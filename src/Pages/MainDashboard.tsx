@@ -375,109 +375,111 @@ export default function MainDashboard() {
                   }
                 >
                   {/* ── Header row ───────────────────────────────────────── */}
-                  <Box sx={{ display: "flex", alignItems: "stretch", borderBottom: "1px solid #F0F0F0" }}>
-                    {/* Salmon number box */}
+                  <Box sx={{ display: "flex", alignItems: "stretch", borderBottom: "1px solid #EBEBEB" }}>
+                    {/* Olive-green number box */}
                     <Box
                       sx={{
-                        width: 52,
-                        minHeight: 56,
-                        backgroundColor: "#FAC9BB",
+                        width: 48,
+                        minHeight: 60,
+                        backgroundColor: "#C5D89D",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
                         flexShrink: 0,
-                        borderRight: "1px solid #F0D0C8",
+                        borderRight: "1px solid #B8CE8A",
                       }}
                     >
                       <Typography
-                        sx={{ fontWeight: 700, fontSize: 15, color: "#7A3020", fontFamily: "Poppins, sans-serif" }}
+                        sx={{ fontWeight: 700, fontSize: 15, color: "#3A5A10", fontFamily: "Poppins, sans-serif" }}
                       >
                         {idx + 1}
                       </Typography>
                     </Box>
 
-                    {/* Order info */}
-                    <Box sx={{ flex: 1, px: 1.5, py: 1 }}>
+                    {/* Order info: -- / Order #xxx / Type */}
+                    <Box sx={{ flex: 1, px: 1.5, py: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
                       <Typography
-                        sx={{ fontSize: 11, color: "#AAAAAA", fontFamily: "Poppins, sans-serif", lineHeight: 1.2 }}
+                        sx={{ fontSize: 10, color: "#BBBBBB", fontFamily: "Poppins, sans-serif", lineHeight: 1.2 }}
                       >
                         --
                       </Typography>
                       <Typography
-                        sx={{ fontWeight: 700, fontSize: 13, color: "#111", fontFamily: "Poppins, sans-serif", lineHeight: 1.4 }}
+                        sx={{ fontWeight: 700, fontSize: 13, color: "#111", fontFamily: "Poppins, sans-serif", lineHeight: 1.5 }}
                       >
                         {order.show_formatted_order_number ?? `Order #${order.order_number}`}
                       </Typography>
                       <Typography
-                        sx={{ fontSize: 11, color: "#8A8A8A", fontFamily: "Poppins, sans-serif" }}
+                        sx={{ fontSize: 11, color: "#8A8A8A", fontFamily: "Poppins, sans-serif", lineHeight: 1.3 }}
                       >
                         {order.order_type?.order_type_name}
                       </Typography>
                     </Box>
 
-                    {/* KOT count + action badges */}
+                    {/* Right: POS + KOT badges (top), then KOT count (below) */}
                     <Box
                       sx={{
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "flex-end",
                         justifyContent: "center",
-                        gap: 0.5,
+                        gap: "4px",
                         px: 1.5,
                         py: 1,
                         flexShrink: 0,
                       }}
                     >
-                      {kotCount > 0 && (
-                        <Typography sx={{ fontSize: 10, color: "#888", fontFamily: "Poppins, sans-serif" }}>
-                          {kotCount} KOT
-                        </Typography>
-                      )}
-                      <Box sx={{ display: "flex", gap: 0.6 }}>
-                        {/* POS badge */}
+                      {/* Badges row */}
+                      <Box sx={{ display: "flex", gap: "6px" }}>
                         <Box
                           sx={{
                             display: "flex",
                             alignItems: "center",
-                            gap: 0.3,
+                            gap: "3px",
                             fontSize: 10,
                             fontWeight: 600,
-                            px: 1,
+                            px: "8px",
                             py: "3px",
                             border: "1px solid #4B9DEC",
                             borderRadius: "3px",
                             color: "#4B9DEC",
                             fontFamily: "Poppins, sans-serif",
+                            lineHeight: 1,
                           }}
                         >
-                          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#4B9DEC" strokeWidth="2.5">
+                          <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#4B9DEC" strokeWidth="2.5">
                             <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
                             <circle cx="12" cy="9" r="2.5"/>
                           </svg>
                           POS
                         </Box>
-                        {/* KOT badge */}
                         <Box
                           sx={{
                             fontSize: 10,
                             fontWeight: 600,
-                            px: 1,
+                            px: "8px",
                             py: "3px",
                             border: "1px solid #C2A429",
                             borderRadius: "3px",
                             color: "#C2A429",
                             fontFamily: "Poppins, sans-serif",
+                            lineHeight: 1,
                           }}
                           onClick={(e) => { e.stopPropagation(); navigate("/kitchens/all-kitchens-kot"); }}
                         >
                           KOT
                         </Box>
                       </Box>
+                      {/* KOT count below badges */}
+                      {kotCount > 0 && (
+                        <Typography sx={{ fontSize: 10, color: "#999", fontFamily: "Poppins, sans-serif" }}>
+                          {kotCount} KOT
+                        </Typography>
+                      )}
                     </Box>
                   </Box>
 
                   {/* ── Order date row ────────────────────────────────────── */}
-                  <Box sx={{ px: 1.5, py: 0.8, borderBottom: "1px solid #F0F0F0" }}>
+                  <Box sx={{ px: 1.5, py: "7px", borderBottom: "1px solid #EBEBEB" }}>
                     <Typography
                       sx={{ fontSize: 11, color: "#999", fontFamily: "Poppins, sans-serif" }}
                     >
@@ -491,19 +493,19 @@ export default function MainDashboard() {
                       display: "flex",
                       alignItems: "center",
                       px: 1.5,
-                      py: 1,
-                      gap: 1,
+                      py: "10px",
+                      gap: "10px",
                     }}
                   >
                     {/* Price */}
                     <Typography
-                      sx={{ fontWeight: 700, fontSize: 14, fontFamily: "Poppins, sans-serif", minWidth: 72 }}
+                      sx={{ fontWeight: 700, fontSize: 15, fontFamily: "Poppins, sans-serif", minWidth: 70, flexShrink: 0 }}
                     >
                       ₹{order.total}
                     </Typography>
 
                     {/* Status dot + label */}
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, flex: 1 }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: "5px", flex: 1 }}>
                       <Box
                         sx={{ width: 7, height: 7, borderRadius: "50%", backgroundColor: status.color, flexShrink: 0 }}
                       />
@@ -524,35 +526,40 @@ export default function MainDashboard() {
                       }}
                       sx={{
                         fontSize: 11,
-                        fontWeight: 600,
-                        px: 1.5,
-                        py: "4px",
-                        border: "1px solid #D0D0D0",
+                        fontWeight: 500,
+                        px: "12px",
+                        py: "5px",
+                        border: "1px solid #CCCCCC",
                         borderRadius: "4px",
-                        backgroundColor: "#FFF",
+                        backgroundColor: "#FFFFFF",
                         cursor: "pointer",
                         fontFamily: "Poppins, sans-serif",
                         whiteSpace: "nowrap",
+                        flexShrink: 0,
                         "&:hover": { backgroundColor: "#F5F5F5" },
                       }}
                     >
                       New KOT
                     </Box>
 
-                    {/* Waiter info — stacked label + name */}
-                    {waiterName && (
+                    {/* Waiter info: stacked label + name on far right */}
+                    {waiterName ? (
                       <Box sx={{ textAlign: "right", flexShrink: 0 }}>
                         <Typography
-                          sx={{ fontSize: 10, color: "#999", fontFamily: "Poppins, sans-serif", lineHeight: 1.2 }}
+                          sx={{ fontSize: 10, color: "#999", fontFamily: "Poppins, sans-serif", lineHeight: 1.3 }}
                         >
                           {waiterLabel}
                         </Typography>
                         <Typography
-                          sx={{ fontSize: 11, fontWeight: 600, color: "#444", fontFamily: "Poppins, sans-serif", lineHeight: 1.3 }}
+                          sx={{ fontSize: 12, fontWeight: 600, color: "#333", fontFamily: "Poppins, sans-serif", lineHeight: 1.4 }}
                         >
                           {waiterName}
                         </Typography>
                       </Box>
+                    ) : (
+                      <Typography sx={{ fontSize: 12, color: "#CCC", fontFamily: "Poppins, sans-serif", flexShrink: 0 }}>
+                        —
+                      </Typography>
                     )}
                   </Box>
                 </Box>
