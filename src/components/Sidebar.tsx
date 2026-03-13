@@ -3,6 +3,7 @@ import { Box, Typography, Popover } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import CheckIcon from "@mui/icons-material/Check";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 
 type Category = {
   id: number;
@@ -21,6 +22,8 @@ type Props = {
   menus: Menu[];
   selectedMenuId: number | null;
   onMenuSelect: (menuId: number | null) => void;
+  collapsed?: boolean;
+  onToggleCollapse?: () => void;
 };
 
 const ROW_PY = 1.1;
@@ -29,6 +32,8 @@ const ACTIVE_BG = "#E8353A";
 const HOVER_BG = "#4A4444";
 const BASE_BG = "#3D3636";
 const HEADER_BG = "#2C2828";
+const COLLAPSED_W = 42;
+const EXPANDED_W = "clamp(165px, 13vw, 195px)";
 
 export default function Sidebar({
   categories = [],
@@ -37,8 +42,10 @@ export default function Sidebar({
   menus = [],
   selectedMenuId,
   onMenuSelect,
+  collapsed = false,
+  onToggleCollapse,
 }: Props) {
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
   const selectedMenuName =
@@ -49,10 +56,89 @@ export default function Sidebar({
     ...categories.map((c) => ({ id: c.id, label: c.category_name.en })),
   ];
 
+  if (collapsed) {
+    return (
+      <Box
+        sx={{
+          width: COLLAPSED_W,
+          flexShrink: 0,
+          backgroundColor: BASE_BG,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          height: "100%",
+          transition: "width 0.2s ease",
+        }}
+      >
+        <Box
+          onClick={onToggleCollapse}
+          sx={{
+            width: "100%",
+            py: 1.2,
+            backgroundColor: HEADER_BG,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+            borderBottom: "1px solid #555",
+            "&:hover": { backgroundColor: "#222" },
+          }}
+        >
+          <MenuIcon sx={{ fontSize: 18, color: "#FFF" }} />
+        </Box>
+
+        {allItems.map((item) => {
+          const isSelected = selectedCategoryId === item.id;
+          return (
+            <Box
+              key={item.id ?? "all"}
+              onClick={() =>
+                onSelect(
+                  item.id === null
+                    ? null
+                    : categories.find((c) => c.id === item.id)!
+                )
+              }
+              title={item.label}
+              sx={{
+                width: "100%",
+                py: 1,
+                display: "flex",
+                justifyContent: "center",
+                cursor: "pointer",
+                backgroundColor: isSelected ? ACTIVE_BG : "transparent",
+                borderBottom: "1px solid #4A4444",
+                "&:hover": { backgroundColor: isSelected ? ACTIVE_BG : HOVER_BG },
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: 9,
+                  color: "#FFF",
+                  fontWeight: isSelected ? 700 : 400,
+                  fontFamily: "Poppins, sans-serif",
+                  textAlign: "center",
+                  px: 0.5,
+                  lineHeight: 1.2,
+                  overflow: "hidden",
+                  display: "-webkit-box",
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: "vertical",
+                }}
+              >
+                {item.label}
+              </Typography>
+            </Box>
+          );
+        })}
+      </Box>
+    );
+  }
+
   return (
     <Box
       sx={{
-        width: "clamp(110px, 9vw, 145px)",
+        width: EXPANDED_W,
         flexShrink: 0,
         backgroundColor: BASE_BG,
         display: "flex",
@@ -60,51 +146,78 @@ export default function Sidebar({
         overflowY: "auto",
         height: "100%",
         fontFamily: "Poppins, sans-serif",
+        transition: "width 0.2s ease",
         "&::-webkit-scrollbar": { width: 3 },
         "&::-webkit-scrollbar-thumb": { backgroundColor: "#555", borderRadius: 2 },
       }}
     >
       {/* ── Filter by menu header ── */}
       <Box
-        onClick={(e) => setAnchorEl(e.currentTarget)}
         sx={{
           px: ROW_PX,
           py: ROW_PY,
           backgroundColor: HEADER_BG,
           display: "flex",
           alignItems: "center",
-          gap: 0.8,
+          gap: 0.5,
           borderBottom: "1px solid #555",
           flexShrink: 0,
-          cursor: "pointer",
-          userSelect: "none",
-          "&:hover": { backgroundColor: "#222" },
         }}
       >
-        <MenuIcon sx={{ fontSize: 14, color: "#FFF", flexShrink: 0 }} />
-        <Typography
+        {/* Collapse toggle */}
+        <Box
+          onClick={onToggleCollapse}
           sx={{
-            fontSize: 11,
-            color: "#FFF",
-            fontWeight: 600,
-            fontFamily: "Poppins, sans-serif",
-            flex: 1,
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-          }}
-        >
-          {selectedMenuName}
-        </Typography>
-        <KeyboardArrowDownIcon
-          sx={{
-            fontSize: 15,
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
             color: "#FFF",
             flexShrink: 0,
-            transform: open ? "rotate(180deg)" : "rotate(0deg)",
-            transition: "transform 0.2s",
+            "&:hover": { color: "#DDD" },
           }}
-        />
+        >
+          <ChevronLeftIcon sx={{ fontSize: 16 }} />
+        </Box>
+
+        {/* Filter by menu trigger */}
+        <Box
+          onClick={(e) => setAnchorEl(e.currentTarget)}
+          sx={{
+            flex: 1,
+            display: "flex",
+            alignItems: "center",
+            gap: 0.5,
+            cursor: "pointer",
+            userSelect: "none",
+            overflow: "hidden",
+            "&:hover": { opacity: 0.8 },
+          }}
+        >
+          <MenuIcon sx={{ fontSize: 13, color: "#FFF", flexShrink: 0 }} />
+          <Typography
+            sx={{
+              fontSize: 11,
+              color: "#FFF",
+              fontWeight: 600,
+              fontFamily: "Poppins, sans-serif",
+              flex: 1,
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {selectedMenuName}
+          </Typography>
+          <KeyboardArrowDownIcon
+            sx={{
+              fontSize: 14,
+              color: "#FFF",
+              flexShrink: 0,
+              transform: open ? "rotate(180deg)" : "rotate(0deg)",
+              transition: "transform 0.2s",
+            }}
+          />
+        </Box>
       </Box>
 
       {/* ── Menu dropdown popover ── */}
@@ -123,14 +236,21 @@ export default function Sidebar({
           },
         }}
       >
-        {[{ id: null, label: "All Menus" }, ...menus.map((m) => ({ id: m.id, label: m.menu_name.en }))].map((item) => {
+        {[
+          { id: null, label: "All Menus" },
+          ...menus.map((m) => ({ id: m.id, label: m.menu_name.en })),
+        ].map((item) => {
           const isActive = selectedMenuId === item.id;
           return (
             <Box
               key={item.id ?? "all"}
-              onClick={() => { onMenuSelect(item.id); setAnchorEl(null); }}
+              onClick={() => {
+                onMenuSelect(item.id);
+                setAnchorEl(null);
+              }}
               sx={{
-                px: 2, py: 0.9,
+                px: 2,
+                py: 0.9,
                 cursor: "pointer",
                 display: "flex",
                 alignItems: "center",
@@ -139,7 +259,14 @@ export default function Sidebar({
                 "&:hover": { backgroundColor: "#F5F5F5" },
               }}
             >
-              <Typography sx={{ fontSize: 13, fontFamily: "Poppins, sans-serif", fontWeight: isActive ? 600 : 400, color: isActive ? ACTIVE_BG : "#333" }}>
+              <Typography
+                sx={{
+                  fontSize: 13,
+                  fontFamily: "Poppins, sans-serif",
+                  fontWeight: isActive ? 600 : 400,
+                  color: isActive ? ACTIVE_BG : "#333",
+                }}
+              >
                 {item.label}
               </Typography>
               {isActive && <CheckIcon sx={{ fontSize: 14, color: ACTIVE_BG }} />}
@@ -154,7 +281,13 @@ export default function Sidebar({
         return (
           <Box
             key={item.id ?? "all"}
-            onClick={() => onSelect(item.id === null ? null : categories.find((c) => c.id === item.id)!)}
+            onClick={() =>
+              onSelect(
+                item.id === null
+                  ? null
+                  : categories.find((c) => c.id === item.id)!
+              )
+            }
             sx={{
               px: ROW_PX,
               py: ROW_PY,

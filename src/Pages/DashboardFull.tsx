@@ -90,6 +90,7 @@ const [selectedTable, setSelectedTable] = useState<{
     branchData?.data?.order_types?.filter((o: any) => o.is_active === 1) ?? [];
 
   const [query, setQuery] = useState("");
+  const [leftSidebarCollapsed, setLeftSidebarCollapsed] = useState(false);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [selectedMenuId, setSelectedMenuId] = useState<number | null>(null);
  const [menuItems, setMenuItems] = useState<any[]>(
@@ -419,6 +420,8 @@ useEffect(() => {
           menus={menus}
           selectedMenuId={selectedMenuId}
           onMenuSelect={setSelectedMenuId}
+          collapsed={leftSidebarCollapsed}
+          onToggleCollapse={() => setLeftSidebarCollapsed((v) => !v)}
         />
 
         {/* MIDDLE: SEARCH + ITEMS */}
@@ -538,7 +541,7 @@ useEffect(() => {
         {/* RIGHT: ORDER PANEL */}
   <Box
   sx={{
-    width: "clamp(300px, 38%, 500px)",
+    width: "clamp(340px, 42%, 560px)",
     flexShrink: 0,
     display: "flex",
     flexDirection: "column",
