@@ -99,29 +99,30 @@ export default function StaffPage() {
   const restaurant_id = branchData?.data?.restaurant_id;
   const phone_code    = String(branchData?.data?.restaurant?.phone_code ?? "91");
 
-  /* ── FETCH ROLES ── */
+  /* ── FETCH ROLES (token-only, no branch_id needed) ── */
   const fetchRoles = useCallback(async () => {
-    if (!token) return;
+    const t = localStorage.getItem("token");
+    if (!t) return;
     try {
       const res = await fetch("http://bhojpe.in/api/v1/restaurant-roles", {
-        headers: { Authorization: `Bearer ${token}` },
-        signal: AbortSignal.timeout(10000),
+        headers: { Authorization: `Bearer ${t}`, "Content-Type": "application/json" },
       });
+      if (!res.ok) return;
       const data = await res.json();
-      if (data.status && Array.isArray(data.roles)) {
+      if (data.status && Array.isArray(data.roles) && data.roles.length > 0) {
         setRoles(data.roles);
       }
-    } catch { /* silent – roles are optional */ }
-  }, [token]);
+    } catch { /* silent */ }
+  }, []);
 
   /* ── FETCH STAFF ── */
   const fetchStaff = useCallback(async () => {
-    if (!token) return;
+    const t = localStorage.getItem("token");
+    if (!t) return;
     setLoading(true);
     try {
       const res = await fetch("http://bhojpe.in/api/v1/getstaffs", {
-        headers: { Authorization: `Bearer ${token}` },
-        signal: AbortSignal.timeout(12000),
+        headers: { Authorization: `Bearer ${t}` },
       });
       const data = await res.json();
       if (data.status) {
@@ -133,18 +134,22 @@ export default function StaffPage() {
         toast.error(data.message || "Failed to load staff");
       }
     } catch (err: any) {
-      if (err?.name !== "AbortError") toast.error("Network error loading staff");
+      toast.error("Network error loading staff");
     } finally {
       setLoading(false);
     }
-  }, [token]);
+  }, []);
 
+  /* Fetch roles immediately on mount; fetch staff once branch_id is available */
+  useEffect(() => { fetchRoles(); }, [fetchRoles]);
+  useEffect(() => { if (branch_id) fetchStaff(); }, [branch_id, fetchStaff]);
+
+  /* Auto-select first role when roles load and form has no role selected */
   useEffect(() => {
-    if (branch_id) {
-      fetchRoles();
-      fetchStaff();
+    if (roles.length > 0 && form.role_id === "") {
+      setForm(prev => ({ ...prev, role_id: roles[0].id }));
     }
-  }, [branch_id, fetchRoles, fetchStaff]);
+  }, [roles]);
 
   /* ── STATS ── */
   const roleCounts = useMemo(() => {
@@ -174,6 +179,7 @@ export default function StaffPage() {
   const handleAdd = () => {
     setEditData(null);
     setForm({ name: "", email: "", phone_number: "", password: "", role_id: roles.length ? roles[0].id : "" });
+    if (roles.length === 0) fetchRoles(); /* retry if still empty */
     setOpenDrawer(true);
   };
 
@@ -487,7 +493,11 @@ export default function StaffPage() {
             <Box sx={{ flex: 1 }}>
               <Typography sx={{ fontSize: 12, fontWeight: 600, color: "#6B7280", fontFamily: FONT, mb: 0.6, textTransform: "uppercase", letterSpacing: 0.5 }}>Role *</Typography>
               <Select fullWidth size="small" value={form.role_id} onChange={e => setForm({ ...form, role_id: Number(e.target.value) })}
+                displayEmpty
                 sx={{ borderRadius: "10px", fontSize: 13, fontFamily: FONT, backgroundColor: "#F9FAFB", "& .MuiOutlinedInput-notchedOutline": { borderColor: "#E5E7EB" } }}>
+                <MenuItem value="" disabled sx={{ fontFamily: FONT, fontSize: 13, color: "#9CA3AF" }}>
+                  {roles.length === 0 ? "Loading roles…" : "Select a role"}
+                </MenuItem>
                 {roles.map(r => <MenuItem key={r.id} value={r.id} sx={{ fontFamily: FONT, fontSize: 13 }}>{r.display_name}</MenuItem>)}
               </Select>
             </Box>
