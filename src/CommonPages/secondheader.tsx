@@ -19,8 +19,6 @@ import image5 from "../assets/image 308.png";
 import image6 from "../assets/image 307.png";
 import { useCustomers } from "../context/CustomerContext.tsx";
 import OrderTypeSwitcher from "../CommonPages/OrderTypeSwitcher.tsx";
-import supporticon1 from "../assets/Support Call (3).png";
-import { useAuth } from "../context/AuthContext.tsx";
 import { useWaiters } from "../context/WaitersContext.tsx";
 
 const QUICK_ICONS = [image1, image2, image3, image4, image5, image6];
@@ -212,11 +210,31 @@ export default function SecondHeader({
                 {waitersLoading ? "…" : waiters.length}
               </Typography>
             </Box>
+
+            {/* New Order Button */}
+            <Button
+              onClick={handleNewKot}
+              sx={{
+                backgroundColor: "#E8353A",
+                color: "#fff",
+                fontFamily: "Poppins, sans-serif",
+                fontWeight: 600,
+                fontSize: "13px",
+                borderRadius: "6px",
+                padding: "6px 16px",
+                textTransform: "none",
+                whiteSpace: "nowrap",
+                boxShadow: "none",
+                "&:hover": { backgroundColor: "#C62828", boxShadow: "none" },
+              }}
+              variant="contained"
+            >
+              New Order
+            </Button>
           </Box>
         </Box>
 
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1, px: 1.5 }}>
-          <img src={supporticon1} alt="helpicon" style={{ width: 166 }} />
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2, px: 1.5 }}>
           <Box
             sx={{
               display: "flex",
@@ -236,8 +254,8 @@ export default function SecondHeader({
                 onClick={() => handleQuickIconClick(index)}
                 style={{
                   cursor: "pointer",
-                  width: 36,
-                  height: 36,
+                  width: 34,
+                  height: 34,
                   objectFit: "contain",
                   flexShrink: 0,
                 }}
@@ -245,22 +263,11 @@ export default function SecondHeader({
             ))}
           </Box>
 
-          <Box
-            sx={{
-              px: 2,
-              py: 0.5,
-              borderRadius: "20px",
-              color: "#fff",
-              fontSize: "12px",
-              fontWeight: 600,
-            }}
-          >
-            <img
-              src={isOnline ? onlineicon : offlineicon}
-              alt={isOnline ? "Online" : "Offline"}
-              style={{ width: 40, height: 40 }}
-            />
-          </Box>
+          <img
+            src={isOnline ? onlineicon : offlineicon}
+            alt={isOnline ? "Online" : "Offline"}
+            style={{ width: 38, height: 38, flexShrink: 0 }}
+          />
         </Box>
       </Box>
 
