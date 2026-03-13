@@ -1,11 +1,13 @@
 import { Box } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import SecondHeader from "../CommonPages/secondheader";
 import HamburgerSidebar from "../CommonPages/HamburgerSidebar";
 import { useAuth } from "../context/AuthContext";
+import { OrderTypeProvider, useOrderType } from "../context/OrderTypeContext";
+import { useState } from "react";
 
-export default function DashboardLayout({
+function LayoutInner({
   children,
   noPad = false,
 }: {
@@ -15,6 +17,7 @@ export default function DashboardLayout({
   const { branchData } = useAuth();
   const navigate = useNavigate();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const { orderType, setOrderType } = useOrderType();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -29,8 +32,6 @@ export default function DashboardLayout({
       (branchData as any)?.data?.order_types?.filter((o: any) => o.is_active === 1) ?? [],
     [branchData],
   );
-
-  const [orderType, setOrderType] = useState<string>("");
 
   useEffect(() => {
     if (!orderType && orderTypes.length > 0) {
@@ -47,7 +48,6 @@ export default function DashboardLayout({
         backgroundColor: "#F6F6F6",
       }}
     >
-      {/* Top header — full width, sticky */}
       <Box
         sx={{
           position: "sticky",
@@ -68,7 +68,6 @@ export default function DashboardLayout({
         />
       </Box>
 
-      {/* Below header: persistent sidebar + content */}
       <Box
         sx={{
           flex: 1,
@@ -76,13 +75,11 @@ export default function DashboardLayout({
           overflow: "hidden",
         }}
       >
-        {/* Persistent nav sidebar */}
         <HamburgerSidebar
           collapsed={sidebarCollapsed}
           onToggle={() => setSidebarCollapsed((v) => !v)}
         />
 
-        {/* Main content */}
         <Box
           sx={{
             flex: 1,
@@ -99,5 +96,19 @@ export default function DashboardLayout({
         </Box>
       </Box>
     </Box>
+  );
+}
+
+export default function DashboardLayout({
+  children,
+  noPad = false,
+}: {
+  children: React.ReactNode;
+  noPad?: boolean;
+}) {
+  return (
+    <OrderTypeProvider>
+      <LayoutInner noPad={noPad}>{children}</LayoutInner>
+    </OrderTypeProvider>
   );
 }

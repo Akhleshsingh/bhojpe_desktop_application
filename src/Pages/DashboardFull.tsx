@@ -17,6 +17,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import type { Order } from "../types/order";
 import { useWaiters } from "../context/WaitersContext";
 import Swal from "sweetalert2";
+import { useOrderType } from "../context/OrderTypeContext";
 const EMPTY_ILLUSTRATION_PATH =
   "/mnt/data/a7d20b31-7dbc-4061-af69-cfbf1f3187e2.png";
 type Item = {
@@ -99,7 +100,7 @@ const [selectedTable, setSelectedTable] = useState<{
 );
   const [cart, setCart] = useState<any[]>([]);
   const [vegFilter, setVegFilter] = useState<"all" | "veg" | "nonveg" | "egg">("all");
-  const [orderType, setOrderType] = useState<any>(null);
+  const { orderType, setOrderType } = useOrderType();
 const [variationOpen, setVariationOpen] = useState(false);
 const [selectedItem, setSelectedItem] = useState<any>(null);
 const [selectedVariation, setSelectedVariation] = useState<any>(null);
