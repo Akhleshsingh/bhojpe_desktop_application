@@ -300,6 +300,114 @@ export default function MainDashboard() {
               </ResponsiveContainer>
             </Box>
           </Box>
+
+          {/* ── Premium insight panels (inside Statistics) ── */}
+          <Box sx={{ display: "flex", gap: 2, mt: 2.5 }}>
+
+            {/* 1. Payment Methods */}
+            <GlassPanel title="Payment Methods" subtitle="Today's collections" gradient="linear-gradient(135deg,#1F2937 0%,#374151 100%)" icon="💳">
+              {loading ? <PanelSkeleton /> : paymentMethods.length === 0 ? <EmptyState text="No payments yet" /> : (
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 0.8 }}>
+                  {paymentMethods.map((pm, i) => {
+                    const pct = Math.round((pm.total / totalPayment) * 100);
+                    return (
+                      <Box key={i}>
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 1.2, py: 0.6 }}>
+                          <Box sx={{ width: 32, height: 32, borderRadius: "8px", flexShrink: 0, background: "linear-gradient(135deg,#E8353A15,#E8353A08)", border: "1px solid #E8353A25", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>
+                            {getPaymentIcon(pm.method)}
+                          </Box>
+                          <Box sx={{ flex: 1, minWidth: 0 }}>
+                            <Box sx={{ display: "flex", justifyContent: "space-between", mb: 0.3 }}>
+                              <Typography sx={{ fontSize: 12, fontWeight: 600, color: "#1F2937", fontFamily: FONT, textTransform: "capitalize" }}>{pm.method}</Typography>
+                              <Typography sx={{ fontSize: 12, fontWeight: 700, color: "#E8353A", fontFamily: FONT }}>₹{Number(pm.total).toFixed(2)}</Typography>
+                            </Box>
+                            <Box sx={{ height: 3, borderRadius: 4, backgroundColor: "#F3F4F6", overflow: "hidden" }}>
+                              <Box sx={{ height: "100%", borderRadius: 4, width: `${pct}%`, background: "linear-gradient(90deg,#E8353A,#c62a2f)", transition: "width .6s ease" }} />
+                            </Box>
+                          </Box>
+                        </Box>
+                        {i < paymentMethods.length - 1 && <Divider sx={{ borderColor: "#F9FAFB" }} />}
+                      </Box>
+                    );
+                  })}
+                  <Box sx={{ mt: 0.5, pt: 1, borderTop: "2px dashed #F3F4F6", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <Typography sx={{ fontSize: 12, fontWeight: 600, color: "#6B7280", fontFamily: FONT }}>Total</Typography>
+                    <Box sx={{ px: 1.4, py: 0.4, borderRadius: "16px", background: "linear-gradient(135deg,#E8353A,#c62a2f)", boxShadow: "0 3px 8px rgba(232,53,58,.3)" }}>
+                      <Typography sx={{ fontSize: 12, fontWeight: 800, color: "#FFF", fontFamily: FONT }}>
+                        ₹{totalPayment === 1 ? "0.00" : totalPayment.toFixed(2)}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Box>
+              )}
+            </GlassPanel>
+
+            {/* 2. Top Selling Dishes */}
+            <GlassPanel title="Top Dishes" subtitle="Today's bestsellers" gradient="linear-gradient(135deg,#7C3AED 0%,#5B21B6 100%)" icon="🍽️">
+              {loading ? <PanelSkeleton /> : topDishes.length === 0 ? <EmptyState text="No dish data yet" /> : (
+                <Box sx={{ display: "flex", flexDirection: "column" }}>
+                  {topDishes.map((dish, i) => {
+                    const rs = RANK_STYLES[i];
+                    const barPct = Math.round((dish.total / maxDishTotal) * 100);
+                    return (
+                      <Box key={i}>
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 1.2, py: 0.8 }}>
+                          <Box sx={{ width: 26, height: 26, borderRadius: "7px", flexShrink: 0, background: rs ? rs.bg : "#F3F4F6", boxShadow: rs ? `0 2px 5px ${rs.shadow}` : "none", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                            <Typography sx={{ fontSize: 10, fontWeight: 800, color: rs ? "#FFF" : "#9CA3AF", fontFamily: FONT }}>#{i + 1}</Typography>
+                          </Box>
+                          <Box sx={{ flex: 1, minWidth: 0 }}>
+                            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                              <Typography sx={{ fontSize: 12, fontWeight: 600, color: "#1F2937", fontFamily: FONT, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "60%" }}>{dish.item_name}</Typography>
+                              <Typography sx={{ fontSize: 12, fontWeight: 700, color: "#7C3AED", fontFamily: FONT, flexShrink: 0 }}>₹{Number(dish.total).toFixed(2)}</Typography>
+                            </Box>
+                            <Box sx={{ display: "flex", alignItems: "center", gap: 0.8, mt: 0.3 }}>
+                              <Box sx={{ flex: 1, height: 3, borderRadius: 4, backgroundColor: "#F3F4F6", overflow: "hidden" }}>
+                                <Box sx={{ height: "100%", borderRadius: 4, width: `${barPct}%`, background: "linear-gradient(90deg,#7C3AED,#5B21B6)", transition: "width .6s ease" }} />
+                              </Box>
+                              <Typography sx={{ fontSize: 9, fontWeight: 600, color: "#9CA3AF", fontFamily: FONT, flexShrink: 0 }}>{dish.qty} qty</Typography>
+                            </Box>
+                          </Box>
+                        </Box>
+                        {i < topDishes.length - 1 && <Divider sx={{ borderColor: "#F9FAFB" }} />}
+                      </Box>
+                    );
+                  })}
+                </Box>
+              )}
+            </GlassPanel>
+
+            {/* 3. Top Tables */}
+            <GlassPanel title="Top Tables" subtitle="Today's revenue" gradient="linear-gradient(135deg,#059669 0%,#047857 100%)" icon="🪑">
+              {loading ? <PanelSkeleton /> : topTables.length === 0 ? <EmptyState text="No table data yet" /> : (
+                <Box sx={{ display: "flex", flexDirection: "column" }}>
+                  {topTables.map((table, i) => {
+                    const rs = RANK_STYLES[i];
+                    const barPct = Math.round((table.total / maxTableTotal) * 100);
+                    return (
+                      <Box key={i}>
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 1.2, py: 0.8 }}>
+                          <Box sx={{ width: 26, height: 26, borderRadius: "7px", flexShrink: 0, background: rs ? rs.bg : "#F3F4F6", boxShadow: rs ? `0 2px 5px ${rs.shadow}` : "none", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                            <Typography sx={{ fontSize: 10, fontWeight: 800, color: rs ? "#FFF" : "#9CA3AF", fontFamily: FONT }}>#{i + 1}</Typography>
+                          </Box>
+                          <Box sx={{ flex: 1, minWidth: 0 }}>
+                            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                              <Typography sx={{ fontSize: 12, fontWeight: 600, color: "#1F2937", fontFamily: FONT, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "65%" }}>{table.table_name}</Typography>
+                              <Typography sx={{ fontSize: 12, fontWeight: 700, color: "#059669", fontFamily: FONT, flexShrink: 0 }}>₹{Number(table.total).toFixed(2)}</Typography>
+                            </Box>
+                            <Box sx={{ flex: 1, height: 3, borderRadius: 4, backgroundColor: "#F3F4F6", overflow: "hidden", mt: 0.5 }}>
+                              <Box sx={{ height: "100%", borderRadius: 4, width: `${barPct}%`, background: "linear-gradient(90deg,#059669,#047857)", transition: "width .6s ease" }} />
+                            </Box>
+                          </Box>
+                        </Box>
+                        {i < topTables.length - 1 && <Divider sx={{ borderColor: "#F9FAFB" }} />}
+                      </Box>
+                    );
+                  })}
+                </Box>
+              )}
+            </GlassPanel>
+
+          </Box>
         </Box>
 
         {/* RIGHT COLUMN — Today's Orders */}
@@ -381,10 +489,8 @@ export default function MainDashboard() {
         </Box>
       </Box>
 
-      {/* ══════════════════════════════════════════
-          NEW PREMIUM SECTION — after the graph
-      ══════════════════════════════════════════ */}
-      <Box sx={{ px: 2, pt: 2.5, pb: 3, display: "flex", gap: 2.5 }}>
+      {/* ── bottom padding ── */}
+      <Box sx={{ px: 2, pb: 3, display: "none", gap: 2.5 }}>
 
         {/* ── 1. Payment Methods Today ── */}
         <GlassPanel
