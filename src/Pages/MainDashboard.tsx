@@ -161,7 +161,7 @@ export default function MainDashboard() {
 
   return (
     <Box
-      sx={{ minHeight: "100vh", backgroundColor: "#F6F6F6", fontFamily: "Poppins, sans-serif" }}
+      sx={{ minHeight: "100vh", backgroundColor: "rgba(0, 0, 0, 0.02)", fontFamily: "Poppins, sans-serif" }}
     >
       {/* Page Header */}
       <Box
@@ -205,7 +205,7 @@ export default function MainDashboard() {
 
       <Box sx={{ display: "flex", px: 2, pt: 2, gap: 2.5 }}>
         {/* LEFT COLUMN */}
-        <Box sx={{ flex: 1, minWidth: 0 }}>
+        <Box sx={{ flex: 1, minWidth: 0, backgroundColor: "#FFFFFF", p: 2, borderRadius: "4px" }}>
           <Typography
             sx={{ fontWeight: 600, mb: 1.5, fontSize: 18, fontFamily: "Poppins, sans-serif" }}
           >
