@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { BASE_URL } from "../utils/api";
+import { store } from "../store/index";
+import { enqueue, removeById, incrementRetry, setSyncing } from "../store/slices/offlineSlice";
+import client from "../api/client";
 
 const NetworkContext = createContext<{
   isOnline: boolean;
@@ -16,72 +18,45 @@ export const NetworkProvider = ({ children }: { children: React.ReactNode }) => 
   const [manualOffline, setManualOffline] = useState(false);
 
   const effectiveOnline = isOnline && !manualOffline;
+
   useEffect(() => {
     const online = () => setIsOnline(true);
     const offline = () => setIsOnline(false);
-
     window.addEventListener("online", online);
     window.addEventListener("offline", offline);
-
     return () => {
       window.removeEventListener("online", online);
       window.removeEventListener("offline", offline);
     };
   }, []);
 
-useEffect(() => {
-  if (!effectiveOnline) return;
+  useEffect(() => {
+    if (!effectiveOnline) return;
 
-  const syncOfflineOrders = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
+    const syncOfflineOrders = async () => {
+      const state = store.getState().offline;
+      if (!state.queue.length) return;
 
-    const orders =
-      JSON.parse(localStorage.getItem("offlineOrders") || "[]");
+      store.dispatch(setSyncing(true));
 
-    if (!orders.length) return;
-
-    const failedOrders: any[] = [];
-
-    for (const order of orders) {
-      try {
-        const res = await fetch(`${BASE_URL}/saveOrder`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        body: JSON.stringify(order.apiPayload),
-        });
-
-        const data = await res.json();
-
-        if (!res.ok || data.status === false) {
-          console.error("❌ Order failed to sync", data);
-          failedOrders.push(order);
+      for (const order of [...state.queue]) {
+        try {
+          const res = await client.post("/saveOrder", order.apiPayload);
+          if (res.data?.status !== false) {
+            store.dispatch(removeById(order.id));
+          } else {
+            store.dispatch(incrementRetry(order.id));
+          }
+        } catch {
+          store.dispatch(incrementRetry(order.id));
         }
-      } catch (err) {
-        console.error("❌ Network error", err);
-        failedOrders.push(order);
       }
-    }
 
-    if (failedOrders.length > 0) {
-      localStorage.setItem(
-        "offlineOrders",
-        JSON.stringify(failedOrders)
-      );
-      console.warn(
-        `⚠️ ${failedOrders.length} offline orders failed to sync`
-      );
-    } else {
-      localStorage.removeItem("offlineOrders");
-    }
-  };
+      store.dispatch(setSyncing(false));
+    };
 
-  syncOfflineOrders();
-}, [effectiveOnline]);
-
+    syncOfflineOrders();
+  }, [effectiveOnline]);
 
   return (
     <NetworkContext.Provider
@@ -98,4 +73,4 @@ useEffect(() => {
 
 export const useNetwork = () => useContext(NetworkContext);
 
-
+export { enqueue };
