@@ -60,13 +60,6 @@ type Split = {
   paymentMode: PaymentMode;
   items: any[];
 };
-
-type Split = {
-  id: number;
-  amount: number;
-  paymentMode: PaymentMode;
-  items: any[];
-};
 export default function CheckoutModal({
   open,
   onClose,

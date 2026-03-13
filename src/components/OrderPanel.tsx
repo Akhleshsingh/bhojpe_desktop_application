@@ -116,7 +116,7 @@ type Props = {
   areaName?: any, onKotTrigger?: (cb: () => void) => void;
   cartSnapshotRef?: React.MutableRefObject<any[]>;
 };
-type PaymentMode = "cash" | "upi" | "gpay" | "other" | "due" | | "checkout"| "";
+type PaymentMode = "cash" | "upi" | "gpay" | "other" | "due" | "checkout" | "";
 type OrderAction =
   | "kot"
   | "bill"
