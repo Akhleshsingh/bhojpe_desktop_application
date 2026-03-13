@@ -271,7 +271,7 @@ export default function SecondHeader({
         </Box>
       </Box>
 
-      {!isMainDashboard && !isDashboardFull && (
+      {!isMainDashboard && !isDashboardFull && !isTableView && (
         <Box
           sx={{
             height: "auto",
