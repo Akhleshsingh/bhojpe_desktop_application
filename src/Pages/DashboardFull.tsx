@@ -423,11 +423,12 @@ useEffect(() => {
         {/* MIDDLE: SEARCH + ITEMS */}
         <Box sx={{
           flex: 1,
-          p: 1.5,
+          p: { xs: 1, sm: 1.5, lg: 2 },
           display: "flex",
           flexDirection: "column",
           minHeight: 0,
           minWidth: 0,
+          overflow: "hidden",
         }}>
           {/* SEARCH + VEG FILTER ROW */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1.5 }}>
@@ -487,7 +488,7 @@ useEffect(() => {
 
           {/* ITEM GRID */}
           <Box sx={{ flex: 1, overflowY: "auto" }}>
-            <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: 1.5 }}>
+            <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: "12px" }}>
               {visibleItems.map((apiItem: any) => (
                 <Box
                   key={apiItem.id}
@@ -536,7 +537,7 @@ useEffect(() => {
         {/* RIGHT: ORDER PANEL */}
   <Box
   sx={{
-    width: { xs: "100%", sm: 360, md: 400, lg: 420 },
+    width: "clamp(300px, 38%, 500px)",
     flexShrink: 0,
     display: "flex",
     flexDirection: "column",

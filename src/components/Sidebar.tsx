@@ -31,10 +31,10 @@ const BASE_BG = "#3D3636";
 const HEADER_BG = "#2C2828";
 
 export default function Sidebar({
-  categories,
+  categories = [],
   selectedCategoryId,
   onSelect,
-  menus,
+  menus = [],
   selectedMenuId,
   onMenuSelect,
 }: Props) {
@@ -52,7 +52,7 @@ export default function Sidebar({
   return (
     <Box
       sx={{
-        width: 120,
+        width: "clamp(110px, 9vw, 145px)",
         flexShrink: 0,
         backgroundColor: BASE_BG,
         display: "flex",
