@@ -106,8 +106,7 @@ export default function App() {
                             <Route
                               path="/menudashboard"
                               element={
-                                <DashboardLayout>
-                                  {" "}
+                                <DashboardLayout noPad>
                                   <DashboardFull
                                     savedOrders={savedOrders}
                                     onSaveOrder={handleSaveOrder}

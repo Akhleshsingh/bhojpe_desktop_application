@@ -8,8 +8,10 @@ import { useAuth } from "../context/AuthContext";
 
 export default function DashboardLayout({
   children,
+  noPad = false,
 }: {
   children: React.ReactNode;
+  noPad?: boolean;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { branchData } = useAuth();
@@ -82,10 +84,15 @@ export default function DashboardLayout({
         <Box
           sx={{
             flex: 1,
-            p: 1,
+            minWidth: 0,
+            minHeight: 0,
+            display: "flex",
+            flexDirection: "column",
+            ...(noPad
+              ? { overflow: "hidden" }
+              : { p: 1, overflowY: "auto" }),
             transition: "margin-left 0.3s ease",
             marginLeft: sidebarOpen ? "280px" : "0px",
-            overflowY: "auto",
           }}
         >
           {children}

@@ -400,11 +400,12 @@ useEffect(() => {
   return (
    <Box
   sx={{
-    width: "100%",
-    height: "100%",
+    flex: 1,
+    minHeight: 0,
     display: "flex",
     flexDirection: "column",
     fontFamily: "Poppins, sans-serif",
+    overflow: "hidden",
   }}
 >
       <Box sx={{ display: "flex", flex: 1, minHeight: 0 }}>
