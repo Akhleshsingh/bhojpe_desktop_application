@@ -2728,8 +2728,8 @@ gap: 1,
         color: "#000",
       }}
     >
-      <Typography fontSize={13}>
-        ({effectiveCart.length + allKotItems.length}) Items
+      <Typography fontSize={13} fontWeight={500}>
+        Items ({effectiveCart.length + allKotItems.length})
       </Typography>
 
       <img
@@ -2738,29 +2738,9 @@ gap: 1,
         style={{ width: 22 }}
       />
 
-      <Typography fontSize={16}>
+      <Typography fontSize={16} fontWeight={700}>
         ₹ {finalTotal}
       </Typography>
-
-      {/* Toggle Arrow */}
-      <Typography fontSize={18}>
-        {showDiscountDetails ? "▲" : "▼"}
-      </Typography>
-
-      {/* PRINT */}
-      <IconButton
-        size="small"
-        onClick={(e) => {
-          e.stopPropagation();
-          handlePrintAllKots();
-        }}
-      >
-        <img
-          src={printerimage}
-          alt="print"
-          style={{ width: 22, height: 22 }}
-        />
-      </IconButton>
     </Box>
   </Box>
 
@@ -2984,18 +2964,18 @@ gap: 1,
     <Box
       sx={{
         display: "flex",
-        flexWrap: "wrap",
+        flexWrap: "nowrap",
         overflowX: "hidden",
         width: "100%",
-        gap: 1,
+        gap: 0.5,
       }}
     >
       <Button
         variant="contained"
         onClick={handleSaveDraft}
-        sx={footerChipBtn}
+        sx={{ ...footerChipBtn, flex: 1, minWidth: 0, fontSize: 12 }}
         startIcon={
-          <img src={hold} alt="hold" style={{ width: 18 }} />
+          <img src={hold} alt="hold" style={{ width: 16 }} />
         }
         style={{borderRadius :'0px!important'}}
       >
@@ -3004,10 +2984,10 @@ gap: 1,
       <Button
         variant="contained"
         onClick={handleSaveDraft}
-        sx={footerChipBtn}
+        sx={{ ...footerChipBtn, flex: 1, minWidth: 0, fontSize: 12 }}
         style={{borderRadius :'0px!important'}}
         startIcon={
-          <img src={draft} alt="draft" style={{ width: 18 }} />
+          <img src={draft} alt="draft" style={{ width: 16 }} />
         }
       >
         Save as Draft
@@ -3017,10 +2997,10 @@ gap: 1,
       <Button
         variant="contained"
         onClick={() => kotActionRef.current?.("kot")}
-        sx={footerChipBtn}
+        sx={{ ...footerChipBtn, flex: 1, minWidth: 0, fontSize: 12 }}
         style={{borderRadius :'0px!important'}}
         startIcon={
-          <img src={kot} alt="kot" style={{ width: 18 }} />
+          <img src={kot} alt="kot" style={{ width: 16 }} />
         }
       >
         KOT
@@ -3032,10 +3012,10 @@ gap: 1,
         onClick={() =>
           kotActionRef.current?.("kot_print")
         }
-        sx={footerChipBtn }
+        sx={{ ...footerChipBtn, flex: 1, minWidth: 0, fontSize: 12 }}
         style={{borderRadius :'0px!important'}}
         startIcon={
-          <img src={kotprint} alt="print" style={{ width: 18 }} />
+          <img src={kotprint} alt="print" style={{ width: 16 }} />
         }
       >
         KOT & Print
@@ -3047,12 +3027,15 @@ gap: 1,
         sx={{
           bgcolor: "#4BAC51",
           textTransform: "none",
-          minWidth: 120,
+          flex: 1,
+          minWidth: 0,
           fontWeight: 700,
+          fontSize: 12,
+          color: "#fff",
         }}
         style={{borderRadius :'0px!important'}}
         startIcon={
-          <img src={ebill} alt="ebill" style={{ width: 18 }} />
+          <img src={ebill} alt="ebill" style={{ width: 16 }} />
         }
         onClick={() => {
           if (!customerInfo) {
@@ -3120,13 +3103,13 @@ gap: 1,
         textTransform: "none",
         minHeight: 48,
         fontWeight: 600,
+        fontSize: 12,
         backgroundColor: "#000000B2",
         border: "1px solid #F6F0D7",
       }}
-      startIcon={<ShoppingCartCheckoutIcon />}
       onClick={ handleKotBillPaymentFlow}
     >
-      KOT,Bill,Print & Payment
+      KOT, Bill & Payment
     </Button>
     <Button
       variant="contained"
@@ -3135,6 +3118,7 @@ gap: 1,
         textTransform: "none",
         minHeight: 48,
         fontWeight: 600,
+        fontSize: 12,
       }}
       disabled={isOrderPaid}
       startIcon={<ShoppingCartCheckoutIcon />}
@@ -3169,7 +3153,7 @@ gap: 1,
   setCheckoutOpen(true);
 }}
     >
-      Checkout
+      Bill & Payment
     </Button>
 
   </Box>
