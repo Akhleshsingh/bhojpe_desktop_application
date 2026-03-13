@@ -22,11 +22,12 @@ const buttonStyle = (active: boolean) => ({
   backgroundColor: active ? "#000000" : "#FFFFFF",
   color: active ? "#fff" : "#000",
   textTransform: "none",
-  width: "137px",
-  height: "53px",
-  flexShrink: 0,
-    border : active ? '1px solid #000000': " 0.5px solid #b7ababff",
-
+  flex: 1,
+  minWidth: 0,
+  height: "44px",
+  border: active ? "1px solid #000000" : "0.5px solid #b7ababff",
+  fontSize: 13,
+  whiteSpace: "nowrap",
 });
 
 export default function OrderTypeSwitcher({
@@ -70,9 +71,10 @@ export default function OrderTypeSwitcher({
       sx={{
         display: "flex",
         alignItems: "center",
-        gap: 2,
+        gap: 1,
         flexWrap: "nowrap",
-        overflowX: "auto",
+        overflowX: "hidden",
+        width: "100%",
       }}
     >
       {/* ORDER TYPE BUTTONS */}
@@ -94,8 +96,9 @@ export default function OrderTypeSwitcher({
      <FormControl
   variant="standard"
   sx={{
-    minWidth: 140,
-    height: 53,
+    minWidth: 90,
+    flexShrink: 0,
+    height: 44,
     justifyContent: "center",
   }}
 >
@@ -108,7 +111,7 @@ export default function OrderTypeSwitcher({
       fontSize: "12px",
       fontWeight: 500,
       color: "#000",
-      height: 53,
+      height: 44,
       "& .MuiSelect-select": {
         padding: "0 2px 0 0",
         display: "flex",

@@ -1245,29 +1245,27 @@ const headerTextStyle = {
   display: "flex",
   flexDirection: "column",
   justifyContent: "center",
-  minWidth: 120,
+  minWidth: 85,
   height: 40,
-  px: 1.5,
+  px: 1,
   border: "1px solid #00000040",
   background: "#FFF",
   cursor: "pointer",
-  fontSize: 13,
+  fontSize: 12,
   fontWeight: 400,
-  maxwidth: 200,  
 };
 const headerTextStyle3 = {
   display: "flex",
   flexDirection: "column",
   justifyContent: "center",
-  minWidth: 180,
+  minWidth: 110,
   height: 40,
-  px: 1.5,
+  px: 1,
   border: "1px solid #00000040",
   background: "#FFF",
   cursor: "pointer",
-  fontSize: 13,
+  fontSize: 12,
   fontWeight: 400,
-  maxwidth: 200,  
 };
 const headerTextStyle2 ={
    display: "flex",
@@ -1592,8 +1590,9 @@ const showPaxDropdown =
   sx={{
     display: "flex",
     alignItems: "center",
-    justifyContent: "space-between", // ⭐ KEY FIX
-    padding: 2,   overflowX :'auto',
+    justifyContent: "space-between",
+    padding: 1,
+    overflowX: "hidden",
   }}
 >
   <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
@@ -2981,11 +2980,10 @@ gap: 1,
     <Box
       sx={{
         display: "flex",
-        flexWrap: "nowrap",   
-        overflowX: "auto",     
+        flexWrap: "wrap",
+        overflowX: "hidden",
         width: "100%",
-        borderRadius :'None',
-        gap :1
+        gap: 1,
       }}
     >
       <Button
