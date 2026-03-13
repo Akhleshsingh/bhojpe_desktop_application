@@ -1,0 +1,202 @@
+/* ---------- MAIN CONTAINER ---------- */
+.login-wrapper {
+  width: 99vw;
+  height: 99vh;
+  background-color: #F7F8FA;
+  overflow-x: hidden;
+}
+
+.login-container {
+  display: flex;
+  height: calc(97vh - 80px);
+}
+.login-left {
+  width: 53.33%;
+  position: relative;
+  background-color: #F7F8FA;
+}
+
+.login-bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.login-video {
+  width: 550px;
+  height:  550px;
+  position: absolute;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* ---------- RIGHT SIDE ---------- */
+.login-right {
+  width: 56.66%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.login-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-paper {
+  padding: 40px;
+  width: 400px;
+  border-radius: 12px;
+  color: #000;
+}
+
+.login-title {
+  margin-bottom: 10px;
+  margin-bottom: 05px;
+ font-family: Poppins;
+font-weight: 700;
+font-style: Bold;
+font-size: 25px;
+leading-trim: NONE;
+line-height: 20px;
+letter-spacing: 10%;
+
+}
+.login-title-2 {
+  margin-bottom: 40px;
+ font-family: Poppins;
+font-weight: 300;
+font-style: Light;
+font-size: 15px;
+leading-trim: NONE;
+line-height: 20px;
+letter-spacing: 10%;
+
+}
+
+/* ---------- INPUT ICON ---------- */
+.input-icon {
+  width: 20px;
+  margin-right: 8px;
+  opacity: 0.7;
+  color: #000;
+}
+
+/* ---------- PASSCODE DOTS ---------- */
+.passcode-dots {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  margin-bottom: 40px;
+  color: #000;
+}
+
+.passcode-dot {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #000;
+}
+
+.passcode-dot-filled {
+  background-color: #000;
+}
+
+/* ---------- KEYPAD ---------- */
+.keypad-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  width: 250px;
+  margin: 0 auto;
+}
+
+.keypad-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: 1px solid #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  cursor: pointer;
+  background: #fff;
+}
+
+.keypad-large-btn {
+  width: 70px;
+  height: 70px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+/* ---------- LOGIN & PASSKEY BOXES ---------- */
+.login-footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+  gap: 12px;
+}
+
+.login-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.login-active {
+background: #00000036;
+  border: 2px solid #00000036;
+}
+
+.login-inactive {
+  background: #FFFFFF;
+}
+
+.login-option img {
+  width: 18px;
+}
+
+.login-option span {
+  font-family: Poppins;
+  font-size: 14px;
+  font-weight: 500;
+}
+.mb-20 {
+  margin-bottom: 20px !important;
+}
+
+.MuiTextField-root.mb-20 {
+  margin-bottom: 20px !important;
+}
+
+.login-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  gap: 6px;
+}
+
+.login-option img {
+  width: 20px;
+  height: 20px;
+}
+
+.login-option span {
+  font-size: 12px;
+  font-weight: 400;
+}

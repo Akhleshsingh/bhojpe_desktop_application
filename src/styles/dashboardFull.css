@@ -1,0 +1,20 @@
+.item-card {
+  transition: box-shadow .15s ease, transform .12s ease;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.item-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+/* Empty illustration placeholder */
+.empty-illustration {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 1px dashed #e0e0e0;
+  display: inline-block;
+}
+

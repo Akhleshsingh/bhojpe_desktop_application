@@ -1,0 +1,667 @@
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import {
+  Box,
+  TextField,
+  Select,
+  MenuItem,
+  FormControl,
+  Button,
+  Typography,
+} from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import "../styles/dashboardFull.css";
+import ItemCard from "../components/ItemCard";
+import OrderPanel from "../components/OrderPanel";
+import SecondHeader from "../CommonPages/secondheader";
+import InsideFooter from "../CommonPages/insidefooter";
+import { useTheme } from "@mui/material/styles";
+import { useAuth } from "../context/AuthContext";
+import { BASE_URL } from "../utils/api";
+import { useOrders } from "../context/OrdersContext";
+import { useLocation, useNavigate } from "react-router-dom";
+import type { Order } from "../types/order";
+import { useWaiters } from "../context/WaitersContext";
+import Swal from "sweetalert2";
+const EMPTY_ILLUSTRATION_PATH =
+  "/mnt/data/a7d20b31-7dbc-4061-af69-cfbf1f3187e2.png";
+type Item = {
+  id: number;
+  name: string;
+  price: number;
+  veg?: boolean;
+  category?: string;
+};
+
+type DashboardFullProps = {
+  savedOrders: Order[];
+  onSaveOrder: (order: Omit<Order, "id">) => void;
+};
+
+export default function DashboardFull({
+  savedOrders,
+  onSaveOrder,
+}: DashboardFullProps) {
+  const theme = useTheme();
+  const location = useLocation();
+  const { waiters } = useWaiters();
+  const { branchData } = useAuth();
+const kotActionRef = useRef<null | ((type?: "kot" | "kot_print") => void)>(null);
+const cartSnapshotRef = useRef<any[]>([]);
+const draftOrder = location.state?.draftOrder;
+ const { mode, tableId ,activeOrder: navOrder} = location.state || {};
+const { orders } = useOrders();
+const fromTable =
+  location.state?.fromTable || false;
+
+const activeOrder = React.useMemo(() => {
+  if (navOrder) {
+    const full = orders.find(
+      (o: any) =>
+        o.id === navOrder.id ||
+        o.order_number === navOrder.order_number
+    );
+
+    return full || navOrder;
+  }
+
+  if (tableId) {
+    return (
+      orders.find(
+        (o: any) =>
+          o.table_id === tableId &&
+          o.status !== "cancelled"
+      ) || null
+    );
+  }
+
+  return null;
+}, [orders, tableId, navOrder]);
+
+
+
+  const tableData = location.state;
+const [selectedTable, setSelectedTable] = useState<{
+  tableId: number | null;
+  tableNo?: string;
+  areaName?: string;
+}>(() => ({
+  tableId: location.state?.tableId ?? null,
+  tableNo: location.state?.tableNo,
+  areaName: location.state?.areaName,
+}));
+
+  const menus = branchData?.data?.menus || [];
+  const allCategories = branchData?.data?.item_categories || [];
+  const orderTypes =
+    branchData?.data?.order_types?.filter((o: any) => o.is_active === 1) ?? [];
+
+  const [query, setQuery] = useState("");
+ const [menuItems, setMenuItems] = useState<any[]>(
+  () =>
+    JSON.parse(localStorage.getItem("menuItems") || "[]")
+);
+  const [cart, setCart] = useState<any[]>([]);
+  const [menuFilter, setMenuFilter] = useState<string>("all");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [vegFilter, setVegFilter] = useState<"all" | "veg" | "nonveg">("all");
+  const [orderType, setOrderType] = useState<any>(null);
+const [variationOpen, setVariationOpen] = useState(false);
+const [selectedItem, setSelectedItem] = useState<any>(null);
+const [selectedVariation, setSelectedVariation] = useState<any>(null);
+
+
+  const tableNo = tableData?.tableNo;
+  const areaName =
+    branchData?.data?.area
+      ?.flatMap((a: any) =>
+        a.tables.map((t: any) => ({ ...t, area: a.area_name }))
+      )
+      ?.find((t: any) => t.id === tableId)?.area;
+  const navigate = useNavigate();
+
+ 
+useEffect(() => {
+  const token = localStorage.getItem("token");
+  const cached = localStorage.getItem("menuItems");
+
+  if (!token) return;
+
+  fetch(`${BASE_URL}/menu-items`, {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.status) {
+        const enrichedItems = data.data.map((item: any) => {
+          const name = item.item_name?.toLowerCase() || "";
+          if (
+            name.includes("dal") ||
+            name.includes("khichdi")
+          ) {
+            return {
+              ...item,
+              variations: [
+                {
+                  id: 1,
+                  variation: "Half",
+                  price: Math.round(item.price * 0.6),
+                },
+                {
+                  id: 2,
+                  variation: "Full",
+                  price: item.price,
+                },
+              ],
+            };
+          }
+
+          // 🫓 Roti / Naan → Plain / Butter
+          if (
+            name.includes("roti") ||
+            name.includes("naan")
+          ) {
+            return {
+              ...item,
+              variations: [
+                {
+                  id: 3,
+                  variation: "Plain",
+                  price: item.price,
+                },
+                {
+                  id: 4,
+                  variation: "Butter",
+                  price: item.price + 10,
+                },
+              ],
+            };
+          }
+
+          // ❌ No variation
+          return {
+            ...item,
+            variations: [],
+          };
+        });
+
+        setMenuItems(enrichedItems);
+
+        localStorage.setItem(
+          "menuItems",
+          JSON.stringify(enrichedItems)
+        );
+      }
+    })
+    .catch(() => {
+      if (cached) {
+        setMenuItems(JSON.parse(cached));
+      }
+    });
+}, []);
+
+
+
+ useEffect(() => {
+  if (fromTable && orderTypes.length > 0) {
+    const dineIn = orderTypes.find(
+      (o: any) =>
+        o.type === "dine_in" ||
+        o.slug === "dine_in"
+    );
+
+    if (dineIn) {
+      setOrderType({
+        id: dineIn.id,
+        type: dineIn.type,
+      });
+    }
+
+    return;
+  }
+  if (activeOrder?.order_type) {
+    setOrderType({
+      id: activeOrder.order_type.id,
+      type: activeOrder.order_type.type,
+    });
+    return;
+  }
+  if (mode === "draft" && location.state?.draftOrder?.orderType) {
+    setOrderType(location.state.draftOrder.orderType);
+    return;
+  }
+  if (!orderType && orderTypes.length > 0) {
+    setOrderType(orderTypes.find(o => o.is_default) || orderTypes[0]);
+  }
+}, [
+  activeOrder?.order_type?.id,
+  mode,
+  orderTypes.length,  fromTable,
+]);
+
+const handleUpdateNote = (itemId: number, note: string) => {
+  setCart((prev) =>
+    prev.map((item) =>
+      item.id === itemId
+        ? { ...item, note }
+        : item
+    )
+  );
+  if (activeOrder) {
+    activeOrder.kot?.forEach((kot: any) => {
+      kot.items.forEach((i: any) => {
+        if (i.menu_item_id === itemId) {
+          i.note = note;
+        }
+      });
+    });
+  }
+};
+
+
+useEffect(() => {
+  if (mode !== "view") return;
+  if (!activeOrder) return;
+
+  const kots = activeOrder.kot || [];
+
+  const items = kots.flatMap((kot: any) =>
+    kot.items?.map((item: any) => ({
+      id: item.menu_item_id,
+      name: item.menu_item?.item_name,
+      qty: item.quantity,
+      price: Number(item.menu_item?.price),
+      note: item.note || "",
+    })) || []
+  );
+
+  setCart(items);
+}, [mode, activeOrder]);
+
+
+  const visibleItems = useMemo(() => {
+    const q = query.trim().toLowerCase();
+
+    return menuItems.filter((item: any) => {
+      const matchesSearch =
+        !q ||
+        item.item_name?.toLowerCase().includes(q) ||
+        String(item.price).includes(q);
+
+      const matchesMenu =
+        menuFilter === "all" ||
+        item.menu?.toLowerCase() === menuFilter.toLowerCase();
+
+      const matchesCategory =
+        categoryFilter === "all" ||
+        item.category?.toLowerCase() === categoryFilter.toLowerCase();
+
+      const matchesVeg =
+        vegFilter === "all" || item.type === vegFilter;
+
+      return (
+        matchesSearch &&
+        matchesMenu &&
+        matchesCategory &&
+        matchesVeg
+      );
+    });
+  }, [menuItems, query, menuFilter, categoryFilter, vegFilter]);
+  const addToCart = (item: Item) => {
+    setCart((prev) => {
+      const found = prev.find((p: any) => p.id === item.id);
+      if (found)
+        return prev.map((p: any) =>
+          p.id === item.id ? { ...p, qty: p.qty + 1 } : p
+        );
+      return [...prev, { ...item, qty: 1 }];
+    });
+  };
+
+  const changeQty = (id: number, delta: number) => {
+    setCart((prev) =>
+      prev
+        .map((p: any) =>
+          p.id === id ? { ...p, qty: Math.max(0, p.qty + delta) } : p
+        )
+        .filter((p: any) => p.qty > 0)
+    );
+  };
+
+  const onRemove = (id: number) => {
+    setCart((prev) => prev.filter((p: any) => p.id !== id));
+  };
+
+  const subtotal = cart.reduce(
+    (s: number, c: any) => s + c.price * c.qty,
+    0
+  );
+const handleSaveDraft = () => {
+  if (cart.length === 0) return;
+
+  const existingDrafts =
+    JSON.parse(localStorage.getItem("pos_draft_orders") || "[]");
+
+  const draftPayload = {
+    _draftId: Date.now(),
+    mode: "draft",
+    cart,
+    orderType,
+    tableId,
+    tableNo,
+    areaName,
+
+    pax: 1,
+    paymentMode: "",
+    orderNote: "",
+    customerInfo: null,
+    selectedWaiter: null,
+
+    createdAt: new Date().toISOString(),
+  };
+
+  localStorage.setItem(
+    "pos_draft_orders",
+    JSON.stringify([draftPayload, ...existingDrafts])
+  );
+
+  setCart([]);
+  alert("Draft saved successfully");
+};
+
+
+useEffect(() => {
+  if (!draftOrder) return;
+  if (draftOrder.cart?.length) {
+    setCart(draftOrder.cart);
+  }
+
+  if (draftOrder.orderType) {
+    setOrderType(draftOrder.orderType);
+  }
+
+  if (draftOrder.tableId) {
+    setSelectedTable({
+      tableId: draftOrder.tableId,
+      tableNo: draftOrder.tableNo,
+      areaName: draftOrder.areaName,
+    });
+  }
+  navigate("/menudashboard", {
+    replace: true,
+    state: {
+      mode: "new",
+      tableId: draftOrder.tableId ?? null,
+      tableNo: draftOrder.tableNo,
+      areaName: draftOrder.areaName,
+    },
+  });
+}, []);
+
+useEffect(() => {
+  cartSnapshotRef.current = cart;
+}, [cart]);
+
+  const handleClearCart = () => setCart([]);
+  return (
+   <Box
+  sx={{
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
+  }}
+>
+      {/* <SecondHeader
+        orderType={orderType}
+        setOrderType={setOrderType}
+        ordersCount={savedOrders.length}
+      /> */}
+
+      <Box sx={{ display: "flex", flex: 1, minHeight: 0 }}>
+        <Box sx={{  flex: 1,
+    p: 2,width: "55%",       
+    minWidth: 390,      
+    display: "flex",
+    flexDirection: "column",
+    minHeight: 0,}}>
+          {/* SEARCH + FILTERS */}
+          <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+            <TextField
+              size="small"
+              placeholder="Search items"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <SearchIcon sx={{ mr: 1, color: "#999" }} />
+                ),
+              }}
+              sx={{ background: "#fff", width: 240 }}
+            />
+
+            <FormControl size="small" sx={{ background: "#fff", width: 200 }}>
+              <Select
+                value={menuFilter}
+                onChange={(e) => setMenuFilter(e.target.value)}
+              >
+                <MenuItem value="all">All Menus</MenuItem>
+                {menus.map((m: any) => (
+                  <MenuItem key={m.id} value={m.menu_name.en}>
+                    {m.menu_name.en}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <FormControl size="small" sx={{ background: "#fff", width: 200 }}>
+              <Select
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+              >
+                <MenuItem value="all">All Categories</MenuItem>
+                {allCategories.map((c: any) => (
+                  <MenuItem key={c.id} value={c.category_name.en}>
+                    {c.category_name.en}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <FormControl size="small" sx={{ background: "#fff", width: 100 }}>
+              <Select
+                value={vegFilter}
+                onChange={(e) =>
+                  setVegFilter(e.target.value as any)
+                }
+              >
+                <MenuItem value="all">All</MenuItem>
+                <MenuItem value="veg">Veg</MenuItem>
+                <MenuItem value="nonveg">Non-Veg</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+<Box
+  sx={{
+    flex: 1,
+    overflowY: "auto",
+    mt: 1,
+  }}
+>
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+            {visibleItems.map((apiItem: any) => (
+              <Box
+                key={apiItem.id}
+                sx={{
+                  width: 176,
+                  backgroundColor: "#FFFFFF",
+                  borderRadius: "10px",
+                  boxShadow: "0 2px 6px var(--border-color)",
+                }}
+              >
+                <ItemCard
+                  item={{
+                    id: apiItem.id,
+                    name: apiItem.item_name,
+                    price: apiItem.price,
+                    category: apiItem.category,
+                    veg: apiItem.type === "veg",
+                    image: apiItem.photo_url,
+                     variations: apiItem.variations, 
+                  }}
+          onAdd={() => {
+  if (apiItem.variations?.length > 0) {
+    setSelectedItem(apiItem);
+    setSelectedVariation(null);
+    setVariationOpen(true);
+  } else {
+    addToCart({
+      id: apiItem.id,
+      name: apiItem.item_name,
+      price: apiItem.price,
+    });
+  }
+}}
+
+
+                />
+              </Box>
+            ))}
+          </Box></Box>
+         
+        </Box>
+  <Box
+  sx={{
+    width: "45%",
+    minWidth: 0,   
+    display: "flex",
+    flexDirection: "column",
+    overflowX :'auto',
+    overflowY :"hidden !important",
+  }}
+>
+          <OrderPanel
+            cart={cart}
+            onIncrease={(id) => changeQty(id, +1)}
+            onDecrease={(id) => changeQty(id, -1)}
+            subtotal={subtotal}
+            onRemove={onRemove}
+            emptyIllustrationPath={EMPTY_ILLUSTRATION_PATH}
+             onUpdateNote={handleUpdateNote}
+            onSaveOrder={onSaveOrder}
+            mode={mode}
+            tableId={tableId}
+            activeOrder={activeOrder}
+            onClearCart={handleClearCart}
+            tableNo={tableNo}
+            areaName={areaName}
+             orderType={orderType} 
+            onKotTrigger={(fn) => {
+    kotActionRef.current = fn;
+  }}  cartSnapshotRef={cartSnapshotRef}  
+  setOrderType={setOrderType}
+          />
+        </Box>
+      </Box>
+{variationOpen && (
+  <Box
+    sx={{
+      position: "fixed",
+      inset: 0,
+      background: "rgba(0,0,0,0.45)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      zIndex: 6000,
+    }}
+  >
+    <Box
+      sx={{
+        width: 360,
+        background: "#FFF",
+        borderRadius: "12px",
+        p: 3,
+      }}
+    >
+      {/* TITLE */}
+      <Typography fontWeight={700} mb={2}>
+        Select Variation
+      </Typography>
+      <Typography mb={2}>
+        {selectedItem?.item_name}
+      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 1.5,
+          mb: 2,
+        }}
+      >
+        {selectedItem?.variations?.map((v: any) => (
+          <Box
+            key={v.id}
+            onClick={() => setSelectedVariation(v)}
+            sx={{
+              border:
+                selectedVariation?.id === v.id
+                  ? "2px solid #5A7863"
+                  : "1px solid #E5E7EB",
+              borderRadius: "8px",
+              px: 2,
+              py: 1.5,
+              display: "flex",
+              justifyContent: "space-between",
+              cursor: "pointer",
+              background:
+                selectedVariation?.id === v.id
+                  ? "#EBF4DD"
+                  : "#FFF",
+            }}
+          >
+            <Typography>{v.variation}</Typography>
+            <Typography>₹{v.price}</Typography>
+          </Box>
+        ))}
+      </Box>
+
+      {/* FOOTER */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "flex-end",
+          gap: 1.5,
+        }}
+      >
+        <Button
+          variant="outlined"
+          onClick={() => setVariationOpen(false)}
+        >
+          Cancel
+        </Button>
+
+        <Button
+          variant="contained"
+          disabled={!selectedVariation}
+          onClick={() => {
+            addToCart({
+              id: selectedItem.id,
+              name: `${selectedItem.item_name} (${selectedVariation.variation})`,
+              price: selectedVariation.price,
+            });
+
+            setVariationOpen(false);
+            setSelectedItem(null);
+            setSelectedVariation(null);
+          }}
+          sx={{ bgcolor: "#5A7863" }}
+        >
+          Add Item
+        </Button>
+      </Box>
+    </Box>
+  </Box>
+)}
+
+    </Box>
+  );
+}

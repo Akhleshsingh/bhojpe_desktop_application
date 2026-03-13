@@ -1,0 +1,68 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+ 
+
+/* For ACTIVE button (contained variant) */
+.MuiButton-contained.active-btn {
+  background-color: #BA3131 !important;
+  border: 1px solid #BA3131 !important;
+  color: white !important;
+}
+
+/* For OUTLINED active state (if needed later) */
+.MuiButton-outlined.active-btn {
+  border: 1px solid #BA3131 !important;
+  color: #BA3131 !important;
+}
+/* ACTIVE toggle button */
+.active-toggle.MuiToggleButton-root {
+  background-color: #BA3131 !important;
+  color: white !important;
+  border: 1px solid #BA3131 !important;
+}
+
+/* Default toggle appearance */
+.MuiToggleButton-root {
+  border: 1px solid #BDBDBD !important;
+  border-radius: 6px !important;
+  padding: 6px 20px !important;
+}

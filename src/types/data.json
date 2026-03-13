@@ -1,0 +1,30 @@
+{
+  "roof": [
+    { "tableNo": 1, "status": "blank", "people": 0, "estimatedTime": null, "amount": 0 },
+    { "tableNo": 2, "status": "running", "people": 3, "estimatedTime": "12 min", "amount": 450 },
+    { "tableNo": 3, "status": "kot", "people": 2, "estimatedTime": "5 min", "amount": 300 },
+    { "tableNo": 4, "status": "print", "people": 1, "estimatedTime": "8 min", "amount": 150 },
+    { "tableNo": 5, "status": "blank", "people": 0, "estimatedTime": null, "amount": 0 },
+    { "tableNo": 6, "status": "running", "people": 5, "estimatedTime": "15 min", "amount": 750 },
+    { "tableNo": 7, "status": "kot", "people": 2, "estimatedTime": "6 min", "amount": 320 },
+    { "tableNo": 8, "status": "blank", "people": 0, "estimatedTime": null, "amount": 0 },
+    { "tableNo": 9, "status": "blank", "people": 0, "estimatedTime": null, "amount": 0 },
+    { "tableNo": 10, "status": "running", "people": 3, "estimatedTime": "12 min", "amount": 460 },
+    { "tableNo": 11, "status": "kot", "people": 2, "estimatedTime": "5 min", "amount": 310 },
+    { "tableNo": 12, "status": "print", "people": 1, "estimatedTime": "8 min", "amount": 150 },
+    { "tableNo": 13, "status": "blank", "people": 0, "estimatedTime": null, "amount": 0 },
+    { "tableNo": 14, "status": "running", "people": 5, "estimatedTime": "15 min", "amount": 800 },
+    { "tableNo": 15, "status": "kot", "people": 2, "estimatedTime": "6 min", "amount": 350 },
+    { "tableNo": 16, "status": "blank", "people": 0, "estimatedTime": null, "amount": 0 }
+  ],
+  "garden": [
+    { "tableNo": 1, "status": "blank", "people": 0, "estimatedTime": null, "amount": 0 },
+    { "tableNo": 2, "status": "print", "people": 4, "estimatedTime": "3 min", "amount": 500 },
+    { "tableNo": 3, "status": "running", "people": 3, "estimatedTime": "10 min", "amount": 400 },
+    { "tableNo": 4, "status": "blank", "people": 0, "estimatedTime": null, "amount": 0 },
+    { "tableNo": 5, "status": "kot", "people": 2, "estimatedTime": "4 min", "amount": 250 },
+    { "tableNo": 6, "status": "running", "people": 6, "estimatedTime": "14 min", "amount": 900 },
+    { "tableNo": 7, "status": "print", "people": 1, "estimatedTime": "2 min", "amount": 120 },
+    { "tableNo": 8, "status": "blank", "people": 0, "estimatedTime": null, "amount": 0 }
+  ]
+}

@@ -1,0 +1,36 @@
+appId: com.example.bhojpeapp
+productName: BhojPeApp
+directories:
+  output: dist
+  buildResources: build
+
+# Windows configuration
+win:
+  target: nsis
+  icon: icon.ico
+  forceCodeSigning: false   # Skip code signing
+  requestedExecutionLevel: asInvoker
+  signAndEditExecutable: false   # Optional: disable rcedit edits if you want
+  verifyUpdateCodeSignature: false
+
+# Linux configuration
+linux:
+  target: AppImage
+  icon: build/icon.png
+  category: Utility
+  synopsis: "BhojPeApp - Your app description"
+
+# Files to include
+files:
+  - "**/*"
+  - "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md}"
+  - "!**/node_modules/*/{test,__tests__,tests,example,examples}"
+  - "!**/*.d.ts"
+  - "!**/.gitignore"
+  - "!**/.npmrc"
+  - "!**/yarn.lock"
+
+# Extra resources if needed
+extraResources:
+  - from: assets/
+    to: assets/
