@@ -41,15 +41,10 @@ export default function ItemCard({ item, onAdd }: ItemCardProps) {
  return (
   <Box
     sx={{
-      height: 180,
       background: "#FFFFFF",
-      backdropFilter: "blur(12px)",
-      WebkitBackdropFilter: "blur(12px)",
       overflow: "hidden",
       cursor: "pointer",
-      border: "none",
       transition: "0.2s",
-      dropshadow: "0px 1px 3px #00000040",  
       "&:hover": {
         boxShadow: "0 4px 14px rgba(0,0,0,0.15)",
         transform: "translateY(-2px)",
@@ -57,53 +52,57 @@ export default function ItemCard({ item, onAdd }: ItemCardProps) {
     }}
     onClick={onAdd}
   >
-    {/* IMAGE CONTAINER */}
+    {/* IMAGE CONTAINER — flush left, right, top */}
     <Box
       sx={{
-        position: "relative",   // ⭐ REQUIRED for absolute icon
-        height: 120,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
+        position: "relative",
+        width: "100%",
+        height: 110,
+        overflow: "hidden",
+        backgroundColor: "#F9F9F9",
       }}
     >
-      {/* 🔥 FOOD TYPE ICON → TOP RIGHT */}
+      {/* Food type icon — top right */}
       <Box
         component="img"
         src={getFoodTypeIcon()}
         alt="food type"
         sx={{
           position: "absolute",
-          top: 8,
-          right: 8,
-          width: 14,
-          height: 14,
+          top: 6,
+          right: 6,
+          width: 13,
+          height: 13,
+          zIndex: 1,
         }}
       />
-    {item.image && (
-  <img
-    src={item.image}
-    alt={item.name}
-    style={{
-      maxHeight: 80,
-      width: "auto",        // ⭐ keeps rectangle
-      objectFit: "contain",
-    }}
-    onError={(e) => {
-      e.currentTarget.style.display = "none";
-    }}
-  />
-)}
-
+      {item.image ? (
+        <img
+          src={item.image}
+          alt={item.name}
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+          }}
+          onError={(e) => {
+            e.currentTarget.style.display = "none";
+          }}
+        />
+      ) : (
+        <Box sx={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <Box component="img" src={getFoodTypeIcon()} alt="" sx={{ width: 40, height: 40, opacity: 0.3 }} />
+        </Box>
+      )}
     </Box>
 
     {/* NAME */}
-    <Typography sx={{ fontWeight: 600, fontSize: "15px",textAlign :'center', mt: 0.3 }}>
+    <Typography sx={{ fontWeight: 600, fontSize: "13px", textAlign: "center", mt: 0.5, px: 0.5, lineHeight: 1.3, fontFamily: "Poppins, sans-serif" }}>
       {item.name}
     </Typography>
 
     {/* PRICE */}
-    <Typography sx={{ fontSize: "15px",fontWeight: 500, textAlign :'center',color: "#555" }}>
+    <Typography sx={{ fontSize: "13px", fontWeight: 500, textAlign: "center", color: "#555", mb: 0.5, fontFamily: "Poppins, sans-serif" }}>
       ₹{item.price}
     </Typography>
   </Box>
