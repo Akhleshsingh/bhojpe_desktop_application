@@ -273,7 +273,7 @@ useEffect(() => {
     <Box sx={{ minHeight: "100vh", backgroundColor: "#FFFFFF", overflow: "auto", fontFamily: "Poppins, sans-serif" }}>
       <Box sx={{ padding: 2 }}>
         {/* Page title row */}
-        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1.5, px: 1 }}>
+        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1.5, px: 1, pb: 1.5, borderBottom: "1px solid #E5E5E5" }}>
           <Typography sx={{ fontWeight: 700, fontSize: 18, fontFamily: "Poppins, sans-serif" }}>
             Table View
           </Typography>
