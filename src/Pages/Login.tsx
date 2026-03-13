@@ -1,61 +1,41 @@
-import React, { useState , useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../CommonPages/header";
 import Footer from "../CommonPages/footer";
-import { Button, TextField, Paper } from "@mui/material";
+import { TextField } from "@mui/material";
 import "../styles/login.css";
 import Rectangle from "../assets/Rectangle 462 (1).png";
-// import Bhojpe from "../assets/Computer login-bro 1.png";
 import videoCall from "../assets/Computer login-bro (1) 1.png";
 import loginicon from "../assets/image 225 (1).png";
 import loginicon1 from "../assets/image 221.png";
 import passkeyicon from "../assets/image 224.png";
-import backIcon from "../assets/image 225.png";        
-import submitIcon from "../assets/image 226.png";    
+import backIcon from "../assets/image 225.png";
+import submitIcon from "../assets/image 226.png";
 import { useNavigate } from "react-router-dom";
-import { API_ENDPOINTS } from "../utils/api";
-import { apiFetch } from "../utils/apiFetch";
-import { useAuth } from "../context/AuthContext"
-import { NetworkProvider } from "../context/NetworkContext";
-import { OrdersProvider, useOrders } from "../context/OrdersContext";
-import { useWaiters, WaitersProvider } from "../context/WaitersContext";
+import { useAuth } from "../context/AuthContext";
+import { useOrders } from "../context/OrdersContext";
+import { useWaiters } from "../context/WaitersContext";
 import toast from "react-hot-toast";
-
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
-const [passwordError, setPasswordError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const [usePasskey, setUsePasskey] = useState(false);
   const [passcode, setPasscode] = useState("");
- const { login } = useAuth();
- const { fetchOrders} = useOrders();
- const {  fetchWaiters} = useWaiters();
-  const navigate = useNavigate(); 
-const [rememberMe, setRememberMe] = useState(false);
-useEffect(() => {
-  const savedEmail = localStorage.getItem("remember_email");
-  if (savedEmail) {
-    setEmail(savedEmail);
-    setRememberMe(true);
-  }
-}, []);
+  const { login } = useAuth();
+  const { fetchOrders } = useOrders();
+  const { fetchWaiters } = useWaiters();
+  const navigate = useNavigate();
+  const [rememberMe, setRememberMe] = useState(false);
 
-const handleLogin = async () => {
-  const success = await login(email, password);
-
-  if (success) {
-    if (rememberMe) {
-      localStorage.setItem("remember_email", email);
-    } else {
-      localStorage.removeItem("remember_email");
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("remember_email");
+    if (savedEmail) {
+      setEmail(savedEmail);
+      setRememberMe(true);
     }
-
-    navigate("/main-dashboard");
-  } else {
-    alert("Invalid credentials");
-  }
-};
+  }, []);
 
   const handleNumberClick = (num: number) => {
     if (passcode.length < 4) setPasscode(passcode + num);
@@ -63,144 +43,210 @@ const handleLogin = async () => {
 
   const handleBackspace = () => setPasscode(passcode.slice(0, -1));
 
-const handleSubmit = async () => {
+  const handleSubmit = async () => {
+    setEmailError("");
+    setPasswordError("");
 
-  // Reset errors
-  setEmailError("");
-  setPasswordError("");
-
-  if (!usePasskey) {
-    let valid = true;
-
-    if (!email.trim()) {
-      setEmailError("Please enter username");
-      valid = false;
+    if (!usePasskey) {
+      let valid = true;
+      if (!email.trim()) {
+        setEmailError("Please enter username");
+        valid = false;
+      }
+      if (!password.trim()) {
+        setPasswordError("Please enter password");
+        valid = false;
+      }
+      if (!valid) return;
     }
 
-    if (!password.trim()) {
-      setPasswordError("Please enter password");
-      valid = false;
+    if (usePasskey) {
+      const savedPasskey = localStorage.getItem("pos_passkey");
+      if (!savedPasskey) {
+        toast.error("No passkey set");
+        return;
+      }
+      if (passcode === savedPasskey) {
+        localStorage.setItem("offline_login", "true");
+        navigate("/main-dashboard");
+        return;
+      } else {
+        toast.error("Wrong passkey");
+        return;
+      }
     }
 
-    if (!valid) return;
-  }
-
-  if (usePasskey) {
-    const savedPasskey = localStorage.getItem("pos_passkey");
-
-    if (!savedPasskey) {
-      toast.error("No passkey set");
-      return;
-    }
-
-    if (passcode === savedPasskey) {
-      localStorage.setItem("offline_login", "true");
+    const success = await login(email, password);
+    if (success) {
+      if (rememberMe) {
+        localStorage.setItem("remember_email", email);
+      } else {
+        localStorage.removeItem("remember_email");
+      }
+      fetchOrders();
+      fetchWaiters();
       navigate("/main-dashboard");
-      return;
     } else {
-      toast.error("Wrong passkey");
-      return;
+      toast.error("Invalid credentials");
     }
-  }
-
-  const success = await login(email, password);
-
-  if (success) {
-    if (rememberMe) {
-      localStorage.setItem("remember_email", email);
-    } else {
-      localStorage.removeItem("remember_email");
-    }
-
-    navigate("/main-dashboard");
-  } else {
-    toast.error("Invalid credentials");
-  }
-};
+  };
 
   return (
     <div className="login-wrapper">
       <Header />
       <div className="login-container">
+        {/* LEFT ILLUSTRATION */}
         <div className="login-left">
-          <img src={Rectangle} className="login-bg" />
-          <img src={videoCall} className="login-video" />
+          <img src={Rectangle} className="login-bg" alt="" />
+          <img src={videoCall} className="login-video" alt="Login illustration" />
         </div>
+
+        {/* RIGHT FORM */}
         <div className="login-right">
           <div className="login-center">
             <div className="login-paper">
               {!usePasskey ? (
                 <>
                   <h2 className="login-title">Welcome to Bhojpe</h2>
-                   <h5 className="login-title-2">Fast billing. Easy management.</h5>
-                  <TextField
-  fullWidth
-  placeholder="Username"
-  value={email}
-  error={!!emailError}
-  helperText={emailError}
-  onChange={(e) => {
-    setEmail(e.target.value);
-    setEmailError("");
-  }}
-  InputProps={{
-    startAdornment: <img src={loginicon1} className="input-icon" />,
-  }}
-  sx={{ mb: 2 }}
-/>
-               <TextField
-  fullWidth
-  placeholder="Password"
-  type="password"
-  value={password}
-  error={!!passwordError}
-  helperText={passwordError}
-  onChange={(e) => {
-    setPassword(e.target.value);
-    setPasswordError("");
-  }}
-  InputProps={{
-    startAdornment: <img src={passkeyicon} className="input-icon" />,
-  }}
-  sx={{ mb: 2 }}
-/>
-                  <div
-  style={{
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: "16px",
-  }}
->
-  <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
-    <input
-      type="checkbox"
-      checked={rememberMe}
-      onChange={(e) => setRememberMe(e.target.checked)}
-      style={{ width: 16, height: 16 }}
-    />
-    <span style={{ fontSize: 14, color: "#555" }}>Remember me</span>
-  </label>
-</div>
+                  <p className="login-title-2">Fast billing. Easy management.</p>
 
-                  <Button
-                    variant="contained"
+                  <TextField
                     fullWidth
-                    onClick={handleSubmit}
+                    placeholder="User Name / Email Id"
+                    value={email}
+                    error={!!emailError}
+                    helperText={emailError}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      setEmailError("");
+                    }}
+                    onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+                    InputProps={{
+                      startAdornment: (
+                        <img src={loginicon1} className="input-icon" alt="" />
+                      ),
+                    }}
                     sx={{
-                      backgroundColor: "#000000",
-                      color: "#fff",
-                      padding: "12px",
-                      borderRadius: "10px",
-                      fontSize: "16px",
-                      fontWeight: 600,
-                      mb: 3,
-                      textTransform: "none",
-                      "&:hover": { backgroundColor: "#90AB8B" },
+                      mb: 2,
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "8px",
+                        backgroundColor: "#FFFFFF",
+                        fontFamily: "Poppins, sans-serif",
+                        fontSize: "14px",
+                        "& fieldset": { borderColor: "#E0DADA" },
+                        "&:hover fieldset": { borderColor: "#E8353A" },
+                        "&.Mui-focused fieldset": { borderColor: "#E8353A" },
+                      },
+                      "& .MuiInputBase-input::placeholder": {
+                        color: "#AAAAAA",
+                        opacity: 1,
+                        fontFamily: "Poppins, sans-serif",
+                        fontSize: "14px",
+                      },
+                    }}
+                  />
+
+                  <TextField
+                    fullWidth
+                    placeholder="Password"
+                    type="password"
+                    value={password}
+                    error={!!passwordError}
+                    helperText={passwordError}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      setPasswordError("");
+                    }}
+                    onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+                    InputProps={{
+                      startAdornment: (
+                        <img src={passkeyicon} className="input-icon" alt="" />
+                      ),
+                    }}
+                    sx={{
+                      mb: 2.5,
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "8px",
+                        backgroundColor: "#FFFFFF",
+                        fontFamily: "Poppins, sans-serif",
+                        fontSize: "14px",
+                        "& fieldset": { borderColor: "#E0DADA" },
+                        "&:hover fieldset": { borderColor: "#E8353A" },
+                        "&.Mui-focused fieldset": { borderColor: "#E8353A" },
+                      },
+                      "& .MuiInputBase-input::placeholder": {
+                        color: "#AAAAAA",
+                        opacity: 1,
+                        fontFamily: "Poppins, sans-serif",
+                        fontSize: "14px",
+                      },
+                    }}
+                  />
+
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      marginBottom: "20px",
                     }}
                   >
-                    Login
-                  </Button>
+                    <label
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 8,
+                        cursor: "pointer",
+                      }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={rememberMe}
+                        onChange={(e) => setRememberMe(e.target.checked)}
+                        style={{
+                          width: 16,
+                          height: 16,
+                          accentColor: "#E8353A",
+                          cursor: "pointer",
+                        }}
+                      />
+                      <span
+                        style={{
+                          fontSize: 13,
+                          color: "#777",
+                          fontFamily: "Poppins, sans-serif",
+                        }}
+                      >
+                        Remember me
+                      </span>
+                    </label>
+                  </div>
+
+                  <button
+                    onClick={handleSubmit}
+                    style={{
+                      width: "100%",
+                      padding: "13px",
+                      backgroundColor: "#E8353A",
+                      color: "#FFFFFF",
+                      border: "none",
+                      borderRadius: "8px",
+                      fontSize: "16px",
+                      fontWeight: 600,
+                      fontFamily: "Poppins, sans-serif",
+                      cursor: "pointer",
+                      marginBottom: "24px",
+                      letterSpacing: "0.3px",
+                      transition: "background-color 0.2s",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#C62828")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#E8353A")
+                    }
+                  >
+                    Login In
+                  </button>
                 </>
               ) : (
                 <>
@@ -210,14 +256,20 @@ const handleSubmit = async () => {
                       <div
                         key={i}
                         className={
-                          passcode[i] ? "passcode-dot passcode-dot-filled" : "passcode-dot"
+                          passcode[i]
+                            ? "passcode-dot passcode-dot-filled"
+                            : "passcode-dot"
                         }
-                      ></div>
+                      />
                     ))}
                   </div>
                   <div className="keypad-grid">
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
-                      <div key={num} className="keypad-btn" onClick={() => handleNumberClick(num)}>
+                      <div
+                        key={num}
+                        className="keypad-btn"
+                        onClick={() => handleNumberClick(num)}
+                      >
                         {num}
                       </div>
                     ))}
@@ -228,7 +280,7 @@ const handleSubmit = async () => {
                         setPasscode("");
                       }}
                     >
-                      <img src={backIcon} style={{ width: 35 }} />
+                      <img src={backIcon} style={{ width: 32 }} alt="back" />
                     </div>
                     <div
                       className="keypad-large-btn keypad-btn"
@@ -237,20 +289,24 @@ const handleSubmit = async () => {
                       0
                     </div>
                     <div className="keypad-large-btn" onClick={handleSubmit}>
-                      <img src={submitIcon} style={{ width: 35 }} />
+                      <img src={submitIcon} style={{ width: 32 }} alt="submit" />
                     </div>
                   </div>
                 </>
               )}
+
+              {/* LOGIN / PASSKEY TABS */}
               <div className="login-footer">
                 <div
                   onClick={() => {
                     setUsePasskey(false);
                     setPasscode("");
                   }}
-                  className={`login-option ${!usePasskey ? "login-active" : "login-inactive"}`}
+                  className={`login-option ${
+                    !usePasskey ? "login-active" : "login-inactive"
+                  }`}
                 >
-                  <img src={loginicon} />
+                  <img src={loginicon} alt="login" />
                   <span>Login</span>
                 </div>
                 <div
@@ -259,10 +315,12 @@ const handleSubmit = async () => {
                     setEmail("");
                     setPassword("");
                   }}
-                  className={`login-option ${usePasskey ? "login-active" : "login-inactive"}`}
+                  className={`login-option ${
+                    usePasskey ? "login-active" : "login-inactive"
+                  }`}
                 >
-                  <img src={passkeyicon} />
-                  <span>Passkey</span>
+                  <img src={passkeyicon} alt="passcode" />
+                  <span>Passcode</span>
                 </div>
               </div>
             </div>
@@ -275,7 +333,3 @@ const handleSubmit = async () => {
 };
 
 export default Login;
-
-
-
-
