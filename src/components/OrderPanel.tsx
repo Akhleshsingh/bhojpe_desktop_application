@@ -9,7 +9,14 @@ import {
   FormControl,
   Select,
   MenuItem,
+  Popover,
+  TextField,
+  InputAdornment,
+  List,
+  ListItem,
+  ListItemText,
 } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 import AddIcon from "../assets/icons/plus.png"
 import RemoveIcon from "../assets/icons/minus.png";
 import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
@@ -251,8 +258,10 @@ const [isEditMode, setIsEditMode] = useState(false);
 const [selectedDeliveryExecutive, setSelectedDeliveryExecutive] =
   useState<any>(null);
 const [checkoutOrder, setCheckoutOrder] = useState<any>(null);
-const [deliveryExecModalOpen, setDeliveryExecModalOpen] =
-  useState(false);
+const [deliveryExecAnchorEl, setDeliveryExecAnchorEl] =
+  useState<HTMLElement | null>(null);
+const [deliveryExecQuery, setDeliveryExecQuery] = useState("");
+const [pendingDeliveryExec, setPendingDeliveryExec] = useState<any>(null);
   const [noteTarget, setNoteTarget] = useState<NoteTarget | null>(null);
   const [orderStatuses, setOrderStatuses] = useState<OrderStatusResponse[]>([]);
  const [discountType, setDiscountType] =
@@ -1312,7 +1321,8 @@ const headerSubText = {
       setPickupModalOpen(true);
     }
  if (icon === delivery) {
-     setDeliveryExecModalOpen(true);
+     setDeliveryExecAnchorEl(document.body as HTMLElement);
+     setPendingDeliveryExec(selectedDeliveryExecutive);
     }
   };
   const orderContextLabel = React.useMemo(() => {
@@ -1981,7 +1991,7 @@ console.log(
       <>
       <Box
         sx={headerTextStyle}
-        onClick={() => setDeliveryExecModalOpen(true)}
+        onClick={(e) => { setDeliveryExecAnchorEl(e.currentTarget); setPendingDeliveryExec(selectedDeliveryExecutive); }}
       >
         Delivery
         {selectedDeliveryExecutive?.name && (
@@ -3333,80 +3343,113 @@ onPaymentSuccess={async (paymentData) => {
           setWaiterAnchorEl(null);
         }}
       />
-      {deliveryExecModalOpen && (
-  <Box
-    sx={{
-      position: "fixed",
-      inset: 0,
-      background: "rgba(0,0,0,0.4)",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      zIndex: 3000,
-    }}
-  >
-    <Box
-      sx={{
-        width: 320,
-        background: "#fff",
-        p: 2.5,
-      }}
-    >
-      <Typography fontWeight={700} mb={2}>
-        Select Delivery Executive
-      </Typography>
-
-      <Box
-        sx={{
-          maxHeight: 240,
-          overflowY: "auto",
-          display: "flex",
-          flexDirection: "column",
-          gap: 1,
+      <Popover
+        open={Boolean(deliveryExecAnchorEl)}
+        anchorEl={deliveryExecAnchorEl}
+        onClose={() => { setDeliveryExecAnchorEl(null); setDeliveryExecQuery(""); setPendingDeliveryExec(null); }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        transformOrigin={{ vertical: "top", horizontal: "left" }}
+        PaperProps={{
+          sx: {
+            width: 280,
+            borderRadius: "10px",
+            boxShadow: "0px 8px 24px rgba(0,0,0,0.15)",
+            overflow: "hidden",
+          },
         }}
       >
-        {deliveryExecutives.map((d) => (
-          <Box
-            key={d.id}
-            onClick={() => {
-              setSelectedDeliveryExecutive(d);
-              setDeliveryExecModalOpen(false);
+        <Box sx={{ p: 1.5 }}>
+          <Typography sx={{ fontSize: 14, fontWeight: 700, mb: 1, color: "#111" }}>
+            Select Delivery Executive
+          </Typography>
+          <TextField
+            fullWidth
+            size="small"
+            placeholder="Search executive..."
+            value={deliveryExecQuery}
+            onChange={(e) => setDeliveryExecQuery(e.target.value)}
+            autoFocus
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon sx={{ fontSize: 16, color: "#9E9E9E" }} />
+                </InputAdornment>
+              ),
             }}
             sx={{
-              p: 1.5,
-              border: "1px solid #ddd",
-              cursor: "pointer",
-              "&:hover": {
-                background: "#EBF4DD",
-              },
+              mb: 0.5,
+              "& .MuiOutlinedInput-root": { fontSize: 13, borderRadius: "8px" },
             }}
-          >
-            <Typography fontWeight={600}>
-              {d.name}
-            </Typography>
-
-            <Typography fontSize={12}>
-              {d.phone}
-            </Typography>
-
-            <Typography fontSize={11} color="#777">
-              Status: {d.status}
-            </Typography>
+          />
+          <List dense disablePadding sx={{ maxHeight: 220, overflowY: "auto" }}>
+            {deliveryExecutives
+              .filter((d: any) =>
+                d.name?.toLowerCase().includes(deliveryExecQuery.toLowerCase())
+              )
+              .map((d: any) => {
+                const isSelected = pendingDeliveryExec?.id === d.id;
+                return (
+                  <ListItem
+                    key={d.id}
+                    onClick={() => setPendingDeliveryExec(d)}
+                    sx={{
+                      borderRadius: "6px",
+                      cursor: "pointer",
+                      bgcolor: isSelected ? "#FFF0F0" : "transparent",
+                      "&:hover": { bgcolor: isSelected ? "#FFF0F0" : "#F5F5F5" },
+                      py: 0.8,
+                      flexDirection: "column",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <Typography
+                      sx={{ fontSize: 13, fontWeight: isSelected ? 600 : 500, color: isSelected ? "#E8353A" : "#111" }}
+                    >
+                      {d.name}
+                    </Typography>
+                    <Typography sx={{ fontSize: 12, color: "#6B7280" }}>
+                      {d.phone}
+                    </Typography>
+                    <Typography sx={{ fontSize: 11, color: d.status === "available" ? "#22C55E" : "#F59E0B" }}>
+                      ● {d.status}
+                    </Typography>
+                  </ListItem>
+                );
+              })}
+          </List>
+          <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
+            <Button
+              variant="contained"
+              fullWidth
+              size="small"
+              disabled={!pendingDeliveryExec}
+              onClick={() => {
+                setSelectedDeliveryExecutive(pendingDeliveryExec);
+                setDeliveryExecAnchorEl(null);
+                setDeliveryExecQuery("");
+                setPendingDeliveryExec(null);
+              }}
+              sx={{
+                bgcolor: "#E8353A",
+                "&:hover": { bgcolor: "#c62a2f" },
+                textTransform: "none",
+                fontSize: 13,
+                fontWeight: 600,
+              }}
+            >
+              Save
+            </Button>
+            <Button
+              fullWidth
+              size="small"
+              onClick={() => { setDeliveryExecAnchorEl(null); setDeliveryExecQuery(""); setPendingDeliveryExec(null); }}
+              sx={{ textTransform: "none", fontSize: 13, color: "#555" }}
+            >
+              Cancel
+            </Button>
           </Box>
-        ))}
-      </Box>
-
-      <Box textAlign="right" mt={2}>
-        <Button
-          variant="outlined"
-          onClick={() => setDeliveryExecModalOpen(false)}
-        >
-          Close
-        </Button>
-      </Box>
-    </Box>
-  </Box>
-)}
+        </Box>
+      </Popover>
 <BillDrawer
   billDrawerOpen={billDrawerOpen}
   setBillDrawerOpen={setBillDrawerOpen}

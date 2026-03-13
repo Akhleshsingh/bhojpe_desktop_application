@@ -54,6 +54,7 @@ export default function DashboardLayout({
           top: 0,
           zIndex: 1100,
           flexShrink: 0,
+          mb: "10px",
         }}
       >
         <SecondHeader
