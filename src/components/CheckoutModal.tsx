@@ -4,10 +4,17 @@ import {
   Button,
   Typography,
   Modal,
-  IconButton,
   TextField,
   MenuItem,
 } from "@mui/material";
+import PaymentsOutlinedIcon from "@mui/icons-material/PaymentsOutlined";
+import CreditCardOutlinedIcon from "@mui/icons-material/CreditCardOutlined";
+import QrCodeIcon from "@mui/icons-material/QrCode";
+import AccountBalanceOutlinedIcon from "@mui/icons-material/AccountBalanceOutlined";
+import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import BackspaceOutlinedIcon from "@mui/icons-material/BackspaceOutlined";
+import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
 
 type PaymentMode = "cash" | "card" | "upi" | "bank" | "due";
 
@@ -17,132 +24,99 @@ interface Props {
   orderNumber: number;
   totalAmount: number;
   cart: any[];
-  orderId: number;   // ⭐ ADD THIS
+  orderId: number;
   onPaymentSuccess?: (paymentData: any) => void;
-
 }
 
-
-type SplitCardProps = {
-  title: string;
-  subtitle: string;
-  onClick: () => void;
-};
-
-const SplitCard = ({ title, subtitle, onClick }: SplitCardProps) => {
-  return (
-    <Box
-      onClick={onClick}
-      sx={{
-        border: "1px solid #E0E0E0",
-        borderRadius: 2,
-        p: 3,
-        cursor: "pointer",
-        transition: "0.2s",
-        "&:hover": {
-          boxShadow: "0px 4px 12px rgba(0,0,0,0.1)",
-          borderColor: "#000",
-        },
-      }}
-    >
-      <Typography fontWeight={700} mb={0.5}>
-        {title}
-      </Typography>
-      <Typography fontSize={13} color="text.secondary">
-        {subtitle}
-      </Typography>
-    </Box>
-  );
-};
 type Split = {
   id: number;
   amount: number;
   paymentMode: PaymentMode;
   items: any[];
 };
+
+const PAYMENT_METHODS = [
+  { key: "cash",  label: "Cash",          icon: <PaymentsOutlinedIcon sx={{ fontSize: 22 }} /> },
+  { key: "card",  label: "Card",          icon: <CreditCardOutlinedIcon sx={{ fontSize: 22 }} /> },
+  { key: "upi",   label: "UPI",           icon: <QrCodeIcon sx={{ fontSize: 22 }} /> },
+  { key: "bank",  label: "Bank Transfer", icon: <AccountBalanceOutlinedIcon sx={{ fontSize: 22 }} /> },
+  { key: "due",   label: "Due",           icon: <AccessTimeOutlinedIcon sx={{ fontSize: 22 }} /> },
+];
+
+const QUICK_AMOUNTS = [50, 100, 500, 1000];
+const KEYPAD_KEYS = [1, 2, 3, 4, 5, 6, 7, 8, 9, ".", 0, "back"] as const;
+
+const FONT = "Poppins, sans-serif";
+
+const SummaryRow = ({
+  label, value, red, bold,
+}: { label: string; value: number; red?: boolean; bold?: boolean }) => (
+  <Box sx={{ display: "flex", justifyContent: "space-between", py: 0.5 }}>
+    <Typography sx={{ fontSize: 14, fontWeight: red || bold ? 600 : 400, color: red ? "#E8353A" : "#111827", fontFamily: FONT }}>
+      {label}
+    </Typography>
+    <Typography sx={{ fontSize: 14, fontWeight: red || bold ? 700 : 500, color: red ? "#E8353A" : "#111827", fontFamily: FONT }}>
+      ₹{Number(value).toFixed(2)}
+    </Typography>
+  </Box>
+);
+
 export default function CheckoutModal({
-  open,
-  onClose,
-  orderNumber,
-  totalAmount, cart, orderId, onPaymentSuccess,
+  open, onClose, orderNumber, totalAmount, cart, orderId, onPaymentSuccess,
 }: Props) {
-  const [mode, setMode] = useState<"full" | "split">("full");
+  const [mode, setMode]               = useState<"full" | "split">("full");
   const [paymentMode, setPaymentMode] = useState<PaymentMode>("cash");
-  const [amount, setAmount] = useState<number>(totalAmount);
-  const [tip, setTip] = useState<number>(0);
+  const [amount, setAmount]           = useState<number>(totalAmount);
+  const [tip, setTip]                 = useState<number>(0);
   const [activeSplitId, setActiveSplitId] = useState<number>(1);
-  const payableAmount = useMemo(() => {
-    return Number((totalAmount + tip).toFixed(2));
-  }, [totalAmount, tip]);
- const [splits, setSplits] = useState<Split[]>([
-  { id: 1, amount: payableAmount, paymentMode: "cash", items: [] },
-]);
-const activeSplit = splits.find(s => s.id === activeSplitId)!;
+  const [splitView, setSplitView]     = useState<"options" | "equal" | "custom" | "items">("options");
 
-const splitTotal = splits.reduce((s, x) => s + x.amount, 0);
-const remainingAmount = payableAmount - splitTotal;
+  const payableAmount = useMemo(() => Number((totalAmount + tip).toFixed(2)), [totalAmount, tip]);
 
-
-  const [splitView, setSplitView] = useState<
-  "options" | "equal" | "custom" | "items"
->("options");
-const updateSplitAmount = (id: number, value: number) => {
-  setSplits(prev => {
-    const other = prev.find(s => s.id !== id)!;
-
-    return prev.map(s =>
-      s.id === id
-        ? { ...s, amount: value }
-        : { ...s, amount: Math.max(payableAmount - value, 0) }
-    );
-  });
-};
-
-  const dueAmount = useMemo(() => {
-    const d = payableAmount - amount;
-    return d > 0 ? d : 0;
-  }, [payableAmount, amount]);
-
-  const paidExtra = useMemo(() => {
-    const e = amount - payableAmount;
-    return e > 0 ? e : 0;
-  }, [payableAmount, amount]);
-const addItemToSplit = (item: any, qty: number) => {
-  setSplits(prev =>
-    prev.map(s =>
-      s.id === activeSplitId
-        ? {
-            ...s,
-            items: [...s.items, { ...item, qty }],
-            amount: s.amount + item.price * qty,
-          }
-        : s
-    )
-  );
-};
-useEffect(() => {
-  setAmount(totalAmount);
-}, [totalAmount]);
-
-useEffect(() => {
-  setSplits([
-    { id: 1, amount: totalAmount, paymentMode: "cash", items: [] },
+  const [splits, setSplits] = useState<Split[]>([
+    { id: 1, amount: payableAmount, paymentMode: "cash", items: [] },
   ]);
-  setActiveSplitId(1);
-  setMode("full");
-  setTip(0);
-}, [orderId]);
-const handleCompletePayment = async () => {
-  const token = localStorage.getItem("token");
-  if (!token || !orderId) return;
 
-  const receivedAmount =
-    mode === "full" ? amount : splitTotal;
+  const activeSplit   = splits.find(s => s.id === activeSplitId)!;
+  const splitTotal    = splits.reduce((s, x) => s + x.amount, 0);
+  const remainingAmount = payableAmount - splitTotal;
+  const dueAmount     = useMemo(() => Math.max(payableAmount - amount, 0), [payableAmount, amount]);
+  const paidExtra     = useMemo(() => Math.max(amount - payableAmount, 0), [payableAmount, amount]);
 
-  try {
-    const res = await fetch(
-      "http://bhojpe.in/api/v1/update-order-payment",
-      {
+  useEffect(() => { setAmount(totalAmount); }, [totalAmount]);
+  useEffect(() => {
+    setSplits([{ id: 1, amount: totalAmount, paymentMode: "cash", items: [] }]);
+    setActiveSplitId(1);
+    setMode("full");
+    setTip(0);
+    setPaymentMode("cash");
+  }, [orderId]);
+
+  const handleKeypad = (val: string | number) => {
+    if (val === "back") { setAmount(p => Number(String(p).slice(0, -1) || 0)); return; }
+    setAmount(p => Number(`${p === 0 ? "" : p}${val}`));
+  };
+
+  const updateSplitAmount = (id: number, value: number) => {
+    setSplits(prev => prev.map(s =>
+      s.id === id ? { ...s, amount: value } : { ...s, amount: Math.max(payableAmount - value, 0) }
+    ));
+  };
+
+  const addItemToSplit = (item: any, qty: number) => {
+    setSplits(prev => prev.map(s =>
+      s.id === activeSplitId
+        ? { ...s, items: [...s.items, { ...item, qty }], amount: s.amount + item.price * qty }
+        : s
+    ));
+  };
+
+  const handleCompletePayment = async () => {
+    const token = localStorage.getItem("token");
+    if (!token || !orderId) return;
+    const receivedAmount = mode === "full" ? amount : splitTotal;
+    try {
+      const res = await fetch("http://bhojpe.in/api/v1/update-order-payment", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -152,539 +126,409 @@ const handleCompletePayment = async () => {
         body: JSON.stringify({
           order_id: orderId,
           received_amount: receivedAmount,
-          payment_method:
-            mode === "full" ? paymentMode : "split",
+          payment_method: mode === "full" ? paymentMode : "split",
           razorpay_payment_id: "",
           razorpay_order_id: "",
           razorpay_signature: "",
         }),
-      }
-    );
-
-    const data = await res.json();
-
-    if (!data.status) {
-      alert(data.message || "Payment failed");
-      return;
+      });
+      const data = await res.json();
+      if (!data.status) { alert(data.message || "Payment failed"); return; }
+      onPaymentSuccess?.({ ...data.data, received_amount: receivedAmount, payment_method: mode === "full" ? paymentMode : "split" });
+    } catch (err) {
+      console.error("Payment error", err);
+      alert("Payment API failed");
     }
-
-    onPaymentSuccess?.({
-      ...data.data,
-      received_amount: receivedAmount,
-      payment_method:
-        mode === "full" ? paymentMode : "split",
-    });
-
-  } catch (err) {
-    console.error("Payment error", err);
-    alert("Payment API failed");
-  }
-};
-  const handleKeypad = (val: string) => {
-    if (val === "clear") {
-      setAmount(0);
-      return;
-    }
-    if (val === "back") {
-      setAmount((p) => Number(String(p).slice(0, -1) || 0));
-      return;
-    }
-    setAmount((p) => Number(`${p}${val}`));
   };
-  const SummaryRow = ({ label, value, bold, color }: any) => (
-  <Box sx={{ display: "flex", justifyContent: "space-between", mb: 0.5 }}>
-    <Typography fontWeight={bold ? 700 : 500} color={color}>
-      {label}
-    </Typography>
-    <Typography fontWeight={bold ? 700 : 500} color={color}>
-      ₹{Number(value).toFixed(2)}
-    </Typography>
-  </Box>
-);
-return (
-  <Modal open={open} onClose={onClose}>
-    <Box
-      sx={{
-        width: 920,
-        background: "#fff",
-        borderRadius: 3,
-        p: 3,
+
+  const canPay = mode === "full"
+    ? (amount >= payableAmount || paymentMode === "due")
+    : splitTotal >= payableAmount;
+
+  return (
+    <Modal open={open} onClose={onClose}>
+      <Box sx={{
+        width: 860,
+        background: "#FFFFFF",
+        borderRadius: "16px",
         mx: "auto",
         mt: "4vh",
-        boxShadow: "0px 20px 60px rgba(0,0,0,0.2)",
-      }}
-    >
-      {/* HEADER */}
-      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
-        <Typography fontSize={22} fontWeight={700}>
-          Payment
-        </Typography>
-        <Typography fontWeight={600}>
-          Order #{orderNumber} &nbsp; ₹{totalAmount.toFixed(2)}
-        </Typography>
-      </Box>
+        boxShadow: "0 24px 80px rgba(0,0,0,0.22)",
+        overflow: "hidden",
+        fontFamily: FONT,
+        outline: "none",
+      }}>
 
-   
-      <Box sx={{ display: "flex", gap: 1.5, mb: 3 }}>
-        {["full", "split"].map((m) => (
-          <Button
-            key={m}
-            variant={mode === m ? "contained" : "outlined"}
-            sx={{
-              height: 44,
-              fontWeight: 600,
-              bgcolor: mode === m ? "#000" : "#fff",
-              color: mode === m ? "#fff" : "#000",
-              borderRadius: 2,
-            }}
-            onClick={() => {
-              setMode(m as any);
-              if (m === "split") setSplitView("options");
-            }}
-          >
-            {m === "full" ? "Full Payment" : "Split Bill"}
-          </Button>
-        ))}
-      </Box>
-      {mode === "full" && (
-      <Box
-  sx={{
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    gap: 4,
-  }}
->
-  {/* LEFT */}
-  <Box>
-    {/* PAYMENT MODES */}
-    <Typography fontWeight={700} mb={1}>
-      Payment Method
-    </Typography>
-
-    <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", mb: 3 }}>
-      {[
-        { key: "cash", label: "Cash" },
-        { key: "card", label: "Card" },
-        { key: "upi", label: "UPI" },
-        { key: "bank", label: "Bank" },
-        { key: "due", label: "Due" },
-      ].map((p) => {
-        const active = paymentMode === p.key;
-
-        return (
-          <Box
-            key={p.key}
-            onClick={() => setPaymentMode(p.key as PaymentMode)}
-            sx={{
-              width: 120,
-              height: 90,
-              borderRadius: 2,
-              border: active ? "2px solid #000" : "1px solid #E0E0E0",
-              backgroundColor: active ? "#F5F5F5" : "#fff",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              fontWeight: 600,
-              transition: "0.2s",
-              "&:hover": {
-                boxShadow: "0px 4px 10px rgba(0,0,0,0.08)",
-              },
-            }}
-          >
-            {p.label}
+        {/* ── HEADER ── */}
+        <Box sx={{
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          px: 3, py: 2.2,
+          borderBottom: "1px solid #F3F4F6",
+          backgroundColor: "#FFFFFF",
+        }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.2 }}>
+            <Box sx={{
+              width: 36, height: 36, borderRadius: "8px",
+              backgroundColor: "#FEF2F2", border: "1px solid #FECACA",
+              display: "flex", alignItems: "center", justifyContent: "center",
+            }}>
+              <ReceiptOutlinedIcon sx={{ fontSize: 18, color: "#E8353A" }} />
+            </Box>
+            <Typography sx={{ fontSize: 18, fontWeight: 700, color: "#111827", fontFamily: FONT }}>
+              Payment
+            </Typography>
           </Box>
-        );
-      })}
-    </Box>
 
-    {/* TIP */}
-    <Button
-      variant="outlined"
-      sx={{
-        borderStyle: "dashed",
-        mb: 2,
-        height: 40,
-        fontWeight: 600,
-        color: "#555",
-      }}
-      onClick={() => setTip((t) => t + 10)}
-    >
-      + Add Tip
-    </Button>
-
-    {/* AMOUNT */}
-    <TextField
-      fullWidth
-      label="Amount"
-      value={amount}
-      onChange={(e) => setAmount(Number(e.target.value))}
-      sx={{
-        mb: 3,
-        "& input": {
-          fontSize: 26,
-          fontWeight: 800,
-          textAlign: "right",
-        },
-      }}
-    />
-
-    {/* SUMMARY */}
-    <Box
-      sx={{
-        background: "#FAFAFA",
-        borderRadius: 2,
-        p: 2,
-        border: "1px solid #E0E0E0",
-      }}
-    >
-      <SummaryRow label="Total" value={totalAmount} />
-      <SummaryRow label="Payable" value={payableAmount} bold />
-      <SummaryRow label="Due" value={dueAmount} color="red" />
-      {paidExtra > 0 && (
-        <SummaryRow label="Change" value={paidExtra} color="green" />
-      )}
-    </Box>
-  </Box>
-
-  {/* RIGHT – KEYPAD */}
-  <Box>
-    <Box
-      sx={{
-        display: "grid",
-        gridTemplateColumns: "repeat(2,1fr)",
-        gap: 1.5,
-        mb: 2, mt: -9,
-      }}
-    >
-      {[50, 100, 500, 1000].map((v) => (
-        <Button
-          key={v}
-          variant="outlined"
-          sx={{ height: 44, fontWeight: 700 }}
-          onClick={() => setAmount(v)}
-        >
-          ₹{v}
-        </Button>
-      ))}
-    </Box>
-
-    <Box
-      sx={{
-        display: "grid",
-        gridTemplateColumns: "repeat(3,1fr)",
-        gap: 1.5
-      }}
-    >
-      {[1, 2, 3, 4, 5, 6, 7, 8, 9, ".", 0].map((k) => (
-        <Button
-          key={k}
-          onClick={() => handleKeypad(String(k))}
-          variant="outlined"
-          sx={{
-            height: 64,
-            fontSize: 20,
-            fontWeight: 800,
-            borderRadius: 2,
-          }}
-        >
-          {k}
-        </Button>
-      ))}
-
-      <Button
-        onClick={() => handleKeypad("back")}
-        variant="outlined"
-        sx={{
-          height: 64,
-          fontSize: 20,
-          fontWeight: 800,
-        }}
-      >
-        ⌫
-      </Button>
-    </Box>
-  </Box>
-</Box>
-
-      )}
-
-      {mode === "split" && splitView === "options" && (
-        <Box>
-          <Typography fontWeight={700} mb={3}>
-            Split Bill
-          </Typography>
-
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: "repeat(3,1fr)",
-              gap: 2,
-            }}
-          >
-            <SplitCard
-              title="Equal Split"
-              subtitle="Split equally"
-              onClick={() => setSplitView("equal")}
-            />
-
-            <SplitCard
-              title="Custom Split"
-              subtitle="Split by amount"
-              onClick={() => setSplitView("custom")}
-            />
-
-            <SplitCard
-              title="Split by Items"
-              subtitle="Split by dishes"
-              onClick={() => setSplitView("items")}
-            />
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+            <Typography sx={{ fontSize: 14, fontWeight: 500, color: "#6B7280", fontFamily: FONT }}>
+              Order #{orderNumber}
+            </Typography>
+            <Typography sx={{ fontSize: 18, fontWeight: 800, color: "#E8353A", fontFamily: FONT }}>
+              ₹{totalAmount.toFixed(2)}
+            </Typography>
           </Box>
         </Box>
-      )}
-      {mode === "split" && splitView === "equal" && (
-        <Box>
-          <Typography fontWeight={700} mb={2}>
-            Split Bill{" "}
-            <Typography
-              component="span"
-              sx={{ color: "#1976d2", cursor: "pointer", fontSize: 13 }}
-              onClick={() => setSplitView("options")}
-            >
-              (Change Method)
-            </Typography>
-          </Typography>
 
-          <Box sx={{ display: "flex", gap: 2 }}>
-            {[1, 2].map((s) => (
+        {/* ── BODY ── */}
+        <Box sx={{ display: "flex", height: 540 }}>
+
+          {/* LEFT PANEL */}
+          <Box sx={{ flex: 1, borderRight: "1px solid #F3F4F6", px: 3, py: 2.5, display: "flex", flexDirection: "column", gap: 2, overflowY: "auto" }}>
+
+            {/* Mode toggle */}
+            <Box sx={{ display: "flex", border: "1px solid #E5E7EB", borderRadius: "10px", overflow: "hidden", height: 42 }}>
+              {[{ v: "full", l: "Full Payment" }, { v: "split", l: "Split Bill" }].map(({ v, l }) => (
+                <Box
+                  key={v}
+                  onClick={() => { setMode(v as any); if (v === "split") setSplitView("options"); }}
+                  sx={{
+                    flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
+                    cursor: "pointer", fontFamily: FONT, fontSize: 13, fontWeight: 700,
+                    backgroundColor: mode === v ? "#E8353A" : "#FFFFFF",
+                    color: mode === v ? "#FFFFFF" : "#6B7280",
+                    transition: "all .15s",
+                    "&:hover": { backgroundColor: mode === v ? "#c62a2f" : "#F9FAFB" },
+                  }}
+                >
+                  {l}
+                </Box>
+              ))}
+            </Box>
+
+            {mode === "full" && (<>
+              {/* Payment methods */}
+              <Box sx={{ display: "flex", gap: 1.2, flexWrap: "wrap" }}>
+                {PAYMENT_METHODS.map(({ key, label, icon }) => {
+                  const active = paymentMode === key;
+                  return (
+                    <Box
+                      key={key}
+                      onClick={() => setPaymentMode(key as PaymentMode)}
+                      sx={{
+                        width: 88, minHeight: 80,
+                        borderRadius: "10px",
+                        border: active ? "2px dashed #E8353A" : "1.5px solid #E5E7EB",
+                        backgroundColor: active ? "#FEF2F2" : "#FAFAFA",
+                        display: "flex", flexDirection: "column",
+                        alignItems: "center", justifyContent: "center", gap: 0.7,
+                        cursor: "pointer", transition: "all .15s",
+                        color: active ? "#E8353A" : "#6B7280",
+                        "&:hover": { borderColor: "#E8353A", backgroundColor: "#FEF2F2", color: "#E8353A" },
+                      }}
+                    >
+                      {icon}
+                      <Typography sx={{ fontSize: 11, fontWeight: 600, fontFamily: FONT, textAlign: "center", lineHeight: 1.2 }}>
+                        {label}
+                      </Typography>
+                    </Box>
+                  );
+                })}
+              </Box>
+
+              {/* Add Tip */}
               <Box
-                key={s}
+                onClick={() => setTip(t => t + 10)}
                 sx={{
-                  flex: 1,
-                  border: "1px solid #E0E0E0",
-                  borderRadius: 2,
-                  p: 2,
+                  width: 88, minHeight: 80,
+                  borderRadius: "10px",
+                  border: "1.5px dashed #D1D5DB",
+                  backgroundColor: "#FAFAFA",
+                  display: "flex", flexDirection: "column",
+                  alignItems: "center", justifyContent: "center", gap: 0.7,
+                  cursor: "pointer", color: "#9CA3AF",
+                  "&:hover": { borderColor: "#6B7280", color: "#374151" },
                 }}
               >
-                <Typography fontWeight={600}>Split {s}</Typography>
-
-                <TextField
-                  fullWidth
-                  size="small"
-                  value={(payableAmount / 2).toFixed(2)}
-                  disabled
-                  sx={{ my: 1 }}
-                />
-
-                <TextField select fullWidth size="small" defaultValue="cash">
-                  <MenuItem value="cash">Cash</MenuItem>
-                  <MenuItem value="upi">UPI</MenuItem>
-                </TextField>
+                <AttachMoneyIcon sx={{ fontSize: 22 }} />
+                <Typography sx={{ fontSize: 11, fontWeight: 600, fontFamily: FONT }}>
+                  {tip > 0 ? `+₹${tip}` : "Add Tip"}
+                </Typography>
               </Box>
-            ))}
+
+              {/* Amount field */}
+              <Box>
+                <Typography sx={{ fontSize: 12, fontWeight: 600, color: "#9CA3AF", fontFamily: FONT, mb: 0.6, textTransform: "uppercase", letterSpacing: 0.5 }}>
+                  Amount
+                </Typography>
+                <Box sx={{
+                  border: "1.5px solid #E5E7EB", borderRadius: "10px",
+                  px: 2, py: 1.5, backgroundColor: "#FAFAFA",
+                }}>
+                  <Typography sx={{ fontSize: 26, fontWeight: 700, color: "#111827", fontFamily: FONT }}>
+                    {amount}
+                  </Typography>
+                </Box>
+              </Box>
+
+              {/* Summary */}
+              <Box sx={{
+                borderTop: "1px solid #F3F4F6",
+                pt: 1.5, mt: "auto",
+                display: "flex", flexDirection: "column", gap: 0.2,
+              }}>
+                <SummaryRow label="Total" value={totalAmount} />
+                <SummaryRow label="Payable Amount" value={payableAmount} red />
+                <SummaryRow label="Due Amount" value={dueAmount} red />
+                {paidExtra > 0 && <SummaryRow label="Change" value={paidExtra} />}
+              </Box>
+            </>)}
+
+            {/* SPLIT: options */}
+            {mode === "split" && splitView === "options" && (
+              <Box sx={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 1.5 }}>
+                {[
+                  { k: "equal", l: "Equal Split", s: "Divide equally" },
+                  { k: "custom", l: "Custom Split", s: "Split by amount" },
+                  { k: "items", l: "Split by Items", s: "Split by dishes" },
+                ].map(({ k, l, s }) => (
+                  <Box key={k} onClick={() => setSplitView(k as any)}
+                    sx={{
+                      border: "1.5px solid #E5E7EB", borderRadius: "10px", p: 2,
+                      cursor: "pointer", transition: "all .15s",
+                      "&:hover": { borderColor: "#E8353A", boxShadow: "0 4px 12px rgba(232,53,58,.1)" },
+                    }}>
+                    <Typography sx={{ fontSize: 14, fontWeight: 700, color: "#111827", fontFamily: FONT }}>{l}</Typography>
+                    <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: FONT, mt: 0.3 }}>{s}</Typography>
+                  </Box>
+                ))}
+              </Box>
+            )}
+
+            {/* SPLIT: equal */}
+            {mode === "split" && splitView === "equal" && (
+              <Box>
+                <Typography sx={{ fontSize: 13, color: "#2563EB", cursor: "pointer", fontFamily: FONT, mb: 2 }}
+                  onClick={() => setSplitView("options")}>← Change Method</Typography>
+                <Box sx={{ display: "flex", gap: 2 }}>
+                  {[1, 2].map(s => (
+                    <Box key={s} sx={{ flex: 1, border: "1.5px solid #E5E7EB", borderRadius: "10px", p: 2 }}>
+                      <Typography sx={{ fontSize: 14, fontWeight: 600, fontFamily: FONT, mb: 1 }}>Split {s}</Typography>
+                      <TextField fullWidth size="small" value={(payableAmount / 2).toFixed(2)} disabled
+                        sx={{ mb: 1, "& .MuiOutlinedInput-root": { borderRadius: "8px", fontFamily: FONT } }} />
+                      <TextField select fullWidth size="small" defaultValue="cash"
+                        sx={{ "& .MuiOutlinedInput-root": { borderRadius: "8px", fontFamily: FONT } }}>
+                        <MenuItem value="cash">Cash</MenuItem>
+                        <MenuItem value="upi">UPI</MenuItem>
+                        <MenuItem value="card">Card</MenuItem>
+                      </TextField>
+                    </Box>
+                  ))}
+                </Box>
+                <Box sx={{ mt: 2 }}>
+                  <SummaryRow label="Total" value={payableAmount} bold />
+                  <SummaryRow label="Per Split" value={payableAmount / 2} red />
+                </Box>
+              </Box>
+            )}
+
+            {/* SPLIT: custom */}
+            {mode === "split" && splitView === "custom" && (
+              <Box>
+                <Typography sx={{ fontSize: 13, color: "#2563EB", cursor: "pointer", fontFamily: FONT, mb: 2 }}
+                  onClick={() => setSplitView("options")}>← Change Method</Typography>
+                <Box sx={{ display: "flex", gap: 2 }}>
+                  {splits.map(s => (
+                    <Box key={s.id} onClick={() => setActiveSplitId(s.id)}
+                      sx={{
+                        flex: 1, border: activeSplitId === s.id ? "2px solid #E8353A" : "1.5px solid #E5E7EB",
+                        borderRadius: "10px", p: 2, cursor: "pointer",
+                      }}>
+                      <Typography sx={{ fontSize: 14, fontWeight: 600, fontFamily: FONT, mb: 1 }}>Split {s.id}</Typography>
+                      <TextField fullWidth size="small" type="number" value={s.amount}
+                        onChange={e => updateSplitAmount(s.id, Number(e.target.value))}
+                        sx={{ mb: 1, "& .MuiOutlinedInput-root": { borderRadius: "8px", fontFamily: FONT } }} />
+                      <TextField select fullWidth size="small" value={s.paymentMode}
+                        onChange={e => setSplits(prev => prev.map(p =>
+                          p.id === s.id ? { ...p, paymentMode: e.target.value as PaymentMode } : p))}
+                        sx={{ "& .MuiOutlinedInput-root": { borderRadius: "8px", fontFamily: FONT } }}>
+                        <MenuItem value="cash">Cash</MenuItem>
+                        <MenuItem value="upi">UPI</MenuItem>
+                        <MenuItem value="card">Card</MenuItem>
+                      </TextField>
+                    </Box>
+                  ))}
+                </Box>
+                <Box sx={{ mt: 2 }}>
+                  <SummaryRow label="Total" value={payableAmount} bold />
+                  <SummaryRow label="Split Total" value={splitTotal} />
+                  <SummaryRow label="Remaining" value={remainingAmount} red />
+                </Box>
+              </Box>
+            )}
+
+            {/* SPLIT: items */}
+            {mode === "split" && splitView === "items" && (
+              <Box>
+                <Typography sx={{ fontSize: 13, color: "#2563EB", cursor: "pointer", fontFamily: FONT, mb: 1 }}
+                  onClick={() => setSplitView("options")}>← Change Method</Typography>
+                <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
+                  {splits.map(s => (
+                    <Button key={s.id} size="small"
+                      variant={activeSplitId === s.id ? "contained" : "outlined"}
+                      onClick={() => setActiveSplitId(s.id)}
+                      sx={{ textTransform: "none", fontFamily: FONT, borderRadius: "8px",
+                        bgcolor: activeSplitId === s.id ? "#E8353A" : undefined,
+                        borderColor: "#E8353A", color: activeSplitId === s.id ? "#fff" : "#E8353A" }}>
+                      Split {s.id}
+                    </Button>
+                  ))}
+                  <Button size="small" onClick={() =>
+                    setSplits(p => [...p, { id: p.length + 1, amount: 0, paymentMode: "cash", items: [] }])}
+                    sx={{ textTransform: "none", fontFamily: FONT, borderRadius: "8px" }}>
+                    + New Split
+                  </Button>
+                </Box>
+                <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 }}>
+                  <Box>
+                    <Typography sx={{ fontSize: 13, fontWeight: 600, fontFamily: FONT, mb: 1 }}>Available</Typography>
+                    {cart.map(item => (
+                      <Box key={item.id} sx={{ display: "flex", justifyContent: "space-between", mb: 0.8, p: 1, border: "1px solid #E5E7EB", borderRadius: "8px" }}>
+                        <Typography sx={{ fontSize: 12, fontFamily: FONT }}>{item.name}</Typography>
+                        <Box sx={{ display: "flex", gap: 0.5 }}>
+                          <Button size="small" onClick={() => addItemToSplit(item, 1)} sx={{ minWidth: 0, px: 1, fontSize: 11, fontFamily: FONT }}>+1</Button>
+                          <Button size="small" onClick={() => addItemToSplit(item, item.qty)} sx={{ minWidth: 0, px: 1, fontSize: 11, fontFamily: FONT }}>All</Button>
+                        </Box>
+                      </Box>
+                    ))}
+                  </Box>
+                  <Box>
+                    <Typography sx={{ fontSize: 13, fontWeight: 600, fontFamily: FONT, mb: 1 }}>Split {activeSplitId}</Typography>
+                    {activeSplit.items.length === 0
+                      ? <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: FONT }}>No items added</Typography>
+                      : activeSplit.items.map((i, idx) => (
+                          <Typography key={idx} sx={{ fontSize: 12, fontFamily: FONT }}>{i.name} × {i.qty}</Typography>
+                        ))}
+                  </Box>
+                </Box>
+                <Box sx={{ mt: 2 }}>
+                  <SummaryRow label="Total" value={payableAmount} bold />
+                  <SummaryRow label="Split Total" value={splitTotal} />
+                  <SummaryRow label="Remaining" value={remainingAmount} red />
+                </Box>
+              </Box>
+            )}
           </Box>
 
-          <Box sx={{ mt: 3 }}>
-            <SummaryRow label="Total" value={payableAmount} bold />
-            <SummaryRow
-              label="Amount per split"
-              value={payableAmount / 2}
-              color="primary"
-            />
-          </Box>
+          {/* RIGHT PANEL — Keypad (only in full payment mode) */}
+          {mode === "full" && (
+            <Box sx={{ width: 260, px: 2.5, py: 2.5, display: "flex", flexDirection: "column", gap: 1.2 }}>
+
+              {/* Quick amounts */}
+              <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1 }}>
+                {QUICK_AMOUNTS.map(v => (
+                  <Box
+                    key={v}
+                    onClick={() => setAmount(v)}
+                    sx={{
+                      border: "1.5px solid #E5E7EB", borderRadius: "8px",
+                      height: 42, display: "flex", alignItems: "center", justifyContent: "center",
+                      cursor: "pointer", backgroundColor: amount === v ? "#FEF2F2" : "#FAFAFA",
+                      borderColor: amount === v ? "#E8353A" : "#E5E7EB",
+                      transition: "all .12s",
+                      "&:hover": { borderColor: "#E8353A", backgroundColor: "#FEF2F2" },
+                    }}
+                  >
+                    <Typography sx={{ fontSize: 13, fontWeight: 700, color: amount === v ? "#E8353A" : "#374151", fontFamily: FONT }}>
+                      ₹{v.toLocaleString()}
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
+
+              {/* Numpad */}
+              <Box sx={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 1, flex: 1 }}>
+                {KEYPAD_KEYS.map(k => (
+                  <Box
+                    key={String(k)}
+                    onClick={() => handleKeypad(k)}
+                    sx={{
+                      border: "1.5px solid #E5E7EB", borderRadius: "8px",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      cursor: "pointer", minHeight: 52,
+                      backgroundColor: k === "back" ? "#FEF2F2" : "#FAFAFA",
+                      borderColor: k === "back" ? "#FECACA" : "#E5E7EB",
+                      transition: "all .1s",
+                      "&:hover": {
+                        backgroundColor: k === "back" ? "#FEE2E2" : "#F3F4F6",
+                        borderColor: k === "back" ? "#E8353A" : "#9CA3AF",
+                      },
+                      "&:active": { transform: "scale(0.96)" },
+                    }}
+                  >
+                    {k === "back"
+                      ? <BackspaceOutlinedIcon sx={{ fontSize: 20, color: "#E8353A" }} />
+                      : <Typography sx={{ fontSize: 18, fontWeight: 700, color: "#374151", fontFamily: FONT }}>{k}</Typography>}
+                  </Box>
+                ))}
+              </Box>
+            </Box>
+          )}
         </Box>
-      )}
-{mode === "split" && splitView === "custom" && (
-  <Box>
-    <Typography fontWeight={700} mb={2}>
-      Split Bill{" "}
-      <Typography
-        component="span"
-        sx={{ color: "#1976d2", cursor: "pointer", fontSize: 13 }}
-        onClick={() => setSplitView("options")}
-      >
-        (Change Method)
-      </Typography>
-    </Typography>
 
-    <Box sx={{ display: "flex", gap: 2 }}>
-      {splits.map((s) => (
-        <Box
-          key={s.id}
-          sx={{
-            flex: 1,
-            border: activeSplitId === s.id
-              ? "2px solid #000"
-              : "1px solid #E0E0E0",
-            borderRadius: 2,
-            p: 2,
-            background: "#FAFAFA",
-            cursor: "pointer",
-          }}
-          onClick={() => setActiveSplitId(s.id)}
-        >
-          <Typography fontWeight={600}>Split {s.id}</Typography>
-
-          <TextField
+        {/* ── FOOTER ── */}
+        <Box sx={{
+          display: "flex", gap: 2,
+          px: 3, py: 2,
+          borderTop: "1px solid #F3F4F6",
+          backgroundColor: "#FAFAFA",
+        }}>
+          <Button
             fullWidth
-            size="small"
-            type="number"
-            value={s.amount}
-            onChange={(e) =>
-              updateSplitAmount(s.id, Number(e.target.value))
-            }
-            sx={{ my: 1 }}
-          />
-
-          <TextField
-            select
-            fullWidth
-            size="small"
-            value={s.paymentMode}
-            onChange={(e) =>
-              setSplits(prev =>
-                prev.map(p =>
-                  p.id === s.id
-                    ? { ...p, paymentMode: e.target.value as PaymentMode }
-                    : p
-                )
-              )
-            }
-          >
-            <MenuItem value="cash">Cash</MenuItem>
-            <MenuItem value="upi">UPI</MenuItem>
-          </TextField>
-        </Box>
-      ))}
-    </Box>
-
-    <Box sx={{ mt: 3 }}>
-      <SummaryRow label="Total" value={payableAmount} bold />
-      <SummaryRow label="Split Total" value={splitTotal} color="primary" />
-      <SummaryRow label="Remaining" value={remainingAmount} color="error" />
-    </Box>
-  </Box>
-)}
-
-{mode === "split" && splitView === "items" && (
-  <Box>
-    <Typography fontWeight={700} mb={2}>
-      Split Bill{" "}
-      <Typography
-        component="span"
-        sx={{ color: "#1976d2", cursor: "pointer", fontSize: 13 }}
-        onClick={() => setSplitView("options")}
-      >
-        (Change Method)
-      </Typography>
-    </Typography>
-
-    {/* SPLIT TABS */}
-    <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
-      {splits.map(s => (
-        <Button
-          key={s.id}
-          variant={activeSplitId === s.id ? "contained" : "outlined"}
-          onClick={() => setActiveSplitId(s.id)}
-        >
-          Split {s.id}
-        </Button>
-      ))}
-
-      <Button
-        onClick={() =>
-          setSplits(prev => [
-            ...prev,
-            { id: prev.length + 1, amount: 0, paymentMode: "cash", items: [] },
-          ])
-        }
-      >
-        + New Split
-      </Button>
-    </Box>
-
-    <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 }}>
-      {/* AVAILABLE ITEMS */}
-      <Box>
-        <Typography fontWeight={600} mb={1}>Available Items</Typography>
-        {cart.map(item => (
-          <Box
-            key={item.id}
+            variant="outlined"
+            onClick={onClose}
             sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              mb: 1,
-              p: 1,
-              border: "1px solid #E0E0E0",
-              borderRadius: 1,
+              textTransform: "none", fontSize: 14, fontWeight: 600, fontFamily: FONT,
+              height: 48, borderRadius: "10px",
+              borderColor: "#D1D5DB", color: "#374151",
+              "&:hover": { borderColor: "#9CA3AF", backgroundColor: "#F3F4F6" },
             }}
           >
-            <Typography>{item.name}</Typography>
-            <Box sx={{ display: "flex", gap: 1 }}>
-              <Button size="small" onClick={() => addItemToSplit(item, 1)}>
-                +1
-              </Button>
-              <Button size="small" onClick={() => addItemToSplit(item, item.qty)}>
-                All
-              </Button>
-            </Box>
-          </Box>
-        ))}
+            Cancel
+          </Button>
+
+          <Button
+            fullWidth
+            variant="contained"
+            disabled={!canPay}
+            onClick={handleCompletePayment}
+            sx={{
+              textTransform: "none", fontSize: 14, fontWeight: 700, fontFamily: FONT,
+              height: 48, borderRadius: "10px",
+              background: canPay
+                ? "linear-gradient(135deg,#E8353A,#c62a2f)"
+                : "#E5E7EB",
+              color: canPay ? "#FFFFFF" : "#9CA3AF",
+              boxShadow: canPay ? "0 4px 16px rgba(232,53,58,.4)" : "none",
+              "&:hover": {
+                background: canPay ? "linear-gradient(135deg,#c62a2f,#a02020)" : "#E5E7EB",
+              },
+              "&.Mui-disabled": { background: "#F3F4F6", color: "#D1D5DB" },
+            }}
+          >
+            Complete Payment
+          </Button>
+        </Box>
       </Box>
-
-      {/* ITEMS IN SPLIT */}
-      <Box>
-        <Typography fontWeight={600} mb={1}>
-          Items in Split {activeSplitId}
-        </Typography>
-
-        {activeSplit.items.length === 0 ? (
-          <Typography fontSize={13} color="text.secondary">
-            No items added
-          </Typography>
-        ) : (
-          activeSplit.items.map((i, idx) => (
-            <Typography key={idx}>
-              {i.name} × {i.qty}
-            </Typography>
-          ))
-        )}
-      </Box>
-    </Box>
-
-    <Box sx={{ mt: 3 }}>
-      <SummaryRow label="Total" value={payableAmount} bold />
-      <SummaryRow label="Split Total" value={splitTotal} color="primary" />
-      <SummaryRow label="Remaining" value={remainingAmount} color="error" />
-    </Box>
-  </Box>
-)}
-
-      <Box sx={{ display: "flex", gap: 2, mt: 4 }}>
-        <Button fullWidth sx={{ height: 48 }} onClick={onClose}>
-          Cancel
-        </Button>
-      <Button
-  fullWidth
-  variant="contained"
-  sx={{
-    bgcolor: "#000",
-    height: 48,
-    fontSize: 16,
-    fontWeight: 700,
-  }}
-disabled={
-  mode === "full"
-    ? amount < payableAmount && paymentMode !== "due"
-    : splitTotal < payableAmount
-}
-  onClick={handleCompletePayment}   // ⭐ API CALL
->
-  Complete Payment
-</Button>
-
-      </Box>
-    </Box>
-  </Modal>
-);
+    </Modal>
+  );
 }

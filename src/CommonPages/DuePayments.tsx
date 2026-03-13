@@ -15,6 +15,7 @@ import WarningAmberOutlinedIcon from "@mui/icons-material/WarningAmberOutlined";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
+import CheckoutModal from "../components/CheckoutModal";
 
 const PER_PAGE = 10;
 
@@ -62,6 +63,7 @@ function StatCard({ label, value, sub, color, icon }: any) {
 export default function DuePayments() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [paymentRow, setPaymentRow] = useState<typeof ROWS[0] | null>(null);
 
   const filtered = useMemo(() => {
     if (!search.trim()) return ROWS;
@@ -185,6 +187,7 @@ export default function DuePayments() {
 
               <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
                 <Button size="small" variant="contained" startIcon={<AddCircleOutlineIcon sx={{ fontSize: 14 }} />}
+                  onClick={() => setPaymentRow(row)}
                   sx={{
                     textTransform: "none", fontSize: 12, fontWeight: 600, fontFamily: "Poppins, sans-serif",
                     borderRadius: "7px", py: 0.5, px: 1.4,
@@ -230,6 +233,19 @@ export default function DuePayments() {
           </Box>
         )}
       </Box>
+
+      {/* ── PAYMENT MODAL ── */}
+      {paymentRow && (
+        <CheckoutModal
+          open={!!paymentRow}
+          onClose={() => setPaymentRow(null)}
+          orderNumber={parseInt(paymentRow.order.replace(/\D/g, ""), 10) || 0}
+          totalAmount={paymentRow.amount}
+          cart={[]}
+          orderId={paymentRow.id}
+          onPaymentSuccess={() => setPaymentRow(null)}
+        />
+      )}
     </Box>
   );
 }
