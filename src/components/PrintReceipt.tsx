@@ -25,10 +25,8 @@ useEffect(() => {
   const handler = (event: MessageEvent) => {
     if (!event.data) return;
 
-    console.log("🖨 PRINT PAGE RECEIVED:", event.data);
 
     if (event.data?.type === "PRINT_ORDER") {
-      console.log("🧾 ORDER DATA:", event.data.payload);
 
       setData(event.data.payload);
 
@@ -38,7 +36,6 @@ useEffect(() => {
     }
 
     if (event.data?.type === "PRINT_KOT") {
-      console.log("🍳 KOT DATA:", event.data.payload);
 
       setData(event.data.payload);
 

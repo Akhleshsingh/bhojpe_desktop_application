@@ -84,7 +84,7 @@ export default function App() {
                     <NetworkProvider>
                       <div className="app-wrapper" style={{ overflow: "auto" }}>
                         <ClickSoundProvider />
-                        <HashRouter>
+                        <HashRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
                           <Routes>
                             <Route path="/" element={<Login />} />
 

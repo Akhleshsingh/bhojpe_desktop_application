@@ -14,7 +14,6 @@ export default function PrintReceiptPage() {
       if (!event.data) return;
 
       if (event.data.type === "print-receipt") {
-        console.log("🧾 RECEIVED RECEIPT DATA:", event.data.payload);
         setData(event.data.payload);
       }
     };

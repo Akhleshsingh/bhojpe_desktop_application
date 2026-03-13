@@ -1,3 +1,4 @@
+import { BASE_URL } from "../utils/api";
 import React, { act, useEffect, useMemo, useRef, useState } from "react";
 import {
   Box,
@@ -195,7 +196,6 @@ const hasKot =
   billedOrderData?.order_status === "food_ready" ||
   billedOrderData?.order_status === "served";
 const { deliveryExecutives} = useDeliveryExecutives();
-console.log("Delivery Executives →", deliveryExecutives,);
 
   const [paymentMode, setPaymentMode] = useState<PaymentMode>("");
   const { fetchOrders } = useOrders();
@@ -268,7 +268,6 @@ const [pendingDeliveryExec, setPendingDeliveryExec] = useState<any>(null);
   const [orderStatuses, setOrderStatuses] = useState<OrderStatusResponse[]>([]);
  const [discountType, setDiscountType] =
   useState<"fixed" | "percent">("fixed");
-  console.log(branchData, activeOrder, allKotItems);
   const { customers } = useCustomers();
   const { createKotWithOrder, loading } = useKot();
 
@@ -347,7 +346,6 @@ useEffect(() => {
 
   if (!updated) return;
   if (updated.order_status !== activeOrder.order_status) {
-    console.log("Active order status refreshed →", updated.order_status);
 
     navigate(location.pathname, {
       replace: true,
@@ -367,24 +365,19 @@ const nextStatus = React.useMemo(() => {
 
   const keys = orderStatuses.map((s) => s.key);
 
-  console.log("Current Status →", currentStatusKey);
-  console.log("Fetched Status Flow →", keys);
 
   const currentIndex = keys.indexOf(currentStatusKey);
 
   if (currentIndex === -1) {
-    console.warn("Current status not found in fetched list");
     return null;
   }
 
   if (currentIndex === keys.length - 1) {
-    console.warn("Already at last status");
     return null;
   }
 
   const next = keys[currentIndex + 1];
 
-  console.log("Next Status →", next);
 
   return next;
 }, [currentStatusKey, orderStatuses]);
@@ -437,15 +430,9 @@ toast("Order is already at final status.");
     return;
   }
 
-  console.log("Updating Order Status →", {
-    orderId: activeOrder.id,
-    currentStatus: currentStatusKey,
-    nextStatus,
-  });
-
   try {
     const res = await fetch(
-      "http://bhojpe.in/api/v1/updateorderStatus",
+      `${BASE_URL}/updateorderStatus`,
       {
         method: "POST",
         headers: {
@@ -462,7 +449,6 @@ toast("Order is already at final status.");
 
     const data = await res.json();
 
-    console.log("Update API Response →", data);
 
     if (!data.status) {
       showError("Failed to update status");
@@ -489,7 +475,6 @@ toast("Order is already at final status.");
     await fetchOrders({ page: 1, per_page: 20 });
 
   } catch (e) {
-    console.error("Status update failed", e);
     showError("Status update failed");
   }
 };
@@ -500,7 +485,7 @@ const moveDrawerToNextStep = async () => {
 
   try {
     const res = await fetch(
-      "http://bhojpe.in/api/v1/updateorderStatus",
+      `${BASE_URL}/updateorderStatus`,
       {
         method: "POST",
         headers: {
@@ -538,7 +523,6 @@ const moveDrawerToNextStep = async () => {
     await fetchOrders({ page: 1, per_page: 20 });
 
   } catch (err) {
-    console.error(err);
     showError("Status update failed");
   }
 };
@@ -593,7 +577,6 @@ const saveOrderOffline = (draftOrder: any) => {
 };
 const handleDeleteDrawerItem = (item: any) => {
   if (!billedOrderData?.id) return;
-  console.log("Delete item from order →", item);
   setBilledOrderData((prev: any) => ({
     ...prev,
     kot: prev.kot.map((k: any) => ({
@@ -701,7 +684,6 @@ const handleSaveOrderDetail = async (action: OrderAction) => {
     refreshed?.find((o: any) => o.id === response?.order?.id) ||
     response?.order ||
     response;
-console.log("Updated Order →", updatedOrder);
   setBilledOrderData(updatedOrder);
   setBillDrawerOpen(true);
 
@@ -758,10 +740,6 @@ console.log("Updated Order →", updatedOrder);
   return;
 }
     case "bill": {
-        console.log("BILL ACTION TRIGGERED");
-  console.log("activeOrder →", activeOrder);
-  console.log("activeOrder.kot →", activeOrder?.kot);
-  console.log("cart →", effectiveCart);
       let response;
 
     if (isNewOrder) {
@@ -977,7 +955,6 @@ const handleKotBillPaymentFlow = async () => {
 
     const finalOrder = updatedOrder || orderData;
 
-    console.log("CHECKOUT ORDER →", finalOrder);
 
     // 🔥 Save this as checkout order
     setCheckoutOrder(finalOrder);
@@ -986,7 +963,6 @@ const handleKotBillPaymentFlow = async () => {
     setCheckoutOpen(true);
 
   } catch (err) {
-    console.error("Combined flow failed", err);
     showError("Something went wrong");
   }
 };
@@ -1016,7 +992,6 @@ const handleDrawerPrint = () => {
     },
   };
 
-  console.log("PRINT RECEIPT PAYLOAD →", payload);
 
   const timer = setInterval(() => {
     if (printWindow.closed) {
@@ -1064,7 +1039,6 @@ alert("Draft saved successfully");
 };
 
   const saveNewOrder = async (token: string, action: OrderAction) => {
-    console.log(drawerItems ,billedOrderData);
 const resolvedTableId =
   activeOrder?.table_id ??
   billedOrderData?.table_id ??
@@ -1074,12 +1048,10 @@ const resolvedTableId =
 
 let itemsForPayload: any[] = [];
 if (effectiveCart?.length > 0) {
-  console.log("Building payload from CART");
 
   itemsForPayload = buildOrderItems(effectiveCart);
 }
 else if (activeOrder?.kot?.length > 0) {
-  console.log("Building payload from ACTIVE ORDER KOT");
 
   itemsForPayload = activeOrder.kot.flatMap((k: any) =>
     (k.items || []).map((i: any) => ({
@@ -1096,7 +1068,6 @@ else if (activeOrder?.kot?.length > 0) {
   );
 }
 
-console.log("FINAL ITEMS PAYLOAD →", itemsForPayload);
 
 const payload = {
   action,
@@ -1120,7 +1091,6 @@ secondaction: action === draft ? "checkout" : "",
       : billedOrderData?.pickup_date ?? null,
   note: orderNote ?? null,
 };
-    console.log(payload , "payload")
     try {
       const res = await saveOrderApi(token, payload);
       const data = await res;
@@ -1138,7 +1108,6 @@ await fetchOrders({ page: 1, per_page: 10 });
  await fetchTables();
 return data;
     } catch (err) {
-      console.warn("Saving order offline", err);
 
 const resolvedOrderType =
   orderType || (mode === "draft" ? draft?.orderType : null);
@@ -1219,15 +1188,12 @@ const STATUS_ICON_MAP: Record<string, string> = {
 useEffect(() => {
   if (!orderType?.type) return;
 
-  console.log("Fetching statuses for →", orderType.type);
 
   fetchOrderStatuses(orderType.type)
     .then((data) => {
-      console.log("Fetched Statuses →", data);
       setOrderStatuses(data);
     })
     .catch((err) => {
-      console.error("Order status fetch failed", err);
       setOrderStatuses([]);
     });
 }, [orderType?.type]);
@@ -1398,7 +1364,6 @@ if (icon === note) {
   };
  const applyDiscount = async () => {
   debugger;
-  console.log({ discountType, discountValue, finalTotal , activeOrder });
     if (!activeOrder?.order_number) {
        setDiscountOpen(false);
  toast.error("Please save the order before applying discount.");  
@@ -1406,7 +1371,7 @@ if (icon === note) {
   }
   const token = localStorage.getItem("token");
   if (!token) return;
-  const res = await fetch("http://bhojpe.in/api/v1/applydiscount", {
+  const res = await fetch(`${BASE_URL}/applydiscount`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -1421,7 +1386,6 @@ if (icon === note) {
   });
 
   const data = await res.json();
- console.log(data, "discount response")
 
   if (data.status) {
     activeOrder.sub_total = data.data.sub_total;
@@ -1455,7 +1419,6 @@ const drawerCurrentIndex = orderStatusUI.findIndex(
 const handlePrintKot = (kot: any) => {
   if (!kot) return;
 
-  console.log("Printing KOT", kot);
 
   const printWindow = window.open("/#/print-kot", "_blank",
     "width=400,height=600"
@@ -1486,7 +1449,6 @@ const mappedItems = kot.items.map((i: any) => ({
 }));
 
 
-  console.log("Mapped KOT Items →", mappedItems);
 
   const payload = {
     type: "PRINT_KOT",
@@ -1701,15 +1663,6 @@ const showPaxDropdown =
     const isCurrent =
       currentIndex !== -1 && stepIndex === currentIndex;
 
-console.log(
-  "Stepper Flow →",
-  orderStatusUI.map(s => s.key)
-);
-
-console.log(
-  "Active Status →",
-  activeOrder?.order_status
-);
 
           return (
             <Box

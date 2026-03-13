@@ -1,3 +1,4 @@
+import { BASE_URL } from "../utils/api";
 import React, { useEffect, useMemo, useState } from "react";
 import {
   Box,
@@ -116,7 +117,7 @@ export default function CheckoutModal({
     if (!token || !orderId) return;
     const receivedAmount = mode === "full" ? amount : splitTotal;
     try {
-      const res = await fetch("http://bhojpe.in/api/v1/update-order-payment", {
+      const res = await fetch(`${BASE_URL}/update-order-payment`, {
         method: "POST",
         headers: {
           Accept: "application/json",

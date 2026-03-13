@@ -1,3 +1,4 @@
+import { BASE_URL } from "../utils/api";
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
   Box, Typography, TextField, Button, IconButton, Select, MenuItem,
@@ -104,7 +105,7 @@ export default function StaffPage() {
     const t = localStorage.getItem("token");
     if (!t) return;
     try {
-      const res = await fetch("http://bhojpe.in/api/v1/restaurant-roles", {
+      const res = await fetch(`${BASE_URL}/restaurant-roles`, {
         headers: { Authorization: `Bearer ${t}`, "Content-Type": "application/json" },
       });
       if (!res.ok) return;
@@ -121,7 +122,7 @@ export default function StaffPage() {
     if (!t) return;
     setLoading(true);
     try {
-      const res = await fetch("http://bhojpe.in/api/v1/getstaffs", {
+      const res = await fetch(`${BASE_URL}/getstaffs`, {
         headers: { Authorization: `Bearer ${t}` },
       });
       const data = await res.json();
@@ -198,8 +199,8 @@ export default function StaffPage() {
     setSaving(true);
     try {
       const url = editData
-        ? `http://bhojpe.in/api/v1/update-staff/${editData.id}`
-        : "http://bhojpe.in/api/v1/add-staff";
+        ? `${BASE_URL}/update-staff/${editData.id}`
+        : `${BASE_URL}/add-staff`;
       const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
@@ -222,7 +223,7 @@ export default function StaffPage() {
   const handleDelete = async (id: number) => {
     setDeletingId(id);
     try {
-      const res = await fetch(`http://bhojpe.in/api/v1/delete-staff/${id}`, {
+      const res = await fetch(`${BASE_URL}/delete-staff/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });

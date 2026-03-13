@@ -11,6 +11,5 @@ export const saveOrderApi = async (token: string, payload: any) => {
     },
     body: JSON.stringify(payload),
   });
-console.log(res);
   return res.json();
 };

@@ -76,7 +76,6 @@ useEffect(() => {
       );
     } else {
       localStorage.removeItem("offlineOrders");
-      console.log("✅ All offline orders synced successfully");
     }
   };
 

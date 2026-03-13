@@ -1,6 +1,7 @@
+import { BASE_URL } from "../utils/api";
 import React, { createContext, useContext, useState } from "react";
 
-const BASE_URL = "http://bhojpe.in/api/v1";
+
 
 type KotContextType = {
   createKotWithOrder: (payload: any) => Promise<any>;

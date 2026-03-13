@@ -1,3 +1,4 @@
+import { BASE_URL } from "../utils/api";
 import React, {
   createContext,
   useContext,
@@ -24,7 +25,7 @@ export const InventoryProvider = ({ children }: ProviderProps) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const BASE_URL = "http://bhojpe.in/api/v1";
+
 
   const getToken = (): string | null => {
     return localStorage.getItem("token");

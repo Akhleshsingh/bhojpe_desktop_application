@@ -1,3 +1,4 @@
+import { BASE_URL } from "../utils/api";
 export type OrderStatusResponse = {
   key: string;
   label: string;
@@ -7,7 +8,7 @@ export async function fetchOrderStatuses(orderType: string) {
   const token = localStorage.getItem("token");
   if (!token) throw new Error("No auth token");
 
-  const res = await fetch("http://bhojpe.in/api/v1/orderstatus", {
+  const res = await fetch(`${BASE_URL}/orderstatus`, {
     method: "POST", // ✅ required for body
     headers: {
       Accept: "application/json",

@@ -91,9 +91,7 @@ const liveTableMap = React.useMemo(() => {
   liveTables.forEach(t => map.set(t.id, t));
   return map;
 }, [liveTables]);
-console.log(liveTableMap ,"livetablemap")
 useEffect(() => {
-  console.log("LIVE TABLES", liveTables);
 }, [liveTables]);
 
 const getActiveOrderByTableId = (tableId: number) => {
@@ -184,7 +182,6 @@ const handleNewOrder = (table: any) => {
 
 const handleViewOrder = (table: any) => {
 const activeOrder = getActiveOrderByTableId(table.id);
-console.log(activeOrder)
   navigate("/menudashboard", {
     state: {
       mode: "view",
@@ -226,7 +223,6 @@ const handleMergeTables = () => {
     return;
   }
 
-  console.log("Merging tables:", selectedTables);
   setMergeOpen(false);
   setSelectedTables([]);
 };
@@ -238,11 +234,6 @@ const availableTables = mappedTables.filter(
 
 const handleKotMove = async () => {
   if (!sourceTable || !targetTableId) return;
-
-  console.log("Moving KOT →", {
-    from: sourceTable.id,
-    to: targetTableId,
-  });
 
 
   alert(

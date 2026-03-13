@@ -39,7 +39,7 @@ export default function OrderTypeSwitcher({
   const { branchData } = useAuth();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [selectedPlatform, setSelectedPlatform] = useState<string>("More Channels");
+  const [selectedPlatform, setSelectedPlatform] = useState<string>("");
 
   const open = Boolean(anchorEl);
 

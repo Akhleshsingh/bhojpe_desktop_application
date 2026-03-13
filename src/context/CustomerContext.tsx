@@ -1,3 +1,4 @@
+import { BASE_URL } from "../utils/api";
 import React, {
   createContext,
   useContext,
@@ -47,7 +48,7 @@ export const CustomersProvider = ({
   const branch_id = branchData?.data?.id;
 
   const callCustomerAPI = async (body: any) => {
-    const res = await fetch("http://bhojpe.in/api/v1/getuser", {
+    const res = await fetch(`${BASE_URL}/getuser`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,

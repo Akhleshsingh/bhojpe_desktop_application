@@ -1,3 +1,4 @@
+import { BASE_URL } from "../utils/api";
 import React from "react";
 import {
   Drawer,
@@ -88,7 +89,6 @@ const BillDrawer: React.FC<BillDrawerProps> = ({
   billedOrderData?.payment_status === "paid" ||
   Number(billedOrderData?.amount_paid || 0) >=
   Number(billedOrderData?.total || 0);
-console.log(drawerItems);
 const isBilled =
   billedOrderData?.order_status === "billed" ||
   billedOrderData?.status === "billed";
@@ -523,7 +523,7 @@ const isBilled =
    
                  try {
                    const res = await fetch(
-                     "http://bhojpe.in/api/v1/update-order-payment",
+                     `${BASE_URL}/update-order-payment`,
                      {
                        method: "POST",
                        headers: {

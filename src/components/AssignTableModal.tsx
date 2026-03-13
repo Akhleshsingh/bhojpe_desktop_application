@@ -69,7 +69,6 @@ const groupedTables = React.useMemo(() => {
   }, {});
 }, [normalizedTables]);
 
-console.log("Grouped Tables:", groupedTables);
   return (
     <Modal open={open} onClose={onClose}>
       <Box
