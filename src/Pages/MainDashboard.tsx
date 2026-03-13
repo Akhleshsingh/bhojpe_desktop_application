@@ -167,7 +167,7 @@ export default function MainDashboard() {
       <Box
         sx={{
           height: 64,
-          backgroundColor: "#fff",
+          backgroundColor: "rgba(0, 0, 0, 0.02)",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
