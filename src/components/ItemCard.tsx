@@ -1,9 +1,5 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
-import vegicon from "../assets/14bd00ea-7be2-451d-9051-62d34474f227 2.png";
-import nonvegicon from "../assets/pngegg 1.png";
-import eggicon from "../assets/Group 68.png";
-import { useTheme } from "@mui/material/styles";
 
 interface Item {
   id: number;
@@ -12,9 +8,8 @@ interface Item {
   category?: string;
   veg?: boolean;
   image?: string;
-  variations?: any[]; 
+  variations?: any[];
 }
-
 
 interface ItemCardProps {
   item: Item;
@@ -22,22 +17,6 @@ interface ItemCardProps {
 }
 
 export default function ItemCard({ item, onAdd }: ItemCardProps) {
-  const theme = useTheme();
-
-  const getFoodTypeIcon = () => {
-    if (
-      item.category?.toLowerCase().includes("egg") ||
-      item.name?.toLowerCase().includes("omlet")
-    ) {
-      return eggicon;
-    }
-
-    if (item.veg === true) return vegicon;
-    if (item.veg === false) return nonvegicon;
-
-    return vegicon;
-  };
-
  return (
   <Box
     sx={{
@@ -52,57 +31,60 @@ export default function ItemCard({ item, onAdd }: ItemCardProps) {
     }}
     onClick={onAdd}
   >
-    {/* IMAGE CONTAINER — flush left, right, top */}
+    {/* IMAGE — flush left, right, top */}
     <Box
       sx={{
-        position: "relative",
         width: "100%",
-        height: 110,
+        height: 100,
         overflow: "hidden",
-        backgroundColor: "#F9F9F9",
+        backgroundColor: "#F5F5F5",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
-      {/* Food type icon — top right */}
-      <Box
-        component="img"
-        src={getFoodTypeIcon()}
-        alt="food type"
-        sx={{
-          position: "absolute",
-          top: 6,
-          right: 6,
-          width: 13,
-          height: 13,
-          zIndex: 1,
-        }}
-      />
       {item.image ? (
         <img
           src={item.image}
           alt={item.name}
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-          }}
-          onError={(e) => {
-            e.currentTarget.style.display = "none";
-          }}
+          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          onError={(e) => { e.currentTarget.style.display = "none"; }}
         />
       ) : (
-        <Box sx={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <Box component="img" src={getFoodTypeIcon()} alt="" sx={{ width: 40, height: 40, opacity: 0.3 }} />
-        </Box>
+        <Typography sx={{ fontSize: 28, color: "#CCC" }}>🍽️</Typography>
       )}
     </Box>
 
     {/* NAME */}
-    <Typography sx={{ fontWeight: 600, fontSize: "13px", textAlign: "center", mt: 0.5, px: 0.5, lineHeight: 1.3, fontFamily: "Poppins, sans-serif" }}>
+    <Typography
+      sx={{
+        fontWeight: 600,
+        fontSize: "12px",
+        textAlign: "center",
+        mt: 0.5,
+        px: 0.5,
+        lineHeight: 1.3,
+        fontFamily: "Poppins, sans-serif",
+        display: "-webkit-box",
+        WebkitLineClamp: 2,
+        WebkitBoxOrient: "vertical",
+        overflow: "hidden",
+      }}
+    >
       {item.name}
     </Typography>
 
     {/* PRICE */}
-    <Typography sx={{ fontSize: "13px", fontWeight: 500, textAlign: "center", color: "#555", mb: 0.5, fontFamily: "Poppins, sans-serif" }}>
+    <Typography
+      sx={{
+        fontSize: "12px",
+        fontWeight: 500,
+        textAlign: "center",
+        color: "#555",
+        mb: 0.5,
+        fontFamily: "Poppins, sans-serif",
+      }}
+    >
       ₹{item.price}
     </Typography>
   </Box>

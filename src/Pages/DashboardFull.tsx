@@ -91,6 +91,7 @@ const [selectedTable, setSelectedTable] = useState<{
 
   const [query, setQuery] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+  const [selectedMenuId, setSelectedMenuId] = useState<number | null>(null);
  const [menuItems, setMenuItems] = useState<any[]>(
   () =>
     JSON.parse(localStorage.getItem("menuItems") || "[]")
@@ -285,16 +286,21 @@ useEffect(() => {
         item.item_category_id === selectedCategoryId ||
         item.category_id === selectedCategoryId;
 
+      const matchesMenu =
+        selectedMenuId === null ||
+        item.menu_id === selectedMenuId;
+
       const matchesVeg =
         vegFilter === "all" || item.type === vegFilter;
 
       return (
         matchesSearch &&
         matchesCategory &&
+        matchesMenu &&
         matchesVeg
       );
     });
-  }, [menuItems, query, selectedCategoryId, vegFilter]);
+  }, [menuItems, query, selectedCategoryId, selectedMenuId, vegFilter]);
   const addToCart = (item: Item) => {
     setCart((prev) => {
       const found = prev.find((p: any) => p.id === item.id);
@@ -411,6 +417,9 @@ useEffect(() => {
               selectedCategoryId === cat.id ? null : cat.id
             )
           }
+          menus={menus}
+          selectedMenuId={selectedMenuId}
+          onMenuSelect={setSelectedMenuId}
         />
 
         {/* MIDDLE: SEARCH + ITEMS */}
@@ -480,12 +489,11 @@ useEffect(() => {
 
           {/* ITEM GRID */}
           <Box sx={{ flex: 1, overflowY: "auto" }}>
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5 }}>
+            <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: 1.5 }}>
               {visibleItems.map((apiItem: any) => (
                 <Box
                   key={apiItem.id}
                   sx={{
-                    width: 155,
                     backgroundColor: "#FFFFFF",
                     borderRadius: "10px",
                     boxShadow: "0 1px 4px rgba(0,0,0,0.10)",
