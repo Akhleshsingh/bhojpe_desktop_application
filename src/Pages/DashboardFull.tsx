@@ -2,9 +2,6 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Box,
   TextField,
-  Select,
-  MenuItem,
-  FormControl,
   Button,
   Typography,
 } from "@mui/material";
@@ -12,9 +9,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import "../styles/dashboardFull.css";
 import ItemCard from "../components/ItemCard";
 import OrderPanel from "../components/OrderPanel";
-import SecondHeader from "../CommonPages/secondheader";
-import InsideFooter from "../CommonPages/insidefooter";
-import { useTheme } from "@mui/material/styles";
+import Sidebar from "../components/Sidebar";
 import { useAuth } from "../context/AuthContext";
 import { BASE_URL } from "../utils/api";
 import { useOrders } from "../context/OrdersContext";
@@ -41,7 +36,6 @@ export default function DashboardFull({
   savedOrders,
   onSaveOrder,
 }: DashboardFullProps) {
-  const theme = useTheme();
   const location = useLocation();
   const { waiters } = useWaiters();
   const { branchData } = useAuth();
@@ -96,14 +90,13 @@ const [selectedTable, setSelectedTable] = useState<{
     branchData?.data?.order_types?.filter((o: any) => o.is_active === 1) ?? [];
 
   const [query, setQuery] = useState("");
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
  const [menuItems, setMenuItems] = useState<any[]>(
   () =>
     JSON.parse(localStorage.getItem("menuItems") || "[]")
 );
   const [cart, setCart] = useState<any[]>([]);
-  const [menuFilter, setMenuFilter] = useState<string>("all");
-  const [categoryFilter, setCategoryFilter] = useState<string>("all");
-  const [vegFilter, setVegFilter] = useState<"all" | "veg" | "nonveg">("all");
+  const [vegFilter, setVegFilter] = useState<"all" | "veg" | "nonveg" | "egg">("all");
   const [orderType, setOrderType] = useState<any>(null);
 const [variationOpen, setVariationOpen] = useState(false);
 const [selectedItem, setSelectedItem] = useState<any>(null);
@@ -287,25 +280,21 @@ useEffect(() => {
         item.item_name?.toLowerCase().includes(q) ||
         String(item.price).includes(q);
 
-      const matchesMenu =
-        menuFilter === "all" ||
-        item.menu?.toLowerCase() === menuFilter.toLowerCase();
-
       const matchesCategory =
-        categoryFilter === "all" ||
-        item.category?.toLowerCase() === categoryFilter.toLowerCase();
+        selectedCategoryId === null ||
+        item.item_category_id === selectedCategoryId ||
+        item.category_id === selectedCategoryId;
 
       const matchesVeg =
         vegFilter === "all" || item.type === vegFilter;
 
       return (
         matchesSearch &&
-        matchesMenu &&
         matchesCategory &&
         matchesVeg
       );
     });
-  }, [menuItems, query, menuFilter, categoryFilter, vegFilter]);
+  }, [menuItems, query, selectedCategoryId, vegFilter]);
   const addToCart = (item: Item) => {
     setCart((prev) => {
       const found = prev.find((p: any) => p.id === item.id);
@@ -409,134 +398,144 @@ useEffect(() => {
     height: "100%",
     display: "flex",
     flexDirection: "column",
+    fontFamily: "Poppins, sans-serif",
   }}
 >
-      {/* <SecondHeader
-        orderType={orderType}
-        setOrderType={setOrderType}
-        ordersCount={savedOrders.length}
-      /> */}
-
       <Box sx={{ display: "flex", flex: 1, minHeight: 0 }}>
-        <Box sx={{  flex: 1,
-    p: 2,width: "55%",       
-    minWidth: 390,      
-    display: "flex",
-    flexDirection: "column",
-    minHeight: 0,}}>
-          {/* SEARCH + FILTERS */}
-          <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+        {/* LEFT CATEGORY SIDEBAR */}
+        <Sidebar
+          categories={allCategories}
+          selectedCategoryId={selectedCategoryId}
+          onSelect={(cat) =>
+            setSelectedCategoryId(
+              selectedCategoryId === cat.id ? null : cat.id
+            )
+          }
+        />
+
+        {/* MIDDLE: SEARCH + ITEMS */}
+        <Box sx={{
+          flex: 1,
+          p: 1.5,
+          display: "flex",
+          flexDirection: "column",
+          minHeight: 0,
+          minWidth: 0,
+        }}>
+          {/* SEARCH + VEG FILTER ROW */}
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1.5 }}>
             <TextField
               size="small"
-              placeholder="Search items"
+              placeholder="Search your menu items here"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               InputProps={{
-                startAdornment: (
-                  <SearchIcon sx={{ mr: 1, color: "#999" }} />
-                ),
+                startAdornment: <SearchIcon sx={{ mr: 1, color: "#BDBDBD", fontSize: 18 }} />,
               }}
-              sx={{ background: "#fff", width: 240 }}
+              sx={{
+                flex: 1,
+                background: "#fff",
+                borderRadius: "6px",
+                "& .MuiOutlinedInput-root": {
+                  fontFamily: "Poppins, sans-serif",
+                  fontSize: 13,
+                },
+              }}
             />
-
-            <FormControl size="small" sx={{ background: "#fff", width: 200 }}>
-              <Select
-                value={menuFilter}
-                onChange={(e) => setMenuFilter(e.target.value)}
-              >
-                <MenuItem value="all">All Menus</MenuItem>
-                {menus.map((m: any) => (
-                  <MenuItem key={m.id} value={m.menu_name.en}>
-                    {m.menu_name.en}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-
-            <FormControl size="small" sx={{ background: "#fff", width: 200 }}>
-              <Select
-                value={categoryFilter}
-                onChange={(e) => setCategoryFilter(e.target.value)}
-              >
-                <MenuItem value="all">All Categories</MenuItem>
-                {allCategories.map((c: any) => (
-                  <MenuItem key={c.id} value={c.category_name.en}>
-                    {c.category_name.en}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-
-            <FormControl size="small" sx={{ background: "#fff", width: 100 }}>
-              <Select
-                value={vegFilter}
-                onChange={(e) =>
-                  setVegFilter(e.target.value as any)
-                }
-              >
-                <MenuItem value="all">All</MenuItem>
-                <MenuItem value="veg">Veg</MenuItem>
-                <MenuItem value="nonveg">Non-Veg</MenuItem>
-              </Select>
-            </FormControl>
+            {/* Veg / NonVeg / Egg pill buttons */}
+            <Box
+              onClick={() => setVegFilter(vegFilter === "veg" ? "all" : "veg")}
+              sx={{
+                width: 28, height: 28,
+                borderRadius: "50%",
+                backgroundColor: vegFilter === "veg" ? "#4CAF50" : "#E8F5E9",
+                border: "2px solid #4CAF50",
+                cursor: "pointer",
+                flexShrink: 0,
+              }}
+            />
+            <Box
+              onClick={() => setVegFilter(vegFilter === "nonveg" ? "all" : "nonveg")}
+              sx={{
+                width: 28, height: 28,
+                borderRadius: "50%",
+                backgroundColor: vegFilter === "nonveg" ? "#F44336" : "#FFEBEE",
+                border: "2px solid #F44336",
+                cursor: "pointer",
+                flexShrink: 0,
+              }}
+            />
+            <Box
+              onClick={() => setVegFilter(vegFilter === "egg" ? "all" : ("egg" as any))}
+              sx={{
+                width: 28, height: 28,
+                borderRadius: "50%",
+                backgroundColor: vegFilter === "egg" ? "#FFC107" : "#FFFDE7",
+                border: "2px solid #FFC107",
+                cursor: "pointer",
+                flexShrink: 0,
+              }}
+            />
           </Box>
-<Box
-  sx={{
-    flex: 1,
-    overflowY: "auto",
-    mt: 1,
-  }}
->
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
-            {visibleItems.map((apiItem: any) => (
-              <Box
-                key={apiItem.id}
-                sx={{
-                  width: 176,
-                  backgroundColor: "#FFFFFF",
-                  borderRadius: "10px",
-                  boxShadow: "0 2px 6px var(--border-color)",
-                }}
-              >
-                <ItemCard
-                  item={{
-                    id: apiItem.id,
-                    name: apiItem.item_name,
-                    price: apiItem.price,
-                    category: apiItem.category,
-                    veg: apiItem.type === "veg",
-                    image: apiItem.photo_url,
-                     variations: apiItem.variations, 
+
+          {/* ITEM GRID */}
+          <Box sx={{ flex: 1, overflowY: "auto" }}>
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5 }}>
+              {visibleItems.map((apiItem: any) => (
+                <Box
+                  key={apiItem.id}
+                  sx={{
+                    width: 155,
+                    backgroundColor: "#FFFFFF",
+                    borderRadius: "10px",
+                    boxShadow: "0 1px 4px rgba(0,0,0,0.10)",
+                    overflow: "hidden",
+                    borderBottom: apiItem.type === "nonveg"
+                      ? "3px solid #F44336"
+                      : apiItem.type === "egg"
+                      ? "3px solid #FFC107"
+                      : "3px solid #4CAF50",
                   }}
-          onAdd={() => {
-  if (apiItem.variations?.length > 0) {
-    setSelectedItem(apiItem);
-    setSelectedVariation(null);
-    setVariationOpen(true);
-  } else {
-    addToCart({
-      id: apiItem.id,
-      name: apiItem.item_name,
-      price: apiItem.price,
-    });
-  }
-}}
-
-
-                />
-              </Box>
-            ))}
-          </Box></Box>
-         
+                >
+                  <ItemCard
+                    item={{
+                      id: apiItem.id,
+                      name: apiItem.item_name,
+                      price: apiItem.price,
+                      category: apiItem.category,
+                      veg: apiItem.type === "veg",
+                      image: apiItem.photo_url,
+                      variations: apiItem.variations,
+                    }}
+                    onAdd={() => {
+                      if (apiItem.variations?.length > 0) {
+                        setSelectedItem(apiItem);
+                        setSelectedVariation(null);
+                        setVariationOpen(true);
+                      } else {
+                        addToCart({
+                          id: apiItem.id,
+                          name: apiItem.item_name,
+                          price: apiItem.price,
+                        });
+                      }
+                    }}
+                  />
+                </Box>
+              ))}
+            </Box>
+          </Box>
         </Box>
+
+        {/* RIGHT: ORDER PANEL */}
   <Box
   sx={{
-    width: "45%",
-    minWidth: 0,   
+    width: "42%",
+    minWidth: 0,
     display: "flex",
     flexDirection: "column",
-    overflowX :'auto',
-    overflowY :"hidden !important",
+    overflowX: "auto",
+    overflowY: "hidden !important",
   }}
 >
           <OrderPanel

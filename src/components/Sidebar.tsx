@@ -1,118 +1,83 @@
-// src/components/Sidebar.tsx
-// import React from "react";
-// import { Box, Button } from "@mui/material";
-
-// type Props = {
-//   categories: string[];
-//   selected: string;
-//   onSelect: (c: string) => void;
-// };
-
-// export default function Sidebar({ categories, selected, onSelect }: Props) {
-//   return (
-//     <Box
-//       sx={{
-//         width: "190px",
-//         height: "890px",
-//         backgroundColor: "#F5F5F5",
-//         borderRadius: "0px",
-//         overflowY: "auto",
-//         fontFamily: "Poppins",
-//       }}
-//     >
-//       {categories.map((cat, idx) => {
-//         // FIGMA COLORS
-//         const bgColor =
-//           idx === 0
-//             ? "#2C72C7"
-//             : idx === 1
-//             ? "#287752"
-//             : "#3D3636A3";
-
-//         const isSelected = selected === cat;
-
-//         return (
-//           <Button
-//             key={cat}
-//             onClick={() => onSelect(cat)}
-//             sx={{
-//               width: "100%",
-//               height: "48px",
-//               justifyContent: "flex-start",
-//               textTransform: "none",
-//               borderRadius: "0px",
-//               mb: 0,
-//               backgroundColor: isSelected ? "#000000" : bgColor,
-//               color: "#FFFFFF",
-//                border : "1px solid #C3C3C3",
-//               fontSize: "15px",
-//               fontWeight: 400,
-//               letterSpacing: "0.05em",
-
-//               "&:hover": {
-//                 backgroundColor: isSelected ? "#000000" : bgColor,
-//               },
-//             }}
-//           >
-//             {cat}
-//           </Button>
-//         );
-//       })}
-//     </Box>
-//   );
-// }
 import React from "react";
-import { Box, Button } from "@mui/material";
+import { Box, Typography } from "@mui/material";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
-type Menu = {
+type Category = {
   id: number;
-  menu_name: { en: string };
+  category_name: { en: string };
 };
 
 type Props = {
-  menus: Menu[];
-  selectedMenuId: number | null;
-  onSelect: (menu: Menu) => void;
+  categories: Category[];
+  selectedCategoryId: number | null;
+  onSelect: (cat: Category) => void;
 };
 
-export default function Sidebar({ menus, selectedMenuId, onSelect }: Props) {
+export default function Sidebar({ categories, selectedCategoryId, onSelect }: Props) {
   return (
     <Box
       sx={{
-       width: "100%",
-        height: "91%", 
-        backgroundColor: "#F5F5F5",
-        overflowY: "auto",     
+        width: 120,
+        flexShrink: 0,
+        backgroundColor: "#3D3636",
         display: "flex",
         flexDirection: "column",
-        flexShrink: 0,
-        fontFamily: "Poppins",              
-               overflow :'auto', 
+        overflowY: "auto",
+        height: "100%",
+        fontFamily: "Poppins, sans-serif",
       }}
     >
-      {menus.map((menu, idx) => {
-        const isSelected = selectedMenuId === menu.id;
+      {/* Filter by menu header */}
+      <Box
+        sx={{
+          px: 1.5,
+          py: 1.2,
+          backgroundColor: "#2C2828",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          borderBottom: "1px solid #555",
+          flexShrink: 0,
+          cursor: "pointer",
+        }}
+      >
+        <Typography sx={{ fontSize: 11, color: "#FFF", fontWeight: 600, fontFamily: "Poppins, sans-serif" }}>
+          Filter by menu
+        </Typography>
+        <KeyboardArrowDownIcon sx={{ fontSize: 16, color: "#FFF" }} />
+      </Box>
 
+      {/* Category list */}
+      {categories.map((cat) => {
+        const isSelected = selectedCategoryId === cat.id;
         return (
-          <Button
-            key={menu.id}
-            onClick={() => onSelect(menu)}
+          <Box
+            key={cat.id}
+            onClick={() => onSelect(cat)}
             sx={{
-              width: "100%",
-              height: "48px",
-              justifyContent: "flex-start",
-              textTransform: "none",
-              borderRadius: 0,
-              backgroundColor: isSelected ? "#C5D89D " : "#F6F0D7",
-              color: "#000",
-              borderBottom: "1px solid #C3C3C3",
+              px: 1.5,
+              py: 1.2,
+              cursor: "pointer",
+              backgroundColor: isSelected ? "#E8883A" : "transparent",
+              borderBottom: "1px solid #4A4444",
+              transition: "background 0.15s",
               "&:hover": {
-             backgroundColor: isSelected ? "#C5D89D " : "#F6F0D7",
+                backgroundColor: isSelected ? "#E8883A" : "#4A4444",
               },
             }}
           >
-            {menu.menu_name.en}
-          </Button>
+            <Typography
+              sx={{
+                fontSize: 12,
+                color: "#FFFFFF",
+                fontWeight: isSelected ? 600 : 400,
+                fontFamily: "Poppins, sans-serif",
+                lineHeight: 1.3,
+              }}
+            >
+              {cat.category_name.en}
+            </Typography>
+          </Box>
         );
       })}
     </Box>
