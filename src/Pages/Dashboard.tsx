@@ -35,7 +35,6 @@ export default function Dashboard() {
   const { branchData } = useAuth();
   const { orders } = useOrders();
    const { tables :liveTables , loading , fetchTables} = useTables();
-console.log(branchData,liveTables);
 const [mergeOpen, setMergeOpen] = useState(false);
 const [selectedTables, setSelectedTables] = useState<number[]>([]);
 const [kotMoveOpen, setKotMoveOpen] = useState(false);
@@ -200,7 +199,6 @@ console.log(activeOrder)
 
 const handleNewKot = (table: any) => {
 const activeOrder = getActiveOrderByTableId(table.id);
-console.log(activeOrder , "activeorder");
   navigate("/menudashboard", {
     state: {
       mode: "kot",
@@ -215,7 +213,6 @@ console.log(activeOrder , "activeorder");
 const mergeableTables = mappedTables.filter(
   (t) => t.status === "running" || t.status === "kot"
 );
-console.log("Mergeable:", mergeableTables);
 const toggleTableSelect = (tableId: number) => {
   setSelectedTables((prev) =>
     prev.includes(tableId)
@@ -273,25 +270,22 @@ useEffect(() => {
 }, [location.state, mappedTables, navigate, location.pathname]);
 
   return (
-    <Box
-      sx={{
-        height: "130vh",
-        backgroundColor: "#FFFF",
-        color: "var(--text)",
-        overflow: "auto",
-      }}
-    >
+    <Box sx={{ minHeight: "100vh", backgroundColor: "#FFFFFF", overflow: "auto", fontFamily: "Poppins, sans-serif" }}>
       <Box sx={{ padding: 2 }}>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            mt: 1,
-            p: 1.5,
-          }}
-        >
-          {/* AREA FILTER */}
+        {/* Page title row */}
+        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1.5, px: 1 }}>
+          <Typography sx={{ fontWeight: 700, fontSize: 18, fontFamily: "Poppins, sans-serif" }}>
+            Table View
+          </Typography>
+          <Box sx={{ display: "flex", gap: 1 }}>
+            <Button variant="outlined" sx={{ textTransform: "none", borderRadius: "6px", borderColor: "#DADADA", color: "#333", fontFamily: "Poppins, sans-serif", fontSize: 13, px: 2, "&:hover": { borderColor: "#999", backgroundColor: "#F5F5F5" } }}>Pickup</Button>
+            <Button variant="outlined" sx={{ textTransform: "none", borderRadius: "6px", borderColor: "#DADADA", color: "#333", fontFamily: "Poppins, sans-serif", fontSize: 13, px: 2, "&:hover": { borderColor: "#999", backgroundColor: "#F5F5F5" } }}>Delivery</Button>
+            <Button variant="contained" sx={{ textTransform: "none", borderRadius: "6px", backgroundColor: "#E8353A", fontFamily: "Poppins, sans-serif", fontSize: 13, px: 2, boxShadow: "none", "&:hover": { backgroundColor: "#C62828", boxShadow: "none" } }}>Add Table</Button>
+          </Box>
+        </Box>
+
+        {/* Filters row */}
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mt: 1, p: 1.5 }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 0 }}>
             {[
               { key: "all", label: "All Area" },
@@ -304,13 +298,10 @@ useEffect(() => {
                 onClick={() => setSelectedArea(area.key as any)}
                 sx={{
                   ...areaBoxStyle,
-                  backgroundColor:
-                    selectedArea === area.key ? "#C5D89D" : "transparent",
+                  fontFamily: "Poppins, sans-serif",
+                  backgroundColor: selectedArea === area.key ? "#C5D89D" : "transparent",
                   fontWeight: selectedArea === area.key ? 600 : 400,
-                  border:
-                    selectedArea === area.key
-                      ? "1px solid #DADADA"
-                      : "none",
+                  border: selectedArea === area.key ? "1px solid #DADADA" : "none",
                 }}
               >
                 {area.label}
@@ -318,81 +309,52 @@ useEffect(() => {
             ))}
           </Box>
 
-          {/* LEGENDS */}
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
             {[
-              { key: "available",label: "Available", color: "#FFFFFF" },
-              { key: "running", label: "Running", color: "#CBDBF8" },
-              {key: "kot", label: "Reserved", color: "#FAC9BB" },
-              { label: "Bill Print", color: "#F6F0D7" },
+              { key: "available", label: "Available",  color: "#FFFFFF" },
+              { key: "running",   label: "Running",    color: "#CBDBF8" },
+              { key: "kot",       label: "Reserved",   color: "#FAC9BB" },
+              { key: "print",     label: "Bill Print", color: "#F6F0D7" },
             ].map((item) => (
               <Box
                 key={item.label}
-                   onClick={() => setSelectedStatus(item.key as any)}
-                   
+                onClick={() => setSelectedStatus(item.key as any)}
                 sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1,
-                  padding: "4px 8px",
-                  border: "1px solid #00000040",
+                  display: "flex", alignItems: "center", gap: 1,
+                  padding: "4px 10px",
+                  border: "1px solid #00000030",
                   borderRadius: "5px",
+                  cursor: "pointer",
+                  fontFamily: "Poppins, sans-serif",
+                  backgroundColor: selectedStatus === item.key ? "#F5F5F5" : "transparent",
                 }}
               >
-                <Box
-                  sx={{
-                    width: 30,
-                    height: 30,
-                    backgroundColor: item.color,
-                    borderRadius: "5px",
-                    boxShadow: "0px 0px 4px 0px #00000040",
-                  }}
-                />
-                <Typography fontSize="14px">{item.label}</Typography>
+                <Box sx={{ width: 26, height: 26, backgroundColor: item.color, borderRadius: "4px", boxShadow: "0px 0px 4px 0px #00000040", border: "1px solid #E0E0E0" }} />
+                <Typography fontSize="13px" fontFamily="Poppins, sans-serif">{item.label}</Typography>
               </Box>
             ))}
           </Box>
 
-     <Button variant="contained"
- sx={{ textTransform: "none", backgroundColor: "#FFFFFF", border: "1px solid var(--border)", color: "#000", borderRadius: "5px", width: 125, height: 47, "&:hover": { backgroundColor: "#C5D89D" }, }}
-  onClick={() => setSourceSelectOpen(true)}
->
-  KOT Move
-</Button>
-
-  <Button
-    variant="contained"
-    onClick={() => setMergeOpen(true)}
-    sx={{
-      textTransform: "none",
-      backgroundColor: "#FFFFFF",
-      border: "1px solid var(--border)",
-      color: "#000",
-      borderRadius: "5px",
-      "&:hover": { backgroundColor: "#C5D89D" },
-    }}
-  >
-    <img src={mergeicon} alt="merge" width={25} height={25} />
-    Merge Table
-  </Button>
-
-
+          <Box sx={{ display: "flex", gap: 1 }}>
+            <Button variant="contained" onClick={() => setSourceSelectOpen(true)} sx={{ textTransform: "none", backgroundColor: "#FFFFFF", border: "1px solid #DADADA", color: "#333", borderRadius: "5px", fontFamily: "Poppins, sans-serif", fontSize: 13, boxShadow: "none", "&:hover": { backgroundColor: "#C5D89D", boxShadow: "none" } }}>Items/KOT Move</Button>
+            <Button variant="contained" onClick={() => setMergeOpen(true)} sx={{ textTransform: "none", backgroundColor: "#FFFFFF", border: "1px solid #DADADA", color: "#333", borderRadius: "5px", fontFamily: "Poppins, sans-serif", fontSize: 13, boxShadow: "none", display: "flex", alignItems: "center", gap: "6px", "&:hover": { backgroundColor: "#C5D89D", boxShadow: "none" } }}>
+              <img src={mergeicon} alt="merge" width={20} height={20} />
+              Merge Table
+            </Button>
+          </Box>
         </Box>
-
 <Box sx={{ mt: 3, px: 2 }}>
   {selectedArea === "all" ? (
     Object.entries(groupedTables).map(([areaKey, tables]: any) => (
       <Box key={areaKey} sx={{ mb: 4 }}>
-        <Typography
-          sx={{
-            fontSize: "18px",
-            fontWeight: 600,
-            mb: 2,
-            color: "#BA3131",
-          }}
-        >
-          {areaTitleMap[areaKey] ?? areaKey}
-        </Typography>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2 }}>
+          <Typography sx={{ fontSize: "16px", fontWeight: 600, color: "#111111", fontFamily: "Poppins, sans-serif" }}>
+            {areaTitleMap[areaKey] ?? areaKey}
+          </Typography>
+          <Box sx={{ px: 1, py: "2px", backgroundColor: "#F0F0F0", borderRadius: "4px", fontSize: 12, color: "#555", fontFamily: "Poppins, sans-serif" }}>
+            Table {tables.length}
+          </Box>
+        </Box>
         <Box
           sx={{
             display: "grid",
@@ -524,16 +486,14 @@ useEffect(() => {
     ))
   ) : (
     <>
-      <Typography
-        sx={{
-          fontSize: "18px",
-          fontWeight: 600,
-          mb: 2,
-          color: "#BA3131",
-        }}
-      >
-        {areaTitleMap[selectedArea]}
-      </Typography>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2 }}>
+        <Typography sx={{ fontSize: "16px", fontWeight: 600, color: "#111111", fontFamily: "Poppins, sans-serif" }}>
+          {areaTitleMap[selectedArea]}
+        </Typography>
+        <Box sx={{ px: 1, py: "2px", backgroundColor: "#F0F0F0", borderRadius: "4px", fontSize: 12, color: "#555", fontFamily: "Poppins, sans-serif" }}>
+          Table {statusFilteredTables.length}
+        </Box>
+      </Box>
       <Box
         sx={{
           display: "grid",
