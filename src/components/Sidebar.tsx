@@ -33,7 +33,7 @@ const HOVER_BG = "#4A4444";
 const BASE_BG = "#3D3636";
 const HEADER_BG = "#2C2828";
 const COLLAPSED_W = 42;
-const EXPANDED_W = "clamp(165px, 13vw, 195px)";
+const EXPANDED_W = "clamp(155px, 11vw, 185px)";
 
 export default function Sidebar({
   categories = [],

@@ -597,8 +597,8 @@ const footerChipBtn = {
   color: "#000",
   textTransform: "none",
   fontWeight: 500,
-  px: 2,
-  height: 38,
+  px: 1.5,
+  height: 42,
 };
 
   const buildOrderItems = (cart: any[]) => {
@@ -1246,26 +1246,26 @@ const headerTextStyle = {
   display: "flex",
   flexDirection: "column",
   justifyContent: "center",
-  minWidth: 85,
-  height: 40,
-  px: 1,
+  minWidth: 100,
+  height: 44,
+  px: 1.5,
   border: "1px solid #00000040",
   background: "#FFF",
   cursor: "pointer",
-  fontSize: 12,
+  fontSize: 13,
   fontWeight: 400,
 };
 const headerTextStyle3 = {
   display: "flex",
   flexDirection: "column",
   justifyContent: "center",
-  minWidth: 110,
-  height: 40,
-  px: 1,
+  minWidth: 130,
+  height: 44,
+  px: 1.5,
   border: "1px solid #00000040",
   background: "#FFF",
   cursor: "pointer",
-  fontSize: 12,
+  fontSize: 13,
   fontWeight: 400,
 };
 const headerTextStyle2 ={
@@ -2973,9 +2973,9 @@ gap: 1,
       <Button
         variant="contained"
         onClick={handleSaveDraft}
-        sx={{ ...footerChipBtn, flex: 1, minWidth: 0, fontSize: 12 }}
+        sx={{ ...footerChipBtn, flex: 1, minWidth: 0, fontSize: 13 }}
         startIcon={
-          <img src={hold} alt="hold" style={{ width: 16 }} />
+          <img src={hold} alt="hold" style={{ width: 18 }} />
         }
         style={{borderRadius :'0px!important'}}
       >
@@ -2984,10 +2984,10 @@ gap: 1,
       <Button
         variant="contained"
         onClick={handleSaveDraft}
-        sx={{ ...footerChipBtn, flex: 1, minWidth: 0, fontSize: 12 }}
+        sx={{ ...footerChipBtn, flex: 1, minWidth: 0, fontSize: 13 }}
         style={{borderRadius :'0px!important'}}
         startIcon={
-          <img src={draft} alt="draft" style={{ width: 16 }} />
+          <img src={draft} alt="draft" style={{ width: 18 }} />
         }
       >
         Save as Draft
@@ -2997,10 +2997,10 @@ gap: 1,
       <Button
         variant="contained"
         onClick={() => kotActionRef.current?.("kot")}
-        sx={{ ...footerChipBtn, flex: 1, minWidth: 0, fontSize: 12 }}
+        sx={{ ...footerChipBtn, flex: 1, minWidth: 0, fontSize: 13 }}
         style={{borderRadius :'0px!important'}}
         startIcon={
-          <img src={kot} alt="kot" style={{ width: 16 }} />
+          <img src={kot} alt="kot" style={{ width: 18 }} />
         }
       >
         KOT
@@ -3012,10 +3012,10 @@ gap: 1,
         onClick={() =>
           kotActionRef.current?.("kot_print")
         }
-        sx={{ ...footerChipBtn, flex: 1, minWidth: 0, fontSize: 12 }}
+        sx={{ ...footerChipBtn, flex: 1, minWidth: 0, fontSize: 13 }}
         style={{borderRadius :'0px!important'}}
         startIcon={
-          <img src={kotprint} alt="print" style={{ width: 16 }} />
+          <img src={kotprint} alt="print" style={{ width: 18 }} />
         }
       >
         KOT & Print
@@ -3030,12 +3030,13 @@ gap: 1,
           flex: 1,
           minWidth: 0,
           fontWeight: 700,
-          fontSize: 12,
+          fontSize: 13,
+          height: 42,
           color: "#fff",
         }}
         style={{borderRadius :'0px!important'}}
         startIcon={
-          <img src={ebill} alt="ebill" style={{ width: 16 }} />
+          <img src={ebill} alt="ebill" style={{ width: 18 }} />
         }
         onClick={() => {
           if (!customerInfo) {
@@ -3069,7 +3070,8 @@ gap: 1,
         bgcolor: "#000000B2",
         textTransform: "none",
         border: "1px solid #000000B2",
-        minHeight: 48,
+        minHeight: 52,
+        fontSize: 14,
         color: "#FFFFFF",
         fontWeight: 600,
       }}style={{borderRadius :'0px!important'}}
@@ -3085,7 +3087,8 @@ gap: 1,
         color: "#FFFFFF",
         borderColor: "#000",
         textTransform: "none",
-        minHeight: 48,
+        minHeight: 52,
+        fontSize: 14,
         fontWeight: 600,
         backgroundColor: "#000000B2",
         border: "1px solid #F6F0D7",
@@ -3101,9 +3104,9 @@ gap: 1,
         color: "#FFFFFF",
         borderColor: "#000",
         textTransform: "none",
-        minHeight: 48,
+        minHeight: 52,
         fontWeight: 600,
-        fontSize: 12,
+        fontSize: 13,
         backgroundColor: "#000000B2",
         border: "1px solid #F6F0D7",
       }}
@@ -3116,9 +3119,9 @@ gap: 1,
       sx={{
         bgcolor: "#2295F3",
         textTransform: "none",
-        minHeight: 48,
+        minHeight: 52,
         fontWeight: 600,
-        fontSize: 12,
+        fontSize: 14,
       }}
       disabled={isOrderPaid}
       startIcon={<ShoppingCartCheckoutIcon />}

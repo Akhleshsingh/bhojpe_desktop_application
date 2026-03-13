@@ -427,7 +427,7 @@ useEffect(() => {
         {/* MIDDLE: SEARCH + ITEMS */}
         <Box sx={{
           flex: 1,
-          p: { xs: 1, sm: 1.5, lg: 2 },
+          p: 2,
           display: "flex",
           flexDirection: "column",
           minHeight: 0,
@@ -492,7 +492,7 @@ useEffect(() => {
 
           {/* ITEM GRID */}
           <Box sx={{ flex: 1, overflowY: "auto" }}>
-            <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: "12px" }}>
+            <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: "14px" }}>
               {visibleItems.map((apiItem: any) => (
                 <Box
                   key={apiItem.id}
@@ -541,7 +541,7 @@ useEffect(() => {
         {/* RIGHT: ORDER PANEL */}
   <Box
   sx={{
-    width: "clamp(340px, 42%, 560px)",
+    width: 730,
     flexShrink: 0,
     display: "flex",
     flexDirection: "column",
