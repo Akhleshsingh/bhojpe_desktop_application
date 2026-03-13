@@ -97,7 +97,6 @@ const Login: React.FC = () => {
       <div className="login-container">
         {/* LEFT ILLUSTRATION */}
         <div className="login-left">
-          <img src={Rectangle} className="login-bg" alt="" />
           <img src={videoCall} className="login-video" alt="Login illustration" />
         </div>
 
