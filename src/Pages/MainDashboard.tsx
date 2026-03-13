@@ -333,7 +333,7 @@ export default function MainDashboard() {
         </Box>
 
         {/* RIGHT COLUMN — Today's Orders */}
-        <Box sx={{ width: 480, flexShrink: 0 }}>
+        <Box sx={{ width: 480, flexShrink: 0, backgroundColor: "#FFFFFF", p: 2, borderRadius: "4px" }}>
           <Typography
             sx={{ fontWeight: 600, mb: 1.5, fontSize: 18, fontFamily: "Poppins, sans-serif" }}
           >
