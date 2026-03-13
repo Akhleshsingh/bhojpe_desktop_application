@@ -132,11 +132,16 @@ export default function HamburgerSidebar({ open }: Props) {
   return (
     <Box
       sx={{
-        width: 220,
-        flexShrink: 0,
-        height: "100%",
+        position: "fixed",
+        left: 0,
+        top: 0,
+        zIndex: 1200,
+        width: 260,
+        height: "100vh",
         backgroundColor: "#FFFFFF",
         borderRight: "1px solid #E5E7EB",
+        transform: open ? "translateX(0)" : "translateX(-100%)",
+        transition: "transform 0.3s ease",
         padding: "14px 12px",
         overflowY: "auto",
       }}
