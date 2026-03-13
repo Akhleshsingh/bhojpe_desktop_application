@@ -518,7 +518,8 @@ export default function OrdersHistory() {
                 {/* Dates + item count */}
                 <Box sx={{ px: 1.5, pb: 0.8, display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
                   <Box>
-                    {order.mode !== "draft" && order.mode !== "offline" && (
+                    {order.mode !== "draft" && order.mode !== "offline" &&
+                      normalizeOrderType(order.order_type?.order_type_name) === "pickup" && (
                       <Typography sx={{ fontSize: 10.5, color: "#6B7280", fontFamily: "Poppins, sans-serif" }}>
                         Pickup Date: {dayjs(order.created_at).format("DD/MM/YYYY hh:mm A")}
                       </Typography>
