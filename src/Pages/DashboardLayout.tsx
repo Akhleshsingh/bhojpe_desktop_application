@@ -14,6 +14,7 @@ export default function DashboardLayout({
 }) {
   const { branchData } = useAuth();
   const navigate = useNavigate();
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -59,8 +60,8 @@ export default function DashboardLayout({
           orderType={orderType}
           setOrderType={setOrderType}
           ordersCount={0}
-          sidebarOpen={false}
-          setSidebarOpen={() => {}}
+          sidebarOpen={!sidebarCollapsed}
+          setSidebarOpen={(v: boolean) => setSidebarCollapsed(!v)}
           tables={undefined}
           waiters={undefined}
         />
@@ -75,7 +76,10 @@ export default function DashboardLayout({
         }}
       >
         {/* Persistent nav sidebar */}
-        <HamburgerSidebar />
+        <HamburgerSidebar
+          collapsed={sidebarCollapsed}
+          onToggle={() => setSidebarCollapsed((v) => !v)}
+        />
 
         {/* Main content */}
         <Box

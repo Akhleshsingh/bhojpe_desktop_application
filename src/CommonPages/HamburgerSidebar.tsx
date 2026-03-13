@@ -1,10 +1,14 @@
-import { Box, Typography, Collapse } from "@mui/material";
+import { Box, Typography, Collapse, Popover, Divider } from "@mui/material";
 import { useState, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import FmdGoodIcon from "@mui/icons-material/FmdGood";
 import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
+import StoreIcon from "@mui/icons-material/Store";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 
 import dashboardicon from "../assets/image 359.png";
 import posicon from "../assets/image 357.png";
@@ -31,6 +35,8 @@ type MenuItem =
   | { label: string; icon: string; action: () => Promise<void>; path?: undefined; children?: undefined };
 
 const ACTIVE_BG = "#E8353A";
+const EXPANDED_W = 220;
+const COLLAPSED_W = 56;
 
 const STATIC_MENU_ITEMS: MenuItem[] = [
   { label: "Dashboard", icon: dashboardicon, path: "/main-dashboard" },
@@ -76,15 +82,23 @@ const STATIC_MENU_ITEMS: MenuItem[] = [
 type Props = {
   open?: boolean;
   onClose?: () => void;
+  collapsed?: boolean;
+  onToggle?: () => void;
 };
 
-export default function HamburgerSidebar(_props: Props) {
+export default function HamburgerSidebar({ collapsed = false, onToggle }: Props) {
   const { logout, branchData } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
-  const branchName: string = (branchData as any)?.data?.name ?? "Branch";
+  // Branch popover
+  const [branchAnchorEl, setBranchAnchorEl] = useState<HTMLElement | null>(null);
+  const branchPopoverOpen = Boolean(branchAnchorEl);
+
+  const branch = (branchData as any)?.data;
+  const restaurant = branch?.restaurant;
+  const branchName: string = branch?.name ?? "Branch";
 
   const handleLogout = useMemo(
     () => async () => {
@@ -124,7 +138,7 @@ export default function HamburgerSidebar(_props: Props) {
   return (
     <Box
       sx={{
-        width: 220,
+        width: collapsed ? COLLAPSED_W : EXPANDED_W,
         flexShrink: 0,
         backgroundColor: "#FFFFFF",
         display: "flex",
@@ -134,6 +148,7 @@ export default function HamburgerSidebar(_props: Props) {
         overflowY: "auto",
         overflowX: "hidden",
         fontFamily: "Poppins, sans-serif",
+        transition: "width 0.22s ease",
         "&::-webkit-scrollbar": { width: 4 },
         "&::-webkit-scrollbar-thumb": { backgroundColor: "#D1D5DB", borderRadius: 2 },
       }}
@@ -141,7 +156,7 @@ export default function HamburgerSidebar(_props: Props) {
       {/* Branch / location row */}
       <Box
         sx={{
-          px: 2,
+          px: collapsed ? 0 : 2,
           py: 1.4,
           display: "flex",
           alignItems: "center",
@@ -149,26 +164,96 @@ export default function HamburgerSidebar(_props: Props) {
           borderBottom: "1px solid #E5E7EB",
           flexShrink: 0,
           cursor: "pointer",
+          justifyContent: collapsed ? "center" : "flex-start",
           "&:hover": { backgroundColor: "#F9FAFB" },
         }}
+        onClick={(e) => setBranchAnchorEl(e.currentTarget)}
       >
         <FmdGoodIcon sx={{ color: "#22C55E", fontSize: 20, flexShrink: 0 }} />
-        <Typography
-          sx={{
-            fontSize: 13,
-            fontWeight: 600,
-            color: "#1F2937",
-            fontFamily: "Poppins, sans-serif",
-            flex: 1,
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-          }}
-        >
-          {branchName}
-        </Typography>
-        <KeyboardArrowDownOutlinedIcon sx={{ fontSize: 17, color: "#6B7280", flexShrink: 0 }} />
+        {!collapsed && (
+          <>
+            <Typography
+              sx={{
+                fontSize: 13,
+                fontWeight: 600,
+                color: "#1F2937",
+                fontFamily: "Poppins, sans-serif",
+                flex: 1,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {branchName}
+            </Typography>
+            <KeyboardArrowDownOutlinedIcon sx={{ fontSize: 17, color: "#6B7280", flexShrink: 0 }} />
+          </>
+        )}
       </Box>
+
+      {/* Branch info popover */}
+      <Popover
+        open={branchPopoverOpen}
+        anchorEl={branchAnchorEl}
+        onClose={() => setBranchAnchorEl(null)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        transformOrigin={{ vertical: "top", horizontal: "left" }}
+        PaperProps={{
+          sx: {
+            width: 260,
+            borderRadius: "10px",
+            boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
+            p: 0,
+            overflow: "hidden",
+          },
+        }}
+      >
+        {/* Restaurant header */}
+        <Box sx={{ backgroundColor: ACTIVE_BG, px: 2, py: 1.5 }}>
+          <Typography sx={{ fontSize: 13, fontWeight: 700, color: "#FFF", fontFamily: "Poppins, sans-serif" }}>
+            {restaurant?.name ?? "Restaurant"}
+          </Typography>
+          <Typography sx={{ fontSize: 11, color: "rgba(255,255,255,0.85)", fontFamily: "Poppins, sans-serif", mt: 0.3 }}>
+            {restaurant?.email ?? ""}
+          </Typography>
+        </Box>
+
+        {/* Branch detail */}
+        <Box sx={{ px: 2, py: 1.5 }}>
+          <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1, mb: 1 }}>
+            <StoreIcon sx={{ fontSize: 16, color: "#6B7280", mt: 0.2, flexShrink: 0 }} />
+            <Box>
+              <Typography sx={{ fontSize: 12, fontWeight: 600, color: "#111827", fontFamily: "Poppins, sans-serif" }}>
+                {branchName}
+              </Typography>
+              <Typography sx={{ fontSize: 11, color: "#6B7280", fontFamily: "Poppins, sans-serif" }}>
+                Current Branch
+              </Typography>
+            </Box>
+          </Box>
+
+          {restaurant?.address && (
+            <>
+              <Divider sx={{ my: 1 }} />
+              <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}>
+                <LocationOnIcon sx={{ fontSize: 16, color: "#22C55E", mt: 0.2, flexShrink: 0 }} />
+                <Typography sx={{ fontSize: 12, color: "#374151", fontFamily: "Poppins, sans-serif", lineHeight: 1.5 }}>
+                  {restaurant.address}
+                </Typography>
+              </Box>
+            </>
+          )}
+
+          {restaurant?.phone_number && (
+            <>
+              <Divider sx={{ my: 1 }} />
+              <Typography sx={{ fontSize: 12, color: "#374151", fontFamily: "Poppins, sans-serif" }}>
+                📞 +{restaurant.phone_code} {restaurant.phone_number}
+              </Typography>
+            </>
+          )}
+        </Box>
+      </Popover>
 
       {/* Navigation items */}
       <Box sx={{ flex: 1, py: 0.5 }}>
@@ -181,13 +266,15 @@ export default function HamburgerSidebar(_props: Props) {
             <Box key={item.label}>
               <Box
                 onClick={() => handleClick(item)}
+                title={collapsed ? item.label : undefined}
                 sx={{
                   display: "flex",
                   alignItems: "center",
-                  gap: 1.5,
-                  px: 2,
+                  gap: collapsed ? 0 : 1.5,
+                  px: collapsed ? 0 : 2,
                   py: 1.15,
                   cursor: "pointer",
+                  justifyContent: collapsed ? "center" : "flex-start",
                   backgroundColor: active ? ACTIVE_BG : "transparent",
                   transition: "background 0.12s",
                   "&:hover": {
@@ -208,27 +295,34 @@ export default function HamburgerSidebar(_props: Props) {
                       : "brightness(0) saturate(0) opacity(0.6)",
                   }}
                 />
-                <Typography
-                  sx={{
-                    fontSize: 14,
-                    fontWeight: active ? 600 : 500,
-                    color: active ? "#FFFFFF" : "#111827",
-                    fontFamily: "Poppins, sans-serif",
-                    flex: 1,
-                    lineHeight: 1.4,
-                  }}
-                >
-                  {item.label}
-                </Typography>
-                {hasChildren && (
-                  isExpanded
-                    ? <KeyboardArrowDownIcon sx={{ fontSize: 17, color: active ? "#FFF" : "#9CA3AF" }} />
-                    : <KeyboardArrowRightIcon sx={{ fontSize: 17, color: active ? "#FFF" : "#9CA3AF" }} />
+                {!collapsed && (
+                  <>
+                    <Typography
+                      sx={{
+                        fontSize: 14,
+                        fontWeight: active ? 600 : 500,
+                        color: active ? "#FFFFFF" : "#111827",
+                        fontFamily: "Poppins, sans-serif",
+                        flex: 1,
+                        lineHeight: 1.4,
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {item.label}
+                    </Typography>
+                    {hasChildren && (
+                      isExpanded
+                        ? <KeyboardArrowDownIcon sx={{ fontSize: 17, color: active ? "#FFF" : "#9CA3AF" }} />
+                        : <KeyboardArrowRightIcon sx={{ fontSize: 17, color: active ? "#FFF" : "#9CA3AF" }} />
+                    )}
+                  </>
                 )}
               </Box>
 
-              {/* Sub-items */}
-              {hasChildren && (
+              {/* Sub-items — only when expanded */}
+              {!collapsed && hasChildren && (
                 <Collapse in={isExpanded} timeout={160}>
                   <Box sx={{ backgroundColor: "#F9FAFB" }}>
                     {item.children!.map((sub) => {
@@ -278,40 +372,69 @@ export default function HamburgerSidebar(_props: Props) {
         })}
       </Box>
 
-      {/* Customer Site */}
-      <Box sx={{ px: 2, py: 1.5, borderTop: "1px solid #E5E7EB", flexShrink: 0 }}>
-        <Box
-          onClick={() => window.open("https://demo.bhojpe.in/", "_blank")}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 1.5,
-            px: 2,
-            py: 0.9,
-            border: "1px solid #E5E7EB",
-            borderRadius: "8px",
-            cursor: "pointer",
-            backgroundColor: "#F9FAFB",
-            "&:hover": { backgroundColor: "#F3F4F6" },
-          }}
-        >
-          <img
-            src={customerSiteIcon}
-            alt="Customer Site"
-            style={{ width: 20, height: 20, objectFit: "contain" }}
-          />
-          <Typography
+      {/* Collapse toggle button */}
+      <Box
+        onClick={onToggle}
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: collapsed ? "center" : "flex-end",
+          px: collapsed ? 0 : 1.5,
+          py: 1,
+          borderTop: "1px solid #E5E7EB",
+          cursor: "pointer",
+          flexShrink: 0,
+          "&:hover": { backgroundColor: "#F3F4F6" },
+        }}
+      >
+        {collapsed
+          ? <ChevronRightIcon sx={{ fontSize: 18, color: "#6B7280" }} />
+          : (
+            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+              <ChevronLeftIcon sx={{ fontSize: 18, color: "#6B7280" }} />
+              <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: "Poppins, sans-serif" }}>
+                Collapse
+              </Typography>
+            </Box>
+          )}
+      </Box>
+
+      {/* Customer Site — only when expanded */}
+      {!collapsed && (
+        <Box sx={{ px: 2, py: 1.2, borderTop: "1px solid #E5E7EB", flexShrink: 0 }}>
+          <Box
+            onClick={() => window.open("https://demo.bhojpe.in/", "_blank")}
             sx={{
-              fontSize: 13,
-              fontWeight: 500,
-              color: "#374151",
-              fontFamily: "Poppins, sans-serif",
+              display: "flex",
+              alignItems: "center",
+              gap: 1.5,
+              px: 2,
+              py: 0.9,
+              border: "1px solid #E5E7EB",
+              borderRadius: "8px",
+              cursor: "pointer",
+              backgroundColor: "#F9FAFB",
+              "&:hover": { backgroundColor: "#F3F4F6" },
             }}
           >
-            Customer Site
-          </Typography>
+            <img
+              src={customerSiteIcon}
+              alt="Customer Site"
+              style={{ width: 20, height: 20, objectFit: "contain" }}
+            />
+            <Typography
+              sx={{
+                fontSize: 13,
+                fontWeight: 500,
+                color: "#374151",
+                fontFamily: "Poppins, sans-serif",
+              }}
+            >
+              Customer Site
+            </Typography>
+          </Box>
         </Box>
-      </Box>
+      )}
     </Box>
   );
 }
