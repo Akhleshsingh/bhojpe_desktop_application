@@ -413,9 +413,7 @@ useEffect(() => {
           categories={allCategories}
           selectedCategoryId={selectedCategoryId}
           onSelect={(cat) =>
-            setSelectedCategoryId(
-              selectedCategoryId === cat.id ? null : cat.id
-            )
+            setSelectedCategoryId(cat === null ? null : cat.id === selectedCategoryId ? null : cat.id)
           }
           menus={menus}
           selectedMenuId={selectedMenuId}
@@ -538,12 +536,13 @@ useEffect(() => {
         {/* RIGHT: ORDER PANEL */}
   <Box
   sx={{
-    width: "42%",
-    minWidth: 0,
+    width: { xs: "100%", sm: 360, md: 400, lg: 420 },
+    flexShrink: 0,
     display: "flex",
     flexDirection: "column",
-    overflowX: "auto",
-    overflowY: "hidden !important",
+    overflowX: "hidden",
+    overflowY: "hidden",
+    borderLeft: "1px solid #EBEBEB",
   }}
 >
           <OrderPanel
