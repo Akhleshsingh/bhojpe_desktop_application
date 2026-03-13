@@ -4,7 +4,7 @@ import Footer from "../CommonPages/footer";
 import { TextField } from "@mui/material";
 import "../styles/login.css";
 import Rectangle from "../assets/Rectangle 462 (1).png";
-import videoCall from "../assets/Computer login-bro (1) 1.png";
+import videoCall from "../assets/login-illustration-nobg.png";
 import loginicon from "../assets/image 225 (1).png";
 import loginicon1 from "../assets/image 221.png";
 import passkeyicon from "../assets/image 224.png";
