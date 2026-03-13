@@ -344,6 +344,17 @@ export default function MainDashboard() {
             {(orders ?? []).slice(0, 5).map((order: any, idx: number) => {
               const status = getStatusMeta(order);
               const kotCount = order.kot_count ?? order.kot?.length ?? 0;
+              const waiterName = order.waiter?.name
+                ?? order.delivery_executive?.name
+                ?? order.customer?.name
+                ?? null;
+              const waiterLabel = order.waiter?.name
+                ? "Waiter:"
+                : order.delivery_executive?.name
+                  ? "Delivery:"
+                  : order.customer?.name
+                    ? "Customer:"
+                    : null;
 
               return (
                 <Box
@@ -351,7 +362,7 @@ export default function MainDashboard() {
                   sx={{
                     backgroundColor: "#FFFFFF",
                     border: "1px solid #EBEBEB",
-                    borderRadius: "6px",
+                    borderRadius: "4px",
                     overflow: "hidden",
                     cursor: "pointer",
                     transition: "box-shadow 0.2s",
@@ -359,254 +370,190 @@ export default function MainDashboard() {
                   }}
                   onClick={() =>
                     navigate("/menudashboard", {
-                      state: {
-                        activeOrder: order,
-                        mode: "kot",
-                        tableId: order.table_id,
-                      },
+                      state: { activeOrder: order, mode: "kot", tableId: order.table_id },
                     })
                   }
                 >
-                  {/* Top row: number circle + order info + KOT count + buttons */}
-                  <Box sx={{ display: "flex", alignItems: "stretch" }}>
-                    {/* Numbered circle */}
+                  {/* ── Header row ───────────────────────────────────────── */}
+                  <Box sx={{ display: "flex", alignItems: "stretch", borderBottom: "1px solid #F0F0F0" }}>
+                    {/* Salmon number box */}
                     <Box
                       sx={{
-                        width: 48,
-                        backgroundColor: "#F5F5F5",
+                        width: 52,
+                        minHeight: 56,
+                        backgroundColor: "#FAC9BB",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
                         flexShrink: 0,
-                        borderRight: "1px solid #EBEBEB",
+                        borderRight: "1px solid #F0D0C8",
                       }}
                     >
                       <Typography
-                        sx={{
-                          fontWeight: 700,
-                          fontSize: 14,
-                          color: "#555",
-                          fontFamily: "Poppins, sans-serif",
-                        }}
+                        sx={{ fontWeight: 700, fontSize: 15, color: "#7A3020", fontFamily: "Poppins, sans-serif" }}
                       >
                         {idx + 1}
                       </Typography>
                     </Box>
 
-                    {/* Main content */}
-                    <Box sx={{ flex: 1, p: 1.5 }}>
-                      {/* Row 1: order number + KOT count + badges */}
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          mb: 0.4,
-                        }}
-                      >
-                        <Box>
-                          <Typography
-                            sx={{
-                              fontWeight: 700,
-                              fontSize: 13,
-                              fontFamily: "Poppins, sans-serif",
-                              color: "#111",
-                            }}
-                          >
-                            {order.show_formatted_order_number ??
-                              `Order #${order.order_number}`}
-                          </Typography>
-                          <Typography
-                            sx={{ fontSize: 11, color: "#8A8A8A", fontFamily: "Poppins, sans-serif" }}
-                          >
-                            {order.order_type?.order_type_name}
-                          </Typography>
-                        </Box>
-
-                        <Box
-                          sx={{ display: "flex", alignItems: "center", gap: 0.8 }}
-                        >
-                          {kotCount > 0 && (
-                            <Typography
-                              sx={{
-                                fontSize: 11,
-                                color: "#777",
-                                fontFamily: "Poppins, sans-serif",
-                              }}
-                            >
-                              {kotCount} KOT
-                            </Typography>
-                          )}
-                          {kotCount > 0 && (
-                            <Box
-                              sx={{
-                                fontSize: 10,
-                                fontWeight: 700,
-                                px: 1,
-                                py: "2px",
-                                borderRadius: "3px",
-                                backgroundColor: "#FFF4D6",
-                                color: "#C2A429",
-                                fontFamily: "Poppins, sans-serif",
-                              }}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                navigate(`/kitchens/all-kitchens-kot`);
-                              }}
-                            >
-                              KOT
-                            </Box>
-                          )}
-                          <Box
-                            sx={{
-                              fontSize: 10,
-                              fontWeight: 700,
-                              px: 1,
-                              py: "2px",
-                              borderRadius: "3px",
-                              backgroundColor: "#E8F1FF",
-                              color: "#1E6BD6",
-                              fontFamily: "Poppins, sans-serif",
-                            }}
-                          >
-                            POS
-                          </Box>
-                        </Box>
-                      </Box>
-
-                      {/* Order date */}
+                    {/* Order info */}
+                    <Box sx={{ flex: 1, px: 1.5, py: 1 }}>
                       <Typography
-                        sx={{
-                          fontSize: 11,
-                          color: "#999",
-                          mb: 0.8,
-                          fontFamily: "Poppins, sans-serif",
-                        }}
+                        sx={{ fontSize: 11, color: "#AAAAAA", fontFamily: "Poppins, sans-serif", lineHeight: 1.2 }}
                       >
-                        Order Date:{" "}
-                        {dayjs(order.created_at).format("DD MMM, hh:mm A")}
+                        --
                       </Typography>
-
-                      {/* Items */}
-                      {(order.kot?.[0]?.items ?? [])
-                        .slice(0, 2)
-                        .map((item: any) => (
-                          <Typography
-                            key={item.id}
-                            sx={{
-                              fontSize: 12,
-                              color: "#444",
-                              fontFamily: "Poppins, sans-serif",
-                            }}
-                          >
-                            {getItemName(item)} × {item.quantity}
-                          </Typography>
-                        ))}
-
-                      <Divider sx={{ my: 1 }} />
-
-                      {/* Bottom row: price + status | waiter + New KOT */}
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                        }}
+                      <Typography
+                        sx={{ fontWeight: 700, fontSize: 13, color: "#111", fontFamily: "Poppins, sans-serif", lineHeight: 1.4 }}
                       >
-                        <Box>
-                          <Typography
-                            sx={{
-                              fontWeight: 700,
-                              fontSize: 15,
-                              fontFamily: "Poppins, sans-serif",
-                            }}
-                          >
-                            ₹{order.total}
-                          </Typography>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 0.6,
-                            }}
-                          >
-                            <Box
-                              sx={{
-                                width: 6,
-                                height: 6,
-                                borderRadius: "50%",
-                                backgroundColor: status.color,
-                                flexShrink: 0,
-                              }}
-                            />
-                            <Typography
-                              sx={{
-                                fontSize: 11,
-                                fontWeight: 600,
-                                color: status.color,
-                                fontFamily: "Poppins, sans-serif",
-                              }}
-                            >
-                              {status.label}
-                            </Typography>
-                          </Box>
-                        </Box>
+                        {order.show_formatted_order_number ?? `Order #${order.order_number}`}
+                      </Typography>
+                      <Typography
+                        sx={{ fontSize: 11, color: "#8A8A8A", fontFamily: "Poppins, sans-serif" }}
+                      >
+                        {order.order_type?.order_type_name}
+                      </Typography>
+                    </Box>
 
+                    {/* KOT count + action badges */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "flex-end",
+                        justifyContent: "center",
+                        gap: 0.5,
+                        px: 1.5,
+                        py: 1,
+                        flexShrink: 0,
+                      }}
+                    >
+                      {kotCount > 0 && (
+                        <Typography sx={{ fontSize: 10, color: "#888", fontFamily: "Poppins, sans-serif" }}>
+                          {kotCount} KOT
+                        </Typography>
+                      )}
+                      <Box sx={{ display: "flex", gap: 0.6 }}>
+                        {/* POS badge */}
                         <Box
                           sx={{
                             display: "flex",
-                            flexDirection: "column",
-                            alignItems: "flex-end",
-                            gap: 0.5,
+                            alignItems: "center",
+                            gap: 0.3,
+                            fontSize: 10,
+                            fontWeight: 600,
+                            px: 1,
+                            py: "3px",
+                            border: "1px solid #4B9DEC",
+                            borderRadius: "3px",
+                            color: "#4B9DEC",
+                            fontFamily: "Poppins, sans-serif",
                           }}
                         >
-                          <Box
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              navigate("/menudashboard", {
-                                state: {
-                                  activeOrder: order,
-                                  mode: "kot",
-                                  tableId: order.table_id,
-                                },
-                              });
-                            }}
-                            sx={{
-                              fontSize: 11,
-                              fontWeight: 600,
-                              px: 1.5,
-                              py: "3px",
-                              border: "1px solid #D0D0D0",
-                              borderRadius: "4px",
-                              backgroundColor: "#F8F8F8",
-                              cursor: "pointer",
-                              fontFamily: "Poppins, sans-serif",
-                              "&:hover": {
-                                backgroundColor: "#EBF4DD",
-                                borderColor: "#5A7863",
-                              },
-                            }}
-                          >
-                            New KOT
-                          </Box>
-                          <Typography
-                            sx={{
-                              fontSize: 11,
-                              color: "#777",
-                              fontFamily: "Poppins, sans-serif",
-                            }}
-                          >
-                            {order.waiter?.name
-                              ? `Waiter: ${order.waiter.name}`
-                              : order.delivery_executive?.name
-                                ? `Delivery: ${order.delivery_executive.name}`
-                                : order.customer?.name
-                                  ? `Customer: ${order.customer.name}`
-                                  : "—"}
-                          </Typography>
+                          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#4B9DEC" strokeWidth="2.5">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+                            <circle cx="12" cy="9" r="2.5"/>
+                          </svg>
+                          POS
+                        </Box>
+                        {/* KOT badge */}
+                        <Box
+                          sx={{
+                            fontSize: 10,
+                            fontWeight: 600,
+                            px: 1,
+                            py: "3px",
+                            border: "1px solid #C2A429",
+                            borderRadius: "3px",
+                            color: "#C2A429",
+                            fontFamily: "Poppins, sans-serif",
+                          }}
+                          onClick={(e) => { e.stopPropagation(); navigate("/kitchens/all-kitchens-kot"); }}
+                        >
+                          KOT
                         </Box>
                       </Box>
                     </Box>
+                  </Box>
+
+                  {/* ── Order date row ────────────────────────────────────── */}
+                  <Box sx={{ px: 1.5, py: 0.8, borderBottom: "1px solid #F0F0F0" }}>
+                    <Typography
+                      sx={{ fontSize: 11, color: "#999", fontFamily: "Poppins, sans-serif" }}
+                    >
+                      Order Date: {dayjs(order.created_at).format("DD MMM, YYYY hh:mm A")}
+                    </Typography>
+                  </Box>
+
+                  {/* ── Footer row ────────────────────────────────────────── */}
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      px: 1.5,
+                      py: 1,
+                      gap: 1,
+                    }}
+                  >
+                    {/* Price */}
+                    <Typography
+                      sx={{ fontWeight: 700, fontSize: 14, fontFamily: "Poppins, sans-serif", minWidth: 72 }}
+                    >
+                      ₹{order.total}
+                    </Typography>
+
+                    {/* Status dot + label */}
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, flex: 1 }}>
+                      <Box
+                        sx={{ width: 7, height: 7, borderRadius: "50%", backgroundColor: status.color, flexShrink: 0 }}
+                      />
+                      <Typography
+                        sx={{ fontSize: 11, fontWeight: 600, color: status.color, fontFamily: "Poppins, sans-serif" }}
+                      >
+                        {status.label}
+                      </Typography>
+                    </Box>
+
+                    {/* New KOT button */}
+                    <Box
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate("/menudashboard", {
+                          state: { activeOrder: order, mode: "kot", tableId: order.table_id },
+                        });
+                      }}
+                      sx={{
+                        fontSize: 11,
+                        fontWeight: 600,
+                        px: 1.5,
+                        py: "4px",
+                        border: "1px solid #D0D0D0",
+                        borderRadius: "4px",
+                        backgroundColor: "#FFF",
+                        cursor: "pointer",
+                        fontFamily: "Poppins, sans-serif",
+                        whiteSpace: "nowrap",
+                        "&:hover": { backgroundColor: "#F5F5F5" },
+                      }}
+                    >
+                      New KOT
+                    </Box>
+
+                    {/* Waiter info — stacked label + name */}
+                    {waiterName && (
+                      <Box sx={{ textAlign: "right", flexShrink: 0 }}>
+                        <Typography
+                          sx={{ fontSize: 10, color: "#999", fontFamily: "Poppins, sans-serif", lineHeight: 1.2 }}
+                        >
+                          {waiterLabel}
+                        </Typography>
+                        <Typography
+                          sx={{ fontSize: 11, fontWeight: 600, color: "#444", fontFamily: "Poppins, sans-serif", lineHeight: 1.3 }}
+                        >
+                          {waiterName}
+                        </Typography>
+                      </Box>
+                    )}
                   </Box>
                 </Box>
               );
