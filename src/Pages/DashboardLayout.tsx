@@ -1,7 +1,6 @@
 import { Box } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Header from "../CommonPages/header";
 import SecondHeader from "../CommonPages/secondheader";
 import HamburgerSidebar from "../CommonPages/HamburgerSidebar";
 import { useAuth } from "../context/AuthContext";
@@ -13,14 +12,12 @@ export default function DashboardLayout({
   children: React.ReactNode;
   noPad?: boolean;
 }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const { branchData } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     const offlineLogin = localStorage.getItem("offline_login");
-
     if (!token && !offlineLogin) {
       navigate("/", { replace: true });
     }
@@ -28,12 +25,10 @@ export default function DashboardLayout({
 
   const orderTypes = useMemo(
     () =>
-      branchData?.data?.order_types?.filter((o: any) => o.is_active === 1) ??
-      [],
+      (branchData as any)?.data?.order_types?.filter((o: any) => o.is_active === 1) ?? [],
     [branchData],
   );
 
-  // ✅ default from backend
   const [orderType, setOrderType] = useState<string>("");
 
   useEffect(() => {
@@ -45,12 +40,13 @@ export default function DashboardLayout({
   return (
     <Box
       sx={{
-        height: "100vh", // 🔥 fixed viewport height
+        height: "100vh",
         display: "flex",
         flexDirection: "column",
         backgroundColor: "#F6F6F6",
       }}
     >
+      {/* Top header — full width, sticky */}
       <Box
         sx={{
           position: "sticky",
@@ -63,12 +59,14 @@ export default function DashboardLayout({
           orderType={orderType}
           setOrderType={setOrderType}
           ordersCount={0}
-          sidebarOpen={sidebarOpen}
-          setSidebarOpen={setSidebarOpen}
+          sidebarOpen={false}
+          setSidebarOpen={() => {}}
           tables={undefined}
           waiters={undefined}
         />
       </Box>
+
+      {/* Below header: persistent sidebar + content */}
       <Box
         sx={{
           flex: 1,
@@ -76,11 +74,10 @@ export default function DashboardLayout({
           overflow: "hidden",
         }}
       >
-        {/* Sidebar */}
-        <HamburgerSidebar
-          open={sidebarOpen}
-          onClose={() => setSidebarOpen(false)}
-        />
+        {/* Persistent nav sidebar */}
+        <HamburgerSidebar />
+
+        {/* Main content */}
         <Box
           sx={{
             flex: 1,
@@ -90,9 +87,7 @@ export default function DashboardLayout({
             flexDirection: "column",
             ...(noPad
               ? { overflow: "hidden" }
-              : { p: 1, overflowY: "auto" }),
-            transition: "margin-left 0.3s ease",
-            marginLeft: sidebarOpen ? "280px" : "0px",
+              : { p: 1.5, overflowY: "auto" }),
           }}
         >
           {children}
