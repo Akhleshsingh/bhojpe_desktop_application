@@ -48,6 +48,8 @@ import ordericon3 from "../assets/image 330 (2).png";
 import ordericon4 from '../assets/image 331 (1).png';
 import ordericon5 from '../assets/image 332 (1).png';
 import SettingsIcon from "@mui/icons-material/Settings";
+import LocalOfferOutlinedIcon from "@mui/icons-material/LocalOfferOutlined";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import hold from "../assets/icons/Hold.png";
 import kot from "../assets/icons/KOT.png";
 import draft from "../assets/icons/Save as draft.png";
@@ -2824,128 +2826,167 @@ gap: 1,
 </Box>
 
       {discountOpen && (
-        <Box
-          sx={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.4)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 4000,
-          }}
-        >
-          <Box
-            sx={{
-              width: 320,
-              background: "#fff",
-              p: 3,
-            }}
-          >
-      <Box
-  sx={{
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    mb: 2,
-  }}
->
-  <Typography fontWeight={700}>
-    Apply Discount
-  </Typography>
-  <Box
-    onClick={() => {
-      setDiscountOpen(false);
-      setDiscountValue(0);
-      setDiscountType("fixed");
-    }}
-    sx={{
-      cursor: "pointer",
-      fontSize: 18,
-      fontWeight: 700,
-      lineHeight: 1,
-      color: "#555",
-      "&:hover": { color: "#000" },
-    }}
-  >
-    ✕
-  </Box>
-</Box>
+        <Box sx={{
+          position: "fixed", inset: 0,
+          background: "rgba(0,0,0,0.5)",
+          backdropFilter: "blur(4px)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          zIndex: 4000,
+        }}>
+          <Box sx={{
+            width: 380,
+            backgroundColor: "#FFFFFF",
+            borderRadius: "16px",
+            boxShadow: "0 24px 80px rgba(0,0,0,0.25)",
+            overflow: "hidden",
+            fontFamily: "Poppins, sans-serif",
+          }}>
+            {/* Header */}
+            <Box sx={{
+              background: "linear-gradient(135deg,#1F2937 0%,#374151 100%)",
+              px: 2.5, py: 2,
+              display: "flex", alignItems: "center", justifyContent: "space-between",
+            }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1.2 }}>
+                <Box sx={{
+                  width: 36, height: 36, borderRadius: "8px",
+                  background: "rgba(232,53,58,.2)",
+                  border: "1px solid rgba(232,53,58,.35)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}>
+                  <LocalOfferOutlinedIcon sx={{ fontSize: 18, color: "#FCA5A5" }} />
+                </Box>
+                <Box>
+                  <Typography sx={{ fontSize: 15, fontWeight: 700, color: "#FFFFFF", fontFamily: "Poppins, sans-serif" }}>
+                    Apply Discount
+                  </Typography>
+                  <Typography sx={{ fontSize: 11, color: "#9CA3AF", fontFamily: "Poppins, sans-serif" }}>
+                    Order total: ₹{finalTotal.toFixed(2)}
+                  </Typography>
+                </Box>
+              </Box>
+              <IconButton size="small"
+                onClick={() => { setDiscountOpen(false); setDiscountValue(0); setDiscountType("fixed"); }}
+                sx={{ color: "#9CA3AF", "&:hover": { backgroundColor: "rgba(255,255,255,0.08)" } }}>
+                <CloseRoundedIcon sx={{ fontSize: 18 }} />
+              </IconButton>
+            </Box>
 
-<Box sx={{ display: "flex", gap: 1, mb: 2 }}>
- <Button
-  fullWidth
-  variant={discountType === "fixed" ? "contained" : "outlined"}
-  sx={{
-    bgcolor: discountType === "fixed" ? "#C5D89D" : "#E0E0E0",
-    color: "#000",
-    fontWeight: 600,
-    textTransform: "none",
-  }}
-  onClick={() => setDiscountType("fixed")}
->
-  Fixed (₹)
-</Button>
+            {/* Body */}
+            <Box sx={{ p: 2.5, display: "flex", flexDirection: "column", gap: 2 }}>
 
-  <Button
-    fullWidth
-    variant={discountType === "percent" ? "contained" : "outlined"}
-    sx={{
-      bgcolor: discountType === "percent" ? "#C5D89D" : "#E0E0E0",
-      color: "#000",
-      fontWeight: 600,
-      textTransform: "none",
-    }}
-    onClick={() => setDiscountType("percent")}
-  >
-    Percentage (%)
-  </Button>
-</Box>
-<input
-  type="number"
-  placeholder={
-    discountType === "fixed"
-      ? "Enter flat discount amount"
-      : "Enter discount percentage"
-  }
-  value={discountValue}
-  onChange={(e) => setDiscountValue(Number(e.target.value))}
-  style={{
-    width: "100%",
-    height: 40,
-    padding: "0 10px",
-    fontSize: 14,
-    border: "1px solid #ccc",
-    marginBottom: 16,
-  }}
-/>
-<Box
-  sx={{
-    display: "flex",
-    justifyContent: "flex-end",
-    gap: 1,
-  }}
->
-  <Button
-    variant="outlined"
-    onClick={() => {
-      setDiscountOpen(false);
-      setDiscountValue(0);
-      setDiscountType("fixed");
-    }}
-  >
-    Cancel
-  </Button>
+              {/* Type toggle */}
+              <Box sx={{ display: "flex", border: "1.5px solid #E5E7EB", borderRadius: "10px", overflow: "hidden", height: 40 }}>
+                {[{ v: "fixed", l: "Fixed (₹)" }, { v: "percent", l: "Percentage (%)" }].map(({ v, l }) => (
+                  <Box key={v} onClick={() => { setDiscountType(v as any); setDiscountValue(0); }}
+                    sx={{
+                      flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
+                      cursor: "pointer", fontSize: 13, fontWeight: 700, fontFamily: "Poppins, sans-serif",
+                      backgroundColor: discountType === v ? "#E8353A" : "#FFFFFF",
+                      color: discountType === v ? "#FFFFFF" : "#6B7280",
+                      transition: "all .15s",
+                      "&:hover": { backgroundColor: discountType === v ? "#c62a2f" : "#F9FAFB" },
+                    }}
+                  >
+                    {l}
+                  </Box>
+                ))}
+              </Box>
 
-  <Button
-    variant="contained"
-    sx={{ bgcolor: "#4BAC51" }}
-    onClick={applyDiscount}
-  >
-    Apply
-  </Button>
-</Box>
+              {/* Quick preset buttons */}
+              <Box>
+                <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#9CA3AF", fontFamily: "Poppins, sans-serif", mb: 0.8, textTransform: "uppercase", letterSpacing: 0.5 }}>
+                  Quick {discountType === "percent" ? "Percentages" : "Amounts"}
+                </Typography>
+                <Box sx={{ display: "flex", gap: 1 }}>
+                  {(discountType === "percent" ? [5, 10, 15, 20] : [50, 100, 150, 200]).map(v => (
+                    <Box key={v} onClick={() => setDiscountValue(v)}
+                      sx={{
+                        flex: 1, height: 36, borderRadius: "8px",
+                        border: `1.5px solid ${discountValue === v ? "#E8353A" : "#E5E7EB"}`,
+                        backgroundColor: discountValue === v ? "#FEF2F2" : "#F9FAFB",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        cursor: "pointer", transition: "all .12s",
+                        "&:hover": { borderColor: "#E8353A", backgroundColor: "#FEF2F2" },
+                      }}>
+                      <Typography sx={{ fontSize: 12, fontWeight: 700, fontFamily: "Poppins, sans-serif", color: discountValue === v ? "#E8353A" : "#374151" }}>
+                        {discountType === "percent" ? `${v}%` : `₹${v}`}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Box>
+              </Box>
 
+              {/* Input */}
+              <Box>
+                <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#9CA3AF", fontFamily: "Poppins, sans-serif", mb: 0.8, textTransform: "uppercase", letterSpacing: 0.5 }}>
+                  {discountType === "fixed" ? "Flat Discount Amount (₹)" : "Discount Percentage (%)"}
+                </Typography>
+                <TextField
+                  fullWidth type="number"
+                  placeholder={discountType === "fixed" ? "e.g. 50" : "e.g. 10"}
+                  value={discountValue || ""}
+                  onChange={e => setDiscountValue(Number(e.target.value))}
+                  InputProps={{
+                    startAdornment: (
+                      <Box sx={{ mr: 0.5, color: "#9CA3AF", fontFamily: "Poppins, sans-serif", fontSize: 18, fontWeight: 700 }}>
+                        {discountType === "fixed" ? "₹" : "%"}
+                      </Box>
+                    ),
+                  }}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      height: 52, fontSize: 22, fontWeight: 700, fontFamily: "Poppins, sans-serif",
+                      borderRadius: "10px", backgroundColor: "#F9FAFB",
+                      "& fieldset": { borderColor: "#E5E7EB" },
+                      "&:hover fieldset": { borderColor: "#9CA3AF" },
+                      "&.Mui-focused fieldset": { borderColor: "#E8353A" },
+                    },
+                  }}
+                />
+                {/* Preview */}
+                {discountValue > 0 && (
+                  <Box sx={{ mt: 1, display: "flex", justifyContent: "space-between", px: 1 }}>
+                    <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: "Poppins, sans-serif" }}>
+                      Discount applied
+                    </Typography>
+                    <Typography sx={{ fontSize: 13, fontWeight: 700, color: "#16A34A", fontFamily: "Poppins, sans-serif" }}>
+                      -{discountType === "fixed"
+                        ? `₹${discountValue}`
+                        : `₹${((finalTotal * discountValue) / 100).toFixed(2)}`}
+                    </Typography>
+                  </Box>
+                )}
+              </Box>
+
+              {/* Footer buttons */}
+              <Box sx={{ display: "flex", gap: 1.2, pt: 0.5, borderTop: "1px solid #F3F4F6" }}>
+                <Button fullWidth variant="outlined"
+                  onClick={() => { setDiscountOpen(false); setDiscountValue(0); setDiscountType("fixed"); }}
+                  sx={{
+                    textTransform: "none", fontSize: 13, fontWeight: 600, fontFamily: "Poppins, sans-serif",
+                    height: 42, borderRadius: "10px",
+                    borderColor: "#D1D5DB", color: "#374151",
+                    "&:hover": { borderColor: "#9CA3AF", backgroundColor: "#F9FAFB" },
+                  }}>
+                  Cancel
+                </Button>
+                <Button fullWidth variant="contained"
+                  disabled={!discountValue || discountValue <= 0}
+                  onClick={applyDiscount}
+                  sx={{
+                    textTransform: "none", fontSize: 13, fontWeight: 700, fontFamily: "Poppins, sans-serif",
+                    height: 42, borderRadius: "10px",
+                    background: discountValue > 0 ? "linear-gradient(135deg,#16A34A,#15803D)" : "#F3F4F6",
+                    color: discountValue > 0 ? "#FFF" : "#D1D5DB",
+                    boxShadow: discountValue > 0 ? "0 4px 12px rgba(22,163,74,.3)" : "none",
+                    "&:hover": { background: discountValue > 0 ? "linear-gradient(135deg,#15803D,#166534)" : "#F3F4F6" },
+                    "&.Mui-disabled": { background: "#F3F4F6", color: "#D1D5DB" },
+                  }}>
+                  Apply Discount
+                </Button>
+              </Box>
+            </Box>
           </Box>
         </Box>
       )}
