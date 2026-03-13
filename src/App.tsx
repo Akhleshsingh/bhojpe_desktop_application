@@ -45,6 +45,7 @@ import StaffPage from "./CommonPages/StaffPage";
 import PrintReceiptPage from "./components/PrintReceiptPage";
 import { Toaster } from "react-hot-toast";
 import AllKitchenKot from "./CommonPages/AllKitchenKot";
+import DeliveryExecutivesPage from "./CommonPages/DeliveryExecutivesPage";
 export default function App() {
   const [savedOrders, setSavedOrders] = useState<Order[]>([]);
 
@@ -289,6 +290,14 @@ export default function App() {
                               element={
                                 <DashboardLayout>
                                   <Updates />
+                                </DashboardLayout>
+                              }
+                            />
+                            <Route
+                              path="/delivery-executives"
+                              element={
+                                <DashboardLayout>
+                                  <DeliveryExecutivesPage />
                                 </DashboardLayout>
                               }
                             />

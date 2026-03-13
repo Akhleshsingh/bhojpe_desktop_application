@@ -12,7 +12,8 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 
 import dashboardicon from "../assets/image 359.png";
 import posicon from "../assets/image 357.png";
-import operationsicon from "../assets/image 234 (1).png";
+import deliveryExecIcon from "../assets/image 358 (1).png";
+import ordersIcon from "../assets/ordernumber.png";
 import waiterreq from "../assets/image 235 (1).png";
 import reservicon from "../assets/image 360.png";
 import stafficon from "../assets/staff.png";
@@ -41,7 +42,8 @@ const COLLAPSED_W = 56;
 const STATIC_MENU_ITEMS: MenuItem[] = [
   { label: "Dashboard", icon: dashboardicon, path: "/main-dashboard" },
   { label: "POS", icon: posicon, path: "/menudashboard" },
-  { label: "Operations", icon: operationsicon, path: "/operations" },
+  { label: "Orders", icon: ordersIcon, path: "/ordershistory" },
+  { label: "Delivery Executive", icon: deliveryExecIcon, path: "/delivery-executives" },
   { label: "Waiter Requests", icon: waiterreq, path: "/waiter-requests" },
   { label: "Reservations", icon: reservicon, path: "/reservations" },
   { label: "Customers", icon: customerIcon, path: "/customers" },
