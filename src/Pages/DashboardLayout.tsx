@@ -11,7 +11,7 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const { branchData } = useAuth();
   const navigate = useNavigate();
 
@@ -74,7 +74,7 @@ export default function DashboardLayout({
           overflow: "hidden",
         }}
       >
-        {/* Sidebar */}
+        {/* Sidebar — always visible */}
         <HamburgerSidebar
           open={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
@@ -83,9 +83,8 @@ export default function DashboardLayout({
           sx={{
             flex: 1,
             p: 1,
-            transition: "margin-left 0.3s ease",
-            marginLeft: sidebarOpen ? "280px" : "0px",
-            overflowY: "auto", // 🔥 scroll only here
+            overflowY: "auto",
+            minWidth: 0,
           }}
         >
           {children}

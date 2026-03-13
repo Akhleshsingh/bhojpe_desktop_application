@@ -1,88 +1,153 @@
-import React, { useState } from "react";
-import { Box, Button } from "@mui/material";
-import { Dropdown } from "react-bootstrap";
+import React, { useState, useRef } from "react";
+import {
+  Box,
+  Button,
+  Popover,
+  List,
+  ListItem,
+  ListItemText,
+  TextField,
+  Typography,
+  InputAdornment,
+} from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 import { useWaiters } from "../context/WaitersContext";
 
-export default function AddWaiterModal({ open, onClose, onSave }: any) {
+export default function AddWaiterModal({ open, onClose, onSave, anchorEl }: any) {
   const { waiters } = useWaiters();
   const [selectedWaiter, setSelectedWaiter] = useState<any>(null);
+  const [query, setQuery] = useState("");
 
-  if (!open) return null;
+  const filtered = waiters.filter((w: any) =>
+    w.name?.toLowerCase().includes(query.toLowerCase())
+  );
+
+  const handleSelect = (w: any) => {
+    setSelectedWaiter(w);
+  };
 
   const handleSave = () => {
     if (selectedWaiter) {
       onSave(selectedWaiter);
+      setSelectedWaiter(null);
+      setQuery("");
       onClose();
     }
   };
 
+  const handleClose = () => {
+    setSelectedWaiter(null);
+    setQuery("");
+    onClose();
+  };
+
   return (
-    <Box
-      sx={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(0,0,0,0.4)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        zIndex: 4000,
+    <Popover
+      open={open}
+      anchorEl={anchorEl}
+      onClose={handleClose}
+      anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+      transformOrigin={{ vertical: "top", horizontal: "left" }}
+      PaperProps={{
+        sx: {
+          width: 260,
+          borderRadius: "10px",
+          boxShadow: "0px 8px 24px rgba(0,0,0,0.15)",
+          overflow: "hidden",
+        },
       }}
     >
-      <Box
-        sx={{
-          width: 320,
-          background: "#fff",
-          p: 2,
-          borderRadius: "8px",
-        }}
-      >
-        {/* WAITER DROPDOWN */}
-        <Dropdown>
-          <Dropdown.Toggle
-            variant="outline-secondary"
-            style={{
-              width: "100%",
-              height: "36px",
-              textAlign: "left",
-            }}
-          >
-            {selectedWaiter ? selectedWaiter.name : "Select Waiter"}
-          </Dropdown.Toggle>
+      <Box sx={{ p: 1.5 }}>
+        <TextField
+          fullWidth
+          size="small"
+          placeholder="Search waiter..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          autoFocus
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon sx={{ fontSize: 16, color: "#9E9E9E" }} />
+              </InputAdornment>
+            ),
+          }}
+          sx={{
+            mb: 0.5,
+            "& .MuiOutlinedInput-root": { fontSize: 13, borderRadius: "8px" },
+          }}
+        />
 
-          <Dropdown.Menu
-            style={{
-              width: "100%",
-              maxHeight: "200px",
-              overflowY: "auto",
-            }}
-          >
-            {waiters.map((w: any) => (
-              <Dropdown.Item
+        <List dense disablePadding sx={{ maxHeight: 200, overflowY: "auto" }}>
+          {filtered.length === 0 ? (
+            <ListItem>
+              <ListItemText
+                primary={
+                  <Typography fontSize={13} color="text.secondary">
+                    No waiters found
+                  </Typography>
+                }
+              />
+            </ListItem>
+          ) : (
+            filtered.map((w: any) => (
+              <ListItem
                 key={w.id}
-                onClick={() => setSelectedWaiter(w)}
+                onClick={() => handleSelect(w)}
+                sx={{
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                  bgcolor:
+                    selectedWaiter?.id === w.id ? "#FFF0F0" : "transparent",
+                  "&:hover": { bgcolor: "#F5F5F5" },
+                  py: 0.7,
+                }}
               >
-                {w.name}
-              </Dropdown.Item>
-            ))}
-          </Dropdown.Menu>
-        </Dropdown>
+                <ListItemText
+                  primary={
+                    <Typography
+                      fontSize={13}
+                      fontWeight={selectedWaiter?.id === w.id ? 600 : 400}
+                      color={
+                        selectedWaiter?.id === w.id ? "#E8353A" : "inherit"
+                      }
+                    >
+                      {w.name}
+                    </Typography>
+                  }
+                />
+              </ListItem>
+            ))
+          )}
+        </List>
 
-        {/* ACTIONS */}
-        <Box sx={{ display: "flex", gap: 1, mt: 2 }}>
+        <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
           <Button
             variant="contained"
             fullWidth
+            size="small"
             disabled={!selectedWaiter}
             onClick={handleSave}
+            sx={{
+              bgcolor: "#E8353A",
+              "&:hover": { bgcolor: "#c62a2f" },
+              textTransform: "none",
+              fontSize: 13,
+              fontWeight: 600,
+            }}
           >
             Save
           </Button>
-
-          <Button fullWidth onClick={onClose}>
+          <Button
+            fullWidth
+            size="small"
+            onClick={handleClose}
+            sx={{ textTransform: "none", fontSize: 13, color: "#555" }}
+          >
             Cancel
           </Button>
         </Box>
       </Box>
-    </Box>
+    </Popover>
   );
 }

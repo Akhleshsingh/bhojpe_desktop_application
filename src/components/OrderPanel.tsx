@@ -245,6 +245,7 @@ const effectiveItems = React.useMemo(() => {
 }, [activeOrder]);
 const [isEditMode, setIsEditMode] = useState(false);
   const [waiterModalOpen, setWaiterModalOpen] = useState(false);
+  const [waiterAnchorEl, setWaiterAnchorEl] = useState<HTMLElement | null>(null);
   const [tableModalOpen, setTableModalOpen] = useState(false);
   const [selectedWaiter, setSelectedWaiter] = useState<any>(null);
 const [selectedDeliveryExecutive, setSelectedDeliveryExecutive] =
@@ -2265,7 +2266,10 @@ console.log(
   <img src={waiter} style={{ width: 25 , height : 25 ,marginTop :4}}/>
   <Box
     sx={headerTextStyle}
-    onClick={() => setWaiterModalOpen(true)}
+    onClick={(e) => {
+      setWaiterAnchorEl(e.currentTarget);
+      setWaiterModalOpen(true);
+    }}
   >
     Waiter
     {selectedWaiter?.name && (
@@ -3332,16 +3336,16 @@ onPaymentSuccess={async (paymentData) => {
     setCustomerModalOpen(false);
   }}
 />   
-      {waiterModalOpen && (
-        <AddWaiterModal
-          open={waiterModalOpen}
-          onClose={() => setWaiterModalOpen(false)}
-          onSave={(waiter: any) => {
-            setSelectedWaiter(waiter);
-            setWaiterModalOpen(false);
-          }}
-        />
-      )}
+      <AddWaiterModal
+        open={waiterModalOpen}
+        anchorEl={waiterAnchorEl}
+        onClose={() => { setWaiterModalOpen(false); setWaiterAnchorEl(null); }}
+        onSave={(w: any) => {
+          setSelectedWaiter(w);
+          setWaiterModalOpen(false);
+          setWaiterAnchorEl(null);
+        }}
+      />
       {deliveryExecModalOpen && (
   <Box
     sx={{

@@ -93,7 +93,9 @@ export const CustomersProvider = ({
         setLoading(true);
         const data = await callCustomerAPI({
           restaurant_id,
-          branch_id
+          branch_id,
+          keyword: keyword.trim(),
+          page: 1,
         });
         return data;
       } catch (err) {
