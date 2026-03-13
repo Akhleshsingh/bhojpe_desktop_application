@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
   Box, Typography, TextField, Button, IconButton, Select, MenuItem,
-  Drawer, CircularProgress, InputAdornment, Tooltip, Chip,
+  Drawer, CircularProgress, InputAdornment, Tooltip,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import PersonAddOutlinedIcon from "@mui/icons-material/PersonAddOutlined";
@@ -33,6 +33,11 @@ interface Staff {
   branch_id: number;
   role_id: number;
   role_name: string;
+}
+
+interface Role {
+  id: number;
+  display_name: string;
 }
 
 interface FormState {
@@ -76,6 +81,7 @@ export default function StaffPage() {
   const { branchData } = useAuth();
 
   const [staff, setStaff]         = useState<Staff[]>([]);
+  const [roles, setRoles]         = useState<Role[]>([]);
   const [loading, setLoading]     = useState(false);
   const [saving, setSaving]       = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
@@ -93,7 +99,22 @@ export default function StaffPage() {
   const restaurant_id = branchData?.data?.restaurant_id;
   const phone_code    = String(branchData?.data?.restaurant?.phone_code ?? "91");
 
-  /* ── FETCH ── */
+  /* ── FETCH ROLES ── */
+  const fetchRoles = useCallback(async () => {
+    if (!token) return;
+    try {
+      const res = await fetch("http://bhojpe.in/api/v1/restaurant-roles", {
+        headers: { Authorization: `Bearer ${token}` },
+        signal: AbortSignal.timeout(10000),
+      });
+      const data = await res.json();
+      if (data.status && Array.isArray(data.roles)) {
+        setRoles(data.roles);
+      }
+    } catch { /* silent – roles are optional */ }
+  }, [token]);
+
+  /* ── FETCH STAFF ── */
   const fetchStaff = useCallback(async () => {
     if (!token) return;
     setLoading(true);
@@ -118,14 +139,12 @@ export default function StaffPage() {
     }
   }, [token]);
 
-  useEffect(() => { if (branch_id) fetchStaff(); }, [branch_id, fetchStaff]);
-
-  /* ── ROLES ── */
-  const roles = useMemo(() => {
-    const map = new Map<number, string>();
-    staff.forEach(s => { if (s.role_id && s.role_name) map.set(s.role_id, s.role_name); });
-    return Array.from(map.entries()).map(([id, name]) => ({ id, name }));
-  }, [staff]);
+  useEffect(() => {
+    if (branch_id) {
+      fetchRoles();
+      fetchStaff();
+    }
+  }, [branch_id, fetchRoles, fetchStaff]);
 
   /* ── STATS ── */
   const roleCounts = useMemo(() => {
@@ -279,7 +298,7 @@ export default function StaffPage() {
           <Select size="small" value={roleFilter} onChange={e => setRoleFilter(e.target.value)}
             sx={{ height: 38, fontSize: 13, fontFamily: FONT, borderRadius: "10px", backgroundColor: "#FFFFFF", minWidth: 140, "& .MuiOutlinedInput-notchedOutline": { borderColor: "#E5E7EB" } }}>
             <MenuItem value="all" sx={{ fontFamily: FONT, fontSize: 13 }}>All Roles</MenuItem>
-            {roles.map(r => <MenuItem key={r.id} value={String(r.id)} sx={{ fontFamily: FONT, fontSize: 13 }}>{r.name}</MenuItem>)}
+            {roles.map(r => <MenuItem key={r.id} value={String(r.id)} sx={{ fontFamily: FONT, fontSize: 13 }}>{r.display_name}</MenuItem>)}
           </Select>
         </Box>
 
@@ -469,7 +488,7 @@ export default function StaffPage() {
               <Typography sx={{ fontSize: 12, fontWeight: 600, color: "#6B7280", fontFamily: FONT, mb: 0.6, textTransform: "uppercase", letterSpacing: 0.5 }}>Role *</Typography>
               <Select fullWidth size="small" value={form.role_id} onChange={e => setForm({ ...form, role_id: Number(e.target.value) })}
                 sx={{ borderRadius: "10px", fontSize: 13, fontFamily: FONT, backgroundColor: "#F9FAFB", "& .MuiOutlinedInput-notchedOutline": { borderColor: "#E5E7EB" } }}>
-                {roles.map(r => <MenuItem key={r.id} value={r.id} sx={{ fontFamily: FONT, fontSize: 13 }}>{r.name}</MenuItem>)}
+                {roles.map(r => <MenuItem key={r.id} value={r.id} sx={{ fontFamily: FONT, fontSize: 13 }}>{r.display_name}</MenuItem>)}
               </Select>
             </Box>
           </Box>
