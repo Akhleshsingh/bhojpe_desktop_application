@@ -27,6 +27,8 @@ import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import CloseIcon from "@mui/icons-material/Close";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 import { useTables } from "../context/TablesContext";
 
 type ReservationStatus = "Confirmed" | "Pending" | "Cancelled" | "No Show";
@@ -689,6 +691,559 @@ function TableCard({ label, seats, isSelected, isOccupied, onClick }: TableCardP
 }
 
 /* ─────────────────────────────────────────────────────
+   Time slots per meal type
+───────────────────────────────────────────────────── */
+const MEAL_SLOTS: Record<string, string[]> = {
+  Breakfast: ["07:00 AM", "07:30 AM", "08:00 AM", "08:30 AM", "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", "11:00 AM"],
+  Lunch:     ["12:00 PM", "12:30 PM", "01:00 PM", "01:30 PM", "02:00 PM", "02:30 PM", "03:00 PM"],
+  Dinner:    ["06:00 PM", "06:30 PM", "07:00 PM", "07:30 PM", "08:00 PM", "08:30 PM", "09:00 PM", "09:30 PM", "10:00 PM"],
+};
+
+const MEAL_TYPES = ["Breakfast", "Lunch", "Dinner"];
+const GUEST_OPTIONS = Array.from({ length: 20 }, (_, i) => i + 1);
+const COUNTRY_CODES = ["+91", "+1", "+44", "+61", "+971", "+65"];
+
+/* ─────────────────────────────────────────────────────
+   New Reservation Modal
+───────────────────────────────────────────────────── */
+interface NewReservationModalProps {
+  open: boolean;
+  onClose: () => void;
+  onSubmit: (res: Omit<Reservation, "id">) => void;
+}
+
+function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalProps) {
+  const today = new Date().toISOString().split("T")[0];
+
+  const [date, setDate]             = useState(today);
+  const [guests, setGuests]         = useState(1);
+  const [mealType, setMealType]     = useState("Lunch");
+  const [timeSlot, setTimeSlot]     = useState("");
+  const [notes, setNotes]           = useState("");
+  const [customerSearch, setCustomerSearch] = useState("");
+  const [name, setName]             = useState("");
+  const [email, setEmail]           = useState("");
+  const [countryCode, setCountryCode] = useState("+91");
+  const [phone, setPhone]           = useState("");
+  const [errors, setErrors]         = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess]       = useState(false);
+
+  const slots = MEAL_SLOTS[mealType] ?? [];
+
+  /* auto-select first slot when meal type changes */
+  React.useEffect(() => {
+    setTimeSlot(MEAL_SLOTS[mealType]?.[0] ?? "");
+  }, [mealType]);
+
+  const handleClose = () => {
+    setDate(today);
+    setGuests(1);
+    setMealType("Lunch");
+    setTimeSlot(MEAL_SLOTS["Lunch"][0]);
+    setNotes("");
+    setCustomerSearch("");
+    setName("");
+    setEmail("");
+    setCountryCode("+91");
+    setPhone("");
+    setErrors({});
+    setSuccess(false);
+    onClose();
+  };
+
+  const validate = () => {
+    const e: Record<string, string> = {};
+    if (!name.trim())  e.name  = "Customer name is required";
+    if (!phone.trim()) e.phone = "Phone number is required";
+    else if (!/^\d{7,15}$/.test(phone.replace(/\s/g, ""))) e.phone = "Enter a valid phone number";
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) e.email = "Enter a valid email";
+    if (!timeSlot) e.timeSlot = "Please select a time slot";
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const handleSubmit = async () => {
+    if (!validate()) return;
+    setSubmitting(true);
+    /* Simulate API call delay */
+    await new Promise((r) => setTimeout(r, 600));
+    setSubmitting(false);
+    setSuccess(true);
+
+    /* Format date for display */
+    const d = new Date(date);
+    const dateStr = d.toLocaleDateString("en-US", { weekday: "long", day: "numeric", month: "short" });
+
+    onSubmit({
+      table: undefined,
+      guests,
+      date: dateStr,
+      time: timeSlot,
+      name: name.trim(),
+      email: email.trim(),
+      phone: `${countryCode}${phone.trim()}`,
+      notes: notes.trim() || undefined,
+      status: "Pending",
+    });
+
+    setTimeout(handleClose, 900);
+  };
+
+  const fieldSx = {
+    "& .MuiOutlinedInput-root": {
+      borderRadius: "10px",
+      fontSize: 13,
+      fontFamily: "Poppins, sans-serif",
+      backgroundColor: "#FAFAFA",
+      "& fieldset": { borderColor: "#E5E7EB" },
+      "&:hover fieldset": { borderColor: "#9CA3AF" },
+      "&.Mui-focused fieldset": { borderColor: "#E8353A", borderWidth: 1.5 },
+    },
+    "& .MuiInputLabel-root": { fontSize: 13, fontFamily: "Poppins, sans-serif" },
+    "& .MuiInputLabel-root.Mui-focused": { color: "#E8353A" },
+  };
+
+  return (
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      maxWidth="sm"
+      fullWidth
+      PaperProps={{
+        sx: {
+          borderRadius: "18px",
+          fontFamily: "Poppins, sans-serif",
+          maxHeight: "92vh",
+          overflow: "hidden",
+          display: "flex",
+          flexDirection: "column",
+        },
+      }}
+    >
+      {/* ── Header ── */}
+      <Box
+        sx={{
+          background: "linear-gradient(135deg,#1F2937 0%,#374151 100%)",
+          px: 3, py: 2,
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          flexShrink: 0,
+        }}
+      >
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+          <Box
+            sx={{
+              width: 34, height: 34, borderRadius: "10px",
+              background: "rgba(232,53,58,0.2)", border: "1px solid rgba(232,53,58,0.4)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+            }}
+          >
+            <CalendarTodayOutlinedIcon sx={{ fontSize: 17, color: "#FCA5A5" }} />
+          </Box>
+          <Typography sx={{ fontSize: 17, fontWeight: 700, color: "#F9FAFB", fontFamily: "Poppins, sans-serif" }}>
+            New Reservation
+          </Typography>
+        </Box>
+        <IconButton onClick={handleClose} size="small" sx={{ color: "#9CA3AF", "&:hover": { color: "#F9FAFB" } }}>
+          <CloseIcon fontSize="small" />
+        </IconButton>
+      </Box>
+
+      {/* ── Body ── */}
+      <DialogContent sx={{ p: 0, overflowY: "auto", flex: 1 }}>
+
+        {/* Success overlay */}
+        {success && (
+          <Box
+            sx={{
+              position: "absolute", inset: 0, zIndex: 10,
+              background: "rgba(255,255,255,0.92)",
+              display: "flex", flexDirection: "column",
+              alignItems: "center", justifyContent: "center", gap: 1.5,
+            }}
+          >
+            <Box
+              sx={{
+                width: 60, height: 60, borderRadius: "50%",
+                background: "linear-gradient(135deg,#DCFCE7,#BBF7D0)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}
+            >
+              <CheckCircleOutlineIcon sx={{ fontSize: 32, color: "#15803D" }} />
+            </Box>
+            <Typography sx={{ fontSize: 15, fontWeight: 700, color: "#15803D", fontFamily: "Poppins, sans-serif" }}>
+              Reservation Created!
+            </Typography>
+          </Box>
+        )}
+
+        <Box sx={{ px: 3, pt: 2.5, pb: 1 }}>
+
+          {/* ── Row 1: Date / Guests / Meal type ── */}
+          <Box sx={{ display: "flex", gap: 1.5, mb: 2.5, flexWrap: "wrap" }}>
+
+            {/* Date */}
+            <Box
+              sx={{
+                display: "flex", alignItems: "center", gap: 1,
+                border: "1.5px solid #E5E7EB", borderRadius: "10px",
+                px: 1.5, height: 46, background: "#FAFAFA",
+                flex: "1 1 140px", minWidth: 130,
+                "&:focus-within": { borderColor: "#E8353A" },
+                transition: "border-color .15s",
+              }}
+            >
+              <CalendarTodayOutlinedIcon sx={{ fontSize: 16, color: "#6B7280", flexShrink: 0 }} />
+              <input
+                type="date"
+                value={date}
+                min={today}
+                onChange={(e) => setDate(e.target.value)}
+                style={{
+                  border: "none", outline: "none", fontSize: 13,
+                  fontFamily: "Poppins, sans-serif", color: "#374151",
+                  background: "transparent", cursor: "pointer", width: "100%",
+                }}
+              />
+            </Box>
+
+            {/* Guests */}
+            <FormControl size="small" sx={{ flex: "1 1 120px", minWidth: 110 }}>
+              <Select
+                value={guests}
+                onChange={(e) => setGuests(Number(e.target.value))}
+                IconComponent={KeyboardArrowDownIcon}
+                renderValue={(v) => (
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <GroupsOutlinedIcon sx={{ fontSize: 16, color: "#6B7280" }} />
+                    <Typography sx={{ fontSize: 13, fontFamily: "Poppins, sans-serif", color: "#374151" }}>
+                      {v} Guest{Number(v) !== 1 ? "s" : ""}
+                    </Typography>
+                  </Box>
+                )}
+                sx={{
+                  height: 46, borderRadius: "10px",
+                  backgroundColor: "#FAFAFA",
+                  "& .MuiOutlinedInput-notchedOutline": { borderColor: "#E5E7EB" },
+                  "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#9CA3AF" },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "#E8353A", borderWidth: 1.5 },
+                  "& .MuiSelect-icon": { fontSize: 18, color: "#6B7280" },
+                }}
+              >
+                {GUEST_OPTIONS.map((n) => (
+                  <MenuItem key={n} value={n} sx={{ fontSize: 13, fontFamily: "Poppins, sans-serif" }}>
+                    {n} Guest{n !== 1 ? "s" : ""}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            {/* Meal type */}
+            <FormControl size="small" sx={{ flex: "1 1 120px", minWidth: 110 }}>
+              <Select
+                value={mealType}
+                onChange={(e) => setMealType(e.target.value)}
+                IconComponent={KeyboardArrowDownIcon}
+                renderValue={(v) => (
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <AccessTimeIcon sx={{ fontSize: 16, color: "#6B7280" }} />
+                    <Typography sx={{ fontSize: 13, fontFamily: "Poppins, sans-serif", color: "#374151" }}>{v}</Typography>
+                  </Box>
+                )}
+                sx={{
+                  height: 46, borderRadius: "10px",
+                  backgroundColor: "#FAFAFA",
+                  "& .MuiOutlinedInput-notchedOutline": { borderColor: "#E5E7EB" },
+                  "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#9CA3AF" },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "#E8353A", borderWidth: 1.5 },
+                  "& .MuiSelect-icon": { fontSize: 18, color: "#6B7280" },
+                }}
+              >
+                {MEAL_TYPES.map((m) => (
+                  <MenuItem key={m} value={m} sx={{ fontSize: 13, fontFamily: "Poppins, sans-serif" }}>{m}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
+
+          {/* ── Time Slot ── */}
+          <Box sx={{ mb: 2.5 }}>
+            <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#374151", mb: 1.2, fontFamily: "Poppins, sans-serif" }}>
+              Select Time Slot
+            </Typography>
+            <Box
+              sx={{
+                display: "flex", flexWrap: "wrap", gap: 1,
+                pb: 0.5,
+              }}
+            >
+              {slots.map((slot) => {
+                const isActive = slot === timeSlot;
+                return (
+                  <Box
+                    key={slot}
+                    onClick={() => setTimeSlot(slot)}
+                    sx={{
+                      px: 1.8, py: 0.7,
+                      borderRadius: "8px",
+                      border: isActive ? "1.5px solid #E8353A" : "1.5px solid #E5E7EB",
+                      backgroundColor: isActive ? "rgba(232,53,58,0.07)" : "#FAFAFA",
+                      cursor: "pointer",
+                      transition: "all .15s",
+                      "&:hover": {
+                        borderColor: isActive ? "#E8353A" : "#9CA3AF",
+                        backgroundColor: isActive ? "rgba(232,53,58,0.1)" : "#F3F4F6",
+                      },
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        fontSize: 12, fontWeight: isActive ? 700 : 500,
+                        color: isActive ? "#E8353A" : "#4B5563",
+                        fontFamily: "Poppins, sans-serif",
+                      }}
+                    >
+                      {slot}
+                    </Typography>
+                  </Box>
+                );
+              })}
+            </Box>
+            {errors.timeSlot && (
+              <Typography sx={{ fontSize: 11, color: "#DC2626", mt: 0.5, fontFamily: "Poppins, sans-serif" }}>
+                {errors.timeSlot}
+              </Typography>
+            )}
+          </Box>
+
+          {/* ── Special Request ── */}
+          <Box sx={{ mb: 2.5 }}>
+            <Typography sx={{ fontSize: 13, fontWeight: 500, color: "#374151", mb: 0.8, fontFamily: "Poppins, sans-serif" }}>
+              Any special request?
+            </Typography>
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              rows={3}
+              placeholder="E.g. anniversary cake, high chair, allergies..."
+              style={{
+                width: "100%", boxSizing: "border-box",
+                border: "1.5px solid #E5E7EB", borderRadius: "10px",
+                padding: "10px 12px",
+                fontSize: 13, fontFamily: "Poppins, sans-serif", color: "#374151",
+                backgroundColor: "#FAFAFA", resize: "vertical",
+                outline: "none", transition: "border-color .15s",
+              }}
+              onFocus={(e) => (e.currentTarget.style.borderColor = "#E8353A")}
+              onBlur={(e) => (e.currentTarget.style.borderColor = "#E5E7EB")}
+            />
+          </Box>
+
+          <Divider sx={{ borderColor: "#F1F5F9", mb: 2.5 }} />
+
+          {/* ── Search Customer ── */}
+          <Box
+            sx={{
+              mb: 2,
+              borderRadius: "12px",
+              border: "1.5px solid #E5E7EB",
+              background: "#F8FAFC",
+              overflow: "hidden",
+            }}
+          >
+            <Box
+              sx={{
+                px: 2, py: 1.2,
+                display: "flex", alignItems: "center", gap: 1,
+                borderBottom: "1px solid #F1F5F9",
+              }}
+            >
+              <SearchIcon sx={{ fontSize: 16, color: "#6B7280" }} />
+              <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#374151", fontFamily: "Poppins, sans-serif" }}>
+                Search Customer
+              </Typography>
+            </Box>
+            <Box sx={{ px: 1.5, py: 1 }}>
+              <TextField
+                fullWidth
+                size="small"
+                placeholder="Search by name, phone or email..."
+                value={customerSearch}
+                onChange={(e) => {
+                  setCustomerSearch(e.target.value);
+                  /* Auto-fill demo: if user types a known name */
+                  const val = e.target.value.toLowerCase();
+                  const match = dummyReservations.find(
+                    (r) =>
+                      r.name.toLowerCase().includes(val) ||
+                      r.phone.includes(val) ||
+                      r.email.toLowerCase().includes(val)
+                  );
+                  if (match && val.length > 2) {
+                    setName(match.name);
+                    setEmail(match.email);
+                    const ph = match.phone.replace(/^\+91/, "").replace(/^\+1/, "").replace(/^\+/, "");
+                    setPhone(ph);
+                  }
+                }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon sx={{ fontSize: 16, color: "#9CA3AF" }} />
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "8px", fontSize: 13,
+                    fontFamily: "Poppins, sans-serif",
+                    backgroundColor: "#FFFFFF",
+                    "& fieldset": { borderColor: "#E5E7EB" },
+                    "&:hover fieldset": { borderColor: "#9CA3AF" },
+                    "&.Mui-focused fieldset": { borderColor: "#E8353A", borderWidth: 1.5 },
+                  },
+                }}
+              />
+            </Box>
+          </Box>
+
+          {/* ── Customer Name + Email ── */}
+          <Box sx={{ display: "flex", gap: 1.5, mb: 1.5, flexWrap: "wrap" }}>
+            <Box sx={{ flex: "1 1 200px", minWidth: 160 }}>
+              <Typography sx={{ fontSize: 12, fontWeight: 500, color: "#374151", mb: 0.6, fontFamily: "Poppins, sans-serif" }}>
+                Customer Name <span style={{ color: "#E8353A" }}>*</span>
+              </Typography>
+              <TextField
+                fullWidth
+                size="small"
+                placeholder="Full name"
+                value={name}
+                onChange={(e) => { setName(e.target.value); setErrors((p) => ({ ...p, name: "" })); }}
+                error={!!errors.name}
+                helperText={errors.name}
+                sx={fieldSx}
+              />
+            </Box>
+            <Box sx={{ flex: "1 1 200px", minWidth: 160 }}>
+              <Typography sx={{ fontSize: 12, fontWeight: 500, color: "#374151", mb: 0.6, fontFamily: "Poppins, sans-serif" }}>
+                Email Address
+              </Typography>
+              <TextField
+                fullWidth
+                size="small"
+                placeholder="email@example.com"
+                value={email}
+                onChange={(e) => { setEmail(e.target.value); setErrors((p) => ({ ...p, email: "" })); }}
+                error={!!errors.email}
+                helperText={errors.email}
+                sx={fieldSx}
+              />
+            </Box>
+          </Box>
+
+          {/* ── Phone ── */}
+          <Box sx={{ mb: 3 }}>
+            <Typography sx={{ fontSize: 12, fontWeight: 500, color: "#374151", mb: 0.6, fontFamily: "Poppins, sans-serif" }}>
+              Phone <span style={{ color: "#E8353A" }}>*</span>
+            </Typography>
+            <Box sx={{ display: "flex", gap: 1 }}>
+              <FormControl size="small" sx={{ flexShrink: 0 }}>
+                <Select
+                  value={countryCode}
+                  onChange={(e) => setCountryCode(e.target.value)}
+                  IconComponent={KeyboardArrowDownIcon}
+                  sx={{
+                    height: 40, minWidth: 88, borderRadius: "10px",
+                    fontSize: 13, fontFamily: "Poppins, sans-serif",
+                    backgroundColor: "#FAFAFA",
+                    "& .MuiOutlinedInput-notchedOutline": { borderColor: "#E5E7EB" },
+                    "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#9CA3AF" },
+                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "#E8353A", borderWidth: 1.5 },
+                    "& .MuiSelect-icon": { fontSize: 16, color: "#6B7280" },
+                  }}
+                >
+                  {COUNTRY_CODES.map((c) => (
+                    <MenuItem key={c} value={c} sx={{ fontSize: 13, fontFamily: "Poppins, sans-serif" }}>{c}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <TextField
+                fullWidth
+                size="small"
+                placeholder="1234567890"
+                value={phone}
+                onChange={(e) => {
+                  const v = e.target.value.replace(/\D/g, "");
+                  setPhone(v);
+                  setErrors((p) => ({ ...p, phone: "" }));
+                }}
+                error={!!errors.phone}
+                helperText={errors.phone}
+                inputProps={{ inputMode: "numeric" }}
+                sx={{
+                  ...fieldSx,
+                  "& .MuiOutlinedInput-root": {
+                    ...fieldSx["& .MuiOutlinedInput-root"],
+                    height: 40,
+                  },
+                }}
+              />
+            </Box>
+          </Box>
+        </Box>
+      </DialogContent>
+
+      {/* ── Footer ── */}
+      <Box
+        sx={{
+          px: 3, py: 2,
+          borderTop: "1px solid #F1F5F9",
+          display: "flex", justifyContent: "flex-end", gap: 1.5,
+          background: "#FFFFFF", flexShrink: 0,
+        }}
+      >
+        <Button
+          onClick={handleClose}
+          variant="outlined"
+          sx={{
+            textTransform: "none", fontWeight: 500, fontSize: 13,
+            borderColor: "#D1D5DB", color: "#6B7280",
+            borderRadius: "10px", px: 3, height: 42,
+            fontFamily: "Poppins, sans-serif",
+            "&:hover": { borderColor: "#9CA3AF", backgroundColor: "#F9FAFB" },
+          }}
+        >
+          Cancel
+        </Button>
+        <Button
+          onClick={handleSubmit}
+          variant="contained"
+          disabled={submitting}
+          sx={{
+            textTransform: "none", fontWeight: 700, fontSize: 13,
+            background: "linear-gradient(135deg,#E8353A,#c62a2f)",
+            borderRadius: "10px", px: 3.5, height: 42,
+            fontFamily: "Poppins, sans-serif",
+            boxShadow: "0 3px 10px rgba(232,53,58,.4)",
+            "&:hover": { background: "linear-gradient(135deg,#c62a2f,#a02020)" },
+            "&:disabled": { background: "#E5E7EB", color: "#9CA3AF", boxShadow: "none" },
+          }}
+        >
+          {submitting ? (
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <CircularProgress size={14} sx={{ color: "#fff" }} />
+              Saving...
+            </Box>
+          ) : (
+            "Reserve Now"
+          )}
+        </Button>
+      </Box>
+    </Dialog>
+  );
+}
+
+/* ─────────────────────────────────────────────────────
    Main Reservations Page
 ───────────────────────────────────────────────────── */
 export default function Reservations() {
@@ -699,12 +1254,23 @@ export default function Reservations() {
   const [toDate, setToDate]       = useState("");
   const [search, setSearch]       = useState("");
 
+  /* New-reservation modal */
+  const [newResOpen, setNewResOpen] = useState(false);
+  const [localReservations, setLocalReservations] = useState<Reservation[]>([]);
+
   /* Assign-table modal */
   const [assignOpen, setAssignOpen]           = useState(false);
   const [assigningReservation, setAssigningReservation] = useState<Reservation | null>(null);
 
   const handleStatusChange = useCallback((id: number, status: ReservationStatus) => {
     setStatusMap((prev) => ({ ...prev, [id]: status }));
+  }, []);
+
+  const handleNewReservationSubmit = useCallback((data: Omit<Reservation, "id">) => {
+    setLocalReservations((prev) => [
+      ...prev,
+      { ...data, id: Date.now() },
+    ]);
   }, []);
 
   const handleOpenAssign = useCallback((res: Reservation) => {
@@ -716,16 +1282,21 @@ export default function Reservations() {
     setTableMap((prev) => ({ ...prev, [reservationId]: tableLabel }));
   }, []);
 
+  const allReservations = useMemo(
+    () => [...dummyReservations, ...localReservations],
+    [localReservations]
+  );
+
   const filteredReservations = useMemo(() => {
-    if (!search.trim()) return dummyReservations;
+    if (!search.trim()) return allReservations;
     const q = search.toLowerCase();
-    return dummyReservations.filter(
+    return allReservations.filter(
       (r) =>
         r.name.toLowerCase().includes(q) ||
         r.email.toLowerCase().includes(q) ||
         r.phone.includes(q)
     );
-  }, [search]);
+  }, [search, allReservations]);
 
   return (
     <Box sx={{ minHeight: "100vh", backgroundColor: "#F8FAFC", fontFamily: "Poppins, sans-serif" }}>
@@ -761,6 +1332,7 @@ export default function Reservations() {
         <Button
           variant="contained"
           startIcon={<AddIcon />}
+          onClick={() => setNewResOpen(true)}
           sx={{
             background: "linear-gradient(135deg,#E8353A,#c62a2f)",
             textTransform: "none", fontWeight: 600, fontSize: 13,
@@ -1034,11 +1606,18 @@ export default function Reservations() {
         })}
       </Box>
 
+      {/* ── NEW RESERVATION MODAL ── */}
+      <NewReservationModal
+        open={newResOpen}
+        onClose={() => setNewResOpen(false)}
+        onSubmit={handleNewReservationSubmit}
+      />
+
       {/* ── ASSIGN TABLE MODAL ── */}
       <AssignTableModal
         open={assignOpen}
         reservation={assigningReservation}
-        allReservations={dummyReservations}
+        allReservations={allReservations}
         tableMap={tableMap}
         onClose={() => setAssignOpen(false)}
         onAssign={handleAssign}
