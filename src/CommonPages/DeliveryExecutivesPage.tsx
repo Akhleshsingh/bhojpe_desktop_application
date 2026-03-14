@@ -16,6 +16,7 @@ import AddIcon from "@mui/icons-material/Add";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { useDeliveryExecutives } from "../context/DeliveryExecutive";
+import AddStaffMemberDialog from "../components/AddStaffMemberDialog";
 
 const PER_PAGE = 10;
 
@@ -43,9 +44,10 @@ const CELL = {
 };
 
 export default function DeliveryExecutivesPage() {
-  const { deliveryExecutives, loading } = useDeliveryExecutives();
+  const { deliveryExecutives, loading, fetchDeliveryExecutives } = useDeliveryExecutives();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [addOpen, setAddOpen] = useState(false);
 
   const filtered = useMemo(() => {
     if (!search.trim()) return deliveryExecutives;
@@ -120,6 +122,7 @@ export default function DeliveryExecutivesPage() {
             <Button
               variant="contained"
               startIcon={<AddIcon sx={{ fontSize: 16 }} />}
+              onClick={() => setAddOpen(true)}
               sx={{
                 textTransform: "none", fontSize: 13, fontWeight: 600,
                 fontFamily: "Poppins, sans-serif", height: 38, px: 2,
@@ -334,6 +337,15 @@ export default function DeliveryExecutivesPage() {
         )}
 
       </Box>
+
+      {/* ── Add Executive Dialog ── */}
+      <AddStaffMemberDialog
+        open={addOpen}
+        onClose={() => setAddOpen(false)}
+        onAdded={fetchDeliveryExecutives}
+        roleKeyword="delivery"
+        title="Add Delivery Executive"
+      />
     </Box>
   );
 }

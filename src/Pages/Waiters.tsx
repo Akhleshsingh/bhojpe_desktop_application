@@ -13,6 +13,7 @@ import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
 import AddIcon from "@mui/icons-material/Add";
 import { useWaiters } from "../context/WaitersContext";
+import AddStaffMemberDialog from "../components/AddStaffMemberDialog";
 
 const AVATAR_COLORS: Record<string, string> = {
   A: "#E3F2FD", B: "#FCE4EC", C: "#E8F5E9", D: "#FFF3E0",
@@ -35,8 +36,9 @@ const AVATAR_TEXT_COLORS: Record<string, string> = {
 };
 
 export default function Waiters() {
-  const { waiters, loading } = useWaiters();
+  const { waiters, loading, fetchWaiters } = useWaiters();
   const [search, setSearch] = useState("");
+  const [addOpen, setAddOpen] = useState(false);
 
   const filtered = useMemo(() => {
     if (!search.trim()) return waiters;
@@ -87,6 +89,7 @@ export default function Waiters() {
             <Button
               variant="contained"
               startIcon={<AddIcon sx={{ fontSize: 16 }} />}
+              onClick={() => setAddOpen(true)}
               sx={{
                 textTransform: "none", fontSize: 13, fontWeight: 600,
                 fontFamily: "Poppins, sans-serif", height: 36, px: 2,
@@ -243,6 +246,15 @@ export default function Waiters() {
           </Box>
         )}
       </Box>
+
+      {/* ── Add Waiter Dialog ── */}
+      <AddStaffMemberDialog
+        open={addOpen}
+        onClose={() => setAddOpen(false)}
+        onAdded={fetchWaiters}
+        roleKeyword="waiter"
+        title="Add New Waiter"
+      />
     </Box>
   );
 }
