@@ -342,14 +342,17 @@ export default function AddStaffMemberDialog({
                 onChange={(e) => { setRoleId(Number(e.target.value)); setErrors((p) => ({ ...p, role: "" })); }}
                 IconComponent={KeyboardArrowDownIcon}
                 displayEmpty
-                renderValue={(v) => (
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <WorkOutlineIcon sx={{ fontSize: 15, color: "#9CA3AF" }} />
-                    <Typography sx={{ fontSize: 13, fontFamily: FONT, color: v === "" ? "#9CA3AF" : "#374151" }}>
-                      {v === "" ? "Select role" : roles.find((r) => r.id === v)?.display_name ?? ""}
-                    </Typography>
-                  </Box>
-                )}
+                renderValue={(v) => {
+                  const isEmpty = v === ("" as any);
+                  return (
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <WorkOutlineIcon sx={{ fontSize: 15, color: "#9CA3AF" }} />
+                      <Typography sx={{ fontSize: 13, fontFamily: FONT, color: isEmpty ? "#9CA3AF" : "#374151" }}>
+                        {isEmpty ? "Select role" : roles.find((r) => r.id === v)?.display_name ?? ""}
+                      </Typography>
+                    </Box>
+                  );
+                }}
                 sx={{
                   height: 40, borderRadius: "10px", backgroundColor: "#FAFAFA",
                   "& .MuiOutlinedInput-notchedOutline": { borderColor: errors.role ? RED : "#E5E7EB" },
