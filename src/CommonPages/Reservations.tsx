@@ -11,6 +11,9 @@ import {
   FormControl,
   IconButton,
   Divider,
+  Dialog,
+  DialogContent,
+  CircularProgress,
 } from "@mui/material";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
@@ -22,6 +25,9 @@ import TableBarOutlinedIcon from "@mui/icons-material/TableBarOutlined";
 import NoteAltOutlinedIcon from "@mui/icons-material/NoteAltOutlined";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import CloseIcon from "@mui/icons-material/Close";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import { useTables } from "../context/TablesContext";
 
 type ReservationStatus = "Confirmed" | "Pending" | "Cancelled" | "No Show";
 
@@ -107,15 +113,607 @@ const selectSx = {
   "& .MuiSelect-icon": { fontSize: 18, color: "#6B7280" },
 };
 
+/* ─────────────────────────────────────────────────────
+   Assign Table Modal
+───────────────────────────────────────────────────── */
+interface AssignTableModalProps {
+  open: boolean;
+  reservation: Reservation | null;
+  allReservations: Reservation[];
+  tableMap: Record<number, string>;
+  onClose: () => void;
+  onAssign: (reservationId: number, tableLabel: string) => void;
+}
+
+function AssignTableModal({
+  open,
+  reservation,
+  allReservations,
+  tableMap,
+  onClose,
+  onAssign,
+}: AssignTableModalProps) {
+  const { tables, loading } = useTables();
+  const [selectedTableId, setSelectedTableId] = useState<number | null>(null);
+  const [selectedTableLabel, setSelectedTableLabel] = useState("");
+
+  const handleClose = () => {
+    setSelectedTableId(null);
+    setSelectedTableLabel("");
+    onClose();
+  };
+
+  const handleAssign = () => {
+    if (!reservation || !selectedTableId) return;
+    onAssign(reservation.id, selectedTableLabel);
+    setSelectedTableId(null);
+    setSelectedTableLabel("");
+    onClose();
+  };
+
+  /* Normalize tables: API may return flat list or area-grouped list */
+  const areas: { id: number; name: string; tables: any[] }[] = useMemo(() => {
+    if (!Array.isArray(tables) || tables.length === 0) return [];
+
+    /* If each item has a "tables" sub-array → already grouped by area */
+    if (tables[0]?.tables) {
+      return tables.map((a: any) => ({
+        id: a.id,
+        name: a.area_name ?? a.name ?? "Area",
+        tables: a.tables ?? [],
+      }));
+    }
+
+    /* If each item has an area_name field → group manually */
+    if (tables[0]?.area_name) {
+      const grouped: Record<string, { id: number; name: string; tables: any[] }> = {};
+      tables.forEach((t: any) => {
+        const k = t.area_name ?? "Area";
+        if (!grouped[k]) grouped[k] = { id: t.area_id ?? 0, name: k, tables: [] };
+        grouped[k].tables.push(t);
+      });
+      return Object.values(grouped);
+    }
+
+    /* Fallback: all tables in one "All Tables" group */
+    return [{ id: 0, name: "All Tables", tables }];
+  }, [tables]);
+
+  /* Reservations for the same date (to show on the right panel) */
+  const sameDay = reservation
+    ? allReservations.filter((r) => r.id !== reservation.id && r.date === reservation.date)
+    : [];
+
+  const dateLabel = reservation?.date ?? "";
+
+  return (
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      maxWidth="md"
+      fullWidth
+      PaperProps={{
+        sx: {
+          borderRadius: "16px",
+          overflow: "hidden",
+          fontFamily: "Poppins, sans-serif",
+          maxHeight: "80vh",
+        },
+      }}
+    >
+      <DialogContent sx={{ p: 0, display: "flex", flexDirection: "column" }}>
+        {/* ── Modal Header ── */}
+        <Box
+          sx={{
+            px: 3,
+            py: 2,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            borderBottom: "1px solid #F1F5F9",
+            background: "linear-gradient(135deg,#1F2937 0%,#374151 100%)",
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+            <TableBarOutlinedIcon sx={{ color: "#FCA5A5", fontSize: 20 }} />
+            <Typography
+              sx={{ fontSize: 17, fontWeight: 700, color: "#F9FAFB", fontFamily: "Poppins, sans-serif" }}
+            >
+              Available Tables
+            </Typography>
+            {reservation && (
+              <Box
+                sx={{
+                  px: 1.4, py: 0.3, borderRadius: "20px",
+                  backgroundColor: "rgba(232,53,58,0.25)",
+                  border: "1px solid rgba(232,53,58,0.4)",
+                }}
+              >
+                <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#FCA5A5", fontFamily: "Poppins, sans-serif" }}>
+                  {reservation.name} · {reservation.guests} Guests
+                </Typography>
+              </Box>
+            )}
+          </Box>
+          <IconButton onClick={handleClose} size="small" sx={{ color: "#9CA3AF", "&:hover": { color: "#F9FAFB" } }}>
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        </Box>
+
+        {/* ── Main Body: Left tables + Right reservations ── */}
+        <Box sx={{ display: "flex", flex: 1, overflow: "hidden", minHeight: 0 }}>
+
+          {/* Left: Table Grid */}
+          <Box
+            sx={{
+              flex: 1,
+              overflowY: "auto",
+              p: 2.5,
+              borderRight: "1px solid #F1F5F9",
+              background: "#FAFAFA",
+            }}
+          >
+            {loading ? (
+              <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: 200 }}>
+                <CircularProgress size={28} sx={{ color: "#E8353A" }} />
+              </Box>
+            ) : areas.length === 0 ? (
+              /* ── Demo fallback so the UI is never empty ── */
+              <DemoAreas
+                selectedTableId={selectedTableId}
+                onSelectTable={(id, label) => {
+                  setSelectedTableId(id);
+                  setSelectedTableLabel(label);
+                }}
+                tableMap={tableMap}
+                allReservations={allReservations}
+              />
+            ) : (
+              areas.map((area) => (
+                <AreaSection
+                  key={area.id}
+                  area={area}
+                  selectedTableId={selectedTableId}
+                  onSelectTable={(id, label) => {
+                    setSelectedTableId(id);
+                    setSelectedTableLabel(label);
+                  }}
+                  tableMap={tableMap}
+                  allReservations={allReservations}
+                />
+              ))
+            )}
+          </Box>
+
+          {/* Right: Reservations panel */}
+          <Box sx={{ width: 240, overflowY: "auto", p: 2.5, background: "#fff", flexShrink: 0 }}>
+            <Box
+              sx={{
+                mb: 2, px: 1.5, py: 1,
+                background: "#F8FAFC",
+                borderRadius: "10px",
+                border: "1px solid #E5E7EB",
+              }}
+            >
+              <Typography sx={{ fontSize: 12, fontWeight: 700, color: "#374151", fontFamily: "Poppins, sans-serif" }}>
+                Reservations: {dateLabel}
+              </Typography>
+            </Box>
+
+            {sameDay.length === 0 ? (
+              <Box
+                sx={{
+                  display: "flex", flexDirection: "column",
+                  alignItems: "center", gap: 1, pt: 3,
+                  color: "#9CA3AF",
+                }}
+              >
+                <TableBarOutlinedIcon sx={{ fontSize: 30, opacity: 0.4 }} />
+                <Typography sx={{ fontSize: 12, fontFamily: "Poppins, sans-serif", textAlign: "center" }}>
+                  No table is reserved.
+                </Typography>
+              </Box>
+            ) : (
+              sameDay.map((r) => {
+                const assignedTable = tableMap[r.id] ?? r.table;
+                return (
+                  <Box
+                    key={r.id}
+                    sx={{
+                      mb: 1.5, p: 1.2,
+                      borderRadius: "10px",
+                      border: "1px solid #E5E7EB",
+                      background: "#F9FAFB",
+                    }}
+                  >
+                    <Typography sx={{ fontSize: 12, fontWeight: 600, color: "#111827", fontFamily: "Poppins, sans-serif" }}>
+                      {r.name}
+                    </Typography>
+                    <Typography sx={{ fontSize: 11, color: "#6B7280", fontFamily: "Poppins, sans-serif" }}>
+                      {r.time} · {r.guests} guests
+                    </Typography>
+                    {assignedTable && (
+                      <Box
+                        sx={{
+                          mt: 0.8, px: 1, py: 0.3,
+                          borderRadius: "6px",
+                          backgroundColor: "rgba(232,53,58,0.08)",
+                          display: "inline-block",
+                        }}
+                      >
+                        <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#E8353A", fontFamily: "Poppins, sans-serif" }}>
+                          {assignedTable}
+                        </Typography>
+                      </Box>
+                    )}
+                  </Box>
+                );
+              })
+            )}
+          </Box>
+        </Box>
+
+        {/* ── Footer ── */}
+        <Box
+          sx={{
+            px: 3, py: 1.5,
+            display: "flex", alignItems: "center", justifyContent: "space-between",
+            borderTop: "1px solid #F1F5F9",
+            background: "#FFFFFF",
+          }}
+        >
+          {selectedTableId ? (
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <CheckCircleOutlineIcon sx={{ fontSize: 16, color: "#15803D" }} />
+              <Typography sx={{ fontSize: 13, color: "#374151", fontFamily: "Poppins, sans-serif" }}>
+                Selected: <strong>{selectedTableLabel}</strong>
+              </Typography>
+            </Box>
+          ) : (
+            <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: "Poppins, sans-serif" }}>
+              Tap a table to select it
+            </Typography>
+          )}
+
+          <Box sx={{ display: "flex", gap: 1.5 }}>
+            <Button
+              onClick={handleClose}
+              variant="outlined"
+              sx={{
+                textTransform: "none", fontWeight: 500, fontSize: 13,
+                borderColor: "#D1D5DB", color: "#6B7280",
+                borderRadius: "8px", px: 2.5, height: 36,
+                fontFamily: "Poppins, sans-serif",
+                "&:hover": { borderColor: "#9CA3AF", backgroundColor: "#F9FAFB" },
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleAssign}
+              disabled={!selectedTableId}
+              variant="contained"
+              sx={{
+                textTransform: "none", fontWeight: 600, fontSize: 13,
+                background: selectedTableId
+                  ? "linear-gradient(135deg,#E8353A,#c62a2f)"
+                  : "#E5E7EB",
+                color: selectedTableId ? "#fff" : "#9CA3AF",
+                borderRadius: "8px", px: 2.5, height: 36,
+                fontFamily: "Poppins, sans-serif",
+                boxShadow: selectedTableId ? "0 2px 8px rgba(232,53,58,.35)" : "none",
+                "&:hover": {
+                  background: selectedTableId
+                    ? "linear-gradient(135deg,#c62a2f,#a02020)"
+                    : "#E5E7EB",
+                },
+              }}
+            >
+              Assign Table
+            </Button>
+          </Box>
+        </Box>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+/* ─────────────────────────────────────────────────────
+   Area Section (live data)
+───────────────────────────────────────────────────── */
+interface AreaSectionProps {
+  area: { id: number; name: string; tables: any[] };
+  selectedTableId: number | null;
+  onSelectTable: (id: number, label: string) => void;
+  tableMap: Record<number, string>;
+  allReservations: Reservation[];
+}
+
+function AreaSection({ area, selectedTableId, onSelectTable, tableMap, allReservations }: AreaSectionProps) {
+  const assignedLabels = new Set([
+    ...allReservations.map((r) => tableMap[r.id] ?? r.table).filter(Boolean),
+  ]);
+
+  return (
+    <Box sx={{ mb: 3 }}>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
+        <Typography sx={{ fontSize: 14, fontWeight: 600, color: "#374151", fontFamily: "Poppins, sans-serif" }}>
+          {area.name}
+        </Typography>
+        <Box
+          sx={{
+            px: 1.2, py: 0.2, borderRadius: "20px",
+            border: "1px solid #E5E7EB", backgroundColor: "#fff",
+          }}
+        >
+          <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#6B7280", fontFamily: "Poppins, sans-serif" }}>
+            {area.tables.length} Table{area.tables.length !== 1 ? "s" : ""}
+          </Typography>
+        </Box>
+      </Box>
+
+      {area.tables.length === 0 ? (
+        <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: "Poppins, sans-serif", pl: 0.5 }}>
+          No tables in this area.
+        </Typography>
+      ) : (
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5 }}>
+          {area.tables.map((t: any) => {
+            const label = t.table_number ?? t.table_name ?? t.name ?? String(t.id);
+            const seats = t.capacity ?? t.seats ?? t.seat_count ?? "?";
+            const isSelected = selectedTableId === t.id;
+            const isOccupied = assignedLabels.has(label);
+
+            return (
+              <TableCard
+                key={t.id}
+                id={t.id}
+                label={label}
+                seats={seats}
+                isSelected={isSelected}
+                isOccupied={isOccupied}
+                onClick={() => {
+                  if (!isOccupied) onSelectTable(t.id, label);
+                }}
+              />
+            );
+          })}
+        </Box>
+      )}
+    </Box>
+  );
+}
+
+/* ─────────────────────────────────────────────────────
+   Demo Areas (shown when API has no data yet)
+───────────────────────────────────────────────────── */
+const DEMO_AREAS = [
+  {
+    id: 1,
+    name: "Ground Floor",
+    tables: [
+      { id: 101, label: "1", seats: 4, occupied: false },
+      { id: 102, label: "4", seats: 4, occupied: false },
+      { id: 103, label: "10", seats: 8, occupied: true },
+    ],
+  },
+  {
+    id: 2,
+    name: "First Floor",
+    tables: [
+      { id: 201, label: "T-2", seats: 4, occupied: false },
+      { id: 202, label: "T-3", seats: 4, occupied: false },
+    ],
+  },
+  {
+    id: 3,
+    name: "Roof Top",
+    tables: [],
+  },
+];
+
+interface DemoAreasProps {
+  selectedTableId: number | null;
+  onSelectTable: (id: number, label: string) => void;
+  tableMap: Record<number, string>;
+  allReservations: Reservation[];
+}
+
+function DemoAreas({ selectedTableId, onSelectTable, tableMap, allReservations }: DemoAreasProps) {
+  const assignedLabels = new Set([
+    ...allReservations.map((r) => tableMap[r.id] ?? r.table).filter(Boolean),
+  ]);
+
+  return (
+    <>
+      {DEMO_AREAS.map((area) => (
+        <Box key={area.id} sx={{ mb: 3 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
+            <Typography sx={{ fontSize: 14, fontWeight: 600, color: "#374151", fontFamily: "Poppins, sans-serif" }}>
+              {area.name}
+            </Typography>
+            <Box
+              sx={{
+                px: 1.2, py: 0.2, borderRadius: "20px",
+                border: "1px solid #E5E7EB", backgroundColor: "#fff",
+              }}
+            >
+              <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#6B7280", fontFamily: "Poppins, sans-serif" }}>
+                {area.tables.length} Table{area.tables.length !== 1 ? "s" : ""}
+              </Typography>
+            </Box>
+          </Box>
+
+          {area.tables.length === 0 ? (
+            <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: "Poppins, sans-serif", pl: 0.5 }}>
+              No tables in this area.
+            </Typography>
+          ) : (
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5 }}>
+              {area.tables.map((t) => {
+                const isSelected = selectedTableId === t.id;
+                const isOccupied = t.occupied || assignedLabels.has(t.label);
+                return (
+                  <TableCard
+                    key={t.id}
+                    id={t.id}
+                    label={t.label}
+                    seats={t.seats}
+                    isSelected={isSelected}
+                    isOccupied={isOccupied}
+                    onClick={() => {
+                      if (!isOccupied) onSelectTable(t.id, t.label);
+                    }}
+                  />
+                );
+              })}
+            </Box>
+          )}
+        </Box>
+      ))}
+    </>
+  );
+}
+
+/* ─────────────────────────────────────────────────────
+   Individual Table Card
+───────────────────────────────────────────────────── */
+interface TableCardProps {
+  id: number;
+  label: string;
+  seats: number | string;
+  isSelected: boolean;
+  isOccupied: boolean;
+  onClick: () => void;
+}
+
+function TableCard({ label, seats, isSelected, isOccupied, onClick }: TableCardProps) {
+  const badgeBg = isOccupied
+    ? "rgba(134,239,172,0.3)"
+    : isSelected
+      ? "rgba(232,53,58,0.12)"
+      : "rgba(147,197,253,0.3)";
+
+  const badgeColor = isOccupied
+    ? "#15803D"
+    : isSelected
+      ? "#E8353A"
+      : "#1D4ED8";
+
+  const borderColor = isOccupied
+    ? "#6EE7B7"
+    : isSelected
+      ? "#E8353A"
+      : "#BFDBFE";
+
+  const cardBorder = isSelected
+    ? "2px solid #E8353A"
+    : isOccupied
+      ? "1.5px solid #6EE7B7"
+      : "1.5px solid #E5E7EB";
+
+  return (
+    <Box
+      onClick={onClick}
+      sx={{
+        width: 100,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 0.8,
+        p: 1.5,
+        borderRadius: "12px",
+        border: cardBorder,
+        background: isSelected ? "rgba(232,53,58,0.04)" : "#fff",
+        cursor: isOccupied ? "not-allowed" : "pointer",
+        opacity: isOccupied ? 0.7 : 1,
+        transition: "all .18s ease",
+        "&:hover": isOccupied
+          ? {}
+          : {
+              boxShadow: "0 4px 14px rgba(0,0,0,0.1)",
+              transform: "translateY(-2px)",
+              border: `2px solid ${isSelected ? "#E8353A" : "#93C5FD"}`,
+            },
+      }}
+    >
+      {/* Badge */}
+      <Box
+        sx={{
+          width: 44, height: 44,
+          borderRadius: "10px",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          backgroundColor: badgeBg,
+          border: `1.5px solid ${borderColor}`,
+        }}
+      >
+        <Typography sx={{ fontSize: 14, fontWeight: 700, color: badgeColor, fontFamily: "Poppins, sans-serif" }}>
+          {label}
+        </Typography>
+      </Box>
+
+      {/* Seat count */}
+      <Typography sx={{ fontSize: 11, color: "#6B7280", fontFamily: "Poppins, sans-serif", textAlign: "center" }}>
+        {seats} Seat{Number(seats) !== 1 ? "(s)" : ""}
+      </Typography>
+
+      {/* Status label */}
+      {isOccupied && (
+        <Box
+          sx={{
+            px: 0.8, py: 0.1, borderRadius: "20px",
+            backgroundColor: "rgba(134,239,172,0.3)",
+            border: "1px solid #6EE7B7",
+          }}
+        >
+          <Typography sx={{ fontSize: 9, fontWeight: 600, color: "#15803D", fontFamily: "Poppins, sans-serif" }}>
+            OCCUPIED
+          </Typography>
+        </Box>
+      )}
+      {isSelected && !isOccupied && (
+        <Box
+          sx={{
+            px: 0.8, py: 0.1, borderRadius: "20px",
+            backgroundColor: "rgba(232,53,58,0.1)",
+            border: "1px solid #FCA5A5",
+          }}
+        >
+          <Typography sx={{ fontSize: 9, fontWeight: 700, color: "#E8353A", fontFamily: "Poppins, sans-serif" }}>
+            SELECTED
+          </Typography>
+        </Box>
+      )}
+    </Box>
+  );
+}
+
+/* ─────────────────────────────────────────────────────
+   Main Reservations Page
+───────────────────────────────────────────────────── */
 export default function Reservations() {
   const [statusMap, setStatusMap] = useState<Record<number, ReservationStatus>>({});
+  const [tableMap, setTableMap]   = useState<Record<number, string>>({});
   const [dateRange, setDateRange] = useState("Current Week");
-  const [fromDate, setFromDate] = useState("");
-  const [toDate, setToDate] = useState("");
-  const [search, setSearch] = useState("");
+  const [fromDate, setFromDate]   = useState("");
+  const [toDate, setToDate]       = useState("");
+  const [search, setSearch]       = useState("");
+
+  /* Assign-table modal */
+  const [assignOpen, setAssignOpen]           = useState(false);
+  const [assigningReservation, setAssigningReservation] = useState<Reservation | null>(null);
 
   const handleStatusChange = useCallback((id: number, status: ReservationStatus) => {
     setStatusMap((prev) => ({ ...prev, [id]: status }));
+  }, []);
+
+  const handleOpenAssign = useCallback((res: Reservation) => {
+    setAssigningReservation(res);
+    setAssignOpen(true);
+  }, []);
+
+  const handleAssign = useCallback((reservationId: number, tableLabel: string) => {
+    setTableMap((prev) => ({ ...prev, [reservationId]: tableLabel }));
   }, []);
 
   const filteredReservations = useMemo(() => {
@@ -143,7 +741,6 @@ export default function Reservations() {
           display: "flex", alignItems: "center", justifyContent: "space-between",
         }}
       >
-        {/* Left: title + badge */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
           <Typography sx={{ fontSize: 18, fontWeight: 700, color: "#111827", fontFamily: "Poppins, sans-serif" }}>
             Reservations
@@ -161,7 +758,6 @@ export default function Reservations() {
           </Box>
         </Box>
 
-        {/* Right: New Reservation */}
         <Button
           variant="contained"
           startIcon={<AddIcon />}
@@ -270,6 +866,7 @@ export default function Reservations() {
         {filteredReservations.map((res) => {
           const currentStatus = statusMap[res.id] || res.status;
           const meta = STATUS_META[currentStatus];
+          const assignedTable = tableMap[res.id] ?? res.table;
 
           return (
             <Box
@@ -295,18 +892,21 @@ export default function Reservations() {
                 }}
               >
                 {/* Table chip or Assign Table button */}
-                {res.table ? (
+                {assignedTable ? (
                   <Box
+                    onClick={() => handleOpenAssign(res)}
                     sx={{
                       display: "flex", alignItems: "center", gap: 0.8,
                       px: 1.4, py: 0.5, borderRadius: "8px",
                       backgroundColor: "rgba(232,53,58,0.2)",
                       border: "1px solid rgba(232,53,58,0.4)",
+                      cursor: "pointer",
+                      "&:hover": { backgroundColor: "rgba(232,53,58,0.3)" },
                     }}
                   >
                     <TableBarOutlinedIcon sx={{ fontSize: 15, color: "#FCA5A5" }} />
                     <Typography sx={{ fontSize: 13, fontWeight: 700, color: "#FCA5A5", fontFamily: "Poppins, sans-serif" }}>
-                      {res.table}
+                      {assignedTable}
                     </Typography>
                   </Box>
                 ) : (
@@ -314,6 +914,7 @@ export default function Reservations() {
                     size="small"
                     variant="outlined"
                     startIcon={<TableBarOutlinedIcon sx={{ fontSize: 14 }} />}
+                    onClick={() => handleOpenAssign(res)}
                     sx={{
                       fontSize: 11, fontWeight: 600, textTransform: "none",
                       borderColor: "#6B7280", color: "#D1D5DB",
@@ -326,14 +927,12 @@ export default function Reservations() {
                   </Button>
                 )}
 
-                {/* Guests count + status chip */}
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                    <PeopleAltOutlinedIcon sx={{ fontSize: 15, color: "#9CA3AF" }} />
-                    <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#E5E7EB", fontFamily: "Poppins, sans-serif" }}>
-                      {res.guests} Guests
-                    </Typography>
-                  </Box>
+                {/* Guests count */}
+                <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                  <PeopleAltOutlinedIcon sx={{ fontSize: 15, color: "#9CA3AF" }} />
+                  <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#E5E7EB", fontFamily: "Poppins, sans-serif" }}>
+                    {res.guests} Guests
+                  </Typography>
                 </Box>
               </Box>
 
@@ -353,7 +952,6 @@ export default function Reservations() {
                   </Typography>
                 </Box>
 
-                {/* Status badge */}
                 <Box
                   sx={{
                     px: 1.2, py: 0.3, borderRadius: "20px",
@@ -388,7 +986,6 @@ export default function Reservations() {
                   </Typography>
                 </Box>
 
-                {/* Notes */}
                 {res.notes && (
                   <Box
                     sx={{
@@ -436,6 +1033,16 @@ export default function Reservations() {
           );
         })}
       </Box>
+
+      {/* ── ASSIGN TABLE MODAL ── */}
+      <AssignTableModal
+        open={assignOpen}
+        reservation={assigningReservation}
+        allReservations={dummyReservations}
+        tableMap={tableMap}
+        onClose={() => setAssignOpen(false)}
+        onAssign={handleAssign}
+      />
     </Box>
   );
 }
