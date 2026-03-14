@@ -79,8 +79,8 @@ export default function AddCustomerModal({ open, onClose, onSave }: Props) {
       email: c.email ?? "",
       address: c.delivery_address ?? "",
     };
-    setSelectedCustomer(normalized);
-    onSave(normalized);
+    setSelectedCustomer(normalized as any);
+    onSave(normalized as any);
     setSearch(""); setResults([]);
     onClose();
   };
@@ -98,7 +98,7 @@ export default function AddCustomerModal({ open, onClose, onSave }: Props) {
       email: savedCustomer.email ?? "",
       address: savedCustomer.delivery_address ?? "",
     };
-    setSelectedCustomer(normalized);
+    setSelectedCustomer(normalized as any);
     setSaved(true);
     setTimeout(() => { onSave(normalized); onClose(); }, 900);
   };

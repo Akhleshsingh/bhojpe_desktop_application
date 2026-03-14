@@ -30,13 +30,13 @@ export default function SecondHeader({
   setSidebarOpen,
   orderType,
 }: {
-  orderType: string;
-  setOrderType: (type: string) => void;
+  orderType?: any;
+  setOrderType?: (type: any) => void;
   ordersCount: number;
   tables?: any;
   waiters?: any;
-  sidebarOpen: boolean;
-  setSidebarOpen: (v: boolean) => void;
+  sidebarOpen?: boolean;
+  setSidebarOpen?: (v: boolean) => void;
 }) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -111,7 +111,7 @@ export default function SecondHeader({
             src={Sidebar}
             alt="Menu"
             style={{ width: 42, cursor: "pointer" }}
-            onClick={() => setSidebarOpen(!sidebarOpen)}
+            onClick={() => setSidebarOpen?.(!sidebarOpen)}
           />
           <img
             src={Bhojpeblack}
@@ -293,7 +293,7 @@ export default function SecondHeader({
               <OrderTypeSwitcher
                 activeType={orderType}
                 onSelect={(type) => {
-                  setOrderType(type);
+                  setOrderType?.(type);
                   navigate("/menudashboard");
                 }}
                 isTableView={false}

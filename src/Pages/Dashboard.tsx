@@ -88,7 +88,7 @@ const getFullActiveOrderByTableId = (tableId: number) => {
 
 const liveTableMap = React.useMemo(() => {
   const map = new Map<number, any>();
-  liveTables.forEach(t => map.set(t.id, t));
+  liveTables.forEach((t: any) => map.set(t.id, t));
   return map;
 }, [liveTables]);
 useEffect(() => {
@@ -137,13 +137,13 @@ React.useEffect(() => {
   const visibleTables =
     selectedArea === "all"
       ? mappedTables
-      : mappedTables.filter((t) => t.area === selectedArea);
+      : mappedTables.filter((t: any) => t.area === selectedArea);
 
 const statusFilteredTables =
   selectedStatus === "all"
     ? visibleTables
     : visibleTables.filter(
-        (t) => t.status === selectedStatus
+        (t: any) => t.status === selectedStatus
       );
 
   const handleTableClick = (table: any) => {
@@ -208,7 +208,7 @@ const activeOrder = getActiveOrderByTableId(table.id);
   });
 };
 const mergeableTables = mappedTables.filter(
-  (t) => t.status === "running" || t.status === "kot"
+  (t: any) => t.status === "running" || t.status === "kot"
 );
 const toggleTableSelect = (tableId: number) => {
   setSelectedTables((prev) =>
@@ -227,7 +227,7 @@ const handleMergeTables = () => {
   setSelectedTables([]);
 };
 const availableTables = mappedTables.filter(
-  (t) =>
+  (t: any) =>
     t.status === "available" &&
     t.id !== sourceTable?.id
 );
@@ -249,7 +249,7 @@ useEffect(() => {
     setMergeOpen(true);
     if (location.state?.sourceTableId) {
       const table = mappedTables.find(
-        (t) => t.id === location.state.sourceTableId
+        (t: any) => t.id === location.state.sourceTableId
       );
 
       if (table) {
@@ -492,7 +492,7 @@ useEffect(() => {
           gap: 2,
         }}
       >
-        {statusFilteredTables.map((table, i) => (
+        {statusFilteredTables.map((table: any, i: number) => (
           <Box
             key={i}
             onClick={() => handleTableClick(table)}
@@ -598,7 +598,7 @@ useEffect(() => {
 
       {/* 🔹 TABLE LIST */}
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-        {mergeableTables.map((table) => (
+        {mergeableTables.map((table: any) => (
           <Box
             key={table.id}
             sx={{
@@ -716,10 +716,10 @@ useEffect(() => {
       >
         {mappedTables
           .filter(
-            (t) =>
+            (t: any) =>
               t.status === "running" || t.status === "kot"
           )
-          .map((table) => (
+          .map((table: any) => (
             <Box
               key={table.id}
               onClick={() => {
@@ -795,7 +795,7 @@ useEffect(() => {
           </Typography>
         )}
 
-        {availableTables.map((table) => (
+        {availableTables.map((table: any) => (
           <Box
             key={table.id}
             onClick={() => setTargetTableId(table.id)}

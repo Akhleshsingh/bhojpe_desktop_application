@@ -122,18 +122,23 @@ type Props = {
   orderId?: number;
   tableId?: number;
   activeOrder?: any;
-  tableNo?: any,
-  areaName?: any, onKotTrigger?: (cb: () => void) => void;
+  tableNo?: any;
+  areaName?: any;
+  onKotTrigger?: (cb: () => void) => void;
   cartSnapshotRef?: React.MutableRefObject<any[]>;
+  orderType?: any;
+  setOrderType?: (t: any) => void;
 };
 type PaymentMode = "cash" | "upi" | "gpay" | "other" | "due" | "checkout" | "";
 type OrderAction =
   | "kot"
   | "bill"
   | "bill_print"
-  | "kot_print" 
+  | "kot_print"
   | "kot_bill_payment"
-  | "bill_payment" | "checkout";
+  | "bill_payment"
+  | "checkout"
+  | "e-bill";
 type NoteTarget =
   | { type: "order" }
   | { type: "item"; itemId: number };
@@ -617,9 +622,8 @@ tax_amount: +(
     ) ?? [];
 useEffect(() => {
   if (activeOrder?.order_type) {
-    setOrderType({
+    setOrderType?.({
       id: activeOrder.order_type.id,
-      // type: activeOrder.order_type.type,
        type: activeOrder.order_type.slug,
     });
     return;
@@ -628,7 +632,7 @@ useEffect(() => {
     const def =
       orderTypes.find((o: any) => o.is_default === 1) || orderTypes[0];
 
-    setOrderType({
+    setOrderType?.({
       id: def.id,
       type: def.type,
     });
@@ -1110,7 +1114,7 @@ return data;
     } catch (err) {
 
 const resolvedOrderType =
-  orderType || (mode === "draft" ? draft?.orderType : null);
+  orderType || (mode === "draft" ? (draft as any)?.orderType : null);
     const draftOrder = {
   _offlineId: Date.now(),
   _createdAt: new Date().toISOString(),
@@ -1550,7 +1554,7 @@ const showPaxDropdown =
         );
 
         if (selected) {
-          setOrderType({
+          setOrderType?.({
             id: selected.id,
             type: selected.type,
           });
@@ -2045,7 +2049,7 @@ const showPaxDropdown =
             >
               <DatePicker
                 selected={pickupDateTime}
-                onChange={(date: Date) => {
+                onChange={(date: Date | null) => {
                   if (!date) return;
 
                   const updated =
@@ -2117,7 +2121,7 @@ const showPaxDropdown =
             >
               <DatePicker
                 selected={pickupDateTime}
-                onChange={(time: Date) => {
+                onChange={(time: Date | null) => {
                   if (!time) return;
 
                   const updated =
@@ -2327,7 +2331,7 @@ const showPaxDropdown =
       KOTs ({derivedKotGroups.length})
     </Typography>
 
-    {derivedKotGroups.map((kot) => (
+    {derivedKotGroups.map((kot: any) => (
       <Box
         key={kot.kotId}
         sx={{
@@ -3142,7 +3146,7 @@ gap: 1,
 
   let orderData = activeOrder;
   if (!activeOrder?.order_number) {
-    const response = await saveNewOrder(token, "bill");
+    const response = await saveNewOrder(token ?? "", "bill");
     if (!response?.order) return;
     orderData = response.order;
   }
@@ -3462,8 +3466,7 @@ onPaymentSuccess={async (paymentData) => {
   setCheckoutOrder={setCheckoutOrder}
   showError={showError}
    setBilledOrderData={setBilledOrderData}
-   setDiscountOpen={setDiscountOpen}
-discountValue={discountValue}
+   saveNewOrder={(t, a) => saveNewOrder(t ?? "", a as any)}
 />
 
       {tableModalOpen && (

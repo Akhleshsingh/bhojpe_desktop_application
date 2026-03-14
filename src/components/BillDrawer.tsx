@@ -53,8 +53,9 @@ type BillDrawerProps = {
   setCustomerModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setCheckoutOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setCheckoutOrder: React.Dispatch<React.SetStateAction<any>>;
-saveNewOrder: (token: string | null, action: string) => void;
+saveNewOrder: (token: string | null, action: string) => Promise<any>;
   showError: (msg: string) => void;
+  setBilledOrderData?: React.Dispatch<React.SetStateAction<any>>;
 };
 
 const BillDrawer: React.FC<BillDrawerProps> = ({
@@ -73,7 +74,9 @@ const BillDrawer: React.FC<BillDrawerProps> = ({
   setCustomerModalOpen,
   setCheckoutOpen,
   setCheckoutOrder,
-  showError,saveNewOrder
+  showError,
+  saveNewOrder,
+  setBilledOrderData,
 }) => {
     const SummaryRow = ({ label, value }: { label: string; value: any }) => (
   <Box display="flex" justifyContent="space-between" mt={0.5}>
@@ -416,18 +419,18 @@ const isBilled =
          alignItems="center"
          bgcolor= "#F9FAFB"
        >
-         <Typography>{item.name}</Typography>
+         <Typography>{String(item.name ?? "")}</Typography>
    
          <Typography textAlign="center">
-           {item.qty}
+           {Number(item.qty)}
          </Typography>
    
          <Typography textAlign="right">
-           ₹{item.price}
+           ₹{Number(item.price ?? 0)}
          </Typography>
    
          <Typography textAlign="right">
-           ₹{item.qty * item.price}
+           ₹{Number(item.qty) * Number(item.price ?? 0)}
          </Typography>
    
          {/* DELETE ICON */}
@@ -541,7 +544,7 @@ const isBilled =
                    const data = await res.json();
    
                    if (data.status) {
-                     setBilledOrderData((prev: any) => ({
+                     setBilledOrderData?.((prev: any) => ({
                        ...prev,
                        payments: prev.payments.map((pay: any) =>
                          pay.id === p.id

@@ -226,7 +226,7 @@ useEffect(() => {
     return;
   }
   if (!orderType && orderTypes.length > 0) {
-    setOrderType(orderTypes.find(o => o.is_default) || orderTypes[0]);
+    setOrderType(orderTypes.find((o: any) => o.is_default) || orderTypes[0]);
   }
 }, [
   activeOrder?.order_type?.id,

@@ -38,7 +38,7 @@ export default function NewOrdersPage() {
     minHeight: "100vh",
 color: "var(--text)" }}>
       <Header/>
-     <SecondHeader setOrderType={setOrderType} />
+     <SecondHeader setOrderType={setOrderType} ordersCount={0} />
       {/* HEADING */}
       <Typography
         sx={{
