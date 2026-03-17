@@ -1,5 +1,11 @@
 import React, { useState } from "react";
 import {
+  Box, Typography, Button, Paper, Chip, Table, TableHead, TableBody, TableRow,
+  TableCell, TableContainer, Select, MenuItem, Divider, Stack,
+} from "@mui/material";
+import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
+import PrintOutlinedIcon from "@mui/icons-material/PrintOutlined";
+import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area, CartesianGrid,
 } from "recharts";
 import data from "../data/reportsDummyData.json";
@@ -8,7 +14,7 @@ import toast from "react-hot-toast";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const T = {
   ac: "#FF3D01", acH: "#e03500", acDim: "rgba(255,61,1,0.07)", acMid: "rgba(255,61,1,0.13)", acBdr: "rgba(255,61,1,0.25)",
-  bg: "#f5f0ea", w: "#fff", s1: "#faf7f3", s2: "#f0ebe3", s3: "#e5ded5",
+  bg: "#f5f0ea", w: "#fff", s1: "#faf7f3", s2: "#f0ebe3",
   bd: "#e2d9d0", bd2: "#cec4b8",
   grn: "#186b35", grnDim: "rgba(24,107,53,0.09)", grnBdr: "rgba(24,107,53,0.22)",
   blu: "#1a4fcc", bluDim: "rgba(26,79,204,0.08)", bluBdr: "rgba(26,79,204,0.22)",
@@ -16,209 +22,237 @@ const T = {
   amb: "#92400e", ambDim: "rgba(146,64,14,0.08)",
   tel: "#0f766e", telDim: "rgba(15,118,110,0.08)",
   red: "#b91c1c", redDim: "rgba(185,28,28,0.08)", redBdr: "rgba(185,28,28,0.22)",
-  ora: "#c2410c", oraDim: "rgba(194,65,12,0.08)",
   tx: "#16100a", t2: "#6b5c48", t3: "#a4927e",
 };
 
-type ReportKey = "sales" | "item" | "category" | "delivery" | "expense" | "cancelled" | "removedkot" | "refund" | "tax" | "outstanding" | "inventory" | "stock";
+type ReportKey = "sales"|"item"|"category"|"delivery"|"expense"|"cancelled"|"removedkot"|"refund"|"tax"|"outstanding"|"inventory"|"stock";
+type BadgeVariant = "ac"|"grn"|"blu"|"pur"|"tel"|"amb"|"ora"|"red";
+type StatusVariant = "green"|"red"|"amber"|"blue";
 
-// ── Shared sub-components ──────────────────────────────────────────────────
-type StatCardVariant = "ac"|"grn"|"blu"|"pur"|"tel"|"amb"|"ora";
-const ACCENT_MAP: Record<StatCardVariant, { dim: string; color: string; }> = {
+const ACCENT_MAP: Record<string, { dim: string; color: string }> = {
   ac: { dim: T.acDim, color: T.ac },
   grn: { dim: T.grnDim, color: T.grn },
   blu: { dim: T.bluDim, color: T.blu },
   pur: { dim: T.purDim, color: T.pur },
   tel: { dim: T.telDim, color: T.tel },
   amb: { dim: T.ambDim, color: T.amb },
-  ora: { dim: T.oraDim, color: T.ora },
+  ora: { dim: "rgba(194,65,12,0.08)", color: "#c2410c" },
+  red: { dim: T.redDim, color: T.red },
 };
 
+// ── Shared MUI-based sub-components ────────────────────────────────────────
 function StatCard({ label, value, icon, variant, rows }: {
-  label: string; value: string | number; icon: string; variant: StatCardVariant;
+  label: string; value: string|number; icon: string; variant: BadgeVariant;
   rows?: { key: string; value: React.ReactNode }[];
 }) {
-  const { dim, color } = ACCENT_MAP[variant];
+  const { dim, color } = ACCENT_MAP[variant] ?? ACCENT_MAP.ac;
   return (
-    <div style={{ background: T.w, border: `1.5px solid ${T.bd}`, borderRadius: 14, padding: "15px 16px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", position: "relative", overflow: "hidden", transition: "transform .15s, box-shadow .15s" }}
-      onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.transform = "translateY(-2px)"; (e.currentTarget as HTMLDivElement).style.boxShadow = "0 6px 22px rgba(0,0,0,0.10)"; }}
-      onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.transform = ""; (e.currentTarget as HTMLDivElement).style.boxShadow = "0 1px 4px rgba(0,0,0,0.06)"; }}
-    >
-      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 3, borderRadius: "0 0 14px 14px", background: color }} />
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 8 }}>
-        <div style={{ fontSize: 10.5, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".5px", color: T.t3 }}>{label}</div>
-        <div style={{ width: 28, height: 28, borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, background: dim }}>{icon}</div>
-      </div>
-      <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 22, fontWeight: 700, color, marginBottom: 8 }}>{value}</div>
+    <Paper elevation={0} sx={{
+      border: `1.5px solid ${T.bd}`, borderRadius: "14px", p: "15px 16px", position: "relative",
+      overflow: "hidden", transition: "transform .15s, box-shadow .15s", cursor: "default",
+      "&:hover": { transform: "translateY(-2px)", boxShadow: "0 6px 22px rgba(0,0,0,0.10)" },
+      "&::after": { content: '""', position: "absolute", bottom: 0, left: 0, right: 0, height: 3, background: color, borderRadius: "0 0 14px 14px" },
+    }}>
+      <Box sx={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", mb: 1 }}>
+        <Typography sx={{ fontSize: 10.5, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".5px", color: T.t3 }}>{label}</Typography>
+        <Box sx={{ width: 28, height: 28, borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, background: dim }}>{icon}</Box>
+      </Box>
+      <Typography sx={{ fontFamily: "'Playfair Display',serif", fontSize: 22, fontWeight: 700, color, mb: 1 }}>{value}</Typography>
       {rows && (
-        <div style={{ display: "flex", flexDirection: "column", gap: 4, borderTop: `1px solid ${T.bd}`, paddingTop: 7 }}>
+        <Box sx={{ borderTop: `1px solid ${T.bd}`, pt: "7px", display: "flex", flexDirection: "column", gap: "4px" }}>
           {rows.map((r, i) => (
-            <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 11.5 }}>
-              <span style={{ color: T.t3, fontWeight: 500 }}>{r.key}</span>
-              <span>{r.value}</span>
-            </div>
+            <Box key={i} sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 11.5 }}>
+              <Typography sx={{ color: T.t3, fontWeight: 500, fontSize: 11.5 }}>{r.key}</Typography>
+              <Box>{r.value}</Box>
+            </Box>
           ))}
-        </div>
+        </Box>
       )}
-    </div>
+    </Paper>
   );
 }
 
-function Badge({ children, color, bg }: { children: React.ReactNode; color: string; bg: string }) {
-  return <span style={{ padding: "1px 7px", borderRadius: 8, fontSize: 10, fontWeight: 700, color, background: bg }}>{children}</span>;
+function SChip({ children, color, bg }: { children: React.ReactNode; color: string; bg: string }) {
+  return <Chip label={children} size="small" sx={{ background: bg, color, fontWeight: 800, fontSize: 10, height: 18, "& .MuiChip-label": { px: "7px" } }} />;
 }
-function StatusPill({ children, variant }: { children: React.ReactNode; variant: "green"|"red"|"amber"|"blue" }) {
-  const vs = { green: { bg: T.grnDim, color: T.grn }, red: { bg: T.redDim, color: T.red }, amber: { bg: T.ambDim, color: T.amb }, blue: { bg: T.bluDim, color: T.blu } };
+
+function StatusChip({ children, variant }: { children: React.ReactNode; variant: StatusVariant }) {
+  const vs: Record<StatusVariant, { bg: string; color: string }> = {
+    green: { bg: T.grnDim, color: T.grn },
+    red: { bg: T.redDim, color: T.red },
+    amber: { bg: T.ambDim, color: T.amb },
+    blue: { bg: T.bluDim, color: T.blu },
+  };
   const v = vs[variant];
-  return <span style={{ display: "inline-flex", padding: "3px 10px", borderRadius: 20, fontSize: 11, fontWeight: 700, background: v.bg, color: v.color }}>{children}</span>;
-}
-function OrderBadge({ children }: { children: React.ReactNode }) {
-  return <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", minWidth: 24, height: 24, borderRadius: 6, background: T.bluDim, color: T.blu, fontSize: 12, fontWeight: 800, padding: "0 5px" }}>{children}</div>;
+  return <Chip label={children} size="small" sx={{ background: v.bg, color: v.color, fontWeight: 700, fontSize: 11, height: 22, borderRadius: "20px", "& .MuiChip-label": { px: "10px" } }} />;
 }
 
-function PageHeader({ title, sub, onExport, onPrint }: { title: string; sub: React.ReactNode; onExport?: () => void; onPrint?: () => void }) {
-  return (
-    <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 18 }}>
-      <div>
-        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 24, fontWeight: 700, color: T.tx }}>{title}</div>
-        <div style={{ fontSize: 12, color: T.t3, marginTop: 4, fontWeight: 500 }}>{sub}</div>
-      </div>
-      <div style={{ display: "flex", gap: 8 }}>
-        {onExport && <Ebtn onClick={onExport}>⬇ Export CSV</Ebtn>}
-        {onPrint && <Ebtn primary onClick={onPrint}>🖨 Print PDF</Ebtn>}
-      </div>
-    </div>
-  );
+function OChip({ children }: { children: React.ReactNode }) {
+  return <Chip label={children} size="small" sx={{ background: T.bluDim, color: T.blu, fontWeight: 800, fontSize: 12, height: 24, borderRadius: "6px", "& .MuiChip-label": { px: "5px" } }} />;
 }
 
-function Ebtn({ children, onClick, primary }: { children: React.ReactNode; onClick?: () => void; primary?: boolean }) {
+function PageHeader({ title, sub, onExport, onPrint, exportLabel }: {
+  title: string; sub: React.ReactNode; onExport?: () => void; onPrint?: () => void; exportLabel?: string;
+}) {
   return (
-    <button onClick={onClick} style={{
-      display: "flex", alignItems: "center", gap: 6, padding: "8px 14px",
-      background: primary ? T.ac : T.w,
-      border: `1.5px solid ${primary ? T.ac : T.bd}`,
-      borderRadius: 9, fontSize: 12.5, fontWeight: 700, cursor: "pointer", color: primary ? "#fff" : T.t2,
-      fontFamily: "Plus Jakarta Sans,sans-serif", transition: "all .14s",
-      boxShadow: primary ? "0 2px 8px rgba(255,61,1,0.25)" : "none",
-    }}>{children}</button>
+    <Box sx={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", mb: "18px" }}>
+      <Box>
+        <Typography sx={{ fontFamily: "'Playfair Display',serif", fontSize: 24, fontWeight: 700, color: T.tx }}>{title}</Typography>
+        <Typography sx={{ fontSize: 12, color: T.t3, mt: "4px", fontWeight: 500 }}>{sub}</Typography>
+      </Box>
+      <Stack direction="row" spacing={1}>
+        {onExport && (
+          <Button variant="outlined" size="small" startIcon={<FileDownloadOutlinedIcon sx={{ fontSize: "15px !important" }} />} onClick={onExport}
+            sx={{ borderColor: T.bd, color: T.t2, borderRadius: "9px", fontWeight: 700, fontSize: 12.5, textTransform: "none", "&:hover": { borderColor: T.bd2, background: T.s1 } }}>
+            {exportLabel || "Export CSV"}
+          </Button>
+        )}
+        {onPrint && (
+          <Button variant="contained" size="small" startIcon={<PrintOutlinedIcon sx={{ fontSize: "15px !important" }} />} onClick={onPrint}
+            sx={{ background: T.ac, color: "#fff", borderRadius: "9px", fontWeight: 700, fontSize: 12.5, textTransform: "none", boxShadow: "0 2px 8px rgba(255,61,1,0.25)", "&:hover": { background: T.acH } }}>
+            Print PDF
+          </Button>
+        )}
+      </Stack>
+    </Box>
   );
 }
 
 function FilterBar({ children }: { children: React.ReactNode }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", padding: "11px 16px", background: T.w, border: `1.5px solid ${T.bd}`, borderRadius: 14, marginBottom: 18, boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
+    <Paper elevation={0} sx={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap", p: "11px 16px", border: `1.5px solid ${T.bd}`, borderRadius: "14px", mb: "18px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
       {children}
-    </div>
+    </Paper>
   );
 }
-const fSelStyle: React.CSSProperties = { padding: "7px 26px 7px 10px", background: T.s1, border: `1.5px solid ${T.bd}`, borderRadius: 8, fontFamily: "Plus Jakarta Sans,sans-serif", fontSize: 12.5, fontWeight: 600, color: T.tx, outline: "none", cursor: "pointer", appearance: "none", backgroundImage: `url("data:image/svg+xml,%3Csvg width='10' height='6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23a4927e' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E")`, backgroundRepeat: "no-repeat", backgroundPosition: "right 10px center" };
-const fInputStyle: React.CSSProperties = { padding: "7px 10px", background: T.s1, border: `1.5px solid ${T.bd}`, borderRadius: 8, fontFamily: "Plus Jakarta Sans,sans-serif", fontSize: 12.5, color: T.tx, outline: "none" };
-const fLabelStyle: React.CSSProperties = { fontSize: 12, fontWeight: 600, color: T.t2, whiteSpace: "nowrap" };
-const fSepStyle: React.CSSProperties = { color: T.t3, fontSize: 12, fontWeight: 500 };
 
-function TCard({ title, badge, children }: { title: string; badge: string; children: React.ReactNode }) {
+const fLabel = <T extends React.ReactNode>({ label }: { label: T }) => (
+  <Typography sx={{ fontSize: 12, fontWeight: 600, color: T.t2, whiteSpace: "nowrap" }}>{label}</Typography>
+);
+const flSx = { fontSize: 12, fontWeight: 600, color: T.t2, whiteSpace: "nowrap" as const };
+const fSepSx = { fontSize: 12, fontWeight: 500, color: T.t3 };
+const fSelSx = { fontSize: "12.5px", fontWeight: 600, color: T.tx, background: T.s1, borderRadius: "8px", "& .MuiOutlinedInput-notchedOutline": { borderColor: T.bd }, "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: T.bd2 }, "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: T.ac } };
+const fInputSx = { "& .MuiOutlinedInput-root": { fontSize: 12.5, fontWeight: 600, background: T.s1, borderRadius: "8px", "& fieldset": { borderColor: T.bd }, "&:hover fieldset": { borderColor: T.bd2 }, "&.Mui-focused fieldset": { borderColor: T.ac } }, "& input": { py: "7px", px: "10px" } };
+
+function FiltSel({ value, onChange, children }: { value: string; onChange: (v: string) => void; children: React.ReactNode }) {
   return (
-    <div style={{ background: T.w, border: `1.5px solid ${T.bd}`, borderRadius: 14, boxShadow: "0 1px 4px rgba(0,0,0,0.06)", overflow: "hidden", marginBottom: 18 }}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 18px", borderBottom: `1px solid ${T.bd}` }}>
-        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 16, fontWeight: 700, color: T.tx }}>{title}</div>
-        <div style={{ fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 20, background: T.acDim, color: T.ac, border: `1px solid ${T.acBdr}` }}>{badge}</div>
-      </div>
-      <div style={{ overflowX: "auto" }}>{children}</div>
-    </div>
+    <Select value={value} onChange={e => onChange(e.target.value as string)} size="small" sx={fSelSx}>
+      {children}
+    </Select>
   );
 }
 
-const thStyle: React.CSSProperties = { padding: "10px 14px", textAlign: "left", fontSize: 10.5, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".5px", color: T.t3, borderBottom: `1.5px solid ${T.bd}`, whiteSpace: "nowrap", background: T.s1 };
-const thR: React.CSSProperties = { ...thStyle, textAlign: "right" };
-const tdStyle: React.CSSProperties = { padding: "11px 14px", fontSize: 13, color: T.tx, borderBottom: `1px solid ${T.bd}` };
-const tdR: React.CSSProperties = { ...tdStyle, textAlign: "right", fontWeight: 700, fontFamily: "'Playfair Display',serif", fontSize: 13 };
+function TCard({ title, badge, badgeGreen, children }: { title: string; badge: string; badgeGreen?: boolean; children: React.ReactNode }) {
+  return (
+    <Paper elevation={0} sx={{ border: `1.5px solid ${T.bd}`, borderRadius: "14px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", overflow: "hidden", mb: "18px" }}>
+      <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", p: "14px 18px", borderBottom: `1px solid ${T.bd}` }}>
+        <Typography sx={{ fontFamily: "'Playfair Display',serif", fontSize: 16, fontWeight: 700, color: T.tx }}>{title}</Typography>
+        <Chip label={badge} size="small" sx={{ fontSize: 11, fontWeight: 700, background: badgeGreen ? T.grnDim : T.acDim, color: badgeGreen ? T.grn : T.ac, border: `1px solid ${badgeGreen ? T.grnBdr : T.acBdr}`, borderRadius: "20px" }} />
+      </Box>
+      <TableContainer sx={{ "&::-webkit-scrollbar": { height: 4 }, "&::-webkit-scrollbar-thumb": { background: T.bd2, borderRadius: 4 } }}>
+        {children}
+      </TableContainer>
+    </Paper>
+  );
+}
+
+const thSx = { fontSize: 10.5, fontWeight: 800, textTransform: "uppercase" as const, letterSpacing: ".5px", color: T.t3, borderBottom: `1.5px solid ${T.bd}`, background: T.s1, whiteSpace: "nowrap" as const, py: "10px", px: "14px" };
+const thRSx = { ...thSx, textAlign: "right" as const };
+const tdSx = { fontSize: 13, color: T.tx, borderBottom: `1px solid ${T.bd}`, py: "11px", px: "14px" };
+const tdRSx = { ...tdSx, textAlign: "right" as const, fontWeight: 700, fontFamily: "'Playfair Display',serif" };
 
 function ChartCard({ title, sub, total, totalLabel, children }: {
   title: string; sub?: string; total?: string; totalLabel?: string; children: React.ReactNode;
 }) {
   return (
-    <div style={{ background: T.w, border: `1.5px solid ${T.bd}`, borderRadius: 14, padding: 18, boxShadow: "0 1px 4px rgba(0,0,0,0.06)", marginBottom: 0 }}>
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 14 }}>
-        <div>
-          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 16, fontWeight: 700, color: T.tx }}>{title}</div>
-          {sub && <div style={{ fontSize: 11, color: T.t3, marginTop: 2 }}>{sub}</div>}
-        </div>
+    <Paper elevation={0} sx={{ border: `1.5px solid ${T.bd}`, borderRadius: "14px", p: "18px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
+      <Box sx={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", mb: "14px" }}>
+        <Box>
+          <Typography sx={{ fontFamily: "'Playfair Display',serif", fontSize: 16, fontWeight: 700, color: T.tx }}>{title}</Typography>
+          {sub && <Typography sx={{ fontSize: 11, color: T.t3, mt: "2px" }}>{sub}</Typography>}
+        </Box>
         {total && (
-          <div style={{ textAlign: "right" }}>
-            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 20, fontWeight: 700, color: T.ac }}>{total}</div>
-            {totalLabel && <div style={{ fontSize: 11, color: T.t3, marginTop: 2 }}>{totalLabel}</div>}
-          </div>
+          <Box sx={{ textAlign: "right" }}>
+            <Typography sx={{ fontFamily: "'Playfair Display',serif", fontSize: 20, fontWeight: 700, color: T.ac }}>{total}</Typography>
+            {totalLabel && <Typography sx={{ fontSize: 11, color: T.t3, mt: "2px" }}>{totalLabel}</Typography>}
+          </Box>
         )}
-      </div>
-      <div style={{ height: 200 }}>{children}</div>
-    </div>
+      </Box>
+      <Box sx={{ height: 200 }}>{children}</Box>
+    </Paper>
   );
 }
 
-function PbarSection({ title, items }: { title: string; items: { label: string; pct: number; value: string; color: string }[] }) {
+function PbarSection({ title, items, footer }: {
+  title: string;
+  items: { label: string; pct: number; value: string; color: string }[];
+  footer?: React.ReactNode;
+}) {
   return (
-    <div style={{ background: T.w, border: `1.5px solid ${T.bd}`, borderRadius: 14, padding: 18, boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
-      <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 15, fontWeight: 700, color: T.tx, marginBottom: 14 }}>{title}</div>
+    <Paper elevation={0} sx={{ border: `1.5px solid ${T.bd}`, borderRadius: "14px", p: "18px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
+      <Typography sx={{ fontFamily: "'Playfair Display',serif", fontSize: 15, fontWeight: 700, color: T.tx, mb: "14px" }}>{title}</Typography>
       {items.map((item, i) => (
-        <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-          <div style={{ fontSize: 12, fontWeight: 600, color: T.t2, minWidth: 90, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{item.label}</div>
-          <div style={{ flex: 1, height: 8, background: T.s2, borderRadius: 4, overflow: "hidden" }}>
-            <div style={{ height: "100%", width: `${item.pct}%`, background: item.color, borderRadius: 4, transition: "width .6s ease" }} />
-          </div>
-          <div style={{ fontSize: 12, fontWeight: 800, minWidth: 60, textAlign: "right", color: item.pct > 0 ? item.color : T.t3 }}>{item.value}</div>
-        </div>
+        <Box key={i} sx={{ display: "flex", alignItems: "center", gap: "10px", mb: "10px" }}>
+          <Typography sx={{ fontSize: 12, fontWeight: 600, color: T.t2, minWidth: 90, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.label}</Typography>
+          <Box sx={{ flex: 1, height: 8, background: T.s2, borderRadius: "4px", overflow: "hidden" }}>
+            <Box sx={{ height: "100%", width: `${item.pct}%`, background: item.color, borderRadius: "4px", transition: "width .6s ease" }} />
+          </Box>
+          <Typography sx={{ fontSize: 12, fontWeight: 800, minWidth: 60, textAlign: "right", color: item.pct > 0 ? item.color : T.t3 }}>{item.value}</Typography>
+        </Box>
       ))}
-    </div>
+      {footer}
+    </Paper>
   );
 }
 
 function InfoCard({ title, rows }: { title: string; rows: { key: string; value: string; color?: string }[] }) {
   return (
-    <div style={{ background: T.w, border: `1.5px solid ${T.bd}`, borderRadius: 14, padding: 18, boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
-      <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 15, fontWeight: 700, color: T.tx, marginBottom: 12, paddingBottom: 8, borderBottom: `1px solid ${T.bd}` }}>{title}</div>
+    <Paper elevation={0} sx={{ border: `1.5px solid ${T.bd}`, borderRadius: "14px", p: "18px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
+      <Typography sx={{ fontFamily: "'Playfair Display',serif", fontSize: 15, fontWeight: 700, color: T.tx, mb: "12px", pb: "8px", borderBottom: `1px solid ${T.bd}` }}>{title}</Typography>
       {rows.map((r, i) => (
-        <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "7px 0", borderBottom: i < rows.length - 1 ? `1px solid ${T.bd}` : "none", fontSize: 13 }}>
-          <span style={{ color: T.t2, fontWeight: 500 }}>{r.key}</span>
-          <span style={{ fontWeight: 700, color: r.color || T.tx }}>{r.value}</span>
-        </div>
+        <Box key={i} sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", py: "7px", borderBottom: i < rows.length - 1 ? `1px solid ${T.bd}` : "none", fontSize: 13 }}>
+          <Typography sx={{ color: T.t2, fontWeight: 500, fontSize: 13 }}>{r.key}</Typography>
+          <Typography sx={{ fontWeight: 700, color: r.color || T.tx, fontSize: 13 }}>{r.value}</Typography>
+        </Box>
       ))}
-    </div>
+    </Paper>
   );
 }
 
-const sg4: React.CSSProperties = { display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12, marginBottom: 18 };
-const sg6: React.CSSProperties = { display: "grid", gridTemplateColumns: "repeat(6,1fr)", gap: 12, marginBottom: 18 };
-const chartRow2: React.CSSProperties = { display: "grid", gridTemplateColumns: "1fr 280px", gap: 16, marginBottom: 18 };
-const info2: React.CSSProperties = { display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 16, marginBottom: 18 };
+const sg4 = { display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "12px", mb: "18px" };
+const sg6 = { display: "grid", gridTemplateColumns: "repeat(6,1fr)", gap: "12px", mb: "18px" };
+const chartRow2 = { display: "grid", gridTemplateColumns: "1fr 280px", gap: "16px", mb: "18px" };
+const info2 = { display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: "16px", mb: "18px" };
 
-// ── Report Sections ─────────────────────────────────────────────────────────
+// ── Inline style helpers for table hover ──
+const trHover = { "&:hover td": { background: T.s1 }, "&:last-child td": { borderBottom: "none" } };
+const totalRowSx = { background: T.s1 };
+
+// ── 12 Report Sections ─────────────────────────────────────────────────────
 
 function SalesReport() {
   const s = data.sales;
+  const [period, setPeriod] = useState("Current Week");
   return (
     <div>
-      <PageHeader
-        title="Sales Report"
-        sub={<>Sales data <b>09/03/2026 – 15/03/2026</b> · Each day 12:00 AM – 11:59 PM</>}
-        onExport={() => toast.success("CSV Exported!")}
-        onPrint={() => toast.success("PDF Generated!")}
-      />
+      <PageHeader title="Sales Report" sub={<>Sales data <b>09/03/2026 – 15/03/2026</b> · Each day 12:00 AM – 11:59 PM</>} onExport={() => toast.success("CSV Exported!")} onPrint={() => toast.success("PDF Generated!")} />
       <FilterBar>
-        <span style={fLabelStyle}>Period:</span>
-        <select style={fSelStyle}><option>Current Week</option><option>Today</option><option>Last 30 Days</option></select>
-        <span style={fSepStyle}>From</span><input style={fInputStyle} type="date" defaultValue="2026-03-09" />
-        <span style={fSepStyle}>To</span><input style={fInputStyle} type="date" defaultValue="2026-03-15" />
-        <select style={fSelStyle}><option>All Users</option><option>Sanjay Singh</option></select>
+        <Typography sx={flSx}>Period:</Typography>
+        <FiltSel value={period} onChange={setPeriod}><MenuItem value="Current Week">Current Week</MenuItem><MenuItem value="Today">Today</MenuItem><MenuItem value="Last 30 Days">Last 30 Days</MenuItem></FiltSel>
+        <Typography sx={fSepSx}>From</Typography>
+        <input type="date" defaultValue="2026-03-09" style={{ padding: "7px 10px", background: T.s1, border: `1.5px solid ${T.bd}`, borderRadius: 8, fontFamily: "inherit", fontSize: 12.5, color: T.tx, outline: "none" }} />
+        <Typography sx={fSepSx}>To</Typography>
+        <input type="date" defaultValue="2026-03-15" style={{ padding: "7px 10px", background: T.s1, border: `1.5px solid ${T.bd}`, borderRadius: 8, fontFamily: "inherit", fontSize: 12.5, color: T.tx, outline: "none" }} />
       </FilterBar>
-      <div style={sg6}>
-        <StatCard label="Total Sales" value="₹745" icon="💰" variant="ac" rows={[{ key: "Orders", value: <Badge color={T.blu} bg={T.bluDim}>5</Badge> }, { key: "Avg/Order", value: <span style={{ fontWeight: 700, color: T.tx }}>₹149</span> }]} />
-        <StatCard label="Cash Received" value="₹745" icon="💵" variant="grn" rows={[{ key: "Cash", value: <span style={{ fontWeight: 700, color: T.tx }}>₹745</span> }, { key: "Other", value: <span style={{ fontWeight: 700, color: T.tx }}>₹0</span> }]} />
-        <StatCard label="Gateway" value="₹0" icon="🔗" variant="blu" rows={[{ key: "Razorpay", value: <span style={{ fontWeight: 700, color: T.tx }}>₹0</span> }, { key: "Status", value: <Badge color={T.grn} bg={T.grnDim}>Active</Badge> }]} />
-        <StatCard label="Additional" value="₹0" icon="➕" variant="pur" rows={[{ key: "Charges", value: <span style={{ fontWeight: 700, color: T.tx }}>₹0</span> }, { key: "Discount", value: <span style={{ fontWeight: 700, color: T.tx }}>₹0</span> }]} />
-        <StatCard label="Tax (GST 5%)" value="₹192.50" icon="🧾" variant="tel" rows={[{ key: "Mode", value: <Badge color={T.blu} bg={T.bluDim}>Item</Badge> }, { key: "Total Tax", value: <span style={{ fontWeight: 700, color: T.tx }}>₹192.50</span> }]} />
-        <StatCard label="Outstanding" value="₹0" icon="⏳" variant="amb" rows={[{ key: "Orders", value: <Badge color={T.grn} bg={T.grnDim}>0</Badge> }, { key: "Status", value: <Badge color={T.grn} bg={T.grnDim}>Clear</Badge> }]} />
-      </div>
-      <div style={chartRow2}>
+      <Box sx={sg6}>
+        <StatCard label="Total Sales" value="₹745" icon="💰" variant="ac" rows={[{ key: "Orders", value: <SChip color={T.blu} bg={T.bluDim}>5</SChip> }, { key: "Avg/Order", value: <b>₹149</b> }]} />
+        <StatCard label="Cash Received" value="₹745" icon="💵" variant="grn" rows={[{ key: "Cash", value: <b>₹745</b> }, { key: "Other", value: <b>₹0</b> }]} />
+        <StatCard label="Gateway" value="₹0" icon="🔗" variant="blu" rows={[{ key: "Razorpay", value: <b>₹0</b> }, { key: "Status", value: <SChip color={T.grn} bg={T.grnDim}>Active</SChip> }]} />
+        <StatCard label="Additional" value="₹0" icon="➕" variant="pur" rows={[{ key: "Charges", value: <b>₹0</b> }, { key: "Discount", value: <b>₹0</b> }]} />
+        <StatCard label="Tax (GST 5%)" value="₹192.50" icon="🧾" variant="tel" rows={[{ key: "Mode", value: <SChip color={T.blu} bg={T.bluDim}>Item</SChip> }, { key: "Total Tax", value: <b>₹192.50</b> }]} />
+        <StatCard label="Outstanding" value="₹0" icon="⏳" variant="amb" rows={[{ key: "Orders", value: <SChip color={T.grn} bg={T.grnDim}>0</SChip> }, { key: "Status", value: <SChip color={T.grn} bg={T.grnDim}>Clear</SChip> }]} />
+      </Box>
+      <Box sx={chartRow2}>
         <ChartCard title="Daily Sales Trend" sub="Revenue per day this week" total="₹745" totalLabel="Period Total">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={s.chartData} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
@@ -236,37 +270,49 @@ function SalesReport() {
           { label: "UPI", pct: 0, value: "₹0", color: T.blu },
           { label: "Card", pct: 0, value: "₹0", color: T.pur },
           { label: "Bank", pct: 0, value: "₹0", color: T.tel },
-        ]} />
-      </div>
+        ]} footer={
+          <Box sx={{ borderTop: `1px solid ${T.bd}`, mt: 1, pt: 1 }}>
+            <Box sx={{ display: "flex", justifyContent: "space-between", fontSize: 12, mb: "5px" }}><Typography sx={{ color: T.t3, fontSize: 12 }}>Total Tax</Typography><Typography sx={{ fontWeight: 800, color: T.tel, fontSize: 12 }}>₹192.50</Typography></Box>
+            <Box sx={{ display: "flex", justifyContent: "space-between", fontSize: 12 }}><Typography sx={{ color: T.t3, fontSize: 12 }}>Discount</Typography><Typography sx={{ fontWeight: 800, color: T.red, fontSize: 12 }}>₹0</Typography></Box>
+          </Box>
+        } />
+      </Box>
       <TCard title="Detailed Sales" badge="5 records">
-        <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 700 }}>
-          <thead><tr>
-            <th style={thStyle}>Date</th><th style={thR}>Orders</th><th style={thR}>GST 5%</th><th style={thR}>Total Tax</th>
-            <th style={thR}>Cash</th><th style={thR}>UPI</th><th style={thR}>Card</th><th style={thR}>Due</th>
-            <th style={thR}>Discount</th><th style={thR}>Total</th>
-          </tr></thead>
-          <tbody>
-            {s.dailyBreakdown.map((row, i) => (
-              <tr key={i} style={{ background: T.w }} onMouseEnter={e => (e.currentTarget.style.background = T.s1)} onMouseLeave={e => (e.currentTarget.style.background = T.w)}>
-                <td style={{ ...tdStyle, fontWeight: 700 }}>{row.date}</td>
-                <td style={tdR}><OrderBadge>{row.orders}</OrderBadge></td>
-                <td style={tdR}>₹{row.gst5.toFixed(2)}</td><td style={tdR}>₹{row.totalTax.toFixed(2)}</td>
-                <td style={{ ...tdR, color: T.grn }}>₹{row.cash.toFixed(2)}</td>
-                <td style={tdR}>₹{row.upi}</td><td style={tdR}>₹{row.card}</td>
-                <td style={tdR}>₹{row.due}</td><td style={tdR}>₹{row.discount}</td>
-                <td style={{ ...tdR, color: T.ac }}>₹{row.total.toFixed(2)}</td>
-              </tr>
+        <Table size="small" sx={{ minWidth: 700 }}>
+          <TableHead><TableRow>
+            {["Date", "Orders", "GST 5%", "Total Tax", "Cash", "UPI", "Card", "Due", "Discount", "Total"].map((h, i) => (
+              <TableCell key={h} sx={i > 0 ? thRSx : thSx}>{h}</TableCell>
             ))}
-            <tr style={{ background: T.s1 }}>
-              <td style={{ ...tdStyle, fontWeight: 800, color: T.ac }}>Total</td>
-              <td style={tdR}><OrderBadge>5</OrderBadge></td>
-              <td style={{ ...tdR, fontWeight: 800 }}>₹192.50</td><td style={{ ...tdR, fontWeight: 800 }}>₹192.50</td>
-              <td style={{ ...tdR, color: T.grn, fontSize: 14 }}>₹745.00</td>
-              <td style={tdR}>₹0</td><td style={tdR}>₹0</td><td style={tdR}>₹0</td><td style={tdR}>₹0</td>
-              <td style={{ ...tdR, color: T.ac, fontSize: 15 }}>₹745.00</td>
-            </tr>
-          </tbody>
-        </table>
+          </TableRow></TableHead>
+          <TableBody>
+            {s.dailyBreakdown.map((row, i) => (
+              <TableRow key={i} sx={trHover}>
+                <TableCell sx={{ ...tdSx, fontWeight: 700 }}>{row.date}</TableCell>
+                <TableCell sx={tdRSx}><OChip>{row.orders}</OChip></TableCell>
+                <TableCell sx={tdRSx}>₹{row.gst5.toFixed(2)}</TableCell>
+                <TableCell sx={tdRSx}>₹{row.totalTax.toFixed(2)}</TableCell>
+                <TableCell sx={{ ...tdRSx, color: T.grn }}>₹{row.cash.toFixed(2)}</TableCell>
+                <TableCell sx={tdRSx}>₹{row.upi}</TableCell>
+                <TableCell sx={tdRSx}>₹{row.card}</TableCell>
+                <TableCell sx={tdRSx}>₹{row.due}</TableCell>
+                <TableCell sx={tdRSx}>₹{row.discount}</TableCell>
+                <TableCell sx={{ ...tdRSx, color: T.ac }}>₹{row.total.toFixed(2)}</TableCell>
+              </TableRow>
+            ))}
+            <TableRow sx={totalRowSx}>
+              <TableCell sx={{ ...tdSx, fontWeight: 800, color: T.ac }}>Total</TableCell>
+              <TableCell sx={tdRSx}><OChip>5</OChip></TableCell>
+              <TableCell sx={{ ...tdRSx, fontWeight: 800 }}>₹192.50</TableCell>
+              <TableCell sx={{ ...tdRSx, fontWeight: 800 }}>₹192.50</TableCell>
+              <TableCell sx={{ ...tdRSx, color: T.grn, fontSize: 14 }}>₹745.00</TableCell>
+              <TableCell sx={tdRSx}>₹0</TableCell>
+              <TableCell sx={tdRSx}>₹0</TableCell>
+              <TableCell sx={tdRSx}>₹0</TableCell>
+              <TableCell sx={tdRSx}>₹0</TableCell>
+              <TableCell sx={{ ...tdRSx, color: T.ac, fontSize: 15 }}>₹745.00</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
       </TCard>
     </div>
   );
@@ -274,23 +320,25 @@ function SalesReport() {
 
 function ItemReport() {
   const d = data.items;
-  const typeColor = (t: string) => t === "Veg" ? "green" : t === "Non-Veg" ? "red" : "amber";
+  const typeVariant = (t: string): StatusVariant => t === "Veg" ? "green" : t === "Non-Veg" ? "red" : "amber";
   return (
     <div>
       <PageHeader title="Item Report" sub={<>Best selling items · <b>09/03/2026 – 15/03/2026</b></>} onExport={() => toast.success("Exported!")} onPrint={() => toast.success("PDF Generated!")} />
       <FilterBar>
-        <span style={fLabelStyle}>Period:</span>
-        <select style={fSelStyle}><option>Current Week</option><option>Today</option><option>Last 30 Days</option></select>
-        <span style={fSepStyle}>From</span><input style={fInputStyle} type="date" defaultValue="2026-03-09" />
-        <span style={fSepStyle}>To</span><input style={fInputStyle} type="date" defaultValue="2026-03-15" />
+        <Typography sx={flSx}>Period:</Typography>
+        <Select defaultValue="Current Week" size="small" sx={fSelSx}><MenuItem value="Current Week">Current Week</MenuItem><MenuItem value="Today">Today</MenuItem></Select>
+        <Typography sx={fSepSx}>From</Typography>
+        <input type="date" defaultValue="2026-03-09" style={{ padding: "7px 10px", background: T.s1, border: `1.5px solid ${T.bd}`, borderRadius: 8, fontFamily: "inherit", fontSize: 12.5, color: T.tx, outline: "none" }} />
+        <Typography sx={fSepSx}>To</Typography>
+        <input type="date" defaultValue="2026-03-15" style={{ padding: "7px 10px", background: T.s1, border: `1.5px solid ${T.bd}`, borderRadius: 8, fontFamily: "inherit", fontSize: 12.5, color: T.tx, outline: "none" }} />
       </FilterBar>
-      <div style={sg4}>
-        <StatCard label="Total Items Sold" value={d.totalItemsSold} icon="🍽️" variant="ac" rows={[{ key: "Unique Items", value: <span style={{ fontWeight: 700 }}>{d.uniqueItems}</span> }, { key: "Top Item", value: <Badge color={T.blu} bg={T.bluDim}>{d.topItem}</Badge> }]} />
-        <StatCard label="Veg Items" value={d.vegItems} icon="🥦" variant="grn" rows={[{ key: "Revenue", value: <span style={{ fontWeight: 700 }}>₹{d.vegRevenue}</span> }, { key: "Share", value: <Badge color={T.grn} bg={T.grnDim}>{d.vegShare}%</Badge> }]} />
-        <StatCard label="Non-Veg Items" value={d.nonVegItems} icon="🍗" variant="blu" rows={[{ key: "Revenue", value: <span style={{ fontWeight: 700 }}>₹{d.nonVegRevenue}</span> }, { key: "Share", value: <Badge color={T.blu} bg={T.bluDim}>{d.nonVegShare}%</Badge> }]} />
-        <StatCard label="Avg Item Price" value={`₹${d.avgItemPrice}`} icon="💲" variant="amb" rows={[{ key: "Min Price", value: <span style={{ fontWeight: 700 }}>₹{d.minPrice}</span> }, { key: "Max Price", value: <span style={{ fontWeight: 700 }}>₹{d.maxPrice}</span> }]} />
-      </div>
-      <div style={chartRow2}>
+      <Box sx={sg4}>
+        <StatCard label="Total Items Sold" value={d.totalItemsSold} icon="🍽️" variant="ac" rows={[{ key: "Unique Items", value: <b>{d.uniqueItems}</b> }, { key: "Top Item", value: <SChip color={T.blu} bg={T.bluDim}>{d.topItem}</SChip> }]} />
+        <StatCard label="Veg Items" value={d.vegItems} icon="🥦" variant="grn" rows={[{ key: "Revenue", value: <b>₹{d.vegRevenue}</b> }, { key: "Share", value: <SChip color={T.grn} bg={T.grnDim}>{d.vegShare}%</SChip> }]} />
+        <StatCard label="Non-Veg Items" value={d.nonVegItems} icon="🍗" variant="blu" rows={[{ key: "Revenue", value: <b>₹{d.nonVegRevenue}</b> }, { key: "Share", value: <SChip color={T.blu} bg={T.bluDim}>{d.nonVegShare}%</SChip> }]} />
+        <StatCard label="Avg Item Price" value={`₹${d.avgItemPrice}`} icon="💲" variant="amb" rows={[{ key: "Min Price", value: <b>₹{d.minPrice}</b> }, { key: "Max Price", value: <b>₹{d.maxPrice}</b> }]} />
+      </Box>
+      <Box sx={chartRow2}>
         <ChartCard title="Top Items by Quantity" sub="Most ordered this period">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={d.topItemsChart} margin={{ top: 4, right: 4, left: 0, bottom: 30 }}>
@@ -303,29 +351,29 @@ function ItemReport() {
           </ResponsiveContainer>
         </ChartCard>
         <PbarSection title="Revenue by Item" items={d.revenueByItem.map(it => ({ label: it.name, pct: it.pct, value: `₹${it.revenue}`, color: it.color }))} />
-      </div>
+      </Box>
       <TCard title="Item-wise Sales" badge={`${d.itemSales.length} items`}>
-        <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 700 }}>
-          <thead><tr>
-            <th style={thStyle}>#</th><th style={thStyle}>Item Name</th><th style={thStyle}>Category</th><th style={thStyle}>Type</th>
-            <th style={thR}>Qty Sold</th><th style={thR}>Unit Price</th><th style={thR}>Total Revenue</th><th style={thR}>Tax</th><th style={thR}>Share</th>
-          </tr></thead>
-          <tbody>
+        <Table size="small" sx={{ minWidth: 700 }}>
+          <TableHead><TableRow>
+            {["#","Item Name","Category","Type"].map(h => <TableCell key={h} sx={thSx}>{h}</TableCell>)}
+            {["Qty Sold","Unit Price","Total Revenue","Tax","Share"].map(h => <TableCell key={h} sx={thRSx}>{h}</TableCell>)}
+          </TableRow></TableHead>
+          <TableBody>
             {d.itemSales.map((row, i) => (
-              <tr key={i} onMouseEnter={e => (e.currentTarget.style.background = T.s1)} onMouseLeave={e => (e.currentTarget.style.background = "")}>
-                <td style={tdStyle}>{row.rank}</td>
-                <td style={{ ...tdStyle, fontWeight: 700 }}>{row.name}</td>
-                <td style={tdStyle}>{row.category}</td>
-                <td style={tdStyle}><StatusPill variant={typeColor(row.type) as any}>{row.type}</StatusPill></td>
-                <td style={tdR}><OrderBadge>{row.qty}</OrderBadge></td>
-                <td style={tdR}>₹{row.unitPrice}</td>
-                <td style={{ ...tdR, color: T.ac }}>₹{row.revenue}</td>
-                <td style={tdR}>₹{row.tax.toFixed(2)}</td>
-                <td style={{ ...tdR, color: T.grn }}>{row.share}</td>
-              </tr>
+              <TableRow key={i} sx={trHover}>
+                <TableCell sx={tdSx}>{row.rank}</TableCell>
+                <TableCell sx={{ ...tdSx, fontWeight: 700 }}>{row.name}</TableCell>
+                <TableCell sx={tdSx}>{row.category}</TableCell>
+                <TableCell sx={tdSx}><StatusChip variant={typeVariant(row.type)}>{row.type}</StatusChip></TableCell>
+                <TableCell sx={tdRSx}><OChip>{row.qty}</OChip></TableCell>
+                <TableCell sx={tdRSx}>₹{row.unitPrice}</TableCell>
+                <TableCell sx={{ ...tdRSx, color: T.ac }}>₹{row.revenue}</TableCell>
+                <TableCell sx={tdRSx}>₹{row.tax.toFixed(2)}</TableCell>
+                <TableCell sx={{ ...tdRSx, color: T.grn }}>{row.share}</TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </TCard>
     </div>
   );
@@ -337,18 +385,18 @@ function CategoryReport() {
     <div>
       <PageHeader title="Category Report" sub={<>Sales by menu category · <b>09/03/2026 – 15/03/2026</b></>} onExport={() => toast.success("Exported!")} onPrint={() => toast.success("PDF Generated!")} />
       <FilterBar>
-        <span style={fLabelStyle}>Period:</span>
-        <select style={fSelStyle}><option>Current Week</option><option>Today</option><option>Last 30 Days</option></select>
-        <span style={fSepStyle}>From</span><input style={fInputStyle} type="date" defaultValue="2026-03-09" />
-        <span style={fSepStyle}>To</span><input style={fInputStyle} type="date" defaultValue="2026-03-15" />
+        <Typography sx={flSx}>Period:</Typography>
+        <Select defaultValue="Current Week" size="small" sx={fSelSx}><MenuItem value="Current Week">Current Week</MenuItem><MenuItem value="Today">Today</MenuItem></Select>
+        <Typography sx={fSepSx}>From</Typography><input type="date" defaultValue="2026-03-09" style={{ padding: "7px 10px", background: T.s1, border: `1.5px solid ${T.bd}`, borderRadius: 8, fontFamily: "inherit", fontSize: 12.5, color: T.tx, outline: "none" }} />
+        <Typography sx={fSepSx}>To</Typography><input type="date" defaultValue="2026-03-15" style={{ padding: "7px 10px", background: T.s1, border: `1.5px solid ${T.bd}`, borderRadius: 8, fontFamily: "inherit", fontSize: 12.5, color: T.tx, outline: "none" }} />
       </FilterBar>
-      <div style={sg4}>
-        <StatCard label="Categories Active" value={d.activeCategories} icon="📂" variant="ac" rows={[{ key: "Total Items", value: <span style={{ fontWeight: 700 }}>{d.totalItemsSold}</span> }, { key: "Top Category", value: <Badge color={T.blu} bg={T.bluDim}>{d.topCategory}</Badge> }]} />
-        <StatCard label="Top Revenue" value={`₹${d.topRevenue}`} icon="🥇" variant="grn" rows={[{ key: "Category", value: <span style={{ fontWeight: 700 }}>{d.topCategory}</span> }, { key: "Share", value: <Badge color={T.grn} bg={T.grnDim}>{d.topCategoryShare}%</Badge> }]} />
-        <StatCard label="Avg per Cat" value={`₹${d.avgPerCategory}`} icon="📊" variant="blu" rows={[{ key: "Avg Orders", value: <span style={{ fontWeight: 700 }}>{d.avgOrders}</span> }, { key: "Variance", value: <Badge color={T.amb} bg={T.ambDim}>High</Badge> }]} />
-        <StatCard label="Least Ordered" value={d.leastOrdered} icon="📉" variant="tel" rows={[{ key: "Orders", value: <span style={{ fontWeight: 700 }}>0</span> }, { key: "Revenue", value: <span style={{ fontWeight: 700 }}>₹0</span> }]} />
-      </div>
-      <div style={chartRow2}>
+      <Box sx={sg4}>
+        <StatCard label="Categories Active" value={d.activeCategories} icon="📂" variant="ac" rows={[{ key: "Total Items", value: <b>{d.totalItemsSold}</b> }, { key: "Top Category", value: <SChip color={T.blu} bg={T.bluDim}>{d.topCategory}</SChip> }]} />
+        <StatCard label="Top Revenue" value={`₹${d.topRevenue}`} icon="🥇" variant="grn" rows={[{ key: "Category", value: <b>{d.topCategory}</b> }, { key: "Share", value: <SChip color={T.grn} bg={T.grnDim}>{d.topCategoryShare}%</SChip> }]} />
+        <StatCard label="Avg per Cat" value={`₹${d.avgPerCategory}`} icon="📊" variant="blu" rows={[{ key: "Avg Orders", value: <b>{d.avgOrders}</b> }, { key: "Variance", value: <SChip color={T.amb} bg={T.ambDim}>High</SChip> }]} />
+        <StatCard label="Least Ordered" value={d.leastOrdered} icon="📉" variant="tel" rows={[{ key: "Orders", value: <b>0</b> }, { key: "Revenue", value: <b>₹0</b> }]} />
+      </Box>
+      <Box sx={chartRow2}>
         <ChartCard title="Revenue by Category" sub="Comparison this period">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={d.chartData} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
@@ -361,37 +409,37 @@ function CategoryReport() {
           </ResponsiveContainer>
         </ChartCard>
         <PbarSection title="Category Breakdown" items={d.breakdown.map(b => ({ label: b.name, pct: b.pct, value: `₹${b.revenue}`, color: b.color }))} />
-      </div>
+      </Box>
       <TCard title="Category-wise Sales" badge={`${d.categorySales.length} categories`}>
-        <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 700 }}>
-          <thead><tr>
-            <th style={thStyle}>#</th><th style={thStyle}>Category</th><th style={thR}>Items Sold</th><th style={thR}>Orders</th>
-            <th style={thR}>Revenue</th><th style={thR}>Tax</th><th style={thR}>Discount</th><th style={thR}>Net Total</th><th style={thR}>Share</th>
-          </tr></thead>
-          <tbody>
+        <Table size="small" sx={{ minWidth: 700 }}>
+          <TableHead><TableRow>
+            {["#","Category"].map(h => <TableCell key={h} sx={thSx}>{h}</TableCell>)}
+            {["Items Sold","Orders","Revenue","Tax","Discount","Net Total","Share"].map(h => <TableCell key={h} sx={thRSx}>{h}</TableCell>)}
+          </TableRow></TableHead>
+          <TableBody>
             {d.categorySales.map((row, i) => (
-              <tr key={i} onMouseEnter={e => (e.currentTarget.style.background = T.s1)} onMouseLeave={e => (e.currentTarget.style.background = "")}>
-                <td style={tdStyle}>{row.rank}</td>
-                <td style={{ ...tdStyle, fontWeight: 700 }}>{row.category}</td>
-                <td style={tdR}><OrderBadge>{row.items}</OrderBadge></td>
-                <td style={tdR}>{row.orders}</td>
-                <td style={{ ...tdR, color: T.grn }}>₹{row.revenue}</td>
-                <td style={tdR}>₹{row.tax.toFixed(2)}</td>
-                <td style={tdR}>₹{row.discount}</td>
-                <td style={{ ...tdR, color: T.ac }}>₹{row.net}</td>
-                <td style={tdR}>{row.share}</td>
-              </tr>
+              <TableRow key={i} sx={trHover}>
+                <TableCell sx={tdSx}>{row.rank}</TableCell>
+                <TableCell sx={{ ...tdSx, fontWeight: 700 }}>{row.category}</TableCell>
+                <TableCell sx={tdRSx}><OChip>{row.items}</OChip></TableCell>
+                <TableCell sx={tdRSx}>{row.orders}</TableCell>
+                <TableCell sx={{ ...tdRSx, color: T.grn }}>₹{row.revenue}</TableCell>
+                <TableCell sx={tdRSx}>₹{row.tax.toFixed(2)}</TableCell>
+                <TableCell sx={tdRSx}>₹{row.discount}</TableCell>
+                <TableCell sx={{ ...tdRSx, color: T.ac }}>₹{row.net}</TableCell>
+                <TableCell sx={tdRSx}>{row.share}</TableCell>
+              </TableRow>
             ))}
-            <tr style={{ background: T.s1 }}>
-              <td colSpan={4} style={{ ...tdStyle, fontWeight: 800, color: T.ac }}>Total</td>
-              <td style={{ ...tdR, color: T.grn, fontSize: 14 }}>₹1160</td>
-              <td style={{ ...tdR, fontWeight: 800 }}>₹55.22</td>
-              <td style={tdR}>₹0</td>
-              <td style={{ ...tdR, color: T.ac, fontSize: 14 }}>₹745</td>
-              <td style={tdR}>100%</td>
-            </tr>
-          </tbody>
-        </table>
+            <TableRow sx={totalRowSx}>
+              <TableCell colSpan={4} sx={{ ...tdSx, fontWeight: 800, color: T.ac }}>Total</TableCell>
+              <TableCell sx={{ ...tdRSx, color: T.grn, fontSize: 14 }}>₹1160</TableCell>
+              <TableCell sx={{ ...tdRSx, fontWeight: 800 }}>₹55.22</TableCell>
+              <TableCell sx={tdRSx}>₹0</TableCell>
+              <TableCell sx={{ ...tdRSx, color: T.ac, fontSize: 14 }}>₹745</TableCell>
+              <TableCell sx={tdRSx}>100%</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
       </TCard>
     </div>
   );
@@ -399,43 +447,46 @@ function CategoryReport() {
 
 function DeliveryReport() {
   const d = data.delivery;
-  const statusVariant = (s: string): "green" | "amber" | "red" | "blue" => s === "Delivered" ? "green" : s === "Pending" ? "amber" : "red";
+  const sv = (s: string): StatusVariant => s === "Delivered" ? "green" : s === "Pending" ? "amber" : "red";
   return (
     <div>
       <PageHeader title="Delivery App Report" sub={<>Online delivery platform orders · <b>09/03/2026 – 15/03/2026</b></>} onExport={() => toast.success("Exported!")} onPrint={() => toast.success("PDF Generated!")} />
       <FilterBar>
-        <span style={fLabelStyle}>Platform:</span>
-        <select style={fSelStyle}><option>All Platforms</option><option>Swiggy</option><option>Zomato</option><option>Direct</option></select>
-        <span style={fSepStyle}>From</span><input style={fInputStyle} type="date" defaultValue="2026-03-09" />
-        <span style={fSepStyle}>To</span><input style={fInputStyle} type="date" defaultValue="2026-03-15" />
+        <Typography sx={flSx}>Platform:</Typography>
+        <Select defaultValue="All Platforms" size="small" sx={fSelSx}><MenuItem value="All Platforms">All Platforms</MenuItem><MenuItem value="Swiggy">Swiggy</MenuItem><MenuItem value="Zomato">Zomato</MenuItem><MenuItem value="Direct">Direct</MenuItem></Select>
+        <Typography sx={fSepSx}>From</Typography><input type="date" defaultValue="2026-03-09" style={{ padding: "7px 10px", background: T.s1, border: `1.5px solid ${T.bd}`, borderRadius: 8, fontFamily: "inherit", fontSize: 12.5, color: T.tx, outline: "none" }} />
+        <Typography sx={fSepSx}>To</Typography><input type="date" defaultValue="2026-03-15" style={{ padding: "7px 10px", background: T.s1, border: `1.5px solid ${T.bd}`, borderRadius: 8, fontFamily: "inherit", fontSize: 12.5, color: T.tx, outline: "none" }} />
       </FilterBar>
-      <div style={sg4}>
-        <StatCard label="Total Deliveries" value={d.totalDeliveries} icon="🛵" variant="ac" rows={[{ key: "Revenue", value: <span style={{ fontWeight: 700 }}>₹{d.deliveryRevenue}</span> }, { key: "Avg Delivery", value: <span style={{ fontWeight: 700 }}>₹{d.avgDeliveryAmount}</span> }]} />
-        <StatCard label="Delivery Charges" value={`₹${d.deliveryChargesTotal}`} icon="🏷️" variant="grn" rows={[{ key: "Avg Charge", value: <span style={{ fontWeight: 700 }}>₹{d.avgDeliveryCharge}</span> }, { key: "Free Deliveries", value: <span style={{ fontWeight: 700 }}>{d.freeDeliveries}</span> }]} />
-        <StatCard label="Platform Commission" value={`₹${d.platformCommission}`} icon="💸" variant="blu" rows={[{ key: "Rate", value: <span style={{ fontWeight: 700 }}>{d.commissionRate}</span> }, { key: "Net After", value: <span style={{ fontWeight: 700 }}>₹{d.netAfterCommission}</span> }]} />
-        <StatCard label="Avg Delivery Time" value={`${d.avgDeliveryTime} min`} icon="⏱️" variant="tel" rows={[{ key: "Fastest", value: <span style={{ fontWeight: 700 }}>{d.fastestDelivery} min</span> }, { key: "Slowest", value: <span style={{ fontWeight: 700 }}>{d.slowestDelivery} min</span> }]} />
-      </div>
+      <Box sx={sg4}>
+        <StatCard label="Total Deliveries" value={d.totalDeliveries} icon="🛵" variant="ac" rows={[{ key: "Revenue", value: <b>₹{d.deliveryRevenue}</b> }, { key: "Avg Delivery", value: <b>₹{d.avgDeliveryAmount}</b> }]} />
+        <StatCard label="Delivery Charges" value={`₹${d.deliveryChargesTotal}`} icon="🏷️" variant="grn" rows={[{ key: "Avg Charge", value: <b>₹{d.avgDeliveryCharge}</b> }, { key: "Free Deliveries", value: <b>{d.freeDeliveries}</b> }]} />
+        <StatCard label="Platform Commission" value={`₹${d.platformCommission}`} icon="💸" variant="blu" rows={[{ key: "Rate", value: <b>{d.commissionRate}</b> }, { key: "Net After", value: <b>₹{d.netAfterCommission}</b> }]} />
+        <StatCard label="Avg Delivery Time" value={`${d.avgDeliveryTime} min`} icon="⏱️" variant="tel" rows={[{ key: "Fastest", value: <b>{d.fastestDelivery} min</b> }, { key: "Slowest", value: <b>{d.slowestDelivery} min</b> }]} />
+      </Box>
       <TCard title="Delivery Orders" badge={`${d.orders.length} orders`}>
-        <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 800 }}>
-          <thead><tr>
-            <th style={thStyle}>Order #</th><th style={thStyle}>Date</th><th style={thStyle}>Platform</th><th style={thStyle}>Customer</th>
-            <th style={thR}>Items</th><th style={thR}>Order Amount</th><th style={thR}>Delivery Fee</th><th style={thR}>Commission</th><th style={thR}>Net Amount</th><th style={thStyle}>Status</th>
-          </tr></thead>
-          <tbody>
+        <Table size="small" sx={{ minWidth: 800 }}>
+          <TableHead><TableRow>
+            {["Order #","Date","Platform","Customer"].map(h => <TableCell key={h} sx={thSx}>{h}</TableCell>)}
+            {["Items","Order Amount","Delivery Fee","Commission","Net Amount"].map(h => <TableCell key={h} sx={thRSx}>{h}</TableCell>)}
+            <TableCell sx={thSx}>Status</TableCell>
+          </TableRow></TableHead>
+          <TableBody>
             {d.orders.map((row, i) => (
-              <tr key={i} onMouseEnter={e => (e.currentTarget.style.background = T.s1)} onMouseLeave={e => (e.currentTarget.style.background = "")}>
-                <td style={{ ...tdStyle, fontWeight: 700 }}>{row.id}</td>
-                <td style={tdStyle}>{row.date}</td><td style={tdStyle}>{row.platform}</td><td style={tdStyle}>{row.customer}</td>
-                <td style={tdR}><OrderBadge>{row.items}</OrderBadge></td>
-                <td style={{ ...tdR, color: T.grn }}>₹{row.amount}</td>
-                <td style={tdR}>₹{row.deliveryFee}</td>
-                <td style={{ ...tdR, color: T.red }}>₹{row.commission}</td>
-                <td style={{ ...tdR, color: T.ac }}>₹{row.net}</td>
-                <td style={tdStyle}><StatusPill variant={statusVariant(row.status)}>{row.status}</StatusPill></td>
-              </tr>
+              <TableRow key={i} sx={trHover}>
+                <TableCell sx={{ ...tdSx, fontWeight: 700 }}>{row.id}</TableCell>
+                <TableCell sx={tdSx}>{row.date}</TableCell>
+                <TableCell sx={tdSx}>{row.platform}</TableCell>
+                <TableCell sx={tdSx}>{row.customer}</TableCell>
+                <TableCell sx={tdRSx}><OChip>{row.items}</OChip></TableCell>
+                <TableCell sx={{ ...tdRSx, color: T.grn }}>₹{row.amount}</TableCell>
+                <TableCell sx={tdRSx}>₹{row.deliveryFee}</TableCell>
+                <TableCell sx={{ ...tdRSx, color: T.red }}>₹{row.commission}</TableCell>
+                <TableCell sx={{ ...tdRSx, color: T.ac }}>₹{row.net}</TableCell>
+                <TableCell sx={tdSx}><StatusChip variant={sv(row.status)}>{row.status}</StatusChip></TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </TCard>
     </div>
   );
@@ -443,41 +494,44 @@ function DeliveryReport() {
 
 function ExpenseReport() {
   const d = data.expenses;
-  const statusVariant = (s: string): "green" | "amber" | "blue" => s === "Paid" ? "green" : s === "Partial" ? "amber" : "blue";
+  const sv = (s: string): StatusVariant => s === "Paid" ? "green" : s === "Partial" ? "amber" : "blue";
   return (
     <div>
       <PageHeader title="Expense Reports" sub={<>Business expenses & overheads · <b>March 2026</b></>} onExport={() => toast.success("Exported!")} onPrint={() => toast.success("PDF Generated!")} />
       <FilterBar>
-        <span style={fLabelStyle}>Category:</span>
-        <select style={fSelStyle}><option>All Categories</option><option>Raw Material</option><option>Utilities</option><option>Salary</option></select>
-        <span style={fSepStyle}>Month:</span>
-        <select style={fSelStyle}><option>March 2026</option><option>February 2026</option></select>
+        <Typography sx={flSx}>Category:</Typography>
+        <Select defaultValue="All Categories" size="small" sx={fSelSx}><MenuItem value="All Categories">All Categories</MenuItem><MenuItem value="Raw Material">Raw Material</MenuItem><MenuItem value="Utilities">Utilities</MenuItem><MenuItem value="Salary">Salary</MenuItem></Select>
+        <Typography sx={fSepSx}>Month:</Typography>
+        <Select defaultValue="March 2026" size="small" sx={fSelSx}><MenuItem value="March 2026">March 2026</MenuItem><MenuItem value="February 2026">February 2026</MenuItem></Select>
       </FilterBar>
-      <div style={sg4}>
-        <StatCard label="Total Expenses" value="₹12,450" icon="💸" variant="ac" rows={[{ key: "vs Last Month", value: <Badge color={T.red} bg={T.redDim}>+8%</Badge> }, { key: "Entries", value: <span style={{ fontWeight: 700 }}>{d.totalEntries}</span> }]} />
-        <StatCard label="Raw Material" value={`₹${d.rawMaterial.toLocaleString()}`} icon="🛒" variant="grn" rows={[{ key: "Share", value: <Badge color={T.grn} bg={T.grnDim}>{d.rawMaterialShare}</Badge> }, { key: "Entries", value: <span style={{ fontWeight: 700 }}>{d.rawMaterialEntries}</span> }]} />
-        <StatCard label="Utilities" value={`₹${d.utilities.toLocaleString()}`} icon="💡" variant="blu" rows={[{ key: "Share", value: <Badge color={T.blu} bg={T.bluDim}>{d.utilitiesShare}</Badge> }, { key: "Entries", value: <span style={{ fontWeight: 700 }}>{d.utilitiesEntries}</span> }]} />
-        <StatCard label="Salary & Others" value={`₹${d.salaryOthers.toLocaleString()}`} icon="👨‍💼" variant="amb" rows={[{ key: "Share", value: <Badge color={T.amb} bg={T.ambDim}>{d.salaryShare}</Badge> }, { key: "Entries", value: <span style={{ fontWeight: 700 }}>{d.salaryEntries}</span> }]} />
-      </div>
+      <Box sx={sg4}>
+        <StatCard label="Total Expenses" value="₹12,450" icon="💸" variant="ac" rows={[{ key: "vs Last Month", value: <SChip color={T.red} bg={T.redDim}>+8%</SChip> }, { key: "Entries", value: <b>{d.totalEntries}</b> }]} />
+        <StatCard label="Raw Material" value={`₹${d.rawMaterial.toLocaleString()}`} icon="🛒" variant="grn" rows={[{ key: "Share", value: <SChip color={T.grn} bg={T.grnDim}>{d.rawMaterialShare}</SChip> }, { key: "Entries", value: <b>{d.rawMaterialEntries}</b> }]} />
+        <StatCard label="Utilities" value={`₹${d.utilities.toLocaleString()}`} icon="💡" variant="blu" rows={[{ key: "Share", value: <SChip color={T.blu} bg={T.bluDim}>{d.utilitiesShare}</SChip> }, { key: "Entries", value: <b>{d.utilitiesEntries}</b> }]} />
+        <StatCard label="Salary & Others" value={`₹${d.salaryOthers.toLocaleString()}`} icon="👨‍💼" variant="amb" rows={[{ key: "Share", value: <SChip color={T.amb} bg={T.ambDim}>{d.salaryShare}</SChip> }, { key: "Entries", value: <b>{d.salaryEntries}</b> }]} />
+      </Box>
       <TCard title="Expense Entries" badge={`${d.entries.length} entries`}>
-        <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 750 }}>
-          <thead><tr>
-            <th style={thStyle}>Date</th><th style={thStyle}>Description</th><th style={thStyle}>Category</th><th style={thStyle}>Vendor</th>
-            <th style={thStyle}>Added By</th><th style={thR}>Amount</th><th style={thStyle}>Payment</th><th style={thStyle}>Status</th>
-          </tr></thead>
-          <tbody>
+        <Table size="small" sx={{ minWidth: 750 }}>
+          <TableHead><TableRow>
+            {["Date","Description","Category","Vendor","Added By"].map(h => <TableCell key={h} sx={thSx}>{h}</TableCell>)}
+            <TableCell sx={thRSx}>Amount</TableCell>
+            {["Payment","Status"].map(h => <TableCell key={h} sx={thSx}>{h}</TableCell>)}
+          </TableRow></TableHead>
+          <TableBody>
             {d.entries.map((row, i) => (
-              <tr key={i} onMouseEnter={e => (e.currentTarget.style.background = T.s1)} onMouseLeave={e => (e.currentTarget.style.background = "")}>
-                <td style={{ ...tdStyle, fontWeight: 700 }}>{row.date}</td>
-                <td style={tdStyle}>{row.description}</td><td style={tdStyle}>{row.category}</td>
-                <td style={tdStyle}>{row.vendor}</td><td style={tdStyle}>{row.addedBy}</td>
-                <td style={{ ...tdR, color: T.ac }}>₹{row.amount.toLocaleString()}</td>
-                <td style={tdStyle}>{row.payment}</td>
-                <td style={tdStyle}><StatusPill variant={statusVariant(row.status)}>{row.status}</StatusPill></td>
-              </tr>
+              <TableRow key={i} sx={trHover}>
+                <TableCell sx={{ ...tdSx, fontWeight: 700 }}>{row.date}</TableCell>
+                <TableCell sx={tdSx}>{row.description}</TableCell>
+                <TableCell sx={tdSx}>{row.category}</TableCell>
+                <TableCell sx={tdSx}>{row.vendor}</TableCell>
+                <TableCell sx={tdSx}>{row.addedBy}</TableCell>
+                <TableCell sx={{ ...tdRSx, color: T.ac }}>₹{row.amount.toLocaleString()}</TableCell>
+                <TableCell sx={tdSx}>{row.payment}</TableCell>
+                <TableCell sx={tdSx}><StatusChip variant={sv(row.status)}>{row.status}</StatusChip></TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </TCard>
     </div>
   );
@@ -485,43 +539,47 @@ function ExpenseReport() {
 
 function CancelledReport() {
   const d = data.cancelledOrders;
-  const kotVariant = (s: string): "green" | "red" => s === "Before KOT" ? "green" : "red";
+  const kotV = (s: string): StatusVariant => s === "Before KOT" ? "green" : "red";
   return (
     <div>
       <PageHeader title="Cancelled Order Report" sub={<>Orders cancelled before completion · <b>09/03/2026 – 15/03/2026</b></>} onExport={() => toast.success("Exported!")} onPrint={() => toast.success("PDF Generated!")} />
       <FilterBar>
-        <span style={fLabelStyle}>Channel:</span>
-        <select style={fSelStyle}><option>All Channels</option><option>Dine In</option><option>Delivery</option><option>Pickup</option></select>
-        <span style={fSepStyle}>From</span><input style={fInputStyle} type="date" defaultValue="2026-03-09" />
-        <span style={fSepStyle}>To</span><input style={fInputStyle} type="date" defaultValue="2026-03-15" />
+        <Typography sx={flSx}>Channel:</Typography>
+        <Select defaultValue="All Channels" size="small" sx={fSelSx}><MenuItem value="All Channels">All Channels</MenuItem><MenuItem value="Dine In">Dine In</MenuItem><MenuItem value="Delivery">Delivery</MenuItem><MenuItem value="Pickup">Pickup</MenuItem></Select>
+        <Typography sx={fSepSx}>From</Typography><input type="date" defaultValue="2026-03-09" style={{ padding: "7px 10px", background: T.s1, border: `1.5px solid ${T.bd}`, borderRadius: 8, fontFamily: "inherit", fontSize: 12.5, color: T.tx, outline: "none" }} />
+        <Typography sx={fSepSx}>To</Typography><input type="date" defaultValue="2026-03-15" style={{ padding: "7px 10px", background: T.s1, border: `1.5px solid ${T.bd}`, borderRadius: 8, fontFamily: "inherit", fontSize: 12.5, color: T.tx, outline: "none" }} />
       </FilterBar>
-      <div style={sg4}>
-        <StatCard label="Cancelled Orders" value={d.count} icon="❌" variant="ac" rows={[{ key: "Lost Revenue", value: <span style={{ fontWeight: 700, color: T.red }}>₹{d.lostRevenue}</span> }, { key: "Cancel Rate", value: <Badge color={T.red} bg={T.redDim}>{d.cancelRate}</Badge> }]} />
-        <StatCard label="Before KOT" value={d.beforeKot} icon="🕐" variant="amb" rows={[{ key: "Revenue Impact", value: <span style={{ fontWeight: 700 }}>₹{d.beforeKotRevenue}</span> }, { key: "Share", value: <Badge color={T.amb} bg={T.ambDim}>{d.beforeKotShare}</Badge> }]} />
-        <StatCard label="After KOT" value={d.afterKot} icon="🍳" variant="blu" rows={[{ key: "Food Wasted", value: <span style={{ fontWeight: 700 }}>₹{d.afterKotRevenue}</span> }, { key: "Share", value: <Badge color={T.blu} bg={T.bluDim}>{d.afterKotShare}</Badge> }]} />
-        <StatCard label="Top Reason" value="No Show" icon="📝" variant="tel" rows={[{ key: "Count", value: <span style={{ fontWeight: 700 }}>{d.topReasonCount}</span> }, { key: "Other", value: <span style={{ fontWeight: 700 }}>Wrong Order</span> }]} />
-      </div>
+      <Box sx={sg4}>
+        <StatCard label="Cancelled Orders" value={d.count} icon="❌" variant="ac" rows={[{ key: "Lost Revenue", value: <Typography sx={{ fontWeight: 700, color: T.red, fontSize: 11.5 }}>₹{d.lostRevenue}</Typography> }, { key: "Cancel Rate", value: <SChip color={T.red} bg={T.redDim}>{d.cancelRate}</SChip> }]} />
+        <StatCard label="Before KOT" value={d.beforeKot} icon="🕐" variant="amb" rows={[{ key: "Revenue Impact", value: <b>₹{d.beforeKotRevenue}</b> }, { key: "Share", value: <SChip color={T.amb} bg={T.ambDim}>{d.beforeKotShare}</SChip> }]} />
+        <StatCard label="After KOT" value={d.afterKot} icon="🍳" variant="blu" rows={[{ key: "Food Wasted", value: <b>₹{d.afterKotRevenue}</b> }, { key: "Share", value: <SChip color={T.blu} bg={T.bluDim}>{d.afterKotShare}</SChip> }]} />
+        <StatCard label="Top Reason" value="No Show" icon="📝" variant="tel" rows={[{ key: "Count", value: <b>{d.topReasonCount}</b> }, { key: "Other", value: <b>Wrong Order</b> }]} />
+      </Box>
       <TCard title="Cancelled Orders" badge={`${d.orders.length} orders`}>
-        <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 800 }}>
-          <thead><tr>
-            <th style={thStyle}>Order #</th><th style={thStyle}>Date</th><th style={thStyle}>Channel</th><th style={thStyle}>Table</th>
-            <th style={thStyle}>Waiter</th><th style={thR}>Items</th><th style={thR}>Order Value</th>
-            <th style={thStyle}>Cancelled By</th><th style={thStyle}>Reason</th><th style={thStyle}>KOT Status</th>
-          </tr></thead>
-          <tbody>
+        <Table size="small" sx={{ minWidth: 800 }}>
+          <TableHead><TableRow>
+            {["Order #","Date","Channel","Table","Waiter"].map(h => <TableCell key={h} sx={thSx}>{h}</TableCell>)}
+            <TableCell sx={thRSx}>Items</TableCell>
+            <TableCell sx={thRSx}>Order Value</TableCell>
+            {["Cancelled By","Reason","KOT Status"].map(h => <TableCell key={h} sx={thSx}>{h}</TableCell>)}
+          </TableRow></TableHead>
+          <TableBody>
             {d.orders.map((row, i) => (
-              <tr key={i} onMouseEnter={e => (e.currentTarget.style.background = T.s1)} onMouseLeave={e => (e.currentTarget.style.background = "")}>
-                <td style={{ ...tdStyle, fontWeight: 700 }}>{row.id}</td>
-                <td style={tdStyle}>{row.date}</td><td style={tdStyle}>{row.channel}</td>
-                <td style={tdStyle}>{row.table}</td><td style={tdStyle}>{row.waiter}</td>
-                <td style={tdR}><OrderBadge>{row.items}</OrderBadge></td>
-                <td style={{ ...tdR, color: T.red }}>₹{row.value}</td>
-                <td style={tdStyle}>{row.cancelledBy}</td><td style={tdStyle}>{row.reason}</td>
-                <td style={tdStyle}><StatusPill variant={kotVariant(row.kotStatus)}>{row.kotStatus}</StatusPill></td>
-              </tr>
+              <TableRow key={i} sx={trHover}>
+                <TableCell sx={{ ...tdSx, fontWeight: 700 }}>{row.id}</TableCell>
+                <TableCell sx={tdSx}>{row.date}</TableCell>
+                <TableCell sx={tdSx}>{row.channel}</TableCell>
+                <TableCell sx={tdSx}>{row.table}</TableCell>
+                <TableCell sx={tdSx}>{row.waiter}</TableCell>
+                <TableCell sx={tdRSx}><OChip>{row.items}</OChip></TableCell>
+                <TableCell sx={{ ...tdRSx, color: T.red }}>₹{row.value}</TableCell>
+                <TableCell sx={tdSx}>{row.cancelledBy}</TableCell>
+                <TableCell sx={tdSx}>{row.reason}</TableCell>
+                <TableCell sx={tdSx}><StatusChip variant={kotV(row.kotStatus)}>{row.kotStatus}</StatusChip></TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </TCard>
     </div>
   );
@@ -533,38 +591,40 @@ function RemovedKotReport() {
     <div>
       <PageHeader title="Removed KOT Item Report" sub={<>Items removed from KOT after kitchen confirmation · <b>09/03/2026 – 15/03/2026</b></>} onExport={() => toast.success("Exported!")} onPrint={() => toast.success("PDF Generated!")} />
       <FilterBar>
-        <span style={fLabelStyle}>Period:</span>
-        <select style={fSelStyle}><option>Current Week</option><option>Today</option><option>Last Month</option></select>
-        <span style={fSepStyle}>From</span><input style={fInputStyle} type="date" defaultValue="2026-03-09" />
-        <span style={fSepStyle}>To</span><input style={fInputStyle} type="date" defaultValue="2026-03-15" />
+        <Typography sx={flSx}>Period:</Typography>
+        <Select defaultValue="Current Week" size="small" sx={fSelSx}><MenuItem value="Current Week">Current Week</MenuItem><MenuItem value="Today">Today</MenuItem></Select>
+        <Typography sx={fSepSx}>From</Typography><input type="date" defaultValue="2026-03-09" style={{ padding: "7px 10px", background: T.s1, border: `1.5px solid ${T.bd}`, borderRadius: 8, fontFamily: "inherit", fontSize: 12.5, color: T.tx, outline: "none" }} />
+        <Typography sx={fSepSx}>To</Typography><input type="date" defaultValue="2026-03-15" style={{ padding: "7px 10px", background: T.s1, border: `1.5px solid ${T.bd}`, borderRadius: 8, fontFamily: "inherit", fontSize: 12.5, color: T.tx, outline: "none" }} />
       </FilterBar>
-      <div style={sg4}>
-        <StatCard label="Items Removed" value={d.count} icon="🗑️" variant="ac" rows={[{ key: "Value Lost", value: <span style={{ fontWeight: 700, color: T.red }}>₹{d.valueLost}</span> }, { key: "Orders Affected", value: <span style={{ fontWeight: 700 }}>{d.ordersAffected}</span> }]} />
-        <StatCard label="By Waiter" value={d.byWaiter} icon="🙋" variant="amb" rows={[{ key: "Value", value: <span style={{ fontWeight: 700 }}>₹{d.byWaiterValue}</span> }, { key: `Top: ${d.topWaiter}`, value: <Badge color={T.amb} bg={T.ambDim}>{d.topWaiterCount}x</Badge> }]} />
-        <StatCard label="By Manager" value={d.byManager} icon="👔" variant="blu" rows={[{ key: "Value", value: <span style={{ fontWeight: 700 }}>₹{d.byManagerValue}</span> }, { key: "Reason", value: <Badge color={T.blu} bg={T.bluDim}>{d.byManagerReason}</Badge> }]} />
-        <StatCard label="Most Removed" value={d.mostRemovedItem} icon="🍽️" variant="grn" rows={[{ key: "Count", value: <span style={{ fontWeight: 700 }}>{d.mostRemovedCount}</span> }, { key: "Value", value: <span style={{ fontWeight: 700, color: T.red }}>₹{d.mostRemovedValue}</span> }]} />
-      </div>
+      <Box sx={sg4}>
+        <StatCard label="Items Removed" value={d.count} icon="🗑️" variant="ac" rows={[{ key: "Value Lost", value: <Typography sx={{ fontWeight: 700, color: T.red, fontSize: 11.5 }}>₹{d.valueLost}</Typography> }, { key: "Orders Affected", value: <b>{d.ordersAffected}</b> }]} />
+        <StatCard label="By Waiter" value={d.byWaiter} icon="🙋" variant="amb" rows={[{ key: "Value", value: <b>₹{d.byWaiterValue}</b> }, { key: `Top: ${d.topWaiter}`, value: <SChip color={T.amb} bg={T.ambDim}>{d.topWaiterCount}x</SChip> }]} />
+        <StatCard label="By Manager" value={d.byManager} icon="👔" variant="blu" rows={[{ key: "Value", value: <b>₹{d.byManagerValue}</b> }, { key: "Reason", value: <SChip color={T.blu} bg={T.bluDim}>{d.byManagerReason}</SChip> }]} />
+        <StatCard label="Most Removed" value={d.mostRemovedItem} icon="🍽️" variant="grn" rows={[{ key: "Count", value: <b>{d.mostRemovedCount}</b> }, { key: "Value", value: <Typography sx={{ fontWeight: 700, color: T.red, fontSize: 11.5 }}>₹{d.mostRemovedValue}</Typography> }]} />
+      </Box>
       <TCard title="Removed Items Log" badge={`${d.items.length} removals`}>
-        <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 750 }}>
-          <thead><tr>
-            <th style={thStyle}>Order #</th><th style={thStyle}>Date & Time</th><th style={thStyle}>Item Name</th>
-            <th style={thR}>Qty</th><th style={thR}>Price</th><th style={thR}>Total Loss</th>
-            <th style={thStyle}>Removed By</th><th style={thStyle}>Reason</th><th style={thStyle}>KOT #</th>
-          </tr></thead>
-          <tbody>
+        <Table size="small" sx={{ minWidth: 750 }}>
+          <TableHead><TableRow>
+            {["Order #","Date & Time","Item Name"].map(h => <TableCell key={h} sx={thSx}>{h}</TableCell>)}
+            {["Qty","Price","Total Loss"].map(h => <TableCell key={h} sx={thRSx}>{h}</TableCell>)}
+            {["Removed By","Reason","KOT #"].map(h => <TableCell key={h} sx={thSx}>{h}</TableCell>)}
+          </TableRow></TableHead>
+          <TableBody>
             {d.items.map((row, i) => (
-              <tr key={i} onMouseEnter={e => (e.currentTarget.style.background = T.s1)} onMouseLeave={e => (e.currentTarget.style.background = "")}>
-                <td style={{ ...tdStyle, fontWeight: 700 }}>{row.orderId}</td>
-                <td style={tdStyle}>{row.datetime}</td><td style={tdStyle}>{row.item}</td>
-                <td style={tdR}>{row.qty}</td>
-                <td style={tdR}>₹{row.price}</td>
-                <td style={{ ...tdR, color: T.red }}>₹{row.totalLoss}</td>
-                <td style={tdStyle}>{row.removedBy}</td><td style={tdStyle}>{row.reason}</td>
-                <td style={tdStyle}>{row.kot}</td>
-              </tr>
+              <TableRow key={i} sx={trHover}>
+                <TableCell sx={{ ...tdSx, fontWeight: 700 }}>{row.orderId}</TableCell>
+                <TableCell sx={tdSx}>{row.datetime}</TableCell>
+                <TableCell sx={tdSx}>{row.item}</TableCell>
+                <TableCell sx={tdRSx}>{row.qty}</TableCell>
+                <TableCell sx={tdRSx}>₹{row.price}</TableCell>
+                <TableCell sx={{ ...tdRSx, color: T.red }}>₹{row.totalLoss}</TableCell>
+                <TableCell sx={tdSx}>{row.removedBy}</TableCell>
+                <TableCell sx={tdSx}>{row.reason}</TableCell>
+                <TableCell sx={tdSx}>{row.kot}</TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </TCard>
     </div>
   );
@@ -572,44 +632,46 @@ function RemovedKotReport() {
 
 function RefundReport() {
   const d = data.refunds;
-  const typeVariant = (t: string): "red" | "amber" => t === "Full" ? "red" : "amber";
+  const tv = (t: string): StatusVariant => t === "Full" ? "red" : "amber";
   return (
     <div>
       <PageHeader title="Refund Report" sub={<>Processed refunds & adjustments · <b>09/03/2026 – 15/03/2026</b></>} onExport={() => toast.success("Exported!")} onPrint={() => toast.success("PDF Generated!")} />
       <FilterBar>
-        <span style={fLabelStyle}>Type:</span>
-        <select style={fSelStyle}><option>All Refunds</option><option>Full Refund</option><option>Partial Refund</option></select>
-        <span style={fSepStyle}>From</span><input style={fInputStyle} type="date" defaultValue="2026-03-09" />
-        <span style={fSepStyle}>To</span><input style={fInputStyle} type="date" defaultValue="2026-03-15" />
+        <Typography sx={flSx}>Type:</Typography>
+        <Select defaultValue="All Refunds" size="small" sx={fSelSx}><MenuItem value="All Refunds">All Refunds</MenuItem><MenuItem value="Full Refund">Full Refund</MenuItem><MenuItem value="Partial Refund">Partial Refund</MenuItem></Select>
+        <Typography sx={fSepSx}>From</Typography><input type="date" defaultValue="2026-03-09" style={{ padding: "7px 10px", background: T.s1, border: `1.5px solid ${T.bd}`, borderRadius: 8, fontFamily: "inherit", fontSize: 12.5, color: T.tx, outline: "none" }} />
+        <Typography sx={fSepSx}>To</Typography><input type="date" defaultValue="2026-03-15" style={{ padding: "7px 10px", background: T.s1, border: `1.5px solid ${T.bd}`, borderRadius: 8, fontFamily: "inherit", fontSize: 12.5, color: T.tx, outline: "none" }} />
       </FilterBar>
-      <div style={sg4}>
-        <StatCard label="Total Refunds" value={`₹${d.totalRefunds}`} icon="↩️" variant="ac" rows={[{ key: "Count", value: <span style={{ fontWeight: 700 }}>{d.refundCount}</span> }, { key: "% of Sales", value: <Badge color={T.red} bg={T.redDim}>{d.pctOfSales}</Badge> }]} />
-        <StatCard label="Full Refunds" value={`₹${d.fullRefunds}`} icon="✅" variant="amb" rows={[{ key: "Orders", value: <span style={{ fontWeight: 700 }}>{d.fullRefundCount}</span> }, { key: "Reason", value: <span style={{ fontWeight: 700 }}>{d.fullRefundReason}</span> }]} />
-        <StatCard label="Partial Refunds" value={`₹${d.partialRefunds}`} icon="⚖️" variant="blu" rows={[{ key: "Orders", value: <span style={{ fontWeight: 700 }}>{d.partialRefundCount}</span> }, { key: "Reason", value: <span style={{ fontWeight: 700 }}>{d.partialRefundReason}</span> }]} />
-        <StatCard label="Refund Rate" value={d.refundRate} icon="📊" variant="grn" rows={[{ key: "Target", value: <span style={{ fontWeight: 700 }}>&lt;2%</span> }, { key: "Status", value: <Badge color={T.amb} bg={T.ambDim}>Watch</Badge> }]} />
-      </div>
+      <Box sx={sg4}>
+        <StatCard label="Total Refunds" value={`₹${d.totalRefunds}`} icon="↩️" variant="ac" rows={[{ key: "Count", value: <b>{d.refundCount}</b> }, { key: "% of Sales", value: <SChip color={T.red} bg={T.redDim}>{d.pctOfSales}</SChip> }]} />
+        <StatCard label="Full Refunds" value={`₹${d.fullRefunds}`} icon="✅" variant="amb" rows={[{ key: "Orders", value: <b>{d.fullRefundCount}</b> }, { key: "Reason", value: <b>{d.fullRefundReason}</b> }]} />
+        <StatCard label="Partial Refunds" value={`₹${d.partialRefunds}`} icon="⚖️" variant="blu" rows={[{ key: "Orders", value: <b>{d.partialRefundCount}</b> }, { key: "Reason", value: <b>{d.partialRefundReason}</b> }]} />
+        <StatCard label="Refund Rate" value={d.refundRate} icon="📊" variant="grn" rows={[{ key: "Target", value: <b>&lt;2%</b> }, { key: "Status", value: <SChip color={T.amb} bg={T.ambDim}>Watch</SChip> }]} />
+      </Box>
       <TCard title="Refund Transactions" badge={`${d.transactions.length} refunds`}>
-        <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 800 }}>
-          <thead><tr>
-            <th style={thStyle}>Refund #</th><th style={thStyle}>Order #</th><th style={thStyle}>Date</th><th style={thStyle}>Customer</th>
-            <th style={thR}>Order Amt</th><th style={thR}>Refund Amt</th><th style={thStyle}>Method</th>
-            <th style={thStyle}>Type</th><th style={thStyle}>Reason</th><th style={thStyle}>Status</th>
-          </tr></thead>
-          <tbody>
+        <Table size="small" sx={{ minWidth: 800 }}>
+          <TableHead><TableRow>
+            {["Refund #","Order #","Date","Customer"].map(h => <TableCell key={h} sx={thSx}>{h}</TableCell>)}
+            {["Order Amt","Refund Amt"].map(h => <TableCell key={h} sx={thRSx}>{h}</TableCell>)}
+            {["Method","Type","Reason","Status"].map(h => <TableCell key={h} sx={thSx}>{h}</TableCell>)}
+          </TableRow></TableHead>
+          <TableBody>
             {d.transactions.map((row, i) => (
-              <tr key={i} onMouseEnter={e => (e.currentTarget.style.background = T.s1)} onMouseLeave={e => (e.currentTarget.style.background = "")}>
-                <td style={{ ...tdStyle, fontWeight: 700 }}>{row.refundId}</td>
-                <td style={tdStyle}>{row.orderId}</td><td style={tdStyle}>{row.date}</td><td style={tdStyle}>{row.customer}</td>
-                <td style={tdR}>₹{row.orderAmt}</td>
-                <td style={{ ...tdR, color: T.red }}>₹{row.refundAmt}</td>
-                <td style={tdStyle}>{row.method}</td>
-                <td style={tdStyle}><StatusPill variant={typeVariant(row.type)}>{row.type}</StatusPill></td>
-                <td style={tdStyle}>{row.reason}</td>
-                <td style={tdStyle}><StatusPill variant="green">{row.status}</StatusPill></td>
-              </tr>
+              <TableRow key={i} sx={trHover}>
+                <TableCell sx={{ ...tdSx, fontWeight: 700 }}>{row.refundId}</TableCell>
+                <TableCell sx={tdSx}>{row.orderId}</TableCell>
+                <TableCell sx={tdSx}>{row.date}</TableCell>
+                <TableCell sx={tdSx}>{row.customer}</TableCell>
+                <TableCell sx={tdRSx}>₹{row.orderAmt}</TableCell>
+                <TableCell sx={{ ...tdRSx, color: T.red }}>₹{row.refundAmt}</TableCell>
+                <TableCell sx={tdSx}>{row.method}</TableCell>
+                <TableCell sx={tdSx}><StatusChip variant={tv(row.type)}>{row.type}</StatusChip></TableCell>
+                <TableCell sx={tdSx}>{row.reason}</TableCell>
+                <TableCell sx={tdSx}><StatusChip variant="green">{row.status}</StatusChip></TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </TCard>
     </div>
   );
@@ -619,20 +681,20 @@ function TaxReport() {
   const d = data.tax;
   return (
     <div>
-      <PageHeader title="Tax Report" sub={<>GST & tax breakdown for filing · <b>09/03/2026 – 15/03/2026</b></>} onExport={() => toast.success("GST File Exported!")} onPrint={() => toast.success("PDF Generated!")} />
+      <PageHeader title="Tax Report" sub={<>GST & tax breakdown for filing · <b>09/03/2026 – 15/03/2026</b></>} onExport={() => toast.success("GST File Exported!")} exportLabel="Export GST" onPrint={() => toast.success("PDF Generated!")} />
       <FilterBar>
-        <span style={fLabelStyle}>Tax Mode:</span>
-        <select style={fSelStyle}><option>Item-wise</option><option>Order-wise</option></select>
-        <span style={fSepStyle}>Period:</span>
-        <select style={fSelStyle}><option>Current Week</option><option>This Month</option><option>Last Quarter</option></select>
+        <Typography sx={flSx}>Tax Mode:</Typography>
+        <Select defaultValue="Item-wise" size="small" sx={fSelSx}><MenuItem value="Item-wise">Item-wise</MenuItem><MenuItem value="Order-wise">Order-wise</MenuItem></Select>
+        <Typography sx={fSepSx}>Period:</Typography>
+        <Select defaultValue="Current Week" size="small" sx={fSelSx}><MenuItem value="Current Week">Current Week</MenuItem><MenuItem value="This Month">This Month</MenuItem><MenuItem value="Last Quarter">Last Quarter</MenuItem></Select>
       </FilterBar>
-      <div style={sg4}>
-        <StatCard label="Total Tax Collected" value="₹192.50" icon="🧾" variant="ac" rows={[{ key: "Taxable Sales", value: <span style={{ fontWeight: 700 }}>₹{d.taxableSales}</span> }, { key: "Tax Rate", value: <Badge color={T.blu} bg={T.bluDim}>{d.taxRate}</Badge> }]} />
-        <StatCard label="CGST (2.5%)" value={`₹${d.cgst}`} icon="🏛️" variant="grn" rows={[{ key: "On Sales", value: <span style={{ fontWeight: 700 }}>₹{d.taxableSales}</span> }, { key: "Payable", value: <Badge color={T.grn} bg={T.grnDim}>₹{d.cgst}</Badge> }]} />
-        <StatCard label="SGST (2.5%)" value={`₹${d.sgst}`} icon="🏢" variant="blu" rows={[{ key: "On Sales", value: <span style={{ fontWeight: 700 }}>₹{d.taxableSales}</span> }, { key: "Payable", value: <Badge color={T.blu} bg={T.bluDim}>₹{d.sgst}</Badge> }]} />
-        <StatCard label="Non-Taxable" value={`₹${d.nonTaxable}`} icon="🔖" variant="tel" rows={[{ key: "Exempt Items", value: <span style={{ fontWeight: 700 }}>₹0</span> }, { key: "Orders", value: <span style={{ fontWeight: 700 }}>5</span> }]} />
-      </div>
-      <div style={info2}>
+      <Box sx={sg4}>
+        <StatCard label="Total Tax Collected" value="₹192.50" icon="🧾" variant="ac" rows={[{ key: "Taxable Sales", value: <b>₹{d.taxableSales}</b> }, { key: "Tax Rate", value: <SChip color={T.blu} bg={T.bluDim}>{d.taxRate}</SChip> }]} />
+        <StatCard label="CGST (2.5%)" value={`₹${d.cgst}`} icon="🏛️" variant="grn" rows={[{ key: "On Sales", value: <b>₹{d.taxableSales}</b> }, { key: "Payable", value: <SChip color={T.grn} bg={T.grnDim}>₹{d.cgst}</SChip> }]} />
+        <StatCard label="SGST (2.5%)" value={`₹${d.sgst}`} icon="🏢" variant="blu" rows={[{ key: "On Sales", value: <b>₹{d.taxableSales}</b> }, { key: "Payable", value: <SChip color={T.blu} bg={T.bluDim}>₹{d.sgst}</SChip> }]} />
+        <StatCard label="Non-Taxable" value={`₹${d.nonTaxable}`} icon="🔖" variant="tel" rows={[{ key: "Exempt Items", value: <b>₹0</b> }, { key: "Orders", value: <b>5</b> }]} />
+      </Box>
+      <Box sx={info2}>
         <InfoCard title="GST Summary" rows={[
           { key: "Total Sales (incl. tax)", value: `₹${d.gstSummary.totalSales.toFixed(2)}` },
           { key: "Taxable Amount", value: `₹${d.gstSummary.taxableAmount.toFixed(2)}` },
@@ -644,36 +706,38 @@ function TaxReport() {
           ...d.taxByCategory.map(tc => ({ key: tc.category, value: `₹${tc.tax.toFixed(2)}`, color: T.ac })),
           { key: "Total", value: `₹${d.totalTaxCollected.toFixed(2)}`, color: T.grn },
         ]} />
-      </div>
+      </Box>
       <TCard title="Day-wise Tax Collection" badge="5 days">
-        <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 750 }}>
-          <thead><tr>
-            <th style={thStyle}>Date</th><th style={thR}>Orders</th><th style={thR}>Sales</th><th style={thR}>Taxable Amt</th>
-            <th style={thR}>CGST 2.5%</th><th style={thR}>SGST 2.5%</th><th style={thR}>Total GST</th><th style={thR}>Net Sales</th>
-          </tr></thead>
-          <tbody>
+        <Table size="small" sx={{ minWidth: 750 }}>
+          <TableHead><TableRow>
+            <TableCell sx={thSx}>Date</TableCell>
+            {["Orders","Sales","Taxable Amt","CGST 2.5%","SGST 2.5%","Total GST","Net Sales"].map(h => <TableCell key={h} sx={thRSx}>{h}</TableCell>)}
+          </TableRow></TableHead>
+          <TableBody>
             {d.dailyTax.map((row, i) => (
-              <tr key={i} onMouseEnter={e => (e.currentTarget.style.background = T.s1)} onMouseLeave={e => (e.currentTarget.style.background = "")}>
-                <td style={{ ...tdStyle, fontWeight: 700 }}>{row.date}</td>
-                <td style={tdR}><OrderBadge>{row.orders}</OrderBadge></td>
-                <td style={tdR}>₹{row.sales}</td><td style={tdR}>₹{row.taxableAmt}</td>
-                <td style={tdR}>₹{row.cgst}</td><td style={tdR}>₹{row.sgst}</td>
-                <td style={{ ...tdR, color: T.grn }}>₹{row.totalGst}</td>
-                <td style={{ ...tdR, color: T.ac }}>₹{row.netSales}</td>
-              </tr>
+              <TableRow key={i} sx={trHover}>
+                <TableCell sx={{ ...tdSx, fontWeight: 700 }}>{row.date}</TableCell>
+                <TableCell sx={tdRSx}><OChip>{row.orders}</OChip></TableCell>
+                <TableCell sx={tdRSx}>₹{row.sales}</TableCell>
+                <TableCell sx={tdRSx}>₹{row.taxableAmt}</TableCell>
+                <TableCell sx={tdRSx}>₹{row.cgst}</TableCell>
+                <TableCell sx={tdRSx}>₹{row.sgst}</TableCell>
+                <TableCell sx={{ ...tdRSx, color: T.grn }}>₹{row.totalGst}</TableCell>
+                <TableCell sx={{ ...tdRSx, color: T.ac }}>₹{row.netSales}</TableCell>
+              </TableRow>
             ))}
-            <tr style={{ background: T.s1 }}>
-              <td style={{ ...tdStyle, fontWeight: 800, color: T.ac }}>Total</td>
-              <td style={tdR}><OrderBadge>5</OrderBadge></td>
-              <td style={{ ...tdR, fontWeight: 800 }}>₹745</td>
-              <td style={{ ...tdR, fontWeight: 800 }}>₹552.50</td>
-              <td style={{ ...tdR, color: T.grn, fontSize: 14 }}>₹96.25</td>
-              <td style={{ ...tdR, color: T.grn, fontSize: 14 }}>₹96.25</td>
-              <td style={{ ...tdR, color: T.ac, fontSize: 14 }}>₹192.50</td>
-              <td style={{ ...tdR, color: T.ac, fontSize: 15 }}>₹745</td>
-            </tr>
-          </tbody>
-        </table>
+            <TableRow sx={totalRowSx}>
+              <TableCell sx={{ ...tdSx, fontWeight: 800, color: T.ac }}>Total</TableCell>
+              <TableCell sx={tdRSx}><OChip>5</OChip></TableCell>
+              <TableCell sx={{ ...tdRSx, fontWeight: 800 }}>₹745</TableCell>
+              <TableCell sx={{ ...tdRSx, fontWeight: 800 }}>₹552.50</TableCell>
+              <TableCell sx={{ ...tdRSx, color: T.grn, fontSize: 14 }}>₹96.25</TableCell>
+              <TableCell sx={{ ...tdRSx, color: T.grn, fontSize: 14 }}>₹96.25</TableCell>
+              <TableCell sx={{ ...tdRSx, color: T.ac, fontSize: 14 }}>₹192.50</TableCell>
+              <TableCell sx={{ ...tdRSx, color: T.ac, fontSize: 15 }}>₹745</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
       </TCard>
     </div>
   );
@@ -683,73 +747,75 @@ function OutstandingReport() {
   const d = data.outstanding;
   return (
     <div>
-      <PageHeader title="Outstanding Payments" sub={<>Unpaid & due orders · As of <b>15/03/2026</b></>} onExport={() => toast.success("Reminder Sent!")} onPrint={() => toast.success("PDF Generated!")} />
+      <PageHeader title="Outstanding Payments" sub={<>Unpaid & due orders · As of <b>15/03/2026</b></>} onExport={() => toast.success("Reminder Sent!")} exportLabel="Send Reminders" onPrint={() => toast.success("PDF Generated!")} />
       <FilterBar>
-        <span style={fLabelStyle}>Status:</span>
-        <select style={fSelStyle}><option>All Outstanding</option><option>Overdue</option><option>Due Today</option></select>
-        <span style={fLabelStyle}>Customer:</span>
-        <input style={{ ...fInputStyle, width: 160 }} type="text" placeholder="Search customer…" />
+        <Typography sx={flSx}>Status:</Typography>
+        <Select defaultValue="All Outstanding" size="small" sx={fSelSx}><MenuItem value="All Outstanding">All Outstanding</MenuItem><MenuItem value="Overdue">Overdue</MenuItem><MenuItem value="Due Today">Due Today</MenuItem></Select>
+        <Typography sx={flSx}>Customer:</Typography>
+        <input type="text" placeholder="Search customer…" style={{ padding: "7px 10px", background: T.s1, border: `1.5px solid ${T.bd}`, borderRadius: 8, fontFamily: "inherit", fontSize: 12.5, color: T.tx, outline: "none", width: 160 }} />
       </FilterBar>
-      <div style={sg4}>
-        <StatCard label="Total Outstanding" value={`₹${d.totalOutstanding}`} icon="⏳" variant="ac" rows={[{ key: "Orders", value: <Badge color={T.grn} bg={T.grnDim}>0</Badge> }, { key: "Status", value: <Badge color={T.grn} bg={T.grnDim}>All Clear</Badge> }]} />
-        <StatCard label="Overdue (>7 days)" value={`₹${d.overdue}`} icon="🚨" variant="amb" rows={[{ key: "Orders", value: <Badge color={T.grn} bg={T.grnDim}>0</Badge> }, { key: "Avg Days", value: <span style={{ fontWeight: 700 }}>—</span> }]} />
-        <StatCard label="Due This Week" value={`₹${d.dueThisWeek}`} icon="📅" variant="blu" rows={[{ key: "Orders", value: <Badge color={T.grn} bg={T.grnDim}>0</Badge> }, { key: "Follow-up", value: <Badge color={T.grn} bg={T.grnDim}>None</Badge> }]} />
-        <StatCard label="Recovered" value={`₹${d.recoveredThisMonth}`} icon="✅" variant="grn" rows={[{ key: "This Month", value: <Badge color={T.grn} bg={T.grnDim}>₹{d.recoveredThisMonth}</Badge> }, { key: "Orders", value: <span style={{ fontWeight: 700 }}>{d.recoveredOrders}</span> }]} />
-      </div>
-      <div style={{ background: T.w, border: `1.5px solid ${T.bd}`, borderRadius: 14, boxShadow: "0 1px 4px rgba(0,0,0,0.06)", overflow: "hidden" }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 18px", borderBottom: `1px solid ${T.bd}` }}>
-          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 16, fontWeight: 700, color: T.tx }}>Outstanding Orders</div>
-          <span style={{ fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 20, background: T.grnDim, color: T.grn, border: `1px solid ${T.grnBdr}` }}>0 pending</span>
-        </div>
-        <div style={{ padding: "60px 20px", textAlign: "center" }}>
-          <div style={{ fontSize: 48, marginBottom: 12 }}>🎉</div>
-          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 20, fontWeight: 700, color: T.tx, marginBottom: 8 }}>All Payments Cleared!</div>
-          <div style={{ fontSize: 13, color: T.t3 }}>No outstanding payments as of 15/03/2026</div>
-        </div>
-      </div>
+      <Box sx={sg4}>
+        <StatCard label="Total Outstanding" value={`₹${d.totalOutstanding}`} icon="⏳" variant="ac" rows={[{ key: "Orders", value: <SChip color={T.grn} bg={T.grnDim}>0</SChip> }, { key: "Status", value: <SChip color={T.grn} bg={T.grnDim}>All Clear</SChip> }]} />
+        <StatCard label="Overdue (>7 days)" value={`₹${d.overdue}`} icon="🚨" variant="amb" rows={[{ key: "Orders", value: <SChip color={T.grn} bg={T.grnDim}>0</SChip> }, { key: "Avg Days", value: <b>—</b> }]} />
+        <StatCard label="Due This Week" value={`₹${d.dueThisWeek}`} icon="📅" variant="blu" rows={[{ key: "Orders", value: <SChip color={T.grn} bg={T.grnDim}>0</SChip> }, { key: "Follow-up", value: <SChip color={T.grn} bg={T.grnDim}>None</SChip> }]} />
+        <StatCard label="Recovered" value={`₹${d.recoveredThisMonth}`} icon="✅" variant="grn" rows={[{ key: "This Month", value: <SChip color={T.grn} bg={T.grnDim}>₹{d.recoveredThisMonth}</SChip> }, { key: "Orders", value: <b>{d.recoveredOrders}</b> }]} />
+      </Box>
+      <Paper elevation={0} sx={{ border: `1.5px solid ${T.bd}`, borderRadius: "14px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", overflow: "hidden" }}>
+        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", p: "14px 18px", borderBottom: `1px solid ${T.bd}` }}>
+          <Typography sx={{ fontFamily: "'Playfair Display',serif", fontSize: 16, fontWeight: 700, color: T.tx }}>Outstanding Orders</Typography>
+          <Chip label="0 pending" size="small" sx={{ background: T.grnDim, color: T.grn, fontWeight: 700, border: `1px solid ${T.grnBdr}`, borderRadius: "20px" }} />
+        </Box>
+        <Box sx={{ p: "60px 20px", textAlign: "center" }}>
+          <Typography sx={{ fontSize: 48, mb: "12px" }}>🎉</Typography>
+          <Typography sx={{ fontFamily: "'Playfair Display',serif", fontSize: 20, fontWeight: 700, color: T.tx, mb: "8px" }}>All Payments Cleared!</Typography>
+          <Typography sx={{ fontSize: 13, color: T.t3 }}>No outstanding payments as of 15/03/2026</Typography>
+        </Box>
+      </Paper>
     </div>
   );
 }
 
 function InventoryReport() {
   const d = data.inventory;
-  const statusVariant = (s: string): "green" | "red" | "amber" => s === "Good" ? "green" : s === "Out of Stock" ? "red" : "amber";
+  const sv = (s: string): StatusVariant => s === "Good" ? "green" : s === "Out of Stock" ? "red" : "amber";
   return (
     <div>
       <PageHeader title="Inventory Report" sub={<>Current stock & usage tracking · <b>March 2026</b></>} onExport={() => toast.success("Exported!")} onPrint={() => toast.success("PDF Generated!")} />
       <FilterBar>
-        <span style={fLabelStyle}>Category:</span>
-        <select style={fSelStyle}><option>All Items</option><option>Raw Material</option><option>Beverages</option><option>Packaging</option></select>
-        <span style={fLabelStyle}>Status:</span>
-        <select style={fSelStyle}><option>All Status</option><option>Low Stock</option><option>Out of Stock</option><option>Good</option></select>
+        <Typography sx={flSx}>Category:</Typography>
+        <Select defaultValue="All Items" size="small" sx={fSelSx}><MenuItem value="All Items">All Items</MenuItem><MenuItem value="Raw Material">Raw Material</MenuItem><MenuItem value="Beverages">Beverages</MenuItem></Select>
+        <Typography sx={flSx}>Status:</Typography>
+        <Select defaultValue="All Status" size="small" sx={fSelSx}><MenuItem value="All Status">All Status</MenuItem><MenuItem value="Low Stock">Low Stock</MenuItem><MenuItem value="Out of Stock">Out of Stock</MenuItem><MenuItem value="Good">Good</MenuItem></Select>
       </FilterBar>
-      <div style={sg4}>
-        <StatCard label="Total Items" value={d.totalItems} icon="📦" variant="ac" rows={[{ key: "Low Stock", value: <Badge color={T.red} bg={T.redDim}>{d.lowStockCount}</Badge> }, { key: "Out of Stock", value: <Badge color={T.red} bg={T.redDim}>{d.outOfStockCount}</Badge> }]} />
-        <StatCard label="Low Stock Alert" value={d.lowStockCount} icon="⚠️" variant="amb" rows={[{ key: "Needs Reorder", value: <span style={{ fontWeight: 700 }}>{d.needsReorder}</span> }, { key: "Critical", value: <Badge color={T.red} bg={T.redDim}>{d.criticalCount}</Badge> }]} />
-        <StatCard label="Well Stocked" value={d.wellStocked} icon="✅" variant="grn" rows={[{ key: "Optimal", value: <span style={{ fontWeight: 700 }}>{d.optimal}</span> }, { key: "Overstocked", value: <Badge color={T.amb} bg={T.ambDim}>{d.overstocked}</Badge> }]} />
-        <StatCard label="Consumed" value={d.consumedThisMonth} icon="📉" variant="blu" rows={[{ key: "of Total", value: <span style={{ fontWeight: 700 }}>{d.consumedPct}</span> }, { key: "Reorder Value", value: <span style={{ fontWeight: 700 }}>{d.reorderValue}</span> }]} />
-      </div>
+      <Box sx={sg4}>
+        <StatCard label="Total Items" value={d.totalItems} icon="📦" variant="ac" rows={[{ key: "Low Stock", value: <SChip color={T.red} bg={T.redDim}>{d.lowStockCount}</SChip> }, { key: "Out of Stock", value: <SChip color={T.red} bg={T.redDim}>{d.outOfStockCount}</SChip> }]} />
+        <StatCard label="Low Stock Alert" value={d.lowStockCount} icon="⚠️" variant="amb" rows={[{ key: "Needs Reorder", value: <b>{d.needsReorder}</b> }, { key: "Critical", value: <SChip color={T.red} bg={T.redDim}>{d.criticalCount}</SChip> }]} />
+        <StatCard label="Well Stocked" value={d.wellStocked} icon="✅" variant="grn" rows={[{ key: "Optimal", value: <b>{d.optimal}</b> }, { key: "Overstocked", value: <SChip color={T.amb} bg={T.ambDim}>{d.overstocked}</SChip> }]} />
+        <StatCard label="Consumed" value={d.consumedThisMonth} icon="📉" variant="blu" rows={[{ key: "of Total", value: <b>{d.consumedPct}</b> }, { key: "Reorder Value", value: <b>{d.reorderValue}</b> }]} />
+      </Box>
       <TCard title="Inventory Items" badge={`${d.items.length} items`}>
-        <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 800 }}>
-          <thead><tr>
-            <th style={thStyle}>Item</th><th style={thStyle}>Category</th><th style={thStyle}>Unit</th>
-            <th style={thR}>Opening</th><th style={thR}>Received</th><th style={thR}>Consumed</th><th style={thR}>Closing</th>
-            <th style={thR}>Min Stock</th><th style={thStyle}>Status</th>
-          </tr></thead>
-          <tbody>
+        <Table size="small" sx={{ minWidth: 800 }}>
+          <TableHead><TableRow>
+            {["Item","Category","Unit"].map(h => <TableCell key={h} sx={thSx}>{h}</TableCell>)}
+            {["Opening","Received","Consumed","Closing","Min Stock"].map(h => <TableCell key={h} sx={thRSx}>{h}</TableCell>)}
+            <TableCell sx={thSx}>Status</TableCell>
+          </TableRow></TableHead>
+          <TableBody>
             {d.items.map((row, i) => (
-              <tr key={i} onMouseEnter={e => (e.currentTarget.style.background = T.s1)} onMouseLeave={e => (e.currentTarget.style.background = "")}>
-                <td style={{ ...tdStyle, fontWeight: 700 }}>{row.name}</td>
-                <td style={tdStyle}>{row.category}</td><td style={tdStyle}>{row.unit}</td>
-                <td style={tdR}>{row.opening}</td><td style={tdR}>{row.received}</td>
-                <td style={tdR}>{row.consumed}</td>
-                <td style={{ ...tdR, color: row.closing === 0 ? T.red : row.closing < row.minStock ? T.amb : T.grn, fontWeight: 800 }}>{row.closing}</td>
-                <td style={tdR}>{row.minStock}</td>
-                <td style={tdStyle}><StatusPill variant={statusVariant(row.status)}>{row.status}</StatusPill></td>
-              </tr>
+              <TableRow key={i} sx={trHover}>
+                <TableCell sx={{ ...tdSx, fontWeight: 700 }}>{row.name}</TableCell>
+                <TableCell sx={tdSx}>{row.category}</TableCell>
+                <TableCell sx={tdSx}>{row.unit}</TableCell>
+                <TableCell sx={tdRSx}>{row.opening}</TableCell>
+                <TableCell sx={tdRSx}>{row.received}</TableCell>
+                <TableCell sx={tdRSx}>{row.consumed}</TableCell>
+                <TableCell sx={{ ...tdRSx, color: row.closing === 0 ? T.red : row.closing < row.minStock ? T.amb : T.grn, fontWeight: 800 }}>{row.closing}</TableCell>
+                <TableCell sx={tdRSx}>{row.minStock}</TableCell>
+                <TableCell sx={tdSx}><StatusChip variant={sv(row.status)}>{row.status}</StatusChip></TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </TCard>
     </div>
   );
@@ -757,51 +823,53 @@ function InventoryReport() {
 
 function StockReport() {
   const d = data.stock;
-  const statusVariant = (s: string): "green" | "red" | "amber" => s === "Good" ? "green" : s === "Out" ? "red" : "amber";
+  const sv = (s: string): StatusVariant => s === "Good" ? "green" : s === "Out" ? "red" : "amber";
   return (
     <div>
       <PageHeader title="Stock Report" sub={<>SKU-level stock valuation & reorder status · <b>March 2026</b></>} onExport={() => toast.success("Exported!")} onPrint={() => toast.success("PDF Generated!")} />
       <FilterBar>
-        <span style={fLabelStyle}>Category:</span>
-        <select style={fSelStyle}><option>All Items</option><option>Vegetables</option><option>Non-Veg</option><option>Dairy</option><option>Grains</option></select>
-        <span style={fLabelStyle}>Status:</span>
-        <select style={fSelStyle}><option>All Status</option><option>Low</option><option>Critical</option><option>Out</option><option>Good</option></select>
+        <Typography sx={flSx}>Category:</Typography>
+        <Select defaultValue="All Items" size="small" sx={fSelSx}><MenuItem value="All Items">All Items</MenuItem><MenuItem value="Vegetables">Vegetables</MenuItem><MenuItem value="Non-Veg">Non-Veg</MenuItem><MenuItem value="Dairy">Dairy</MenuItem></Select>
+        <Typography sx={flSx}>Status:</Typography>
+        <Select defaultValue="All Status" size="small" sx={fSelSx}><MenuItem value="All Status">All Status</MenuItem><MenuItem value="Low">Low</MenuItem><MenuItem value="Critical">Critical</MenuItem><MenuItem value="Out">Out</MenuItem></Select>
       </FilterBar>
-      <div style={sg4}>
-        <StatCard label="Total SKUs" value={d.totalSKUs} icon="🗄️" variant="ac" rows={[{ key: "Total Value", value: <span style={{ fontWeight: 700 }}>{d.totalValue}</span> }, { key: "vs Last Month", value: <Badge color={T.grn} bg={T.grnDim}>{d.totalValueChange}</Badge> }]} />
-        <StatCard label="In Transit" value={d.inTransit} icon="🚚" variant="blu" rows={[{ key: "Value", value: <span style={{ fontWeight: 700 }}>{d.inTransitValue}</span> }, { key: "ETA", value: <span style={{ fontWeight: 700 }}>2 days</span> }]} />
-        <StatCard label="Reorder Needed" value="4 items" icon="⚠️" variant="amb" rows={[{ key: "Value", value: <span style={{ fontWeight: 700 }}>₹2,200</span> }, { key: "Urgent", value: <Badge color={T.red} bg={T.redDim}>2</Badge> }]} />
-        <StatCard label="Last Updated" value={d.lastUpdated} icon="🔄" variant="grn" rows={[{ key: "By", value: <span style={{ fontWeight: 700 }}>Arjun K.</span> }, { key: "Next Audit", value: <span style={{ fontWeight: 700 }}>22/03</span> }]} />
-      </div>
+      <Box sx={sg4}>
+        <StatCard label="Total SKUs" value={d.totalSKUs} icon="🗄️" variant="ac" rows={[{ key: "Total Value", value: <b>{d.totalValue}</b> }, { key: "vs Last Month", value: <SChip color={T.grn} bg={T.grnDim}>{d.totalValueChange}</SChip> }]} />
+        <StatCard label="In Transit" value={d.inTransit} icon="🚚" variant="blu" rows={[{ key: "Value", value: <b>{d.inTransitValue}</b> }, { key: "ETA", value: <b>2 days</b> }]} />
+        <StatCard label="Reorder Needed" value="4 items" icon="⚠️" variant="amb" rows={[{ key: "Value", value: <b>₹2,200</b> }, { key: "Urgent", value: <SChip color={T.red} bg={T.redDim}>2</SChip> }]} />
+        <StatCard label="Last Updated" value={d.lastUpdated} icon="🔄" variant="grn" rows={[{ key: "By", value: <b>Arjun K.</b> }, { key: "Next Audit", value: <b>22/03</b> }]} />
+      </Box>
       <TCard title="Stock Ledger" badge={`${d.items.length} items`}>
-        <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 900 }}>
-          <thead><tr>
-            <th style={thStyle}>SKU</th><th style={thStyle}>Item Name</th><th style={thStyle}>Category</th><th style={thStyle}>Unit</th>
-            <th style={thR}>Qty</th><th style={thR}>Unit Cost</th><th style={thR}>Total Value</th>
-            <th style={thR}>Reorder Level</th><th style={thStyle}>Supplier</th><th style={thStyle}>Last Purchase</th><th style={thStyle}>Status</th>
-          </tr></thead>
-          <tbody>
+        <Table size="small" sx={{ minWidth: 900 }}>
+          <TableHead><TableRow>
+            {["SKU","Item Name","Category","Unit"].map(h => <TableCell key={h} sx={thSx}>{h}</TableCell>)}
+            {["Qty","Unit Cost","Total Value","Reorder Level"].map(h => <TableCell key={h} sx={thRSx}>{h}</TableCell>)}
+            {["Supplier","Last Purchase","Status"].map(h => <TableCell key={h} sx={thSx}>{h}</TableCell>)}
+          </TableRow></TableHead>
+          <TableBody>
             {d.items.map((row, i) => (
-              <tr key={i} onMouseEnter={e => (e.currentTarget.style.background = T.s1)} onMouseLeave={e => (e.currentTarget.style.background = "")}>
-                <td style={{ ...tdStyle, fontFamily: "monospace", fontSize: 12 }}>{row.sku}</td>
-                <td style={{ ...tdStyle, fontWeight: 700 }}>{row.name}</td>
-                <td style={tdStyle}>{row.category}</td><td style={tdStyle}>{row.unit}</td>
-                <td style={{ ...tdR, color: row.qty === 0 ? T.red : row.qty < row.reorderLevel ? T.amb : T.grn, fontWeight: 800 }}>{row.qty}</td>
-                <td style={tdR}>₹{row.unitCost}</td>
-                <td style={{ ...tdR, color: T.ac }}>₹{row.totalValue.toLocaleString()}</td>
-                <td style={tdR}>{row.reorderLevel}</td>
-                <td style={tdStyle}>{row.supplier}</td><td style={tdStyle}>{row.lastPurchase}</td>
-                <td style={tdStyle}><StatusPill variant={statusVariant(row.status)}>{row.status}</StatusPill></td>
-              </tr>
+              <TableRow key={i} sx={trHover}>
+                <TableCell sx={{ ...tdSx, fontFamily: "monospace", fontSize: 12 }}>{row.sku}</TableCell>
+                <TableCell sx={{ ...tdSx, fontWeight: 700 }}>{row.name}</TableCell>
+                <TableCell sx={tdSx}>{row.category}</TableCell>
+                <TableCell sx={tdSx}>{row.unit}</TableCell>
+                <TableCell sx={{ ...tdRSx, color: row.qty === 0 ? T.red : row.qty < row.reorderLevel ? T.amb : T.grn, fontWeight: 800 }}>{row.qty}</TableCell>
+                <TableCell sx={tdRSx}>₹{row.unitCost}</TableCell>
+                <TableCell sx={{ ...tdRSx, color: T.ac }}>₹{row.totalValue.toLocaleString()}</TableCell>
+                <TableCell sx={tdRSx}>{row.reorderLevel}</TableCell>
+                <TableCell sx={tdSx}>{row.supplier}</TableCell>
+                <TableCell sx={tdSx}>{row.lastPurchase}</TableCell>
+                <TableCell sx={tdSx}><StatusChip variant={sv(row.status)}>{row.status}</StatusChip></TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </TCard>
     </div>
   );
 }
 
-// ── Sidebar nav items ──────────────────────────────────────────────────────
+// ── Nav items ──────────────────────────────────────────────────────────────
 const NAV_ITEMS: { key: ReportKey; icon: string; label: string; section: string }[] = [
   { key: "sales", icon: "📈", label: "Sales Report", section: "Sales" },
   { key: "item", icon: "🍽️", label: "Item Report", section: "Sales" },
@@ -828,61 +896,51 @@ const REPORT_COMPONENTS: Record<ReportKey, React.FC> = {
 export default function Reports() {
   const [active, setActive] = useState<ReportKey>("sales");
   const ReportComponent = REPORT_COMPONENTS[active];
-
   const sections = [...new Set(NAV_ITEMS.map(n => n.section))];
 
   return (
-    <div style={{ display: "flex", height: "100%", fontFamily: "Plus Jakarta Sans,sans-serif", background: T.bg, color: T.tx, fontSize: 14 }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-        table { min-width: 100% }
-      `}</style>
+    <Box sx={{ display: "flex", height: "100%", fontFamily: "Plus Jakarta Sans,sans-serif", background: T.bg, color: T.tx, fontSize: 14 }}>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');`}</style>
 
       {/* Sidebar */}
-      <div style={{ width: 210, background: T.w, borderRight: `1px solid ${T.bd}`, display: "flex", flexDirection: "column", flexShrink: 0, overflow: "hidden" }}>
-        <div style={{ padding: "14px 14px 6px", fontFamily: "'Playfair Display',serif", fontSize: 17, fontWeight: 700, color: T.tx }}>
-          Reports<span style={{ color: T.ac }}>.</span>
-        </div>
-        <div style={{ margin: "0 14px 8px", height: 2, borderRadius: 2, background: `linear-gradient(90deg,${T.ac},transparent)` }} />
-        <div style={{ flex: 1, overflowY: "auto", paddingBottom: 10 }}>
+      <Box sx={{ width: 210, background: T.w, borderRight: `1px solid ${T.bd}`, display: "flex", flexDirection: "column", flexShrink: 0, overflow: "hidden" }}>
+        <Typography sx={{ p: "14px 14px 6px", fontFamily: "'Playfair Display',serif", fontSize: 17, fontWeight: 700, color: T.tx }}>
+          Reports<Box component="span" sx={{ color: T.ac }}>.</Box>
+        </Typography>
+        <Box sx={{ mx: "14px", mb: "8px", height: 2, borderRadius: "2px", background: `linear-gradient(90deg,${T.ac},transparent)` }} />
+
+        <Box sx={{ flex: 1, overflowY: "auto", pb: "10px", "&::-webkit-scrollbar": { width: 3 }, "&::-webkit-scrollbar-thumb": { background: T.bd, borderRadius: 3 } }}>
           {sections.map(sec => (
-            <div key={sec}>
-              <div style={{ padding: "8px 20px 3px", fontSize: 9, fontWeight: 800, textTransform: "uppercase", letterSpacing: "1.2px", color: T.t3 }}>{sec}</div>
+            <Box key={sec}>
+              <Typography sx={{ p: "8px 20px 3px", fontSize: 9, fontWeight: 800, textTransform: "uppercase", letterSpacing: "1.2px", color: T.t3 }}>{sec}</Typography>
               {NAV_ITEMS.filter(n => n.section === sec).map(item => (
-                <div
+                <Box
                   key={item.key}
                   onClick={() => setActive(item.key)}
-                  style={{
-                    display: "flex", alignItems: "center", gap: 9, padding: "9px 12px",
-                    borderRadius: 10, margin: "1px 8px", cursor: "pointer",
+                  sx={{
+                    display: "flex", alignItems: "center", gap: "9px", p: "9px 12px",
+                    borderRadius: "10px", mx: "8px", my: "1px", cursor: "pointer",
                     fontSize: 12.5, fontWeight: active === item.key ? 700 : 500,
                     transition: "all .14s",
                     background: active === item.key ? T.ac : "transparent",
                     color: active === item.key ? "#fff" : T.t2,
                     boxShadow: active === item.key ? "0 3px 10px rgba(255,61,1,0.22)" : "none",
+                    "&:hover": active === item.key ? {} : { background: T.s2, color: T.tx },
                   }}
-                  onMouseEnter={e => { if (active !== item.key) { (e.currentTarget as HTMLDivElement).style.background = T.s2; (e.currentTarget as HTMLDivElement).style.color = T.tx; } }}
-                  onMouseLeave={e => { if (active !== item.key) { (e.currentTarget as HTMLDivElement).style.background = "transparent"; (e.currentTarget as HTMLDivElement).style.color = T.t2; } }}
                 >
-                  <span style={{ width: 18, textAlign: "center", flexShrink: 0, fontSize: 14 }}>{item.icon}</span>
+                  <Box component="span" sx={{ width: 18, textAlign: "center", flexShrink: 0, fontSize: 14 }}>{item.icon}</Box>
                   {item.label}
-                </div>
+                </Box>
               ))}
-            </div>
+            </Box>
           ))}
-        </div>
-        <div style={{ padding: "10px 12px", borderTop: `1px solid ${T.bd}` }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 7, padding: "8px 12px", background: T.s1, border: `1.5px solid ${T.bd}`, borderRadius: 10, cursor: "pointer", fontSize: 12, fontWeight: 600, color: T.t2 }}>
-            🛒 Customer Site
-            <svg style={{ marginLeft: "auto", opacity: .4 }} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg>
-          </div>
-        </div>
-      </div>
+        </Box>
+      </Box>
 
       {/* Content */}
-      <div style={{ flex: 1, overflowY: "auto", padding: "20px 22px" }}>
+      <Box sx={{ flex: 1, overflowY: "auto", p: "20px 22px", "&::-webkit-scrollbar": { width: 5 }, "&::-webkit-scrollbar-thumb": { background: T.bd2, borderRadius: 4 } }}>
         <ReportComponent />
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }
