@@ -48,6 +48,26 @@ function isValidToken(authHeader: string): boolean {
   return token.length > 10 && token !== "null" && token !== "undefined";
 }
 
+function serveMock(req: any, res: any, json: string) {
+  const method = (req.method || "GET").toUpperCase();
+  const sendResponse = () => {
+    res.setHeader("Content-Type", "application/json");
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
+    res.statusCode = 200;
+    res.end(json);
+  };
+
+  /* For mutating methods, drain the request body first so the TCP
+     connection isn't reset before the browser reads the response. */
+  if (method === "POST" || method === "PUT" || method === "PATCH") {
+    req.resume();
+    req.once("end", sendResponse);
+  } else {
+    sendResponse();
+  }
+}
+
 export function mockApiPlugin(): Plugin {
   return {
     name: "mock-api",
@@ -55,6 +75,16 @@ export function mockApiPlugin(): Plugin {
       server.middlewares.use((req, res, next) => {
         const url = req.url || "";
         if (!url.startsWith("/api/v1/")) { next(); return; }
+
+        /* Handle CORS preflight */
+        if ((req.method || "").toUpperCase() === "OPTIONS") {
+          res.setHeader("Access-Control-Allow-Origin", "*");
+          res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
+          res.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
+          res.statusCode = 204;
+          res.end();
+          return;
+        }
 
         const cleanPath = url.split("?")[0];
         const alwaysMock = ALWAYS_MOCK.has(cleanPath);
@@ -66,10 +96,7 @@ export function mockApiPlugin(): Plugin {
         if (!mockFile) { next(); return; }
 
         const json = fs.readFileSync(mockFile, "utf-8");
-        res.setHeader("Content-Type", "application/json");
-        res.setHeader("Access-Control-Allow-Origin", "*");
-        res.statusCode = 200;
-        res.end(json);
+        serveMock(req, res, json);
       });
     },
   };
