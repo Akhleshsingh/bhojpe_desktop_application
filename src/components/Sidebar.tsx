@@ -28,7 +28,7 @@ type Props = {
 
 const ROW_PY = 1.1;
 const ROW_PX = 1.5;
-const ACTIVE_BG = "#E8353A";
+const ACTIVE_BG = "#FF3D01";
 const HOVER_BG = "#4A4444";
 const BASE_BG = "#3D3636";
 const HEADER_BG = "#2C2828";

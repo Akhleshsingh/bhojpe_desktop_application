@@ -1,58 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
 * {
   box-sizing: border-box;
 }
 
+:root {
+  --accent: #FF3D01;
+  --accent-h: #e63500;
+  --accent-dim: rgba(255, 61, 1, 0.08);
+  --accent-mid: rgba(255, 61, 1, 0.14);
+  --accent-bdr: rgba(255, 61, 1, 0.28);
+  --bg: #f5f0ea;
+  --white: #ffffff;
+  --s1: #faf7f3;
+  --s2: #f0ebe3;
+  --s3: #e6dfd6;
+  --border: #e2d9d0;
+  --border2: #cfc5ba;
+  --text: #1a1208;
+  --text2: #6b5c4a;
+  --text3: #a8978a;
+  --card-bg: #ffffff;
+  --header-bg: #ffffff;
+  --border-color: #e2d9d0;
+}
+
 body {
   margin: 0;
-  font-family: "Poppins", system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
   line-height: 1.5;
   background-color: var(--bg);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-size: 14px;
 }
 
-:root {
-  --bg: #f6f6f6;
-  --text: #000000;
-  --card-bg: #ffffff;
-  --header-bg: #ffffff;
-  --border-color: #e5e5e5;
-}
-
-/* DARK THEME */
-[data-theme="dark"],
-.dark {
-  --bg: #121212;
-  --text: #ffffff;
-  --card-bg: #1e1e1e;
-  --header-bg: #2b2b2b;
-  --border-color: #444444;
-}
-
-/* =========================
-   LINKS
-========================= */
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: none;
-}
-a:hover {
-  color: #535bf2;
-}
-
-/* =========================
-   HEADINGS
-========================= */
 h1, h2, h3, h4, h5, h6 {
-  font-family: "Poppins", sans-serif;
-  font-weight: 600;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
 }
 
 button {
-  font-family: "Poppins", sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-weight: 500;
   border-radius: 8px;
   border: 1px solid transparent;
@@ -62,20 +52,12 @@ button {
   transition: all 0.25s ease;
 }
 
-button:hover {
-  border-color: #646cff;
+a {
+  font-weight: 500;
+  color: var(--accent);
+  text-decoration: none;
 }
 
-button:focus-visible {
-  outline: 3px solid #646cff;
-}
-
-/* =========================
-   LIGHT MODE OVERRIDE
-========================= */
-@media (prefers-color-scheme: light) {
-  :root {
-    background-color: #ffffff;
-    color: #213547;
-  }
+a:hover {
+  color: var(--accent-h);
 }

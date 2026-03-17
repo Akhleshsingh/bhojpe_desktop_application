@@ -135,7 +135,7 @@ export default function Payments() {
           <StatCard label="Total Revenue" value={`₹${totalRevenue.toLocaleString()}`} sub="All transactions" color="#16A34A" icon={<CurrencyRupeeIcon />} />
           <StatCard label="Cash Payments" value={cashCount} sub={`${cashCount} transactions`} color="#2563EB" icon={<PaymentsIcon />} />
           <StatCard label="UPI Payments" value={upiCount} sub={`${upiCount} transactions`} color="#7C3AED" icon={<QrCodeIcon />} />
-          <StatCard label="Total Transactions" value={ROWS.length} sub="Today" color="#E8353A" icon={<ReceiptLongOutlinedIcon />} />
+          <StatCard label="Total Transactions" value={ROWS.length} sub="Today" color="#FF3D01" icon={<ReceiptLongOutlinedIcon />} />
         </Box>
 
         {/* ── TOOLBAR ── */}
@@ -248,8 +248,8 @@ export default function Payments() {
                   sx={{
                     width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center",
                     borderRadius: "6px", cursor: "pointer",
-                    border: `1px solid ${p === page ? "#E8353A" : "#D1D5DB"}`,
-                    backgroundColor: p === page ? "#E8353A" : "#FFFFFF",
+                    border: `1px solid ${p === page ? "#FF3D01" : "#D1D5DB"}`,
+                    backgroundColor: p === page ? "#FF3D01" : "#FFFFFF",
                     "&:hover": { backgroundColor: p === page ? "#c62a2f" : "#F3F4F6" },
                   }}>
                   <Typography sx={{ fontSize: 13, fontWeight: 600, color: p === page ? "#FFF" : "#374151", fontFamily: "Poppins, sans-serif" }}>{p}</Typography>
@@ -318,7 +318,7 @@ export default function Payments() {
             <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#374151", fontFamily: "Poppins, sans-serif", mb: 0.8 }}>Refund Type</Typography>
             <RadioGroup value={refundType} onChange={(e) => setRefundType(e.target.value)}>
               {[["full", "Full Refund"], ["partial", "Partial Refund"], ["waste", "Waste / Write-Off Refund"]].map(([v, l]) => (
-                <FormControlLabel key={v} value={v} control={<Radio size="small" sx={{ color: "#E8353A", "&.Mui-checked": { color: "#E8353A" } }} />}
+                <FormControlLabel key={v} value={v} control={<Radio size="small" sx={{ color: "#FF3D01", "&.Mui-checked": { color: "#FF3D01" } }} />}
                   label={<Typography sx={{ fontSize: 13, fontFamily: "Poppins, sans-serif", color: "#374151" }}>{l}</Typography>} />
               ))}
             </RadioGroup>
@@ -343,7 +343,7 @@ export default function Payments() {
             <Button fullWidth variant="contained"
               sx={{
                 textTransform: "none", fontWeight: 700, fontFamily: "Poppins, sans-serif", height: 42, borderRadius: "8px",
-                background: "linear-gradient(135deg,#E8353A,#c62a2f)",
+                background: "linear-gradient(135deg,#FF3D01,#c62a2f)",
                 boxShadow: "0 2px 8px rgba(232,53,58,.35)",
                 "&:hover": { background: "linear-gradient(135deg,#c62a2f,#a02020)" },
               }}>

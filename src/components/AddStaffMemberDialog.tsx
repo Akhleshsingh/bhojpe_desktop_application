@@ -20,7 +20,7 @@ import { useAuth } from "../context/AuthContext";
 import { BASE_URL } from "../utils/api";
 
 const FONT = "Poppins, sans-serif";
-const RED  = "#E8353A";
+const RED  = "#FF3D01";
 
 const COUNTRY_CODES = ["+91", "+1", "+44", "+61", "+971", "+65", "+81", "+86"];
 
@@ -34,7 +34,7 @@ export interface AddStaffMemberDialogProps {
   roleKeyword?: string;
   /** Title shown in the dialog header. Defaults to "Add New Member". */
   title?: string;
-  /** Icon colour accent. Defaults to "#E8353A". */
+  /** Icon colour accent. Defaults to "#FF3D01". */
   accentColor?: string;
 }
 

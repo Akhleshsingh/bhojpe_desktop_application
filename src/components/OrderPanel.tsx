@@ -2839,7 +2839,7 @@ gap: 1,
                     sx={{
                       flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
                       cursor: "pointer", fontSize: 13, fontWeight: 700, fontFamily: "Poppins, sans-serif",
-                      backgroundColor: discountType === v ? "#E8353A" : "#FFFFFF",
+                      backgroundColor: discountType === v ? "#FF3D01" : "#FFFFFF",
                       color: discountType === v ? "#FFFFFF" : "#6B7280",
                       transition: "all .15s",
                       "&:hover": { backgroundColor: discountType === v ? "#c62a2f" : "#F9FAFB" },
@@ -2860,13 +2860,13 @@ gap: 1,
                     <Box key={v} onClick={() => setDiscountValue(v)}
                       sx={{
                         flex: 1, height: 36, borderRadius: "8px",
-                        border: `1.5px solid ${discountValue === v ? "#E8353A" : "#E5E7EB"}`,
+                        border: `1.5px solid ${discountValue === v ? "#FF3D01" : "#E5E7EB"}`,
                         backgroundColor: discountValue === v ? "#FEF2F2" : "#F9FAFB",
                         display: "flex", alignItems: "center", justifyContent: "center",
                         cursor: "pointer", transition: "all .12s",
-                        "&:hover": { borderColor: "#E8353A", backgroundColor: "#FEF2F2" },
+                        "&:hover": { borderColor: "#FF3D01", backgroundColor: "#FEF2F2" },
                       }}>
-                      <Typography sx={{ fontSize: 12, fontWeight: 700, fontFamily: "Poppins, sans-serif", color: discountValue === v ? "#E8353A" : "#374151" }}>
+                      <Typography sx={{ fontSize: 12, fontWeight: 700, fontFamily: "Poppins, sans-serif", color: discountValue === v ? "#FF3D01" : "#374151" }}>
                         {discountType === "percent" ? `${v}%` : `₹${v}`}
                       </Typography>
                     </Box>
@@ -2897,7 +2897,7 @@ gap: 1,
                       borderRadius: "10px", backgroundColor: "#F9FAFB",
                       "& fieldset": { borderColor: "#E5E7EB" },
                       "&:hover fieldset": { borderColor: "#9CA3AF" },
-                      "&.Mui-focused fieldset": { borderColor: "#E8353A" },
+                      "&.Mui-focused fieldset": { borderColor: "#FF3D01" },
                     },
                   }}
                 />
@@ -3401,7 +3401,7 @@ onPaymentSuccess={async (paymentData) => {
                     }}
                   >
                     <Typography
-                      sx={{ fontSize: 13, fontWeight: isSelected ? 600 : 500, color: isSelected ? "#E8353A" : "#111" }}
+                      sx={{ fontSize: 13, fontWeight: isSelected ? 600 : 500, color: isSelected ? "#FF3D01" : "#111" }}
                     >
                       {d.name}
                     </Typography>
@@ -3428,7 +3428,7 @@ onPaymentSuccess={async (paymentData) => {
                 setPendingDeliveryExec(null);
               }}
               sx={{
-                bgcolor: "#E8353A",
+                bgcolor: "#FF3D01",
                 "&:hover": { bgcolor: "#c62a2f" },
                 textTransform: "none",
                 fontSize: 13,

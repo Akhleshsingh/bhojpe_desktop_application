@@ -53,10 +53,10 @@ const SummaryRow = ({
   label, value, red, bold,
 }: { label: string; value: number; red?: boolean; bold?: boolean }) => (
   <Box sx={{ display: "flex", justifyContent: "space-between", py: 0.5 }}>
-    <Typography sx={{ fontSize: 14, fontWeight: red || bold ? 600 : 400, color: red ? "#E8353A" : "#111827", fontFamily: FONT }}>
+    <Typography sx={{ fontSize: 14, fontWeight: red || bold ? 600 : 400, color: red ? "#FF3D01" : "#111827", fontFamily: FONT }}>
       {label}
     </Typography>
-    <Typography sx={{ fontSize: 14, fontWeight: red || bold ? 700 : 500, color: red ? "#E8353A" : "#111827", fontFamily: FONT }}>
+    <Typography sx={{ fontSize: 14, fontWeight: red || bold ? 700 : 500, color: red ? "#FF3D01" : "#111827", fontFamily: FONT }}>
       ₹{Number(value).toFixed(2)}
     </Typography>
   </Box>
@@ -173,7 +173,7 @@ export default function CheckoutModal({
               backgroundColor: "#FEF2F2", border: "1px solid #FECACA",
               display: "flex", alignItems: "center", justifyContent: "center",
             }}>
-              <ReceiptOutlinedIcon sx={{ fontSize: 18, color: "#E8353A" }} />
+              <ReceiptOutlinedIcon sx={{ fontSize: 18, color: "#FF3D01" }} />
             </Box>
             <Typography sx={{ fontSize: 18, fontWeight: 700, color: "#111827", fontFamily: FONT }}>
               Payment
@@ -184,7 +184,7 @@ export default function CheckoutModal({
             <Typography sx={{ fontSize: 14, fontWeight: 500, color: "#6B7280", fontFamily: FONT }}>
               Order #{orderNumber}
             </Typography>
-            <Typography sx={{ fontSize: 18, fontWeight: 800, color: "#E8353A", fontFamily: FONT }}>
+            <Typography sx={{ fontSize: 18, fontWeight: 800, color: "#FF3D01", fontFamily: FONT }}>
               ₹{totalAmount.toFixed(2)}
             </Typography>
           </Box>
@@ -205,7 +205,7 @@ export default function CheckoutModal({
                   sx={{
                     flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
                     cursor: "pointer", fontFamily: FONT, fontSize: 13, fontWeight: 700,
-                    backgroundColor: mode === v ? "#E8353A" : "#FFFFFF",
+                    backgroundColor: mode === v ? "#FF3D01" : "#FFFFFF",
                     color: mode === v ? "#FFFFFF" : "#6B7280",
                     transition: "all .15s",
                     "&:hover": { backgroundColor: mode === v ? "#c62a2f" : "#F9FAFB" },
@@ -228,13 +228,13 @@ export default function CheckoutModal({
                       sx={{
                         width: 88, minHeight: 80,
                         borderRadius: "10px",
-                        border: active ? "2px dashed #E8353A" : "1.5px solid #E5E7EB",
+                        border: active ? "2px dashed #FF3D01" : "1.5px solid #E5E7EB",
                         backgroundColor: active ? "#FEF2F2" : "#FAFAFA",
                         display: "flex", flexDirection: "column",
                         alignItems: "center", justifyContent: "center", gap: 0.7,
                         cursor: "pointer", transition: "all .15s",
-                        color: active ? "#E8353A" : "#6B7280",
-                        "&:hover": { borderColor: "#E8353A", backgroundColor: "#FEF2F2", color: "#E8353A" },
+                        color: active ? "#FF3D01" : "#6B7280",
+                        "&:hover": { borderColor: "#FF3D01", backgroundColor: "#FEF2F2", color: "#FF3D01" },
                       }}
                     >
                       {icon}
@@ -306,7 +306,7 @@ export default function CheckoutModal({
                     sx={{
                       border: "1.5px solid #E5E7EB", borderRadius: "10px", p: 2,
                       cursor: "pointer", transition: "all .15s",
-                      "&:hover": { borderColor: "#E8353A", boxShadow: "0 4px 12px rgba(232,53,58,.1)" },
+                      "&:hover": { borderColor: "#FF3D01", boxShadow: "0 4px 12px rgba(232,53,58,.1)" },
                     }}>
                     <Typography sx={{ fontSize: 14, fontWeight: 700, color: "#111827", fontFamily: FONT }}>{l}</Typography>
                     <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: FONT, mt: 0.3 }}>{s}</Typography>
@@ -351,7 +351,7 @@ export default function CheckoutModal({
                   {splits.map(s => (
                     <Box key={s.id} onClick={() => setActiveSplitId(s.id)}
                       sx={{
-                        flex: 1, border: activeSplitId === s.id ? "2px solid #E8353A" : "1.5px solid #E5E7EB",
+                        flex: 1, border: activeSplitId === s.id ? "2px solid #FF3D01" : "1.5px solid #E5E7EB",
                         borderRadius: "10px", p: 2, cursor: "pointer",
                       }}>
                       <Typography sx={{ fontSize: 14, fontWeight: 600, fontFamily: FONT, mb: 1 }}>Split {s.id}</Typography>
@@ -388,8 +388,8 @@ export default function CheckoutModal({
                       variant={activeSplitId === s.id ? "contained" : "outlined"}
                       onClick={() => setActiveSplitId(s.id)}
                       sx={{ textTransform: "none", fontFamily: FONT, borderRadius: "8px",
-                        bgcolor: activeSplitId === s.id ? "#E8353A" : undefined,
-                        borderColor: "#E8353A", color: activeSplitId === s.id ? "#fff" : "#E8353A" }}>
+                        bgcolor: activeSplitId === s.id ? "#FF3D01" : undefined,
+                        borderColor: "#FF3D01", color: activeSplitId === s.id ? "#fff" : "#FF3D01" }}>
                       Split {s.id}
                     </Button>
                   ))}
@@ -444,12 +444,12 @@ export default function CheckoutModal({
                       border: "1.5px solid #E5E7EB", borderRadius: "8px",
                       height: 42, display: "flex", alignItems: "center", justifyContent: "center",
                       cursor: "pointer", backgroundColor: amount === v ? "#FEF2F2" : "#FAFAFA",
-                      borderColor: amount === v ? "#E8353A" : "#E5E7EB",
+                      borderColor: amount === v ? "#FF3D01" : "#E5E7EB",
                       transition: "all .12s",
-                      "&:hover": { borderColor: "#E8353A", backgroundColor: "#FEF2F2" },
+                      "&:hover": { borderColor: "#FF3D01", backgroundColor: "#FEF2F2" },
                     }}
                   >
-                    <Typography sx={{ fontSize: 13, fontWeight: 700, color: amount === v ? "#E8353A" : "#374151", fontFamily: FONT }}>
+                    <Typography sx={{ fontSize: 13, fontWeight: 700, color: amount === v ? "#FF3D01" : "#374151", fontFamily: FONT }}>
                       ₹{v.toLocaleString()}
                     </Typography>
                   </Box>
@@ -471,13 +471,13 @@ export default function CheckoutModal({
                       transition: "all .1s",
                       "&:hover": {
                         backgroundColor: k === "back" ? "#FEE2E2" : "#F3F4F6",
-                        borderColor: k === "back" ? "#E8353A" : "#9CA3AF",
+                        borderColor: k === "back" ? "#FF3D01" : "#9CA3AF",
                       },
                       "&:active": { transform: "scale(0.96)" },
                     }}
                   >
                     {k === "back"
-                      ? <BackspaceOutlinedIcon sx={{ fontSize: 20, color: "#E8353A" }} />
+                      ? <BackspaceOutlinedIcon sx={{ fontSize: 20, color: "#FF3D01" }} />
                       : <Typography sx={{ fontSize: 18, fontWeight: 700, color: "#374151", fontFamily: FONT }}>{k}</Typography>}
                   </Box>
                 ))}
@@ -516,7 +516,7 @@ export default function CheckoutModal({
               textTransform: "none", fontSize: 14, fontWeight: 700, fontFamily: FONT,
               height: 48, borderRadius: "10px",
               background: canPay
-                ? "linear-gradient(135deg,#E8353A,#c62a2f)"
+                ? "linear-gradient(135deg,#FF3D01,#c62a2f)"
                 : "#E5E7EB",
               color: canPay ? "#FFFFFF" : "#9CA3AF",
               boxShadow: canPay ? "0 4px 16px rgba(232,53,58,.4)" : "none",

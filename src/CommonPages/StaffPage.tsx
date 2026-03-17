@@ -23,7 +23,7 @@ import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 
 const FONT = "Poppins, sans-serif";
-const RED = "#E8353A";
+const RED = "#FF3D01";
 const PAGE_SIZE = 10;
 
 interface Staff {

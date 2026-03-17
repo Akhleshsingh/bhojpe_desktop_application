@@ -313,7 +313,7 @@ export default function OrdersHistory() {
           <Typography sx={{ fontSize: 18, fontWeight: 700, color: "#111827", fontFamily: "Poppins, sans-serif" }}>
             Orders History
           </Typography>
-          <Box sx={{ px: 1.5, py: 0.2, borderRadius: "20px", background: "linear-gradient(135deg,#E8353A,#FF6B6B)", boxShadow: "0 2px 8px rgba(232,53,58,.35)" }}>
+          <Box sx={{ px: 1.5, py: 0.2, borderRadius: "20px", background: "linear-gradient(135deg,#FF3D01,#FF6B6B)", boxShadow: "0 2px 8px rgba(232,53,58,.35)" }}>
             <Typography sx={{ fontSize: 13, fontWeight: 700, color: "#FFF", fontFamily: "Poppins, sans-serif" }}>{allOrders.length}</Typography>
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", gap: 0.6, px: 1.2, py: 0.3, borderRadius: "20px", backgroundColor: "#DCFCE7" }}>
@@ -341,7 +341,7 @@ export default function OrdersHistory() {
             startIcon={<AddIcon />}
             onClick={() => navigate("/menudashboard")}
             sx={{
-              background: "linear-gradient(135deg,#E8353A,#c62a2f)", textTransform: "none",
+              background: "linear-gradient(135deg,#FF3D01,#c62a2f)", textTransform: "none",
               fontWeight: 600, fontSize: 13, height: 36, px: 2, borderRadius: "8px",
               fontFamily: "Poppins, sans-serif", boxShadow: "0 2px 8px rgba(232,53,58,.35)",
               "&:hover": { background: "linear-gradient(135deg,#c62a2f,#a02020)" },
@@ -353,7 +353,7 @@ export default function OrdersHistory() {
             variant="outlined"
             startIcon={<MergeIcon />}
             sx={{
-              borderColor: "#E8353A", color: "#E8353A", textTransform: "none",
+              borderColor: "#FF3D01", color: "#FF3D01", textTransform: "none",
               fontWeight: 600, fontSize: 13, height: 36, px: 2, borderRadius: "8px",
               fontFamily: "Poppins, sans-serif",
               "&:hover": { backgroundColor: "#FEF2F2", borderColor: "#c62a2f" },
@@ -470,10 +470,10 @@ export default function OrdersHistory() {
                 {/* Top row: icon + info + chips */}
                 <Box sx={{ p: 1.5, display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                   <Box sx={{ display: "flex", gap: 1, alignItems: "flex-start" }}>
-                    <Box sx={{ width: 40, height: 40, borderRadius: "10px", flexShrink: 0, background: icon ? "#FEF2F2" : "linear-gradient(135deg,#E8353A20,#FF6B6B30)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <Box sx={{ width: 40, height: 40, borderRadius: "10px", flexShrink: 0, background: icon ? "#FEF2F2" : "linear-gradient(135deg,#FF3D0120,#FF6B6B30)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       {icon
                         ? <img src={icon} width={22} alt="type" />
-                        : <Typography sx={{ fontSize: 10, fontWeight: 700, color: "#E8353A", textAlign: "center", lineHeight: 1.2 }}>
+                        : <Typography sx={{ fontSize: 10, fontWeight: 700, color: "#FF3D01", textAlign: "center", lineHeight: 1.2 }}>
                             {order.customer?.name?.split(" ")[0]?.slice(0, 2)?.toUpperCase() || "--"}
                           </Typography>
                       }
@@ -580,7 +580,7 @@ export default function OrdersHistory() {
                       fontSize: 11, fontWeight: 600, textTransform: "none",
                       borderColor: "#D1D5DB", color: "#374151", borderRadius: "8px",
                       fontFamily: "Poppins, sans-serif", px: 1.2,
-                      "&:hover": { borderColor: "#E8353A", color: "#E8353A", backgroundColor: "#FEF2F2" },
+                      "&:hover": { borderColor: "#FF3D01", color: "#FF3D01", backgroundColor: "#FEF2F2" },
                     }}
                   >
                     New KOT
@@ -597,7 +597,7 @@ export default function OrdersHistory() {
             disabled={page === 1}
             onClick={() => setPage((p) => p - 1)}
             variant="outlined"
-            sx={{ textTransform: "none", fontSize: 13, fontFamily: "Poppins, sans-serif", borderColor: "#D1D5DB", color: "#374151", borderRadius: "8px", "&:hover": { borderColor: "#E8353A", color: "#E8353A" } }}
+            sx={{ textTransform: "none", fontSize: 13, fontFamily: "Poppins, sans-serif", borderColor: "#D1D5DB", color: "#374151", borderRadius: "8px", "&:hover": { borderColor: "#FF3D01", color: "#FF3D01" } }}
           >
             Previous
           </MuiButton>
@@ -608,7 +608,7 @@ export default function OrdersHistory() {
             disabled={page * perPage >= ordersTotal}
             onClick={() => setPage((p) => p + 1)}
             variant="outlined"
-            sx={{ textTransform: "none", fontSize: 13, fontFamily: "Poppins, sans-serif", borderColor: "#D1D5DB", color: "#374151", borderRadius: "8px", "&:hover": { borderColor: "#E8353A", color: "#E8353A" } }}
+            sx={{ textTransform: "none", fontSize: 13, fontFamily: "Poppins, sans-serif", borderColor: "#D1D5DB", color: "#374151", borderRadius: "8px", "&:hover": { borderColor: "#FF3D01", color: "#FF3D01" } }}
           >
             Next
           </MuiButton>

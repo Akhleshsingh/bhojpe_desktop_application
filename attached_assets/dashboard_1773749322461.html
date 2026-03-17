@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bhojpe — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --accent:#FF3D01;
+  --accent-h:#e63500;
+  --accent-dim:rgba(255,61,1,0.08);
+  --accent-mid:rgba(255,61,1,0.14);
+  --accent-bdr:rgba(255,61,1,0.28);
+  --bg:#f5f0ea;
+  --white:#ffffff;
+  --s1:#faf7f3;
+  --s2:#f0ebe3;
+  --s3:#e6dfd6;
+  --border:#e2d9d0;
+  --border2:#cfc5ba;
+  --green:#1e8c45;
+  --green-dim:rgba(30,140,69,0.1);
+  --red-dim:rgba(204,34,34,0.09);
+  --blue:#2563eb;
+  --blue-dim:rgba(37,99,235,0.09);
+  --amber:#b45309;
+  --amber-dim:rgba(180,83,9,0.09);
+  --purple:#7c3aed;
+  --purple-dim:rgba(124,58,237,0.09);
+  --text:#1a1208;
+  --text2:#6b5c4a;
+  --text3:#a8978a;
+  --sh:0 1px 4px rgba(0,0,0,0.07);
+  --sh2:0 4px 16px rgba(0,0,0,0.10);
+}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden;font-size:14px}
+
+/* TOPBAR */
+.topbar{
+  display:flex;align-items:center;padding:0 18px;height:56px;
+  background:var(--white);border-bottom:1px solid var(--border);
+  gap:10px;flex-shrink:0;box-shadow:0 1px 6px rgba(0,0,0,0.06);
+}
+.logo-wrap{display:flex;align-items:center;gap:10px}
+.logo-icon{width:36px;height:36px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 3px 10px rgba(255,61,1,0.28)}
+.logo-col{display:flex;flex-direction:column;line-height:1.1}
+.logo-name{font-family:'Playfair Display',serif;font-size:21px;font-weight:700;color:var(--accent)}
+.logo-sub{font-size:9px;color:var(--text3);margin-top:2px}
+.sep{width:1px;height:26px;background:var(--border);margin:0 4px;flex-shrink:0}
+.order-pills{display:flex;gap:7px}
+.order-pill{display:flex;align-items:center;gap:7px;padding:5px 13px 5px 10px;background:var(--s1);border:1px solid var(--border);border-radius:30px;cursor:pointer;font-size:12px;color:var(--text2);font-weight:500;transition:all .15s}
+.order-pill:hover{border-color:var(--border2)}
+.pill-badge{min-width:18px;height:18px;border-radius:9px;padding:0 5px;background:var(--accent);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.pill-badge.empty{background:var(--s3);color:var(--text3)}
+.new-order-btn{padding:7px 16px;background:var(--accent);border:none;border-radius:9px;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:7px;white-space:nowrap;box-shadow:0 3px 10px rgba(255,61,1,0.25);transition:background .15s}
+.new-order-btn:hover{background:var(--accent-h)}
+.topbar-spacer{flex:1}
+.topbar-icons{display:flex;align-items:center;gap:2px}
+.t-icon{width:36px;height:36px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:16px;transition:all .15s;border:none;background:none}
+.t-icon:hover{background:var(--s2)}
+.t-icon.active{color:var(--accent);background:var(--accent-dim)}
+
+/* LAYOUT */
+.main{display:flex;flex:1;overflow:hidden}
+
+/* SIDEBAR */
+.sidebar{width:220px;background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+.location-select{
+  margin:14px 12px 10px;display:flex;align-items:center;gap:8px;
+  padding:9px 12px;background:var(--accent-dim);border:1.5px solid var(--accent-bdr);
+  border-radius:10px;cursor:pointer;font-size:13px;font-weight:600;color:var(--accent);
+  transition:background .15s;
+}
+.location-select:hover{background:var(--accent-mid)}
+.location-arrow{margin-left:auto;font-size:11px;color:var(--text3)}
+
+.nav-list{flex:1;padding:4px 8px;overflow-y:auto}
+.nav-list::-webkit-scrollbar{width:3px}
+.nav-list::-webkit-scrollbar-thumb{background:var(--border)}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:10px;cursor:pointer;
+  font-size:13px;color:var(--text2);font-weight:500;
+  transition:all .15s;margin-bottom:2px;
+}
+.nav-item:hover{background:var(--s2);color:var(--text)}
+.nav-item.active{background:var(--accent);color:#fff;font-weight:700;box-shadow:0 3px 10px rgba(255,61,1,0.25)}
+.nav-item.active .nav-icon{filter:brightness(10)}
+.nav-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0}
+.nav-arrow{margin-left:auto;font-size:11px;opacity:.5}
+
+.sidebar-footer{padding:12px;border-top:1px solid var(--border)}
+.customer-site-btn{
+  display:flex;align-items:center;gap:8px;
+  padding:9px 12px;background:var(--s1);border:1.5px solid var(--border);
+  border-radius:10px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text2);
+  transition:all .15s;
+}
+.customer-site-btn:hover{border-color:var(--border2);color:var(--text)}
+
+/* CONTENT */
+.content{flex:1;overflow-y:auto;padding:20px 22px}
+.content::-webkit-scrollbar{width:5px}
+.content::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.page-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--text)}
+.page-date{font-size:13px;color:var(--text2);font-weight:500;background:var(--white);padding:7px 14px;border-radius:9px;border:1px solid var(--border)}
+
+/* STAT CARDS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.stat-card{
+  background:var(--white);border:1.5px solid var(--border);border-radius:16px;
+  padding:18px 20px;box-shadow:var(--sh);transition:transform .15s,box-shadow .15s;
+  position:relative;overflow:hidden;
+}
+.stat-card:hover{transform:translateY(-2px);box-shadow:var(--sh2)}
+.stat-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  border-radius:16px 16px 0 0;
+}
+.stat-card.c1::before{background:var(--green)}
+.stat-card.c2::before{background:var(--accent)}
+.stat-card.c3::before{background:var(--blue)}
+.stat-card.c4::before{background:var(--purple)}
+
+.stat-icon{
+  width:40px;height:40px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  margin-bottom:12px;
+}
+.stat-card.c1 .stat-icon{background:var(--green-dim)}
+.stat-card.c2 .stat-icon{background:var(--accent-dim)}
+.stat-card.c3 .stat-icon{background:var(--blue-dim)}
+.stat-card.c4 .stat-icon{background:var(--purple-dim)}
+
+.stat-label{font-size:11.5px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.stat-value{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--text);margin-bottom:8px}
+.stat-change{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:500}
+.stat-change.up{color:var(--green)}
+.stat-change.down{color:var(--accent)}
+.stat-change.neutral{color:var(--text3)}
+
+/* BOTTOM GRID */
+.bottom-grid{display:grid;grid-template-columns:1fr 380px;gap:16px}
+
+/* CHART */
+.chart-card{
+  background:var(--white);border:1.5px solid var(--border);border-radius:16px;
+  padding:20px;box-shadow:var(--sh);
+}
+.chart-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
+.chart-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--text)}
+.chart-subtitle{font-size:12px;color:var(--text3);margin-top:2px}
+.chart-meta{text-align:right}
+.chart-total{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--text)}
+.chart-change{font-size:12px;font-weight:500;margin-top:2px}
+.chart-change.down{color:var(--accent)}
+.chart-change.up{color:var(--green)}
+.chart-wrap{position:relative;height:200px}
+
+/* ORDERS PANEL */
+.orders-card{
+  background:var(--white);border:1.5px solid var(--border);border-radius:16px;
+  box-shadow:var(--sh);display:flex;flex-direction:column;overflow:hidden;
+}
+.orders-header{
+  padding:16px 18px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+}
+.orders-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--text)}
+.orders-count{
+  font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;
+  background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent-bdr);
+}
+.orders-list{flex:1;overflow-y:auto;padding:8px 12px}
+.orders-list::-webkit-scrollbar{width:3px}
+.orders-list::-webkit-scrollbar-thumb{background:var(--border)}
+
+.order-card{
+  padding:12px;border:1.5px solid var(--border);border-radius:12px;
+  margin-bottom:8px;transition:border-color .15s;background:var(--s1);
+}
+.order-card:hover{border-color:var(--border2)}
+.oc-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.oc-num{
+  width:36px;height:36px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:16px;font-weight:700;flex-shrink:0;
+}
+.oc-num.t1{background:#e8f5e9;color:#1e8c45}
+.oc-num.t2{background:#fff3e0;color:#b45309}
+.oc-num.t3{background:var(--blue-dim);color:var(--blue)}
+.oc-info{flex:1}
+.oc-id{font-size:13px;font-weight:700;color:var(--text)}
+.oc-type{font-size:11px;color:var(--text3);margin-top:1px;font-weight:500}
+.oc-actions{display:flex;gap:6px}
+.oc-btn{
+  padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;
+  font-family:'Plus Jakarta Sans',sans-serif;border:none;transition:opacity .15s;
+}
+.oc-btn:hover{opacity:.85}
+.oc-btn.pos{background:var(--blue-dim);color:var(--blue);border:1px solid rgba(37,99,235,.25)}
+.oc-btn.kot{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(180,83,9,.25)}
+
+.oc-mid{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.oc-date{font-size:11px;color:var(--text3)}
+.oc-kots{font-size:11px;font-weight:600;color:var(--text2)}
+
+.oc-bottom{display:flex;align-items:center;justify-content:space-between}
+.oc-amount{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--text)}
+.oc-status-row{display:flex;align-items:center;gap:8px}
+.oc-status{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600}
+.oc-dot{width:7px;height:7px;border-radius:50%}
+.oc-dot.confirmed{background:var(--green)}
+.oc-dot.pending{background:var(--amber)}
+.new-kot-btn{
+  padding:4px 10px;background:var(--s2);border:1px solid var(--border2);
+  border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;
+  font-family:'Plus Jakarta Sans',sans-serif;color:var(--text2);transition:all .15s;
+}
+.new-kot-btn:hover{background:var(--s3);color:var(--text)}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo-wrap">
+    <div class="logo-icon">🍽️</div>
+    <div class="logo-col">
+      <div class="logo-name">Bhojpe</div>
+      <div class="logo-sub">by Nepson Infotech LLP</div>
+    </div>
+  </div>
+  <div class="sep"></div>
+  <div class="order-pills">
+    <div class="order-pill">🍽️ Dine In <div class="pill-badge empty">0</div></div>
+    <div class="order-pill">🥡 Takeaway <div class="pill-badge empty">0</div></div>
+    <div class="order-pill">🛵 Delivery <div class="pill-badge empty">0</div></div>
+  </div>
+  <button class="new-order-btn">+ New Order</button>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-icons">
+    <button class="t-icon">🧾</button>
+    <button class="t-icon">💳</button>
+    <button class="t-icon">🖥️</button>
+    <button class="t-icon">📦</button>
+    <button class="t-icon">🔄</button>
+    <button class="t-icon">🔔</button>
+    <button class="t-icon">🖥</button>
+    <button class="t-icon active">〰️</button>
+  </div>
+</div>
+
+<div class="main">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="location-select">
+      📍 City Center, Gwalior
+      <span class="location-arrow">▾</span>
+    </div>
+    <div class="nav-list">
+      <div class="nav-item active"><span class="nav-icon">📊</span>Dashboard</div>
+      <div class="nav-item"><span class="nav-icon">🖥️</span>POS</div>
+      <div class="nav-item"><span class="nav-icon">⚙️</span>Operations<span class="nav-arrow">›</span></div>
+      <div class="nav-item"><span class="nav-icon">🙋</span>Waiter Requests</div>
+      <div class="nav-item"><span class="nav-icon">📅</span>Reservations</div>
+      <div class="nav-item"><span class="nav-icon">👥</span>Customers</div>
+      <div class="nav-item"><span class="nav-icon">👨‍🍳</span>Staff</div>
+      <div class="nav-item"><span class="nav-icon">💳</span>Payments<span class="nav-arrow">›</span></div>
+      <div class="nav-item"><span class="nav-icon">📈</span>Reports<span class="nav-arrow">›</span></div>
+      <div class="nav-item"><span class="nav-icon">🍳</span>Kitchens<span class="nav-arrow">›</span></div>
+      <div class="nav-item"><span class="nav-icon">🔄</span>Update</div>
+      <div class="nav-item"><span class="nav-icon">🚪</span>Logout</div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="customer-site-btn">🛒 Customer Site</div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+    <div class="page-header">
+      <div class="page-title">Dashboard</div>
+      <div class="page-date">📅 Tuesday, 30 Dec, 03:01 PM</div>
+    </div>
+
+    <!-- STAT CARDS -->
+    <div class="stats-grid">
+      <div class="stat-card c1">
+        <div class="stat-icon">🛍️</div>
+        <div class="stat-label">Today's Orders</div>
+        <div class="stat-value">26</div>
+        <div class="stat-change down">↓ -100% since yesterday</div>
+      </div>
+      <div class="stat-card c2">
+        <div class="stat-icon">💰</div>
+        <div class="stat-label">Today's Earnings</div>
+        <div class="stat-value">₹0.00</div>
+        <div class="stat-change down">↓ -100% since yesterday</div>
+      </div>
+      <div class="stat-card c3">
+        <div class="stat-icon">👥</div>
+        <div class="stat-label">Today's Customers</div>
+        <div class="stat-value">26</div>
+        <div class="stat-change neutral">→ 0% since yesterday</div>
+      </div>
+      <div class="stat-card c4">
+        <div class="stat-icon">📈</div>
+        <div class="stat-label">Avg Daily Earnings (Dec)</div>
+        <div class="stat-value">₹319.84</div>
+        <div class="stat-change down">↓ -9.39% vs last month</div>
+      </div>
+    </div>
+
+    <!-- CHART + ORDERS -->
+    <div class="bottom-grid">
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Sales This Month</div>
+            <div class="chart-subtitle">Daily earnings — December 2025</div>
+          </div>
+          <div class="chart-meta">
+            <div class="chart-total">₹9,595.12</div>
+            <div class="chart-change down">↓ -9.39% vs previous month</div>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="salesChart"></canvas>
+        </div>
+      </div>
+
+      <div class="orders-card">
+        <div class="orders-header">
+          <div class="orders-title">Today's Orders</div>
+          <div class="orders-count">26 orders</div>
+        </div>
+        <div class="orders-list">
+          <div class="order-card">
+            <div class="oc-top">
+              <div class="oc-num t1">10</div>
+              <div class="oc-info">
+                <div class="oc-id">Order #152</div>
+                <div class="oc-type">🍽️ Dine In</div>
+              </div>
+              <div class="oc-actions">
+                <button class="oc-btn pos">🖥️ POS</button>
+                <button class="oc-btn kot">📋 KOT</button>
+              </div>
+            </div>
+            <div class="oc-mid">
+              <div class="oc-date">Dec 30, 2025 04:28 PM</div>
+              <div class="oc-kots">2 KOT</div>
+            </div>
+            <div class="oc-bottom">
+              <div class="oc-amount">₹65.00</div>
+              <div class="oc-status-row">
+                <div class="oc-status"><div class="oc-dot confirmed"></div>Confirmed</div>
+                <button class="new-kot-btn">+ New KOT</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="order-card">
+            <div class="oc-top">
+              <div class="oc-num t2">11</div>
+              <div class="oc-info">
+                <div class="oc-id">Order #153</div>
+                <div class="oc-type">🛵 Delivery</div>
+              </div>
+              <div class="oc-actions">
+                <button class="oc-btn pos">🖥️ POS</button>
+                <button class="oc-btn kot">📋 KOT</button>
+              </div>
+            </div>
+            <div class="oc-mid">
+              <div class="oc-date">Dec 30, 2025 04:28 PM</div>
+              <div class="oc-kots">1 KOT</div>
+            </div>
+            <div class="oc-bottom">
+              <div class="oc-amount">₹565.00</div>
+              <div class="oc-status-row">
+                <div class="oc-status"><div class="oc-dot confirmed"></div>Confirmed</div>
+                <button class="new-kot-btn">+ New KOT</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="order-card">
+            <div class="oc-top">
+              <div class="oc-num t3">12</div>
+              <div class="oc-info">
+                <div class="oc-id">Order #154</div>
+                <div class="oc-type">🥡 Pickup</div>
+              </div>
+              <div class="oc-actions">
+                <button class="oc-btn pos">🖥️ POS</button>
+                <button class="oc-btn kot">📋 KOT</button>
+              </div>
+            </div>
+            <div class="oc-mid">
+              <div class="oc-date">Dec 30, 2025 04:28 PM</div>
+              <div class="oc-kots">1 KOT</div>
+            </div>
+            <div class="oc-bottom">
+              <div class="oc-amount">₹115.00</div>
+              <div class="oc-status-row">
+                <div class="oc-status"><div class="oc-dot confirmed"></div>Confirmed</div>
+                <button class="new-kot-btn">+ New KOT</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="order-card">
+            <div class="oc-top">
+              <div class="oc-num t1">13</div>
+              <div class="oc-info">
+                <div class="oc-id">Order #155</div>
+                <div class="oc-type">🍽️ Dine In</div>
+              </div>
+              <div class="oc-actions">
+                <button class="oc-btn pos">🖥️ POS</button>
+                <button class="oc-btn kot">📋 KOT</button>
+              </div>
+            </div>
+            <div class="oc-mid">
+              <div class="oc-date">Dec 30, 2025 05:10 PM</div>
+              <div class="oc-kots">3 KOT</div>
+            </div>
+            <div class="oc-bottom">
+              <div class="oc-amount">₹820.00</div>
+              <div class="oc-status-row">
+                <div class="oc-status"><div class="oc-dot pending"></div>Pending</div>
+                <button class="new-kot-btn">+ New KOT</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const ctx = document.getElementById('salesChart').getContext('2d');
+new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: ['20 Dec','21 Dec','22 Dec','23 Dec','24 Dec','25 Dec','26 Dec','27 Dec','28 Dec','29 Dec','30 Dec'],
+    datasets: [{
+      data: [400, 2200, 1200, 2500, 1800, 900, 1600, 2100, 1400, 800, 900],
+      borderColor: '#FF3D01',
+      backgroundColor: 'rgba(255,61,1,0.06)',
+      borderWidth: 2.5,
+      pointBackgroundColor: '#FF3D01',
+      pointBorderColor: '#fff',
+      pointBorderWidth: 2,
+      pointRadius: 4,
+      pointHoverRadius: 6,
+      fill: true,
+      tension: 0.4
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#1a1208',
+        titleColor: '#a8978a',
+        bodyColor: '#fff',
+        bodyFont: { family: 'Plus Jakarta Sans', weight: '700', size: 14 },
+        titleFont: { family: 'Plus Jakarta Sans', size: 11 },
+        padding: 12,
+        cornerRadius: 10,
+        callbacks: {
+          label: ctx => ' ₹' + ctx.parsed.y.toLocaleString('en-IN')
+        }
+      }
+    },
+    scales: {
+      x: {
+        grid: { display: false },
+        ticks: { color: '#a8978a', font: { family: 'Plus Jakarta Sans', size: 11 } },
+        border: { display: false }
+      },
+      y: {
+        grid: { color: 'rgba(0,0,0,0.05)' },
+        ticks: {
+          color: '#a8978a',
+          font: { family: 'Plus Jakarta Sans', size: 11 },
+          callback: v => '₹' + (v/1000).toFixed(0) + 'k'
+        },
+        border: { display: false }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>

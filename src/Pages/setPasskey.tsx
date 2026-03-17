@@ -82,7 +82,7 @@ function PinInput({
               sx={{
                 width: 64, height: 64,
                 borderRadius: "12px",
-                border: `2px solid ${error ? "#FECACA" : filled ? "#E8353A" : "#E5E7EB"}`,
+                border: `2px solid ${error ? "#FECACA" : filled ? "#FF3D01" : "#E5E7EB"}`,
                 backgroundColor: error ? "#FEF2F2" : filled ? "#FEF2F2" : "#F9FAFB",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 position: "relative",
@@ -104,7 +104,7 @@ function PinInput({
                 }}
               />
               <Typography sx={{
-                fontSize: show ? 22 : 28, fontWeight: 700, color: error ? "#DC2626" : "#E8353A",
+                fontSize: show ? 22 : 28, fontWeight: 700, color: error ? "#DC2626" : "#FF3D01",
                 fontFamily: "Poppins, sans-serif", lineHeight: 1, userSelect: "none",
               }}>
                 {filled ? (show ? value[i] : "●") : ""}
@@ -268,7 +268,7 @@ export default function SetPasskey() {
                   textTransform: "none", fontSize: 14, fontWeight: 700,
                   fontFamily: "Poppins, sans-serif", height: 46, borderRadius: "12px",
                   background: passkey.length === 4 && confirm.length === 4
-                    ? "linear-gradient(135deg,#E8353A,#c62a2f)"
+                    ? "linear-gradient(135deg,#FF3D01,#c62a2f)"
                     : "#E5E7EB",
                   color: passkey.length === 4 && confirm.length === 4 ? "#FFF" : "#9CA3AF",
                   boxShadow: passkey.length === 4 && confirm.length === 4 ? "0 4px 12px rgba(232,53,58,.35)" : "none",

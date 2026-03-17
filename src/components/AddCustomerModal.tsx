@@ -175,7 +175,7 @@ export default function AddCustomerModal({ open, onClose, onSave }: Props) {
                     backgroundColor: "#F9FAFB",
                     "& fieldset": { borderColor: "#E5E7EB" },
                     "&:hover fieldset": { borderColor: "#9CA3AF" },
-                    "&.Mui-focused fieldset": { borderColor: "#E8353A" },
+                    "&.Mui-focused fieldset": { borderColor: "#FF3D01" },
                   },
                 }}
               />
@@ -303,7 +303,7 @@ export default function AddCustomerModal({ open, onClose, onSave }: Props) {
                 sx={{
                   textTransform: "none", fontSize: 13, fontWeight: 700, fontFamily: FONT,
                   height: 42, borderRadius: "10px",
-                  background: canSave ? "linear-gradient(135deg,#E8353A,#c62a2f)" : "#F3F4F6",
+                  background: canSave ? "linear-gradient(135deg,#FF3D01,#c62a2f)" : "#F3F4F6",
                   color: canSave ? "#FFF" : "#D1D5DB",
                   boxShadow: canSave ? "0 4px 12px rgba(232,53,58,.3)" : "none",
                   "&:hover": { background: canSave ? "linear-gradient(135deg,#c62a2f,#a02020)" : "#F3F4F6" },

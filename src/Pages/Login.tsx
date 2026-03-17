@@ -133,8 +133,8 @@ const Login: React.FC = () => {
                         fontFamily: "Poppins, sans-serif",
                         fontSize: "14px",
                         "& fieldset": { borderColor: "#E0DADA" },
-                        "&:hover fieldset": { borderColor: "#E8353A" },
-                        "&.Mui-focused fieldset": { borderColor: "#E8353A" },
+                        "&:hover fieldset": { borderColor: "#FF3D01" },
+                        "&.Mui-focused fieldset": { borderColor: "#FF3D01" },
                       },
                       "& .MuiInputBase-input::placeholder": {
                         color: "#AAAAAA",
@@ -170,8 +170,8 @@ const Login: React.FC = () => {
                         fontFamily: "Poppins, sans-serif",
                         fontSize: "14px",
                         "& fieldset": { borderColor: "#E0DADA" },
-                        "&:hover fieldset": { borderColor: "#E8353A" },
-                        "&.Mui-focused fieldset": { borderColor: "#E8353A" },
+                        "&:hover fieldset": { borderColor: "#FF3D01" },
+                        "&.Mui-focused fieldset": { borderColor: "#FF3D01" },
                       },
                       "& .MuiInputBase-input::placeholder": {
                         color: "#AAAAAA",
@@ -204,7 +204,7 @@ const Login: React.FC = () => {
                         style={{
                           width: 16,
                           height: 16,
-                          accentColor: "#E8353A",
+                          accentColor: "#FF3D01",
                           cursor: "pointer",
                         }}
                       />
@@ -225,7 +225,7 @@ const Login: React.FC = () => {
                     style={{
                       width: "100%",
                       padding: "13px",
-                      backgroundColor: "#E8353A",
+                      backgroundColor: "#FF3D01",
                       color: "#FFFFFF",
                       border: "none",
                       borderRadius: "8px",
@@ -238,10 +238,10 @@ const Login: React.FC = () => {
                       transition: "background-color 0.2s",
                     }}
                     onMouseEnter={(e) =>
-                      (e.currentTarget.style.backgroundColor = "#C62828")
+                      (e.currentTarget.style.backgroundColor = "#e63500")
                     }
                     onMouseLeave={(e) =>
-                      (e.currentTarget.style.backgroundColor = "#E8353A")
+                      (e.currentTarget.style.backgroundColor = "#FF3D01")
                     }
                   >
                     Login In

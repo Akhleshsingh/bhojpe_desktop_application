@@ -220,15 +220,15 @@ export default function SecondHeader({
               onClick={() => navigate("/kitchens/all-kitchens-kot")}
               sx={{
                 backgroundColor: "#fff",
-                color: "#E8353A",
-                fontFamily: "Poppins, sans-serif",
+                color: "#FF3D01",
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
                 fontWeight: 600,
                 fontSize: "13px",
                 borderRadius: "6px",
                 padding: "6px 16px",
                 textTransform: "none",
                 whiteSpace: "nowrap",
-                border: "1.5px solid #E8353A",
+                border: "1.5px solid #FF3D01",
                 boxShadow: "none",
                 "&:hover": { backgroundColor: "#FFF0EE", boxShadow: "none" },
               }}
@@ -241,9 +241,9 @@ export default function SecondHeader({
             <Button
               onClick={handleNewKot}
               sx={{
-                backgroundColor: "#E8353A",
+                backgroundColor: "#FF3D01",
                 color: "#fff",
-                fontFamily: "Poppins, sans-serif",
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
                 fontWeight: 600,
                 fontSize: "13px",
                 borderRadius: "6px",
@@ -251,7 +251,7 @@ export default function SecondHeader({
                 textTransform: "none",
                 whiteSpace: "nowrap",
                 boxShadow: "none",
-                "&:hover": { backgroundColor: "#C62828", boxShadow: "none" },
+                "&:hover": { backgroundColor: "#e63500", boxShadow: "none" },
               }}
               variant="contained"
             >
