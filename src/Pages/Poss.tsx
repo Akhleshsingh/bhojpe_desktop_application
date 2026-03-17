@@ -14,6 +14,10 @@ import { useDeliveryExecutives } from "../context/DeliveryExecutive";
 import { useCustomers } from "../context/CustomerContext";
 import { useTables } from "../context/TablesContext";
 import { BASE_URL } from "../utils/api";
+import SecondHeader from "../CommonPages/secondheader";
+import HamburgerSidebar from "../CommonPages/HamburgerSidebar";
+import Sidebar from "../components/Sidebar";
+import CheckoutModal from "../components/CheckoutModal";
 
 // ─── Design Tokens ──────────────────────────────────────────────────────────
 const C = {
@@ -256,6 +260,8 @@ export default function Poss() {
   const [selVariation, setSelVariation] = useState<number|null>(null);
 
   const [placing, setPlacing]           = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [checkoutModal, setCheckoutModal] = useState<{open:boolean;orderId:number;orderNo:number;total:number}|null>(null);
 
   // ── Grid items ──
   const gridItems = useMemo(() => {
@@ -417,15 +423,14 @@ export default function Poss() {
       });
       const data = await res.json();
       if (!data.status) throw new Error(data.message||"Order failed");
+      const orderId = data.data?.order?.id ?? 0;
       // Apply discount if any
-      if (discAmt > 0 && data.data?.order?.id) {
+      if (discAmt > 0 && orderId) {
         await fetch(`${BASE_URL}/applydiscount`, {
           method:"POST", headers:{ Authorization:`Bearer ${token}`, "Content-Type":"application/json" },
-          body: JSON.stringify({ order_id:data.data.order.id, discount_type:discType==="percent"?"percent":"fixed", discount_value:discAmt }),
+          body: JSON.stringify({ order_id:orderId, discount_type:discType==="percent"?"percent":"fixed", discount_value:discAmt }),
         });
       }
-      const ch = {dine:"🍽️ Dine In",pickup:"🥡 Pickup",delivery:"🛵 Delivery"}[channel];
-      toast.success(`${ch} order placed! ✓`);
       // increment KOT token
       const n = parseInt(kotToken.replace(/\D/g,""))||0;
       setKotToken(`T-${String(n+1).padStart(3,"0")}`);
@@ -435,7 +440,16 @@ export default function Poss() {
         if (pw) setTimeout(()=>pw.postMessage({ type:"PRINT_ORDER", payload:{ order:data.data?.order, items:cart, branch:branchData?.data } },"*"), 500);
       }
       await fetchTables();
-      clearCart();
+      // For bill actions → open payment modal
+      if (action==="bill" || action==="bill_print") {
+        setCheckoutModal({ open:true, orderId, orderNo:orderNo, total });
+        // don't clearCart here — clear on payment success
+      } else {
+        // KOT only — just clear cart and show success
+        const ch = {dine:"🍽️ Dine In",pickup:"🥡 Pickup",delivery:"🛵 Delivery"}[channel];
+        toast.success(`${ch} KOT placed! ✓`);
+        clearCart();
+      }
     } catch(e:any) { toast.error(e.message||"Order place karne mein error!"); }
     finally { setPlacing(false); }
   };
@@ -469,82 +483,40 @@ export default function Poss() {
         ::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-thumb{background:#cec4b8;border-radius:4px}
       `}</style>
 
-      {/* ══ TOPBAR ══════════════════════════════════════════════════════════ */}
-      <Box sx={{display:"flex",alignItems:"center",px:"16px",height:54,background:C.w,borderBottom:`1.5px solid ${C.bd}`,gap:"8px",flexShrink:0,boxShadow:`0 1px 4px rgba(0,0,0,.07)`,zIndex:20}}>
-        <Typography sx={{fontFamily:FONT,fontSize:21,fontWeight:800,color:C.tx,letterSpacing:"-.5px",mr:"4px"}}>
-          Bhoj<span style={{color:C.ac}}>Pe</span>
-        </Typography>
-        <Box sx={{width:1,height:26,background:C.bd,mx:"4px",flexShrink:0}} />
-        <Box sx={{display:"flex",alignItems:"center",gap:"5px",px:"11px",py:"5px",background:cartCount>0?C.adim:C.s1,border:`1.5px solid ${cartCount>0?C.abdr:C.bd}`,borderRadius:"9px",fontSize:12,fontWeight:700,color:cartCount>0?C.ac:C.t2,transition:"all .15s"}}>
-          📋 #{orderNo}
-          {cartCount>0 && <Box sx={{minWidth:16,height:16,px:"3px",borderRadius:"8px",background:C.ac,color:"#fff",fontSize:9,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center"}}>{cartCount}</Box>}
-        </Box>
-        <Box sx={{flex:1}} />
-        {[{icon:"🪑",label:"Tables",fn:()=>setTablesPage(true)},{icon:"📋",label:"Orders",fn:()=>setOrdersPage(true)},{icon:"🔔",label:"Alerts",fn:()=>toast("No alerts")},{icon:"⚙️",label:"Settings",fn:()=>toast("Settings")}].map(b=>(
-          <Box key={b.label} component="button" title={b.label} onClick={b.fn} sx={{width:33,height:33,borderRadius:"7px",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",border:"none",background:"none",fontSize:15,transition:"all .15s","&:hover":{background:C.s2}}}>
-            {b.icon}
-          </Box>
-        ))}
-        <Box component="button" onClick={()=>{if(!cart.length||window.confirm("New order? Cart clear ho jaayega."))clearCart();}}
-          sx={{ml:"4px",px:"16px",py:"7px",background:C.ac,border:"none",borderRadius:"8px",color:"#fff",fontFamily:FONT,fontWeight:700,fontSize:12.5,cursor:"pointer",boxShadow:"0 2px 8px rgba(255,61,1,.28)",transition:"all .15s","&:hover":{background:C.ah}}}>
-          ⚡ New Order
-        </Box>
+      {/* ══ HEADER (existing app header) ════════════════════════════════════ */}
+      <Box sx={{flexShrink:0,zIndex:20}}>
+        <SecondHeader
+          ordersCount={cartCount}
+          sidebarOpen={!sidebarCollapsed}
+          setSidebarOpen={(v:boolean)=>setSidebarCollapsed(!v)}
+        />
       </Box>
 
       {/* ══ POS BODY ════════════════════════════════════════════════════════ */}
       <Box sx={{display:"flex",flex:1,overflow:"hidden",minHeight:0}}>
 
-        {/* ── SIDEBAR ───────────────────────────────────────────────────── */}
-        <Box sx={{width:190,minWidth:170,background:C.w,borderRight:`1.5px solid ${C.bd}`,display:"flex",flexDirection:"column",flexShrink:0,overflow:"hidden",boxShadow:"2px 0 8px rgba(0,0,0,.04)"}}>
-          {/* Tab toggle */}
-          <Box sx={{display:"grid",gridTemplateColumns:"1fr 1fr",borderBottom:`1.5px solid ${C.bd}`,flexShrink:0,background:C.s1}}>
-            {(["cat","menu"] as const).map(m=>(
-              <Box key={m} component="button" onClick={()=>{setSideMode(m);setSelectedCategoryId(null);setSelectedMenuId(null);setActiveMealTime(null);}}
-                sx={{py:"10px",textAlign:"center",fontSize:"10.5px",fontWeight:800,cursor:"pointer",color:sideMode===m?C.ac:C.t3,border:"none",background:sideMode===m?C.w:"transparent",fontFamily:FONT,letterSpacing:".6px",textTransform:"uppercase",transition:"all .15s",borderBottom:`2.5px solid ${sideMode===m?C.ac:"transparent"}`,boxShadow:sideMode===m?"0 1px 0 #fff inset":"none"}}>
-                {m==="cat"?"Category":"Menu"}
-              </Box>
-            ))}
-          </Box>
-          {/* List */}
-          <Box sx={{flex:1,overflowY:"auto",py:"6px",px:"8px"}}>
-            {sideMode==="cat" ? (
-              <>
-                {[
-                  { id:null as number|null, label:"All Items", cnt:menuItems.length },
-                  ...categories.map((c:any)=>({
-                    id: c.id as number,
-                    label: (typeof c.category_name==="object" ? c.category_name?.en : c.category_name) ?? c.name ?? "Unknown",
-                    cnt: menuItems.filter((m:MenuItem)=>m.item_category_id===c.id||m.category_id===c.id).length,
-                  }))
-                ].map(cat=>{
-                  const active = selectedCategoryId===cat.id;
-                  return (
-                    <Box key={cat.id??0} onClick={()=>setSelectedCategoryId(cat.id)}
-                      sx={{display:"flex",alignItems:"center",justifyContent:"space-between",px:"10px",py:"9px",borderRadius:"10px",mb:"2px",cursor:"pointer",color:active?C.ac:C.t2,fontWeight:active?700:500,border:`1.5px solid ${active?C.abdr:"transparent"}`,background:active?C.adim:"transparent",transition:"all .13s","&:hover":{background:active?C.adim:C.s2,color:active?C.ac:C.tx}}}>
-                      <Typography sx={{fontSize:"12px",fontWeight:"inherit",color:"inherit",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",maxWidth:120,fontFamily:FONT}}>{cat.label}</Typography>
-                      <Box component="span" sx={{fontSize:"10px",fontWeight:700,minWidth:20,textAlign:"center",px:"5px",py:"1.5px",borderRadius:"8px",background:active?C.amid:C.s2,color:active?C.ac:C.t3,flexShrink:0,ml:"4px"}}>{cat.cnt}</Box>
-                    </Box>
-                  );
-                })}
-              </>
-            ) : (
-              <>
-                {(menus.length > 0 ? menus : MEAL_TIMES.map(mt=>({id:mt.key,menu_name:{en:`${mt.icon} ${mt.key}`}}))).map((menu:any)=>{
-                  const label = (typeof menu.menu_name==="object" ? menu.menu_name?.en : menu.menu_name) ?? menu.name ?? "Menu";
-                  const isActive = typeof menu.id==="number" ? selectedMenuId===menu.id : activeMealTime===menu.id;
-                  const cnt = typeof menu.id==="number" ? menuItems.filter((m:MenuItem)=>m.menu_id===menu.id).length : (MEAL_TIMES.find(mt=>mt.key===menu.id)?.cats.length??0);
-                  return (
-                    <Box key={menu.id} onClick={()=>{ if(typeof menu.id==="number"){setSelectedMenuId(isActive?null:menu.id);setActiveMealTime(null);}else{setActiveMealTime(isActive?null:menu.id);setSelectedMenuId(null);}}}
-                      sx={{display:"flex",alignItems:"center",justifyContent:"space-between",px:"10px",py:"9px",borderRadius:"10px",mb:"2px",cursor:"pointer",border:`1.5px solid ${isActive?C.abdr:"transparent"}`,background:isActive?C.adim:"transparent",color:isActive?C.ac:C.t2,transition:"all .13s","&:hover":{background:isActive?C.adim:C.s2}}}>
-                      <Typography sx={{fontSize:"12px",fontWeight:isActive?700:500,color:"inherit",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",maxWidth:120,fontFamily:FONT}}>{label}</Typography>
-                      <Box component="span" sx={{fontSize:"10px",fontWeight:700,minWidth:20,textAlign:"center",px:"5px",py:"1.5px",borderRadius:"8px",background:isActive?C.amid:C.s2,color:isActive?C.ac:C.t3,flexShrink:0,ml:"4px"}}>{cnt}</Box>
-                    </Box>
-                  );
-                })}
-              </>
-            )}
-          </Box>
-        </Box>
+        {/* ── NAVIGATION SIDEBAR (existing HamburgerSidebar) ────────────── */}
+        <HamburgerSidebar
+          collapsed={sidebarCollapsed}
+          onToggle={()=>setSidebarCollapsed(v=>!v)}
+        />
+
+        {/* ── CATEGORY SIDEBAR (existing Sidebar component) ─────────────── */}
+        <Sidebar
+          categories={categories.map((c:any)=>({
+            id: c.id,
+            category_name: typeof c.category_name==="object" ? c.category_name : { en: c.category_name ?? c.name ?? "Unknown" },
+          }))}
+          selectedCategoryId={selectedCategoryId}
+          onSelect={(cat)=>{ setSelectedCategoryId(cat ? cat.id : null); setSelectedMenuId(null); setActiveMealTime(null); }}
+          menus={menus.map((m:any)=>({
+            id: m.id,
+            menu_name: typeof m.menu_name==="object" ? m.menu_name : { en: m.menu_name ?? m.name ?? "Menu" },
+          }))}
+          selectedMenuId={selectedMenuId}
+          onMenuSelect={(id)=>{ setSelectedMenuId(id); setSelectedCategoryId(null); setActiveMealTime(null); }}
+          collapsed={false}
+        />
 
         {/* ── CENTER (Search + Grid) ─────────────────────────────────────── */}
         <Box sx={{display:"flex",flexDirection:"column",flex:1,overflow:"hidden",minWidth:0}}>
@@ -575,7 +547,7 @@ export default function Poss() {
             <Typography sx={{fontSize:"11px",color:C.t3,flexShrink:0,fontWeight:600}}>{gridItems.length} items</Typography>
           </Box>
 
-          {/* Product Grid — responsive columns */}
+          {/* Product Grid — responsive columns, scrollable */}
           <Box sx={{
             display:"grid",
             gridTemplateColumns:"repeat(auto-fill, minmax(155px, 1fr))",
@@ -584,6 +556,7 @@ export default function Poss() {
             py:"12px",
             overflowY:"auto",
             flex:1,
+            minHeight:0,
             alignContent:"start",
           }}>
             {gridItems.length===0 ? (
@@ -1260,6 +1233,24 @@ export default function Poss() {
           <Typography sx={{color:C.t3,textAlign:"center",py:"40px",fontSize:13}}>Order history ko refresh karein ya menudashboard se check karein.</Typography>
         </Box>
       </Box>
+
+      {/* ── PAYMENT CHECKOUT MODAL ──────────────────────────────────────── */}
+      {checkoutModal && (
+        <CheckoutModal
+          open={checkoutModal.open}
+          onClose={()=>setCheckoutModal(null)}
+          orderNumber={checkoutModal.orderNo}
+          totalAmount={checkoutModal.total}
+          cart={cart}
+          orderId={checkoutModal.orderId}
+          onPaymentSuccess={()=>{
+            setCheckoutModal(null);
+            const ch = {dine:"🍽️ Dine In",pickup:"🥡 Pickup",delivery:"🛵 Delivery"}[channel];
+            toast.success(`${ch} payment complete! ✓`);
+            clearCart();
+          }}
+        />
+      )}
     </Box>
   );
 }
