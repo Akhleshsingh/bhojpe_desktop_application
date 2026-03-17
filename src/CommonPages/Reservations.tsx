@@ -107,7 +107,7 @@ const DATE_RANGES = ["Today", "Tomorrow", "Current Week", "Next Week", "This Mon
 const selectSx = {
   height: 36,
   fontSize: 13,
-  fontFamily: "Poppins, sans-serif",
+  fontFamily: "'Plus Jakarta Sans', sans-serif",
   backgroundColor: "#FFFFFF",
   borderRadius: "8px",
   "& .MuiOutlinedInput-notchedOutline": { borderColor: "#D1D5DB" },
@@ -198,7 +198,7 @@ function AssignTableModal({
         sx: {
           borderRadius: "16px",
           overflow: "hidden",
-          fontFamily: "Poppins, sans-serif",
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
           maxHeight: "80vh",
         },
       }}
@@ -219,7 +219,7 @@ function AssignTableModal({
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
             <TableBarOutlinedIcon sx={{ color: "#FCA5A5", fontSize: 20 }} />
             <Typography
-              sx={{ fontSize: 17, fontWeight: 700, color: "#F9FAFB", fontFamily: "Poppins, sans-serif" }}
+              sx={{ fontSize: 17, fontWeight: 700, color: "#F9FAFB", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
             >
               Available Tables
             </Typography>
@@ -231,7 +231,7 @@ function AssignTableModal({
                   border: "1px solid rgba(232,53,58,0.4)",
                 }}
               >
-                <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#FCA5A5", fontFamily: "Poppins, sans-serif" }}>
+                <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#FCA5A5", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                   {reservation.name} · {reservation.guests} Guests
                 </Typography>
               </Box>
@@ -292,12 +292,12 @@ function AssignTableModal({
             <Box
               sx={{
                 mb: 2, px: 1.5, py: 1,
-                background: "#F8FAFC",
+                background: "#f5f0ea",
                 borderRadius: "10px",
                 border: "1px solid #E5E7EB",
               }}
             >
-              <Typography sx={{ fontSize: 12, fontWeight: 700, color: "#374151", fontFamily: "Poppins, sans-serif" }}>
+              <Typography sx={{ fontSize: 12, fontWeight: 700, color: "#374151", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                 Reservations: {dateLabel}
               </Typography>
             </Box>
@@ -311,7 +311,7 @@ function AssignTableModal({
                 }}
               >
                 <TableBarOutlinedIcon sx={{ fontSize: 30, opacity: 0.4 }} />
-                <Typography sx={{ fontSize: 12, fontFamily: "Poppins, sans-serif", textAlign: "center" }}>
+                <Typography sx={{ fontSize: 12, fontFamily: "'Plus Jakarta Sans', sans-serif", textAlign: "center" }}>
                   No table is reserved.
                 </Typography>
               </Box>
@@ -328,10 +328,10 @@ function AssignTableModal({
                       background: "#F9FAFB",
                     }}
                   >
-                    <Typography sx={{ fontSize: 12, fontWeight: 600, color: "#111827", fontFamily: "Poppins, sans-serif" }}>
+                    <Typography sx={{ fontSize: 12, fontWeight: 600, color: "#111827", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                       {r.name}
                     </Typography>
-                    <Typography sx={{ fontSize: 11, color: "#6B7280", fontFamily: "Poppins, sans-serif" }}>
+                    <Typography sx={{ fontSize: 11, color: "#6B7280", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                       {r.time} · {r.guests} guests
                     </Typography>
                     {assignedTable && (
@@ -343,7 +343,7 @@ function AssignTableModal({
                           display: "inline-block",
                         }}
                       >
-                        <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#FF3D01", fontFamily: "Poppins, sans-serif" }}>
+                        <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#FF3D01", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                           {assignedTable}
                         </Typography>
                       </Box>
@@ -367,12 +367,12 @@ function AssignTableModal({
           {selectedTableId ? (
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <CheckCircleOutlineIcon sx={{ fontSize: 16, color: "#15803D" }} />
-              <Typography sx={{ fontSize: 13, color: "#374151", fontFamily: "Poppins, sans-serif" }}>
+              <Typography sx={{ fontSize: 13, color: "#374151", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                 Selected: <strong>{selectedTableLabel}</strong>
               </Typography>
             </Box>
           ) : (
-            <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: "Poppins, sans-serif" }}>
+            <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
               Tap a table to select it
             </Typography>
           )}
@@ -385,7 +385,7 @@ function AssignTableModal({
                 textTransform: "none", fontWeight: 500, fontSize: 13,
                 borderColor: "#D1D5DB", color: "#6B7280",
                 borderRadius: "8px", px: 2.5, height: 36,
-                fontFamily: "Poppins, sans-serif",
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
                 "&:hover": { borderColor: "#9CA3AF", backgroundColor: "#F9FAFB" },
               }}
             >
@@ -402,7 +402,7 @@ function AssignTableModal({
                   : "#E5E7EB",
                 color: selectedTableId ? "#fff" : "#9CA3AF",
                 borderRadius: "8px", px: 2.5, height: 36,
-                fontFamily: "Poppins, sans-serif",
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
                 boxShadow: selectedTableId ? "0 2px 8px rgba(232,53,58,.35)" : "none",
                 "&:hover": {
                   background: selectedTableId
@@ -439,7 +439,7 @@ function AreaSection({ area, selectedTableId, onSelectTable, tableMap, allReserv
   return (
     <Box sx={{ mb: 3 }}>
       <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
-        <Typography sx={{ fontSize: 14, fontWeight: 600, color: "#374151", fontFamily: "Poppins, sans-serif" }}>
+        <Typography sx={{ fontSize: 14, fontWeight: 600, color: "#374151", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
           {area.name}
         </Typography>
         <Box
@@ -448,14 +448,14 @@ function AreaSection({ area, selectedTableId, onSelectTable, tableMap, allReserv
             border: "1px solid #E5E7EB", backgroundColor: "#fff",
           }}
         >
-          <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#6B7280", fontFamily: "Poppins, sans-serif" }}>
+          <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#6B7280", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
             {area.tables.length} Table{area.tables.length !== 1 ? "s" : ""}
           </Typography>
         </Box>
       </Box>
 
       {area.tables.length === 0 ? (
-        <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: "Poppins, sans-serif", pl: 0.5 }}>
+        <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans', sans-serif", pl: 0.5 }}>
           No tables in this area.
         </Typography>
       ) : (
@@ -531,7 +531,7 @@ function DemoAreas({ selectedTableId, onSelectTable, tableMap, allReservations }
       {DEMO_AREAS.map((area) => (
         <Box key={area.id} sx={{ mb: 3 }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
-            <Typography sx={{ fontSize: 14, fontWeight: 600, color: "#374151", fontFamily: "Poppins, sans-serif" }}>
+            <Typography sx={{ fontSize: 14, fontWeight: 600, color: "#374151", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
               {area.name}
             </Typography>
             <Box
@@ -540,14 +540,14 @@ function DemoAreas({ selectedTableId, onSelectTable, tableMap, allReservations }
                 border: "1px solid #E5E7EB", backgroundColor: "#fff",
               }}
             >
-              <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#6B7280", fontFamily: "Poppins, sans-serif" }}>
+              <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#6B7280", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                 {area.tables.length} Table{area.tables.length !== 1 ? "s" : ""}
               </Typography>
             </Box>
           </Box>
 
           {area.tables.length === 0 ? (
-            <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: "Poppins, sans-serif", pl: 0.5 }}>
+            <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans', sans-serif", pl: 0.5 }}>
               No tables in this area.
             </Typography>
           ) : (
@@ -649,13 +649,13 @@ function TableCard({ label, seats, isSelected, isOccupied, onClick }: TableCardP
           border: `1.5px solid ${borderColor}`,
         }}
       >
-        <Typography sx={{ fontSize: 14, fontWeight: 700, color: badgeColor, fontFamily: "Poppins, sans-serif" }}>
+        <Typography sx={{ fontSize: 14, fontWeight: 700, color: badgeColor, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
           {label}
         </Typography>
       </Box>
 
       {/* Seat count */}
-      <Typography sx={{ fontSize: 11, color: "#6B7280", fontFamily: "Poppins, sans-serif", textAlign: "center" }}>
+      <Typography sx={{ fontSize: 11, color: "#6B7280", fontFamily: "'Plus Jakarta Sans', sans-serif", textAlign: "center" }}>
         {seats} Seat{Number(seats) !== 1 ? "(s)" : ""}
       </Typography>
 
@@ -668,7 +668,7 @@ function TableCard({ label, seats, isSelected, isOccupied, onClick }: TableCardP
             border: "1px solid #6EE7B7",
           }}
         >
-          <Typography sx={{ fontSize: 9, fontWeight: 600, color: "#15803D", fontFamily: "Poppins, sans-serif" }}>
+          <Typography sx={{ fontSize: 9, fontWeight: 600, color: "#15803D", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
             OCCUPIED
           </Typography>
         </Box>
@@ -681,7 +681,7 @@ function TableCard({ label, seats, isSelected, isOccupied, onClick }: TableCardP
             border: "1px solid #FCA5A5",
           }}
         >
-          <Typography sx={{ fontSize: 9, fontWeight: 700, color: "#FF3D01", fontFamily: "Poppins, sans-serif" }}>
+          <Typography sx={{ fontSize: 9, fontWeight: 700, color: "#FF3D01", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
             SELECTED
           </Typography>
         </Box>
@@ -794,13 +794,13 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
     "& .MuiOutlinedInput-root": {
       borderRadius: "10px",
       fontSize: 13,
-      fontFamily: "Poppins, sans-serif",
+      fontFamily: "'Plus Jakarta Sans', sans-serif",
       backgroundColor: "#FAFAFA",
       "& fieldset": { borderColor: "#E5E7EB" },
       "&:hover fieldset": { borderColor: "#9CA3AF" },
       "&.Mui-focused fieldset": { borderColor: "#FF3D01", borderWidth: 1.5 },
     },
-    "& .MuiInputLabel-root": { fontSize: 13, fontFamily: "Poppins, sans-serif" },
+    "& .MuiInputLabel-root": { fontSize: 13, fontFamily: "'Plus Jakarta Sans', sans-serif" },
     "& .MuiInputLabel-root.Mui-focused": { color: "#FF3D01" },
   };
 
@@ -813,7 +813,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
       PaperProps={{
         sx: {
           borderRadius: "18px",
-          fontFamily: "Poppins, sans-serif",
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
           maxHeight: "92vh",
           overflow: "hidden",
           display: "flex",
@@ -840,7 +840,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
           >
             <CalendarTodayOutlinedIcon sx={{ fontSize: 17, color: "#FCA5A5" }} />
           </Box>
-          <Typography sx={{ fontSize: 17, fontWeight: 700, color: "#F9FAFB", fontFamily: "Poppins, sans-serif" }}>
+          <Typography sx={{ fontSize: 17, fontWeight: 700, color: "#F9FAFB", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
             New Reservation
           </Typography>
         </Box>
@@ -871,7 +871,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
             >
               <CheckCircleOutlineIcon sx={{ fontSize: 32, color: "#15803D" }} />
             </Box>
-            <Typography sx={{ fontSize: 15, fontWeight: 700, color: "#15803D", fontFamily: "Poppins, sans-serif" }}>
+            <Typography sx={{ fontSize: 15, fontWeight: 700, color: "#15803D", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
               Reservation Created!
             </Typography>
           </Box>
@@ -901,7 +901,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
                 onChange={(e) => setDate(e.target.value)}
                 style={{
                   border: "none", outline: "none", fontSize: 13,
-                  fontFamily: "Poppins, sans-serif", color: "#374151",
+                  fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#374151",
                   background: "transparent", cursor: "pointer", width: "100%",
                 }}
               />
@@ -916,7 +916,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
                 renderValue={(v) => (
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                     <GroupsOutlinedIcon sx={{ fontSize: 16, color: "#6B7280" }} />
-                    <Typography sx={{ fontSize: 13, fontFamily: "Poppins, sans-serif", color: "#374151" }}>
+                    <Typography sx={{ fontSize: 13, fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#374151" }}>
                       {v} Guest{Number(v) !== 1 ? "s" : ""}
                     </Typography>
                   </Box>
@@ -931,7 +931,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
                 }}
               >
                 {GUEST_OPTIONS.map((n) => (
-                  <MenuItem key={n} value={n} sx={{ fontSize: 13, fontFamily: "Poppins, sans-serif" }}>
+                  <MenuItem key={n} value={n} sx={{ fontSize: 13, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                     {n} Guest{n !== 1 ? "s" : ""}
                   </MenuItem>
                 ))}
@@ -947,7 +947,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
                 renderValue={(v) => (
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                     <AccessTimeIcon sx={{ fontSize: 16, color: "#6B7280" }} />
-                    <Typography sx={{ fontSize: 13, fontFamily: "Poppins, sans-serif", color: "#374151" }}>{v}</Typography>
+                    <Typography sx={{ fontSize: 13, fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#374151" }}>{v}</Typography>
                   </Box>
                 )}
                 sx={{
@@ -960,7 +960,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
                 }}
               >
                 {MEAL_TYPES.map((m) => (
-                  <MenuItem key={m} value={m} sx={{ fontSize: 13, fontFamily: "Poppins, sans-serif" }}>{m}</MenuItem>
+                  <MenuItem key={m} value={m} sx={{ fontSize: 13, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{m}</MenuItem>
                 ))}
               </Select>
             </FormControl>
@@ -968,7 +968,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
 
           {/* ── Time Slot ── */}
           <Box sx={{ mb: 2.5 }}>
-            <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#374151", mb: 1.2, fontFamily: "Poppins, sans-serif" }}>
+            <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#374151", mb: 1.2, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
               Select Time Slot
             </Typography>
             <Box
@@ -1000,7 +1000,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
                       sx={{
                         fontSize: 12, fontWeight: isActive ? 700 : 500,
                         color: isActive ? "#FF3D01" : "#4B5563",
-                        fontFamily: "Poppins, sans-serif",
+                        fontFamily: "'Plus Jakarta Sans', sans-serif",
                       }}
                     >
                       {slot}
@@ -1010,7 +1010,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
               })}
             </Box>
             {errors.timeSlot && (
-              <Typography sx={{ fontSize: 11, color: "#DC2626", mt: 0.5, fontFamily: "Poppins, sans-serif" }}>
+              <Typography sx={{ fontSize: 11, color: "#DC2626", mt: 0.5, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                 {errors.timeSlot}
               </Typography>
             )}
@@ -1018,7 +1018,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
 
           {/* ── Special Request ── */}
           <Box sx={{ mb: 2.5 }}>
-            <Typography sx={{ fontSize: 13, fontWeight: 500, color: "#374151", mb: 0.8, fontFamily: "Poppins, sans-serif" }}>
+            <Typography sx={{ fontSize: 13, fontWeight: 500, color: "#374151", mb: 0.8, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
               Any special request?
             </Typography>
             <textarea
@@ -1030,7 +1030,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
                 width: "100%", boxSizing: "border-box",
                 border: "1.5px solid #E5E7EB", borderRadius: "10px",
                 padding: "10px 12px",
-                fontSize: 13, fontFamily: "Poppins, sans-serif", color: "#374151",
+                fontSize: 13, fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#374151",
                 backgroundColor: "#FAFAFA", resize: "vertical",
                 outline: "none", transition: "border-color .15s",
               }}
@@ -1047,7 +1047,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
               mb: 2,
               borderRadius: "12px",
               border: "1.5px solid #E5E7EB",
-              background: "#F8FAFC",
+              background: "#f5f0ea",
               overflow: "hidden",
             }}
           >
@@ -1059,7 +1059,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
               }}
             >
               <SearchIcon sx={{ fontSize: 16, color: "#6B7280" }} />
-              <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#374151", fontFamily: "Poppins, sans-serif" }}>
+              <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#374151", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                 Search Customer
               </Typography>
             </Box>
@@ -1096,7 +1096,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     borderRadius: "8px", fontSize: 13,
-                    fontFamily: "Poppins, sans-serif",
+                    fontFamily: "'Plus Jakarta Sans', sans-serif",
                     backgroundColor: "#FFFFFF",
                     "& fieldset": { borderColor: "#E5E7EB" },
                     "&:hover fieldset": { borderColor: "#9CA3AF" },
@@ -1110,7 +1110,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
           {/* ── Customer Name + Email ── */}
           <Box sx={{ display: "flex", gap: 1.5, mb: 1.5, flexWrap: "wrap" }}>
             <Box sx={{ flex: "1 1 200px", minWidth: 160 }}>
-              <Typography sx={{ fontSize: 12, fontWeight: 500, color: "#374151", mb: 0.6, fontFamily: "Poppins, sans-serif" }}>
+              <Typography sx={{ fontSize: 12, fontWeight: 500, color: "#374151", mb: 0.6, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                 Customer Name <span style={{ color: "#FF3D01" }}>*</span>
               </Typography>
               <TextField
@@ -1125,7 +1125,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
               />
             </Box>
             <Box sx={{ flex: "1 1 200px", minWidth: 160 }}>
-              <Typography sx={{ fontSize: 12, fontWeight: 500, color: "#374151", mb: 0.6, fontFamily: "Poppins, sans-serif" }}>
+              <Typography sx={{ fontSize: 12, fontWeight: 500, color: "#374151", mb: 0.6, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                 Email Address
               </Typography>
               <TextField
@@ -1143,7 +1143,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
 
           {/* ── Phone ── */}
           <Box sx={{ mb: 3 }}>
-            <Typography sx={{ fontSize: 12, fontWeight: 500, color: "#374151", mb: 0.6, fontFamily: "Poppins, sans-serif" }}>
+            <Typography sx={{ fontSize: 12, fontWeight: 500, color: "#374151", mb: 0.6, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
               Phone <span style={{ color: "#FF3D01" }}>*</span>
             </Typography>
             <Box sx={{ display: "flex", gap: 1 }}>
@@ -1154,7 +1154,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
                   IconComponent={KeyboardArrowDownIcon}
                   sx={{
                     height: 40, minWidth: 88, borderRadius: "10px",
-                    fontSize: 13, fontFamily: "Poppins, sans-serif",
+                    fontSize: 13, fontFamily: "'Plus Jakarta Sans', sans-serif",
                     backgroundColor: "#FAFAFA",
                     "& .MuiOutlinedInput-notchedOutline": { borderColor: "#E5E7EB" },
                     "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#9CA3AF" },
@@ -1163,7 +1163,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
                   }}
                 >
                   {COUNTRY_CODES.map((c) => (
-                    <MenuItem key={c} value={c} sx={{ fontSize: 13, fontFamily: "Poppins, sans-serif" }}>{c}</MenuItem>
+                    <MenuItem key={c} value={c} sx={{ fontSize: 13, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{c}</MenuItem>
                   ))}
                 </Select>
               </FormControl>
@@ -1209,7 +1209,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
             textTransform: "none", fontWeight: 500, fontSize: 13,
             borderColor: "#D1D5DB", color: "#6B7280",
             borderRadius: "10px", px: 3, height: 42,
-            fontFamily: "Poppins, sans-serif",
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
             "&:hover": { borderColor: "#9CA3AF", backgroundColor: "#F9FAFB" },
           }}
         >
@@ -1223,7 +1223,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
             textTransform: "none", fontWeight: 700, fontSize: 13,
             background: "linear-gradient(135deg,#FF3D01,#c62a2f)",
             borderRadius: "10px", px: 3.5, height: 42,
-            fontFamily: "Poppins, sans-serif",
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
             boxShadow: "0 3px 10px rgba(232,53,58,.4)",
             "&:hover": { background: "linear-gradient(135deg,#c62a2f,#a02020)" },
             "&:disabled": { background: "#E5E7EB", color: "#9CA3AF", boxShadow: "none" },
@@ -1299,7 +1299,7 @@ export default function Reservations() {
   }, [search, allReservations]);
 
   return (
-    <Box sx={{ minHeight: "100vh", backgroundColor: "#F8FAFC", fontFamily: "Poppins, sans-serif" }}>
+    <Box sx={{ minHeight: "100vh", backgroundColor: "#f5f0ea", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
 
       {/* ── TOP HEADER ── */}
       <Box
@@ -1313,7 +1313,7 @@ export default function Reservations() {
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-          <Typography sx={{ fontSize: 18, fontWeight: 700, color: "#111827", fontFamily: "Poppins, sans-serif" }}>
+          <Typography sx={{ fontSize: 18, fontWeight: 700, color: "#111827", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
             Reservations
           </Typography>
           <Box
@@ -1323,7 +1323,7 @@ export default function Reservations() {
               boxShadow: "0 2px 8px rgba(232,53,58,.3)",
             }}
           >
-            <Typography sx={{ fontSize: 12, fontWeight: 700, color: "#FFF", fontFamily: "Poppins, sans-serif" }}>
+            <Typography sx={{ fontSize: 12, fontWeight: 700, color: "#FFF", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
               {filteredReservations.length}
             </Typography>
           </Box>
@@ -1337,7 +1337,7 @@ export default function Reservations() {
             background: "linear-gradient(135deg,#FF3D01,#c62a2f)",
             textTransform: "none", fontWeight: 600, fontSize: 13,
             height: 36, px: 2.5, borderRadius: "8px",
-            fontFamily: "Poppins, sans-serif",
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
             boxShadow: "0 2px 8px rgba(232,53,58,.35)",
             "&:hover": { background: "linear-gradient(135deg,#c62a2f,#a02020)" },
           }}
@@ -1379,11 +1379,11 @@ export default function Reservations() {
             value={fromDate}
             onChange={(e) => setFromDate(e.target.value)}
             max={toDate || undefined}
-            style={{ border: "none", outline: "none", fontSize: 13, fontFamily: "Poppins, sans-serif", color: "#374151", background: "transparent", cursor: "pointer" }}
+            style={{ border: "none", outline: "none", fontSize: 13, fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#374151", background: "transparent", cursor: "pointer" }}
           />
         </Box>
 
-        <Typography sx={{ fontSize: 13, color: "#6B7280", fontFamily: "Poppins, sans-serif" }}>To</Typography>
+        <Typography sx={{ fontSize: 13, color: "#6B7280", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>To</Typography>
 
         <Box
           sx={{
@@ -1398,7 +1398,7 @@ export default function Reservations() {
             value={toDate}
             onChange={(e) => setToDate(e.target.value)}
             min={fromDate || undefined}
-            style={{ border: "none", outline: "none", fontSize: 13, fontFamily: "Poppins, sans-serif", color: "#374151", background: "transparent", cursor: "pointer" }}
+            style={{ border: "none", outline: "none", fontSize: 13, fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#374151", background: "transparent", cursor: "pointer" }}
           />
         </Box>
 
@@ -1417,7 +1417,7 @@ export default function Reservations() {
           sx={{
             flex: 1, minWidth: 240,
             "& .MuiOutlinedInput-root": {
-              height: 36, fontSize: 13, fontFamily: "Poppins, sans-serif",
+              height: 36, fontSize: 13, fontFamily: "'Plus Jakarta Sans', sans-serif",
               borderRadius: "8px", backgroundColor: "#fff",
               "& fieldset": { borderColor: "#D1D5DB" },
               "&:hover fieldset": { borderColor: "#9CA3AF" },
@@ -1477,7 +1477,7 @@ export default function Reservations() {
                     }}
                   >
                     <TableBarOutlinedIcon sx={{ fontSize: 15, color: "#FCA5A5" }} />
-                    <Typography sx={{ fontSize: 13, fontWeight: 700, color: "#FCA5A5", fontFamily: "Poppins, sans-serif" }}>
+                    <Typography sx={{ fontSize: 13, fontWeight: 700, color: "#FCA5A5", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                       {assignedTable}
                     </Typography>
                   </Box>
@@ -1491,7 +1491,7 @@ export default function Reservations() {
                       fontSize: 11, fontWeight: 600, textTransform: "none",
                       borderColor: "#6B7280", color: "#D1D5DB",
                       borderRadius: "8px", py: 0.4, px: 1.2,
-                      fontFamily: "Poppins, sans-serif",
+                      fontFamily: "'Plus Jakarta Sans', sans-serif",
                       "&:hover": { borderColor: "#FCA5A5", color: "#FCA5A5", backgroundColor: "rgba(232,53,58,0.1)" },
                     }}
                   >
@@ -1502,7 +1502,7 @@ export default function Reservations() {
                 {/* Guests count */}
                 <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
                   <PeopleAltOutlinedIcon sx={{ fontSize: 15, color: "#9CA3AF" }} />
-                  <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#E5E7EB", fontFamily: "Poppins, sans-serif" }}>
+                  <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#E5E7EB", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                     {res.guests} Guests
                   </Typography>
                 </Box>
@@ -1519,7 +1519,7 @@ export default function Reservations() {
               >
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   <CalendarTodayOutlinedIcon sx={{ fontSize: 15, color: "#FF3D01" }} />
-                  <Typography sx={{ fontSize: 13, fontWeight: 700, color: "#FF3D01", fontFamily: "Poppins, sans-serif" }}>
+                  <Typography sx={{ fontSize: 13, fontWeight: 700, color: "#FF3D01", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                     {res.date}, {res.time}
                   </Typography>
                 </Box>
@@ -1531,7 +1531,7 @@ export default function Reservations() {
                     border: `1px solid ${meta.border}`,
                   }}
                 >
-                  <Typography sx={{ fontSize: 11, fontWeight: 700, color: meta.color, fontFamily: "Poppins, sans-serif" }}>
+                  <Typography sx={{ fontSize: 11, fontWeight: 700, color: meta.color, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                     {currentStatus.toUpperCase()}
                   </Typography>
                 </Box>
@@ -1541,19 +1541,19 @@ export default function Reservations() {
               <Box sx={{ px: 2, py: 1.5, display: "flex", flexDirection: "column", gap: 0.8 }}>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   <PersonOutlineIcon sx={{ fontSize: 16, color: "#9CA3AF" }} />
-                  <Typography sx={{ fontSize: 13, color: "#374151", fontWeight: 500, fontFamily: "Poppins, sans-serif" }}>
+                  <Typography sx={{ fontSize: 13, color: "#374151", fontWeight: 500, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                     {res.name}
                   </Typography>
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   <EmailOutlinedIcon sx={{ fontSize: 16, color: "#9CA3AF" }} />
-                  <Typography sx={{ fontSize: 13, color: "#374151", fontFamily: "Poppins, sans-serif" }}>
+                  <Typography sx={{ fontSize: 13, color: "#374151", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                     {res.email}
                   </Typography>
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   <PhoneOutlinedIcon sx={{ fontSize: 16, color: "#9CA3AF" }} />
-                  <Typography sx={{ fontSize: 13, color: "#374151", fontFamily: "Poppins, sans-serif" }}>
+                  <Typography sx={{ fontSize: 13, color: "#374151", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                     {res.phone}
                   </Typography>
                 </Box>
@@ -1567,7 +1567,7 @@ export default function Reservations() {
                     }}
                   >
                     <NoteAltOutlinedIcon sx={{ fontSize: 15, color: "#9CA3AF", mt: 0.1 }} />
-                    <Typography sx={{ fontSize: 12, color: "#6B7280", fontFamily: "Poppins, sans-serif", fontStyle: "italic" }}>
+                    <Typography sx={{ fontSize: 12, color: "#6B7280", fontFamily: "'Plus Jakarta Sans', sans-serif", fontStyle: "italic" }}>
                       {res.notes}
                     </Typography>
                   </Box>
@@ -1584,7 +1584,7 @@ export default function Reservations() {
                     onChange={(e) => handleStatusChange(res.id, e.target.value as ReservationStatus)}
                     IconComponent={KeyboardArrowDownIcon}
                     sx={{
-                      height: 38, fontSize: 13, fontFamily: "Poppins, sans-serif",
+                      height: 38, fontSize: 13, fontFamily: "'Plus Jakarta Sans', sans-serif",
                       fontWeight: 600, color: meta.color,
                       borderRadius: "8px",
                       backgroundColor: meta.bg,
@@ -1594,7 +1594,7 @@ export default function Reservations() {
                     }}
                   >
                     {STATUS_OPTIONS.map((s) => (
-                      <MenuItem key={s} value={s} sx={{ fontSize: 13, fontFamily: "Poppins, sans-serif" }}>
+                      <MenuItem key={s} value={s} sx={{ fontSize: 13, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                         {s}
                       </MenuItem>
                     ))}

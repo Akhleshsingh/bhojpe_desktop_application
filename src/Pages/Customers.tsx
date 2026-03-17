@@ -26,7 +26,7 @@ const COL_HEADER = {
   fontSize: 11,
   fontWeight: 700,
   color: "#6B7280",
-  fontFamily: "Poppins, sans-serif",
+  fontFamily: "'Plus Jakarta Sans', sans-serif",
   letterSpacing: 0.6,
   textTransform: "uppercase" as const,
 };
@@ -34,7 +34,7 @@ const COL_HEADER = {
 const CELL = {
   fontSize: 13,
   color: "#111827",
-  fontFamily: "Poppins, sans-serif",
+  fontFamily: "'Plus Jakarta Sans', sans-serif",
 };
 
 export default function Customers() {
@@ -77,11 +77,11 @@ export default function Customers() {
   }, []);
 
   return (
-    <Box sx={{ minHeight: "100vh", backgroundColor: "#F8FAFC", fontFamily: "Poppins, sans-serif" }}>
+    <Box sx={{ minHeight: "100vh", backgroundColor: "#f5f0ea", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
       <Box sx={{ p: 3 }}>
 
         {/* ── TITLE ── */}
-        <Typography sx={{ fontSize: 22, fontWeight: 700, color: "#111827", fontFamily: "Poppins, sans-serif", mb: 2.5 }}>
+        <Typography sx={{ fontSize: 22, fontWeight: 700, color: "#111827", fontFamily: "'Plus Jakarta Sans', sans-serif", mb: 2.5 }}>
           Customers
         </Typography>
 
@@ -105,7 +105,7 @@ export default function Customers() {
             sx={{
               width: 300,
               "& .MuiOutlinedInput-root": {
-                height: 38, fontSize: 13, fontFamily: "Poppins, sans-serif",
+                height: 38, fontSize: 13, fontFamily: "'Plus Jakarta Sans', sans-serif",
                 borderRadius: "8px", backgroundColor: "#fff",
                 "& fieldset": { borderColor: "#D1D5DB" },
                 "&:hover fieldset": { borderColor: "#9CA3AF" },
@@ -120,7 +120,7 @@ export default function Customers() {
               startIcon={<FileUploadOutlinedIcon sx={{ fontSize: 16 }} />}
               sx={{
                 textTransform: "none", fontSize: 13, fontWeight: 600,
-                fontFamily: "Poppins, sans-serif", height: 38, px: 2,
+                fontFamily: "'Plus Jakarta Sans', sans-serif", height: 38, px: 2,
                 borderColor: "#D1D5DB", color: "#374151", borderRadius: "8px",
                 "&:hover": { borderColor: "#9CA3AF", backgroundColor: "#F9FAFB" },
               }}
@@ -132,7 +132,7 @@ export default function Customers() {
               startIcon={<FileDownloadOutlinedIcon sx={{ fontSize: 16 }} />}
               sx={{
                 textTransform: "none", fontSize: 13, fontWeight: 600,
-                fontFamily: "Poppins, sans-serif", height: 38, px: 2,
+                fontFamily: "'Plus Jakarta Sans', sans-serif", height: 38, px: 2,
                 borderColor: "#D1D5DB", color: "#374151", borderRadius: "8px",
                 "&:hover": { borderColor: "#9CA3AF", backgroundColor: "#F9FAFB" },
               }}
@@ -145,7 +145,7 @@ export default function Customers() {
               onClick={() => setAddOpen(true)}
               sx={{
                 textTransform: "none", fontSize: 13, fontWeight: 600,
-                fontFamily: "Poppins, sans-serif", height: 38, px: 2,
+                fontFamily: "'Plus Jakarta Sans', sans-serif", height: 38, px: 2,
                 background: "linear-gradient(135deg,#FF3D01,#c62a2f)",
                 borderRadius: "8px",
                 boxShadow: "0 2px 8px rgba(232,53,58,.3)",
@@ -188,7 +188,7 @@ export default function Customers() {
           {(loading && !searching && displayList.length === 0) && (
             <Box sx={{ px: 2.5, py: 5, display: "flex", alignItems: "center", justifyContent: "center", gap: 1.5 }}>
               <CircularProgress size={20} sx={{ color: "#FF3D01" }} />
-              <Typography sx={{ fontSize: 13, color: "#9CA3AF", fontFamily: "Poppins, sans-serif" }}>
+              <Typography sx={{ fontSize: 13, color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                 Loading customers…
               </Typography>
             </Box>
@@ -200,10 +200,10 @@ export default function Customers() {
               <Box sx={{ width: 56, height: 56, borderRadius: "50%", backgroundColor: "#FEF2F2", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <PeopleOutlineIcon sx={{ fontSize: 28, color: "#FF3D01" }} />
               </Box>
-              <Typography sx={{ fontSize: 15, fontWeight: 600, color: "#374151", fontFamily: "Poppins, sans-serif" }}>
+              <Typography sx={{ fontSize: 15, fontWeight: 600, color: "#374151", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                 No customers found
               </Typography>
-              <Typography sx={{ fontSize: 13, color: "#9CA3AF", fontFamily: "Poppins, sans-serif" }}>
+              <Typography sx={{ fontSize: 13, color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                 {search ? "Try a different search term" : "No customers have been added yet"}
               </Typography>
             </Box>
@@ -252,7 +252,7 @@ export default function Customers() {
                       backgroundColor: "#F9FAFB",
                     }}
                   >
-                    <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#374151", fontFamily: "Poppins, sans-serif", letterSpacing: 0.3 }}>
+                    <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#374151", fontFamily: "'Plus Jakarta Sans', sans-serif", letterSpacing: 0.3 }}>
                       {orders} ORDERS
                     </Typography>
                   </Box>
@@ -265,7 +265,7 @@ export default function Customers() {
                     startIcon={<EditOutlinedIcon sx={{ fontSize: 14 }} />}
                     sx={{
                       textTransform: "none", fontSize: 12, fontWeight: 600,
-                      fontFamily: "Poppins, sans-serif",
+                      fontFamily: "'Plus Jakarta Sans', sans-serif",
                       color: "#0891B2", px: 1, py: 0.4, minWidth: 0,
                       "&:hover": { backgroundColor: "#E0F7FA" },
                     }}
@@ -290,7 +290,7 @@ export default function Customers() {
         {/* ── PAGINATION ── */}
         {displayList.length > 0 && (
           <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mt: 2 }}>
-            <Typography sx={{ fontSize: 13, color: "#6B7280", fontFamily: "Poppins, sans-serif" }}>
+            <Typography sx={{ fontSize: 13, color: "#6B7280", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
               Showing {(page - 1) * PER_PAGE + 1} To {Math.min(page * PER_PAGE, displayList.length)} of {displayList.length} results
             </Typography>
 
@@ -321,7 +321,7 @@ export default function Customers() {
                     "&:hover": { backgroundColor: p === page ? "#c62a2f" : "#F3F4F6" },
                   }}
                 >
-                  <Typography sx={{ fontSize: 13, fontWeight: 600, color: p === page ? "#FFF" : "#374151", fontFamily: "Poppins, sans-serif" }}>
+                  <Typography sx={{ fontSize: 13, fontWeight: 600, color: p === page ? "#FFF" : "#374151", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                     {p}
                   </Typography>
                 </Box>

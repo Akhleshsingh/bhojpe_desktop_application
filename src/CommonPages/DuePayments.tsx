@@ -27,10 +27,10 @@ const ROWS = [
 
 const COL_HEADER = {
   fontSize: 11, fontWeight: 700, color: "#6B7280",
-  fontFamily: "Poppins, sans-serif", letterSpacing: 0.6,
+  fontFamily: "'Plus Jakarta Sans', sans-serif", letterSpacing: 0.6,
   textTransform: "uppercase" as const,
 };
-const CELL = { fontSize: 13, color: "#111827", fontFamily: "Poppins, sans-serif" };
+const CELL = { fontSize: 13, color: "#111827", fontFamily: "'Plus Jakarta Sans', sans-serif" };
 
 function StatCard({ label, value, sub, color, icon }: any) {
   return (
@@ -48,13 +48,13 @@ function StatCard({ label, value, sub, color, icon }: any) {
         {React.cloneElement(icon, { sx: { fontSize: 22, color } })}
       </Box>
       <Box>
-        <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#9CA3AF", fontFamily: "Poppins, sans-serif", letterSpacing: 0.5, textTransform: "uppercase" }}>
+        <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans', sans-serif", letterSpacing: 0.5, textTransform: "uppercase" }}>
           {label}
         </Typography>
-        <Typography sx={{ fontSize: 20, fontWeight: 700, color: "#111827", fontFamily: "Poppins, sans-serif", lineHeight: 1.3 }}>
+        <Typography sx={{ fontSize: 20, fontWeight: 700, color: "#111827", fontFamily: "'Plus Jakarta Sans', sans-serif", lineHeight: 1.3 }}>
           {value}
         </Typography>
-        {sub && <Typography sx={{ fontSize: 11, color: "#9CA3AF", fontFamily: "Poppins, sans-serif" }}>{sub}</Typography>}
+        {sub && <Typography sx={{ fontSize: 11, color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{sub}</Typography>}
       </Box>
     </Box>
   );
@@ -80,11 +80,11 @@ export default function DuePayments() {
   const totalDue = ROWS.reduce((s, r) => s + r.amount, 0);
 
   return (
-    <Box sx={{ minHeight: "100vh", backgroundColor: "#F8FAFC", fontFamily: "Poppins, sans-serif" }}>
+    <Box sx={{ minHeight: "100vh", backgroundColor: "#f5f0ea", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
       <Box sx={{ p: 3 }}>
 
         {/* ── TITLE ── */}
-        <Typography sx={{ fontSize: 22, fontWeight: 700, color: "#111827", fontFamily: "Poppins, sans-serif", mb: 2.5 }}>
+        <Typography sx={{ fontSize: 22, fontWeight: 700, color: "#111827", fontFamily: "'Plus Jakarta Sans', sans-serif", mb: 2.5 }}>
           Due Payments
         </Typography>
 
@@ -108,7 +108,7 @@ export default function DuePayments() {
             sx={{
               width: 300,
               "& .MuiOutlinedInput-root": {
-                height: 38, fontSize: 13, fontFamily: "Poppins, sans-serif",
+                height: 38, fontSize: 13, fontFamily: "'Plus Jakarta Sans', sans-serif",
                 borderRadius: "8px", backgroundColor: "#fff",
                 "& fieldset": { borderColor: "#D1D5DB" },
                 "&:hover fieldset": { borderColor: "#9CA3AF" },
@@ -119,7 +119,7 @@ export default function DuePayments() {
           {/* Due alert pill */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 0.8, px: 1.5, py: 0.6, borderRadius: "20px", backgroundColor: "#FEF2F2", border: "1px solid #FECACA" }}>
             <WarningAmberOutlinedIcon sx={{ fontSize: 15, color: "#DC2626" }} />
-            <Typography sx={{ fontSize: 12, fontWeight: 600, color: "#DC2626", fontFamily: "Poppins, sans-serif" }}>
+            <Typography sx={{ fontSize: 12, fontWeight: 600, color: "#DC2626", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
               ₹{totalDue.toFixed(2)} outstanding
             </Typography>
           </Box>
@@ -129,7 +129,7 @@ export default function DuePayments() {
         <Box sx={{ backgroundColor: "#FFFFFF", borderRadius: "12px", border: "1px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,0.05)", overflow: "hidden" }}>
 
           {/* Header */}
-          <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1.2fr 1.5fr 1.8fr 1fr", px: 2.5, py: 1.4, backgroundColor: "#F9FAFB", borderBottom: "1px solid #E5E7EB" }}>
+          <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1.2fr 1.5fr 1.8fr 1fr", px: 2.5, py: 1.4, backgroundColor: "#f0ebe4", borderBottom: "1px solid #e2d9d0" }}>
             <Typography sx={COL_HEADER}>Amount</Typography>
             <Typography sx={COL_HEADER}>Method</Typography>
             <Typography sx={COL_HEADER}>Order</Typography>
@@ -142,8 +142,8 @@ export default function DuePayments() {
               <Box sx={{ width: 52, height: 52, borderRadius: "50%", backgroundColor: "#FEF2F2", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <ReceiptLongOutlinedIcon sx={{ fontSize: 26, color: "#FF3D01" }} />
               </Box>
-              <Typography sx={{ fontSize: 14, fontWeight: 600, color: "#374151", fontFamily: "Poppins, sans-serif" }}>No due payments found</Typography>
-              <Typography sx={{ fontSize: 13, color: "#9CA3AF", fontFamily: "Poppins, sans-serif" }}>
+              <Typography sx={{ fontSize: 14, fontWeight: 600, color: "#374151", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>No due payments found</Typography>
+              <Typography sx={{ fontSize: 13, color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                 {search ? "Try a different search term" : "All payments are cleared!"}
               </Typography>
             </Box>
@@ -163,7 +163,7 @@ export default function DuePayments() {
               {/* Amount chip */}
               <Box sx={{ display: "inline-flex" }}>
                 <Box sx={{ px: 1.2, py: 0.3, borderRadius: "6px", backgroundColor: "#FEF2F2", border: "1px solid #FECACA" }}>
-                  <Typography sx={{ fontSize: 12, fontWeight: 700, color: "#DC2626", fontFamily: "Poppins, sans-serif" }}>
+                  <Typography sx={{ fontSize: 12, fontWeight: 700, color: "#DC2626", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                     ₹{row.amount.toFixed(2)}
                   </Typography>
                 </Box>
@@ -172,7 +172,7 @@ export default function DuePayments() {
               {/* Method badge */}
               <Box>
                 <Box sx={{ display: "inline-flex", alignItems: "center", px: 1, py: 0.3, borderRadius: "6px", backgroundColor: "#FFF7ED", border: "1px solid #FED7AA" }}>
-                  <Typography sx={{ fontSize: 11, fontWeight: 700, color: "#C2410C", fontFamily: "Poppins, sans-serif", letterSpacing: 0.3 }}>
+                  <Typography sx={{ fontSize: 11, fontWeight: 700, color: "#C2410C", fontFamily: "'Plus Jakarta Sans', sans-serif", letterSpacing: 0.3 }}>
                     {row.method.toUpperCase()}
                   </Typography>
                 </Box>
@@ -189,7 +189,7 @@ export default function DuePayments() {
                 <Button size="small" variant="contained" startIcon={<AddCircleOutlineIcon sx={{ fontSize: 14 }} />}
                   onClick={() => setPaymentRow(row)}
                   sx={{
-                    textTransform: "none", fontSize: 12, fontWeight: 600, fontFamily: "Poppins, sans-serif",
+                    textTransform: "none", fontSize: 12, fontWeight: 600, fontFamily: "'Plus Jakarta Sans', sans-serif",
                     borderRadius: "7px", py: 0.5, px: 1.4,
                     background: "linear-gradient(135deg,#16A34A,#15803D)",
                     boxShadow: "0 2px 6px rgba(22,163,74,.3)",
@@ -205,7 +205,7 @@ export default function DuePayments() {
         {/* ── PAGINATION ── */}
         {filtered.length > 0 && (
           <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mt: 2 }}>
-            <Typography sx={{ fontSize: 13, color: "#6B7280", fontFamily: "Poppins, sans-serif" }}>
+            <Typography sx={{ fontSize: 13, color: "#6B7280", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
               Showing {(page - 1) * PER_PAGE + 1} To {Math.min(page * PER_PAGE, filtered.length)} of {filtered.length} results
             </Typography>
             <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
@@ -222,7 +222,7 @@ export default function DuePayments() {
                     backgroundColor: p === page ? "#FF3D01" : "#FFFFFF",
                     "&:hover": { backgroundColor: p === page ? "#c62a2f" : "#F3F4F6" },
                   }}>
-                  <Typography sx={{ fontSize: 13, fontWeight: 600, color: p === page ? "#FFF" : "#374151", fontFamily: "Poppins, sans-serif" }}>{p}</Typography>
+                  <Typography sx={{ fontSize: 13, fontWeight: 600, color: p === page ? "#FFF" : "#374151", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{p}</Typography>
                 </Box>
               ))}
               <IconButton size="small" disabled={page === totalPages} onClick={() => setPage(p => p + 1)}

@@ -130,7 +130,7 @@ const Login: React.FC = () => {
                       "& .MuiOutlinedInput-root": {
                         borderRadius: "8px",
                         backgroundColor: "#FFFFFF",
-                        fontFamily: "Poppins, sans-serif",
+                        fontFamily: "'Plus Jakarta Sans', sans-serif",
                         fontSize: "14px",
                         "& fieldset": { borderColor: "#E0DADA" },
                         "&:hover fieldset": { borderColor: "#FF3D01" },
@@ -139,7 +139,7 @@ const Login: React.FC = () => {
                       "& .MuiInputBase-input::placeholder": {
                         color: "#AAAAAA",
                         opacity: 1,
-                        fontFamily: "Poppins, sans-serif",
+                        fontFamily: "'Plus Jakarta Sans', sans-serif",
                         fontSize: "14px",
                       },
                     }}
@@ -167,7 +167,7 @@ const Login: React.FC = () => {
                       "& .MuiOutlinedInput-root": {
                         borderRadius: "8px",
                         backgroundColor: "#FFFFFF",
-                        fontFamily: "Poppins, sans-serif",
+                        fontFamily: "'Plus Jakarta Sans', sans-serif",
                         fontSize: "14px",
                         "& fieldset": { borderColor: "#E0DADA" },
                         "&:hover fieldset": { borderColor: "#FF3D01" },
@@ -176,7 +176,7 @@ const Login: React.FC = () => {
                       "& .MuiInputBase-input::placeholder": {
                         color: "#AAAAAA",
                         opacity: 1,
-                        fontFamily: "Poppins, sans-serif",
+                        fontFamily: "'Plus Jakarta Sans', sans-serif",
                         fontSize: "14px",
                       },
                     }}
@@ -212,7 +212,7 @@ const Login: React.FC = () => {
                         style={{
                           fontSize: 13,
                           color: "#777",
-                          fontFamily: "Poppins, sans-serif",
+                          fontFamily: "'Plus Jakarta Sans', sans-serif",
                         }}
                       >
                         Remember me
@@ -231,7 +231,7 @@ const Login: React.FC = () => {
                       borderRadius: "8px",
                       fontSize: "16px",
                       fontWeight: 600,
-                      fontFamily: "Poppins, sans-serif",
+                      fontFamily: "'Plus Jakarta Sans', sans-serif",
                       cursor: "pointer",
                       marginBottom: "24px",
                       letterSpacing: "0.3px",

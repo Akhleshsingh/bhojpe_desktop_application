@@ -406,7 +406,7 @@ useEffect(() => {
     minHeight: 0,
     display: "flex",
     flexDirection: "column",
-    fontFamily: "Poppins, sans-serif",
+    fontFamily: "'Plus Jakarta Sans', sans-serif",
     overflow: "hidden",
   }}
 >
@@ -450,7 +450,7 @@ useEffect(() => {
                 background: "#fff",
                 borderRadius: "6px",
                 "& .MuiOutlinedInput-root": {
-                  fontFamily: "Poppins, sans-serif",
+                  fontFamily: "'Plus Jakarta Sans', sans-serif",
                   fontSize: 13,
                 },
               }}

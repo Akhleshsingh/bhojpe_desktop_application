@@ -78,7 +78,7 @@ const [manageOpen,setManageOpen] = useState(false);
 
   return (
 
-<Box sx={{p:3, background:"#F9FAFB", minHeight:"100vh"}}>
+<Box sx={{p:3, background:"#f5f0ea", minHeight:"100vh"}}>
 
 {/* HEADER */}
 

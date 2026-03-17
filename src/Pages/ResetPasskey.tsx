@@ -63,21 +63,21 @@ function PinInput({
   return (
     <Box>
       <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1 }}>
-        <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#374151", fontFamily: "Poppins, sans-serif" }}>
+        <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#374151", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
           {label}
         </Typography>
         <Box onClick={onToggleShow} sx={{ display: "flex", alignItems: "center", gap: 0.4, cursor: "pointer" }}>
           {show
             ? <VisibilityOffOutlinedIcon sx={{ fontSize: 15, color: "#9CA3AF" }} />
             : <VisibilityOutlinedIcon sx={{ fontSize: 15, color: "#9CA3AF" }} />}
-          <Typography sx={{ fontSize: 11, color: "#9CA3AF", fontFamily: "Poppins, sans-serif" }}>
+          <Typography sx={{ fontSize: 11, color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
             {show ? "Hide" : "Show"}
           </Typography>
         </Box>
       </Box>
 
       {hint && (
-        <Typography sx={{ fontSize: 11, color: "#9CA3AF", fontFamily: "Poppins, sans-serif", mb: 0.8 }}>
+        <Typography sx={{ fontSize: 11, color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans', sans-serif", mb: 0.8 }}>
           {hint}
         </Typography>
       )}
@@ -114,7 +114,7 @@ function PinInput({
               />
               <Typography sx={{
                 fontSize: show ? 22 : 28, fontWeight: 700, color: error ? "#DC2626" : "#FF3D01",
-                fontFamily: "Poppins, sans-serif", lineHeight: 1, userSelect: "none",
+                fontFamily: "'Plus Jakarta Sans', sans-serif", lineHeight: 1, userSelect: "none",
               }}>
                 {filled ? (show ? value[i] : "●") : ""}
               </Typography>
@@ -160,7 +160,7 @@ export default function ResetPasskey() {
     <Box sx={{
       minHeight: "100vh", backgroundColor: "#F4F6F9",
       display: "flex", alignItems: "center", justifyContent: "center",
-      fontFamily: "Poppins, sans-serif", p: 3,
+      fontFamily: "'Plus Jakarta Sans', sans-serif", p: 3,
     }}>
       <Box sx={{
         width: "100%", maxWidth: 420,
@@ -186,10 +186,10 @@ export default function ResetPasskey() {
               <LockResetOutlinedIcon sx={{ fontSize: 22, color: "#FCA5A5" }} />
             </Box>
             <Box>
-              <Typography sx={{ fontSize: 16, fontWeight: 700, color: "#FFFFFF", fontFamily: "Poppins, sans-serif" }}>
+              <Typography sx={{ fontSize: 16, fontWeight: 700, color: "#FFFFFF", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                 Reset Passkey
               </Typography>
-              <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: "Poppins, sans-serif" }}>
+              <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                 Verify current &amp; set new passkey
               </Typography>
             </Box>
@@ -204,7 +204,7 @@ export default function ResetPasskey() {
             }}
           >
             <ArrowBackIcon sx={{ fontSize: 16, color: "#9CA3AF" }} />
-            <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: "Poppins, sans-serif" }}>Back</Typography>
+            <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Back</Typography>
           </Box>
         </Box>
 
@@ -216,17 +216,17 @@ export default function ResetPasskey() {
               <Box sx={{ width: 60, height: 60, borderRadius: "50%", backgroundColor: "#DCFCE7", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <CheckCircleOutlineIcon sx={{ fontSize: 32, color: "#16A34A" }} />
               </Box>
-              <Typography sx={{ fontSize: 16, fontWeight: 700, color: "#111827", fontFamily: "Poppins, sans-serif" }}>
+              <Typography sx={{ fontSize: 16, fontWeight: 700, color: "#111827", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                 Passkey Reset Successfully!
               </Typography>
-              <Typography sx={{ fontSize: 13, color: "#9CA3AF", fontFamily: "Poppins, sans-serif" }}>
+              <Typography sx={{ fontSize: 13, color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                 Redirecting you back…
               </Typography>
             </Box>
           ) : (
             <>
               {error && (
-                <Alert severity="error" sx={{ borderRadius: "10px", fontSize: 13, fontFamily: "Poppins, sans-serif", py: 0.5 }}>
+                <Alert severity="error" sx={{ borderRadius: "10px", fontSize: 13, fontFamily: "'Plus Jakarta Sans', sans-serif", py: 0.5 }}>
                   {error}
                 </Alert>
               )}
@@ -234,7 +234,7 @@ export default function ResetPasskey() {
               {/* Security notice */}
               <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1, p: 1.5, borderRadius: "10px", backgroundColor: "#FFFBEB", border: "1px solid #FDE68A" }}>
                 <ShieldOutlinedIcon sx={{ fontSize: 16, color: "#D97706", mt: 0.1, flexShrink: 0 }} />
-                <Typography sx={{ fontSize: 12, color: "#92400E", fontFamily: "Poppins, sans-serif", lineHeight: 1.6 }}>
+                <Typography sx={{ fontSize: 12, color: "#92400E", fontFamily: "'Plus Jakarta Sans', sans-serif", lineHeight: 1.6 }}>
                   You must enter your <strong>current passkey</strong> to set a new one. This ensures only authorized users can change security settings.
                 </Typography>
               </Box>
@@ -254,7 +254,7 @@ export default function ResetPasskey() {
               {/* Divider */}
               <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
                 <Box sx={{ flex: 1, height: 1, backgroundColor: "#F3F4F6" }} />
-                <Typography sx={{ fontSize: 11, color: "#D1D5DB", fontFamily: "Poppins, sans-serif" }}>NEW PASSKEY</Typography>
+                <Typography sx={{ fontSize: 11, color: "#D1D5DB", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>NEW PASSKEY</Typography>
                 <Box sx={{ flex: 1, height: 1, backgroundColor: "#F3F4F6" }} />
               </Box>
 
@@ -274,7 +274,7 @@ export default function ResetPasskey() {
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   <Box sx={{ width: 40, height: 3, borderRadius: "2px", backgroundColor: strength === "strong" ? "#16A34A" : "#DC2626" }} />
                   <Box sx={{ width: 40, height: 3, borderRadius: "2px", backgroundColor: strength === "strong" ? "#16A34A" : "#F3F4F6" }} />
-                  <Typography sx={{ fontSize: 11, fontWeight: 600, color: strength === "strong" ? "#16A34A" : "#DC2626", fontFamily: "Poppins, sans-serif", ml: 0.5 }}>
+                  <Typography sx={{ fontSize: 11, fontWeight: 600, color: strength === "strong" ? "#16A34A" : "#DC2626", fontFamily: "'Plus Jakarta Sans', sans-serif", ml: 0.5 }}>
                     {strength === "strong" ? "Strong passkey" : "Weak passkey — choose a less predictable combination"}
                   </Typography>
                 </Box>
@@ -287,7 +287,7 @@ export default function ResetPasskey() {
                 disabled={oldKey.length !== 4 || newKey.length !== 4}
                 sx={{
                   textTransform: "none", fontSize: 14, fontWeight: 700,
-                  fontFamily: "Poppins, sans-serif", height: 46, borderRadius: "12px",
+                  fontFamily: "'Plus Jakarta Sans', sans-serif", height: 46, borderRadius: "12px",
                   background: oldKey.length === 4 && newKey.length === 4
                     ? "linear-gradient(135deg,#FF3D01,#c62a2f)"
                     : "#E5E7EB",
@@ -305,7 +305,7 @@ export default function ResetPasskey() {
                 Reset Passkey
               </Button>
 
-              <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: "Poppins, sans-serif", textAlign: "center", lineHeight: 1.6 }}>
+              <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans', sans-serif", textAlign: "center", lineHeight: 1.6 }}>
                 After resetting, your new passkey will immediately protect POS access.
               </Typography>
             </>

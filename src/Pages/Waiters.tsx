@@ -52,12 +52,12 @@ export default function Waiters() {
   }, [waiters, search]);
 
   return (
-    <Box sx={{ minHeight: "100vh", backgroundColor: "#F4F6F8", fontFamily: "Poppins, sans-serif" }}>
+    <Box sx={{ minHeight: "100vh", backgroundColor: "#f5f0ea", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
       <Box sx={{ p: 3 }}>
 
         {/* ── HEADER ── */}
         <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 3 }}>
-          <Typography sx={{ fontSize: 22, fontWeight: 700, color: "#111827", fontFamily: "Poppins, sans-serif" }}>
+          <Typography sx={{ fontSize: 22, fontWeight: 700, color: "#111827", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
             Waiters ({waiters.length})
           </Typography>
 
@@ -78,7 +78,7 @@ export default function Waiters() {
               sx={{
                 width: 230,
                 "& .MuiOutlinedInput-root": {
-                  height: 36, fontSize: 13, fontFamily: "Poppins, sans-serif",
+                  height: 36, fontSize: 13, fontFamily: "'Plus Jakarta Sans', sans-serif",
                   borderRadius: "8px", backgroundColor: "#fff",
                   "& fieldset": { borderColor: "#D1D5DB" },
                   "&:hover fieldset": { borderColor: "#9CA3AF" },
@@ -92,7 +92,7 @@ export default function Waiters() {
               onClick={() => setAddOpen(true)}
               sx={{
                 textTransform: "none", fontSize: 13, fontWeight: 600,
-                fontFamily: "Poppins, sans-serif", height: 36, px: 2,
+                fontFamily: "'Plus Jakarta Sans', sans-serif", height: 36, px: 2,
                 background: "linear-gradient(135deg,#FF3D01,#c62a2f)",
                 borderRadius: "8px",
                 boxShadow: "0 2px 8px rgba(232,53,58,.3)",
@@ -108,7 +108,7 @@ export default function Waiters() {
         {loading && (
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, py: 6, justifyContent: "center" }}>
             <CircularProgress size={22} sx={{ color: "#FF3D01" }} />
-            <Typography sx={{ fontSize: 13, color: "#9CA3AF", fontFamily: "Poppins, sans-serif" }}>
+            <Typography sx={{ fontSize: 13, color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
               Loading waiters…
             </Typography>
           </Box>
@@ -120,10 +120,10 @@ export default function Waiters() {
             <Box sx={{ width: 60, height: 60, borderRadius: "50%", backgroundColor: "#FEF2F2", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <PeopleOutlineIcon sx={{ fontSize: 30, color: "#FF3D01" }} />
             </Box>
-            <Typography sx={{ fontSize: 15, fontWeight: 600, color: "#374151", fontFamily: "Poppins, sans-serif" }}>
+            <Typography sx={{ fontSize: 15, fontWeight: 600, color: "#374151", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
               No waiters found
             </Typography>
-            <Typography sx={{ fontSize: 13, color: "#9CA3AF", fontFamily: "Poppins, sans-serif" }}>
+            <Typography sx={{ fontSize: 13, color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
               {search ? "Try a different search term" : "No waiters have been added yet"}
             </Typography>
           </Box>
@@ -173,13 +173,13 @@ export default function Waiters() {
                           flexShrink: 0,
                         }}
                       >
-                        <Typography sx={{ fontSize: 14, fontWeight: 700, color: avatarColor, fontFamily: "Poppins, sans-serif" }}>
+                        <Typography sx={{ fontSize: 14, fontWeight: 700, color: avatarColor, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                           {initial}
                         </Typography>
                       </Box>
 
                       {/* Name */}
-                      <Typography sx={{ fontSize: 14, fontWeight: 600, color: "#111827", fontFamily: "Poppins, sans-serif", lineHeight: 1.3 }}>
+                      <Typography sx={{ fontSize: 14, fontWeight: 600, color: "#111827", fontFamily: "'Plus Jakarta Sans', sans-serif", lineHeight: 1.3 }}>
                         {waiter.name}
                       </Typography>
                     </Box>
@@ -194,14 +194,14 @@ export default function Waiters() {
                         flexShrink: 0,
                       }}
                     >
-                      <Typography sx={{ fontSize: 10, fontWeight: 700, color: isActive ? "#15803D" : "#DC2626", fontFamily: "Poppins, sans-serif", letterSpacing: 0.2 }}>
+                      <Typography sx={{ fontSize: 10, fontWeight: 700, color: isActive ? "#15803D" : "#DC2626", fontFamily: "'Plus Jakarta Sans', sans-serif", letterSpacing: 0.2 }}>
                         {isActive ? "Active" : "Inactive"}
                       </Typography>
                     </Box>
                   </Box>
 
                   {/* ID row */}
-                  <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: "Poppins, sans-serif" }}>
+                  <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                     ID • {waiter.id}
                   </Typography>
 
@@ -212,14 +212,14 @@ export default function Waiters() {
                   <Box sx={{ display: "flex", flexDirection: "column", gap: 0.7, flex: 1 }}>
                     <Box sx={{ display: "flex", alignItems: "center", gap: 0.8 }}>
                       <LocalPhoneOutlinedIcon sx={{ fontSize: 14, color: "#FF3D01", flexShrink: 0 }} />
-                      <Typography sx={{ fontSize: 13, color: "#374151", fontFamily: "Poppins, sans-serif" }}>
+                      <Typography sx={{ fontSize: 13, color: "#374151", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                         {waiter.phone_number || "—"}
                       </Typography>
                     </Box>
 
                     <Box sx={{ display: "flex", alignItems: "center", gap: 0.8 }}>
                       <EmailOutlinedIcon sx={{ fontSize: 14, color: "#6B7280", flexShrink: 0 }} />
-                      <Typography sx={{ fontSize: 12, color: "#6B7280", fontFamily: "Poppins, sans-serif", wordBreak: "break-word" }}>
+                      <Typography sx={{ fontSize: 12, color: "#6B7280", fontFamily: "'Plus Jakarta Sans', sans-serif", wordBreak: "break-word" }}>
                         {waiter.email || "—"}
                       </Typography>
                     </Box>
@@ -231,7 +231,7 @@ export default function Waiters() {
                       size="small"
                       sx={{
                         textTransform: "none", fontSize: 13, fontWeight: 600,
-                        fontFamily: "Poppins, sans-serif",
+                        fontFamily: "'Plus Jakarta Sans', sans-serif",
                         color: "#0891B2", px: 1, py: 0,
                         minWidth: 0,
                         "&:hover": { backgroundColor: "#E0F7FA", color: "#0E7490" },

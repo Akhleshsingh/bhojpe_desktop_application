@@ -1,9 +1,9 @@
 /* PAGE */
 .kot-page {
-  background-color: #f6f6f6;
+  background-color: #f5f0ea;
   min-height: 100vh;
   padding: 24px;
-  font-family: "Inter", sans-serif;
+  font-family: "Plus Jakarta Sans", sans-serif;
 }
 
 /* HEADER */
@@ -16,7 +16,8 @@
 
 .kot-header h2 {
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 700;
+  color: #1a1208;
 }
 
 .kot-header-actions {
@@ -27,18 +28,29 @@
 .kot-filter {
   height: 32px;
   border-radius: 6px;
-  border: 1px solid #e5e5e5;
+  border: 1px solid #e2d9d0;
   padding: 0 10px;
   background: #fff;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 13px;
+  color: #1a1208;
 }
 
 .kot-new-btn {
-  background: #4f6f2f;
+  background: #FF3D01;
   color: #fff;
   border: none;
   border-radius: 6px;
-  padding: 6px 12px;
+  padding: 6px 14px;
   cursor: pointer;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.15s;
+}
+
+.kot-new-btn:hover {
+  background: #e63500;
 }
 
 /* FILTER BAR */
@@ -68,10 +80,12 @@
 .kot-search-input {
   height: 39px;
   padding: 0 34px 0 32px;
-  border: 1.5px solid #e5e5e5;
+  border: 1.5px solid #e2d9d0;
   border-radius: 8px;
   background: #ffffff;
   font-size: 13px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  color: #1a1208;
   width: 100%;
   outline: none;
   transition: border-color 0.15s;
@@ -83,7 +97,7 @@
 }
 
 .kot-search-input::placeholder {
-  color: #aaa;
+  color: #a08c7c;
 }
 
 .kot-search-clear {
@@ -93,15 +107,15 @@
   border: none;
   cursor: pointer;
   font-size: 11px;
-  color: #999;
+  color: #a08c7c;
   padding: 2px 4px;
   border-radius: 4px;
   line-height: 1;
 }
 
 .kot-search-clear:hover {
-  background: #f0f0f0;
-  color: #333;
+  background: rgba(255, 61, 1, 0.07);
+  color: #FF3D01;
 }
 
 /* EMPTY STATE */
@@ -111,7 +125,7 @@
   align-items: center;
   justify-content: center;
   padding: 60px 20px;
-  color: #999;
+  color: #a08c7c;
 }
 
 .kot-empty-icon {
@@ -122,7 +136,7 @@
 .kot-empty p {
   font-size: 14px;
   margin: 0 0 14px;
-  color: #666;
+  color: #6b5c4a;
 }
 
 .kot-empty-clear {
@@ -134,6 +148,7 @@
   font-size: 13px;
   cursor: pointer;
   font-weight: 600;
+  font-family: "Plus Jakarta Sans", sans-serif;
 }
 
 .kot-empty-clear:hover {
@@ -143,10 +158,12 @@
 .kot-filter-input {
   height: 39px;
   padding: 0 12px;
-  border: 1px solid #e5e5e5;
+  border: 1px solid #e2d9d0;
   border-radius: 5px;
   background: #ffffff;
   font-size: 13px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  color: #1a1208;
 }
 
 /* GRID */
@@ -160,11 +177,18 @@
 .kot-card {
   background: #ffffff;
   border-radius: 10px;
+  border: 1px solid #e2d9d0;
   padding: 16px;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0px 4px 12px rgba(100, 60, 10, 0.07);
   display: flex;
   flex-direction: column;
   position: relative;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.kot-card:hover {
+  box-shadow: 0px 8px 24px rgba(100, 60, 10, 0.12);
+  transform: translateY(-2px);
 }
 
 /* CARD HEADER */
@@ -176,29 +200,31 @@
 
 .kot-title {
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
+  color: #1a1208;
 }
 
 .kot-status {
   font-size: 11px;
   font-weight: 600;
   padding: 4px 8px;
-  background-color: #fdecec;
-  color: #ba3131;
+  background-color: rgba(255, 61, 1, 0.08);
+  color: #FF3D01;
   border-radius: 4px;
+  border: 1px solid rgba(255, 61, 1, 0.22);
 }
 
 /* META */
 .kot-meta {
   font-size: 12px;
-  color: #666;
+  color: #6b5c4a;
   margin-top: 4px;
 }
 
 /* DIVIDER */
 .kot-divider {
   height: 1px;
-  background-color: #e5e5e5;
+  background-color: #e2d9d0;
   margin: 10px 0;
 }
 
@@ -207,7 +233,8 @@
   display: flex;
   justify-content: space-between;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
+  color: #6b5c4a;
   margin-bottom: 6px;
 }
 
@@ -215,6 +242,7 @@
   display: flex;
   justify-content: space-between;
   font-size: 13px;
+  color: #1a1208;
   margin-bottom: 4px;
 }
 
@@ -228,9 +256,15 @@
 .kot-print-btn {
   width: 36px;
   height: 36px;
-  background-color: #c5d89d;
+  background-color: #FF3D01;
+  color: #fff;
   border: none;
   border-radius: 6px;
   cursor: pointer;
   font-size: 16px;
+  transition: background 0.15s;
+}
+
+.kot-print-btn:hover {
+  background-color: #e63500;
 }

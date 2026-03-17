@@ -13,7 +13,7 @@ import RocketLaunchOutlinedIcon from "@mui/icons-material/RocketLaunchOutlined";
 import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 
-const FONT = "Poppins, sans-serif";
+const FONT = "'Plus Jakarta Sans', sans-serif";
 const RED = "#FF3D01";
 
 type ChangeType = "new" | "fixed" | "improved" | "security" | "removed";
@@ -206,7 +206,7 @@ export default function Updates() {
   const previous = RELEASES.slice(1);
 
   return (
-    <Box sx={{ bgcolor: "#F8FAFC", minHeight: "100vh", fontFamily: FONT, p: { xs: 2, md: 3 } }}>
+    <Box sx={{ bgcolor: "#f5f0ea", minHeight: "100vh", fontFamily: FONT, p: { xs: 2, md: 3 } }}>
       <Box sx={{ maxWidth: 820, mx: "auto" }}>
 
         {/* Page Header */}

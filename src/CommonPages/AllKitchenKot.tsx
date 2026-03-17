@@ -113,14 +113,23 @@ const initialKots: Kot[] = [
   },
 ];
 
+// ── Theme tokens ─────────────────────────────────────────────────────────────
+const ACCENT   = "#FF3D01";
+const FONT     = "'Plus Jakarta Sans', sans-serif";
+const BG       = "#f5f0ea";
+const BDR      = "#e2d9d0";
+const TX       = "#1a1208";
+const TX2      = "#6b5c4a";
+const TX3      = "#a08c7c";
+
 const selectSx = {
   height: 36,
   fontSize: 13,
-  fontFamily: "Poppins, sans-serif",
+  fontFamily: FONT,
   background: "#fff",
-  "& .MuiOutlinedInput-notchedOutline": { borderColor: "#D1D5DB" },
-  "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#9CA3AF" },
-  "& .MuiSelect-icon": { fontSize: 18, color: "#6B7280" },
+  "& .MuiOutlinedInput-notchedOutline": { borderColor: BDR },
+  "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: TX3 },
+  "& .MuiSelect-icon": { fontSize: 18, color: TX3 },
 };
 
 export default function AllKitchenKot() {
@@ -159,7 +168,7 @@ export default function AllKitchenKot() {
   const tabs = ["All", "Pending", "In Kitchen", "Food Ready", "Cancelled"];
 
   return (
-    <Box sx={{ minHeight: "100vh", backgroundColor: "#F8FAFC", fontFamily: "Poppins, sans-serif" }}>
+    <Box sx={{ minHeight: "100vh", backgroundColor: BG, fontFamily: FONT }}>
 
       {/* ── TOP HEADER BAR ── */}
       <Box
@@ -170,13 +179,13 @@ export default function AllKitchenKot() {
           px: 3,
           py: 1.5,
           backgroundColor: "#fff",
-          borderBottom: "1px solid #E5E7EB",
-          boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
+          borderBottom: `1px solid ${BDR}`,
+          boxShadow: "0 1px 4px rgba(100,60,10,0.06)",
         }}
       >
         {/* Left: KOT count */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-          <Typography sx={{ fontSize: 18, fontWeight: 700, color: "#111827", fontFamily: "Poppins, sans-serif" }}>
+          <Typography sx={{ fontSize: 18, fontWeight: 700, color: TX, fontFamily: FONT }}>
             KOT
           </Typography>
           <Box
@@ -188,7 +197,7 @@ export default function AllKitchenKot() {
               boxShadow: "0 2px 8px rgba(232,53,58,0.35)",
             }}
           >
-            <Typography sx={{ fontSize: 13, fontWeight: 700, color: "#FFF", fontFamily: "Poppins, sans-serif" }}>
+            <Typography sx={{ fontSize: 13, fontWeight: 700, color: "#FFF", fontFamily: FONT }}>
               {kots.length}
             </Typography>
           </Box>
@@ -233,7 +242,7 @@ export default function AllKitchenKot() {
               height: 36,
               px: 2,
               borderRadius: "8px",
-              fontFamily: "Poppins, sans-serif",
+              fontFamily: FONT,
               boxShadow: "0 2px 8px rgba(34,197,94,0.35)",
               "&:hover": { background: "linear-gradient(135deg, #16A34A 0%, #15803D 100%)" },
             }}
@@ -252,7 +261,7 @@ export default function AllKitchenKot() {
           px: 3,
           py: 1.5,
           backgroundColor: "#fff",
-          borderBottom: "1px solid #F1F5F9",
+          borderBottom: `1px solid ${BDR}`,
         }}
       >
         <FormControl size="small">
@@ -275,24 +284,24 @@ export default function AllKitchenKot() {
             display: "flex",
             alignItems: "center",
             gap: 1,
-            border: "1px solid #D1D5DB",
+            border: `1px solid ${BDR}`,
             borderRadius: "8px",
             px: 1.5,
             height: 36,
             background: "#fff",
           }}
         >
-          <CalendarTodayIcon sx={{ fontSize: 14, color: "#9CA3AF" }} />
+          <CalendarTodayIcon sx={{ fontSize: 14, color: TX3 }} />
           <input
             type="date"
             value={fromDate}
             onChange={(e) => { setFromDate(e.target.value); if (toDate && e.target.value > toDate) setToDate(e.target.value); }}
             max={toDate || undefined}
-            style={{ border: "none", outline: "none", fontSize: 13, fontFamily: "Poppins, sans-serif", color: "#374151", background: "transparent", cursor: "pointer" }}
+            style={{ border: "none", outline: "none", fontSize: 13, fontFamily: "'Plus Jakarta Sans', sans-serif", color: TX2, background: "transparent", cursor: "pointer" }}
           />
         </Box>
 
-        <Typography sx={{ fontSize: 13, color: "#6B7280", fontFamily: "Poppins, sans-serif" }}>To</Typography>
+        <Typography sx={{ fontSize: 13, color: TX2, fontFamily: FONT }}>To</Typography>
 
         {/* To date */}
         <Box
@@ -300,20 +309,20 @@ export default function AllKitchenKot() {
             display: "flex",
             alignItems: "center",
             gap: 1,
-            border: "1px solid #D1D5DB",
+            border: `1px solid ${BDR}`,
             borderRadius: "8px",
             px: 1.5,
             height: 36,
             background: "#fff",
           }}
         >
-          <CalendarTodayIcon sx={{ fontSize: 14, color: "#9CA3AF" }} />
+          <CalendarTodayIcon sx={{ fontSize: 14, color: TX3 }} />
           <input
             type="date"
             value={toDate}
             onChange={(e) => setToDate(e.target.value)}
             min={fromDate || undefined}
-            style={{ border: "none", outline: "none", fontSize: 13, fontFamily: "Poppins, sans-serif", color: "#374151", background: "transparent", cursor: "pointer" }}
+            style={{ border: "none", outline: "none", fontSize: 13, fontFamily: "'Plus Jakarta Sans', sans-serif", color: TX2, background: "transparent", cursor: "pointer" }}
           />
         </Box>
 
@@ -358,10 +367,10 @@ export default function AllKitchenKot() {
           <Box
             key={kot.id}
             sx={{
-              background: "#FFFFFF",
+              background: "#fff",
               borderRadius: "12px",
-              border: "1px solid #E5E7EB",
-              boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
+              border: `1px solid ${BDR}`,
+              boxShadow: "0 2px 12px rgba(100,60,10,0.07)",
               display: "flex",
               flexDirection: "column",
               overflow: "hidden",
@@ -375,41 +384,41 @@ export default function AllKitchenKot() {
             {/* Card header */}
             <Box
               sx={{
-                background: "linear-gradient(135deg, #1F2937 0%, #374151 100%)",
+                background: "linear-gradient(135deg, #2c1a0e 0%, #3d2810 100%)",
                 px: 2,
                 py: 1.5,
                 textAlign: "center",
               }}
             >
-              <Typography sx={{ fontSize: 15, fontWeight: 700, color: "#FFFFFF", fontFamily: "Poppins, sans-serif" }}>
+              <Typography sx={{ fontSize: 15, fontWeight: 700, color: "#fff", fontFamily: FONT }}>
                 KOT #{kot.id}
               </Typography>
-              <Typography sx={{ fontSize: 12, color: "#D1D5DB", fontFamily: "Poppins, sans-serif" }}>
-                Order Type: <span style={{ fontWeight: 600, color: "#FCD34D" }}>{kot.type}</span>
+              <Typography sx={{ fontSize: 12, color: "#e2c9b0", fontFamily: FONT }}>
+                Order Type: <span style={{ fontWeight: 600, color: ACCENT }}>{kot.type}</span>
               </Typography>
             </Box>
 
             {/* Order info */}
             <Box sx={{ px: 2, pt: 1.2, pb: 0.5 }}>
               <Box sx={{ display: "flex", justifyContent: "space-between", mb: 0.4 }}>
-                <Typography sx={{ fontSize: 11, color: "#6B7280", fontFamily: "Poppins, sans-serif" }}>
-                  Order <span style={{ fontWeight: 600, color: "#111827" }}>#{kot.order}</span>
+                <Typography sx={{ fontSize: 11, color: TX3, fontFamily: FONT }}>
+                  Order <span style={{ fontWeight: 600, color: TX }}>#{kot.order}</span>
                 </Typography>
-                <Typography sx={{ fontSize: 11, color: "#6B7280", fontFamily: "Poppins, sans-serif" }}>
-                  Date: <span style={{ fontWeight: 500, color: "#374151" }}>{kot.date}</span>
+                <Typography sx={{ fontSize: 11, color: TX3, fontFamily: FONT }}>
+                  Date: <span style={{ fontWeight: 500, color: TX2 }}>{kot.date}</span>
                 </Typography>
               </Box>
               <Box sx={{ display: "flex", justifyContent: "space-between", mb: 0.4 }}>
-                <Typography sx={{ fontSize: 11, color: "#6B7280", fontFamily: "Poppins, sans-serif" }}>
-                  Time: <span style={{ fontWeight: 500, color: "#374151" }}>{kot.time}</span>
+                <Typography sx={{ fontSize: 11, color: TX3, fontFamily: FONT }}>
+                  Time: <span style={{ fontWeight: 500, color: TX2 }}>{kot.time}</span>
                 </Typography>
               </Box>
               <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                <Typography sx={{ fontSize: 11, color: "#6B7280", fontFamily: "Poppins, sans-serif" }}>
-                  Table: <span style={{ fontWeight: 600, color: "#111827" }}>{kot.table}</span>
+                <Typography sx={{ fontSize: 11, color: TX3, fontFamily: FONT }}>
+                  Table: <span style={{ fontWeight: 600, color: TX }}>{kot.table}</span>
                 </Typography>
-                <Typography sx={{ fontSize: 11, color: "#6B7280", fontFamily: "Poppins, sans-serif", textAlign: "right", maxWidth: 110, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                  Waiter: <span style={{ fontWeight: 500, color: "#374151" }}>{kot.waiter}</span>
+                <Typography sx={{ fontSize: 11, color: TX3, fontFamily: FONT, textAlign: "right", maxWidth: 110, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  Waiter: <span style={{ fontWeight: 500, color: TX2 }}>{kot.waiter}</span>
                 </Typography>
               </Box>
             </Box>
@@ -419,22 +428,22 @@ export default function AllKitchenKot() {
               sx={{
                 mx: 2,
                 my: 1,
-                borderTop: "1.5px dashed #D1D5DB",
+                borderTop: `1.5px dashed ${BDR}`,
               }}
             />
 
             {/* Items header */}
             <Box sx={{ px: 2, mb: 0.5, display: "flex", justifyContent: "space-between" }}>
-              <Typography sx={{ fontSize: 11, fontWeight: 700, color: "#374151", fontFamily: "Poppins, sans-serif", letterSpacing: 0.3 }}>
+              <Typography sx={{ fontSize: 11, fontWeight: 700, color: TX2, fontFamily: FONT, letterSpacing: 0.3 }}>
                 Items
               </Typography>
-              <Typography sx={{ fontSize: 11, fontWeight: 700, color: "#374151", fontFamily: "Poppins, sans-serif", letterSpacing: 0.3 }}>
+              <Typography sx={{ fontSize: 11, fontWeight: 700, color: TX2, fontFamily: FONT, letterSpacing: 0.3 }}>
                 QTY
               </Typography>
             </Box>
 
             {/* Item rows — scrollable if many */}
-            <Box sx={{ px: 2, flex: 1, maxHeight: 90, overflowY: "auto", "&::-webkit-scrollbar": { width: 3 }, "&::-webkit-scrollbar-thumb": { background: "#D1D5DB", borderRadius: 2 } }}>
+            <Box sx={{ px: 2, flex: 1, maxHeight: 90, overflowY: "auto", "&::-webkit-scrollbar": { width: 3 }, "&::-webkit-scrollbar-thumb": { background: BDR, borderRadius: 2 } }}>
               {kot.items.map((item) => {
                 const s = statusColor(item.status);
                 return (
@@ -445,15 +454,15 @@ export default function AllKitchenKot() {
                       justifyContent: "space-between",
                       alignItems: "center",
                       py: 0.4,
-                      borderBottom: "1px solid #F9FAFB",
+                      borderBottom: `1px solid ${BDR}`,
                     }}
                   >
-                    <Typography sx={{ fontSize: 12, color: "#374151", fontFamily: "Poppins, sans-serif" }}>
+                    <Typography sx={{ fontSize: 12, color: TX2, fontFamily: FONT }}>
                       {item.name}
                     </Typography>
                     <Box sx={{ display: "flex", alignItems: "center", gap: 0.8 }}>
                       <Box sx={{ px: 0.8, py: 0.1, borderRadius: "10px", background: s.bg }}>
-                        <Typography sx={{ fontSize: 10, fontWeight: 600, color: s.color, fontFamily: "Poppins, sans-serif" }}>
+                        <Typography sx={{ fontSize: 10, fontWeight: 600, color: s.color, fontFamily: FONT }}>
                           {item.qty}
                         </Typography>
                       </Box>
@@ -464,7 +473,7 @@ export default function AllKitchenKot() {
             </Box>
 
             {/* Dashed separator */}
-            <Box sx={{ mx: 2, my: 1, borderTop: "1.5px dashed #D1D5DB" }} />
+            <Box sx={{ mx: 2, my: 1, borderTop: `1.5px dashed ${BDR}` }} />
 
             {/* Footer actions */}
             <Box
@@ -480,8 +489,8 @@ export default function AllKitchenKot() {
                 size="small"
                 onClick={() => openModal(kot.id, kot.items[0]?.id)}
                 sx={{
-                  color: "#9CA3AF",
-                  "&:hover": { color: "#4B5563", background: "#F3F4F6" },
+                  color: TX3,
+                  "&:hover": { color: TX2, background: `rgba(255,61,1,0.06)` },
                 }}
               >
                 <VisibilityIcon sx={{ fontSize: 18 }} />
@@ -521,7 +530,7 @@ export default function AllKitchenKot() {
           {/* Modal header */}
           <Box
             sx={{
-              background: "linear-gradient(135deg, #1F2937 0%, #374151 100%)",
+              background: "linear-gradient(135deg, #2c1a0e 0%, #3d2810 100%)",
               px: 3,
               py: 2,
               display: "flex",
@@ -529,16 +538,16 @@ export default function AllKitchenKot() {
               justifyContent: "space-between",
             }}
           >
-            <Typography sx={{ fontWeight: 700, fontSize: 16, color: "#FFF", fontFamily: "Poppins, sans-serif" }}>
+            <Typography sx={{ fontWeight: 700, fontSize: 16, color: "#fff", fontFamily: FONT }}>
               Change Item Status
             </Typography>
-            <IconButton size="small" onClick={closeModal} sx={{ color: "#FFF" }}>
+            <IconButton size="small" onClick={closeModal} sx={{ color: "#e2c9b0" }}>
               <CloseIcon fontSize="small" />
             </IconButton>
           </Box>
 
           <Box sx={{ p: 3 }}>
-            <Typography sx={{ fontSize: 13, color: "#6B7280", mb: 2.5, fontFamily: "Poppins, sans-serif" }}>
+            <Typography sx={{ fontSize: 13, color: TX2, mb: 2.5, fontFamily: FONT }}>
               Select the new status for this item:
             </Typography>
 
@@ -565,7 +574,7 @@ export default function AllKitchenKot() {
                 }}
               >
                 <Typography sx={{ fontSize: 20 }}>{icon}</Typography>
-                <Typography sx={{ fontWeight: 600, fontSize: 14, color, fontFamily: "Poppins, sans-serif" }}>
+                <Typography sx={{ fontWeight: 600, fontSize: 14, color, fontFamily: FONT }}>
                   {label}
                 </Typography>
               </Box>
@@ -579,11 +588,11 @@ export default function AllKitchenKot() {
                 mt: 1,
                 textTransform: "none",
                 fontSize: 13,
-                fontFamily: "Poppins, sans-serif",
-                color: "#6B7280",
-                borderColor: "#D1D5DB",
+                fontFamily: FONT,
+                color: TX2,
+                borderColor: BDR,
                 borderRadius: "8px",
-                "&:hover": { borderColor: "#9CA3AF", background: "#F9FAFB" },
+                "&:hover": { borderColor: TX3, background: BG },
               }}
             >
               Cancel

@@ -116,7 +116,7 @@ export default function Sidebar({
                   fontSize: 9,
                   color: "#FFF",
                   fontWeight: isSelected ? 700 : 400,
-                  fontFamily: "Poppins, sans-serif",
+                  fontFamily: "'Plus Jakarta Sans', sans-serif",
                   textAlign: "center",
                   px: 0.5,
                   lineHeight: 1.2,
@@ -145,7 +145,7 @@ export default function Sidebar({
         flexDirection: "column",
         overflowY: "auto",
         height: "100%",
-        fontFamily: "Poppins, sans-serif",
+        fontFamily: "'Plus Jakarta Sans', sans-serif",
         transition: "width 0.2s ease",
         "&::-webkit-scrollbar": { width: 3 },
         "&::-webkit-scrollbar-thumb": { backgroundColor: "#555", borderRadius: 2 },
@@ -199,7 +199,7 @@ export default function Sidebar({
               fontSize: 11,
               color: "#FFF",
               fontWeight: 600,
-              fontFamily: "Poppins, sans-serif",
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
               flex: 1,
               overflow: "hidden",
               textOverflow: "ellipsis",
@@ -262,7 +262,7 @@ export default function Sidebar({
               <Typography
                 sx={{
                   fontSize: 13,
-                  fontFamily: "Poppins, sans-serif",
+                  fontFamily: "'Plus Jakarta Sans', sans-serif",
                   fontWeight: isActive ? 600 : 400,
                   color: isActive ? ACTIVE_BG : "#333",
                 }}
@@ -305,7 +305,7 @@ export default function Sidebar({
                 fontSize: 12,
                 color: "#FFFFFF",
                 fontWeight: isSelected ? 600 : 400,
-                fontFamily: "Poppins, sans-serif",
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
                 lineHeight: 1.35,
               }}
             >
