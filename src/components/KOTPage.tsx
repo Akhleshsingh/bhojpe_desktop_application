@@ -103,7 +103,16 @@ export default function KOTPage() {
 
       {/* FILTER ROW */}
       <div className="kot-filters">
-        {/* Search box */}
+        <input type="date" className="kot-filter-input" />
+        <input type="date" className="kot-filter-input" />
+        <select className="kot-filter-input">
+          <option>Show All KOT</option>
+        </select>
+        <select className="kot-filter-input">
+          <option>Show All Waiter</option>
+        </select>
+
+        {/* Search box — after Show All Waiter */}
         <div className="kot-search-wrapper">
           <span className="kot-search-icon">🔍</span>
           <input
@@ -119,15 +128,6 @@ export default function KOTPage() {
             </button>
           )}
         </div>
-
-        <input type="date" className="kot-filter-input" />
-        <input type="date" className="kot-filter-input" />
-        <select className="kot-filter-input">
-          <option>Show All KOT</option>
-        </select>
-        <select className="kot-filter-input">
-          <option>Show All Waiter</option>
-        </select>
       </div>
 
       {/* EMPTY STATE */}
