@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bhojpe — Settings Suite</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ac:#FF3D01;--ah:#cc3000;
+  --adim:rgba(255,61,1,.07);--amid:rgba(255,61,1,.13);--abdr:rgba(255,61,1,.22);
+  --bg:#f4efe8;--w:#fff;--s1:#faf7f3;--s2:#f0ebe3;--s3:#e5ded5;
+  --bd:#e2d9d0;--bd2:#cec4b8;
+  --grn:#16a34a;--gdim:rgba(22,163,74,.09);--gbdr:rgba(22,163,74,.26);
+  --red:#dc2626;--rdim:rgba(220,38,38,.09);--rbdr:rgba(220,38,38,.26);
+  --blu:#2563eb;--bdim:rgba(37,99,235,.08);--bbdr:rgba(37,99,235,.25);
+  --amb:#d97706;--adm2:rgba(217,119,6,.09);--abdr2:rgba(217,119,6,.25);
+  --pur:#7c3aed;--pdim:rgba(124,58,237,.08);
+  --tx:#16100a;--t2:#6b5c48;--t3:#a4927e;
+  --sh:0 1px 4px rgba(0,0,0,.06);--sh2:0 6px 24px rgba(0,0,0,.10);--sh3:0 20px 60px rgba(0,0,0,.18);
+  --r:10px;--rl:14px;--rxl:18px;
+}
+body{font-family:"Plus Jakarta Sans",sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;font-size:14px;overflow-x:hidden}
+/* ══ TOPBAR ══ */
+.topbar{display:flex;align-items:center;padding:0 20px;height:56px;background:var(--tx);gap:10px;box-shadow:0 2px 14px rgba(0,0,0,.22);position:sticky;top:0;z-index:60}
+.t-logo{height:32px;width:auto;border-radius:8px}
+.t-vsep{width:1px;height:22px;background:rgba(255,255,255,.15);flex-shrink:0}
+.t-breadcrumb{display:flex;align-items:center;gap:6px;font-size:13px}
+.tb-link{color:rgba(255,255,255,.55);cursor:pointer;font-weight:500;transition:color .14s}
+.tb-link:hover{color:rgba(255,255,255,.9)}
+.tb-sep{color:rgba(255,255,255,.25);font-size:11px}
+.tb-current{color:#fff;font-weight:700}
+.t-sp{flex:1}
+/* page tabs */
+.page-tabs{display:flex;gap:4px}
+.pt{padding:6px 14px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:rgba(255,255,255,.65);transition:all .14s;font-family:"Plus Jakarta Sans",sans-serif;white-space:nowrap}
+.pt:hover{background:rgba(255,255,255,.13);color:#fff}
+.pt.active{background:var(--ac);border-color:var(--ac);color:#fff;box-shadow:0 2px 8px rgba(255,61,1,.35)}
+.t-save{display:flex;align-items:center;gap:6px;padding:8px 18px;background:var(--ac);border:none;border-radius:9px;color:#fff;font-size:13px;font-weight:800;cursor:pointer;font-family:"Plus Jakarta Sans",sans-serif;box-shadow:0 3px 10px rgba(255,61,1,.3);transition:all .14s;white-space:nowrap}
+.t-save:hover{background:var(--ah)}
+/* ══ PAGE ══ */
+.pages-wrap{position:relative}
+.main-page{display:none}.main-page.active{display:flex}
+.main-page{min-height:calc(100vh - 56px)}
+/* ══ SIDEBAR ══ */
+.sidebar{width:236px;background:var(--w);border-right:1px solid var(--bd);flex-shrink:0;padding:14px 8px;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto}
+.sidebar::-webkit-scrollbar{width:3px}.sidebar::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px}
+.sb-sec{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:1.1px;color:var(--t3);padding:10px 12px 4px}
+.sb-item{display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:var(--r);margin-bottom:2px;cursor:pointer;font-size:13px;color:var(--t2);font-weight:500;transition:all .14s;border:1.5px solid transparent;width:100%;text-align:left;background:none;font-family:"Plus Jakarta Sans",sans-serif}
+.sb-item:hover{background:var(--s2);color:var(--tx)}
+.sb-item.active{background:var(--adim);color:var(--ac);font-weight:700;border-color:var(--abdr)}
+.sb-ic{font-size:16px;width:20px;text-align:center;flex-shrink:0}
+.sb-badge{margin-left:auto;min-width:18px;height:18px;border-radius:9px;padding:0 5px;font-size:9.5px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.badge-grn{background:var(--grn);color:#fff}
+.badge-amb{background:var(--amb);color:#fff}
+.badge-gray{background:var(--s3);color:var(--t3)}
+/* ══ CONTENT ══ */
+.content{flex:1;padding:22px 26px;overflow-y:auto}
+.content::-webkit-scrollbar{width:5px}.content::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:4px}
+.sec-panel{display:none}.sec-panel.active{display:block}
+/* ══ COMMON UI ══ */
+.pg-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
+.pg-title{font-size:22px;font-weight:800;color:var(--tx)}
+.pg-sub{font-size:13px;color:var(--t3);margin-top:3px;font-weight:500;max-width:560px}
+.btn-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn{display:flex;align-items:center;gap:6px;padding:9px 16px;background:var(--w);border:1.5px solid var(--bd);border-radius:var(--r);font-size:13px;font-weight:700;cursor:pointer;color:var(--t2);transition:all .14s;font-family:"Plus Jakarta Sans",sans-serif}
+.btn:hover{border-color:var(--bd2);color:var(--tx);box-shadow:var(--sh)}
+.btn.pr{background:var(--ac);border-color:var(--ac);color:#fff;box-shadow:0 2px 8px rgba(255,61,1,.25)}
+.btn.pr:hover{background:var(--ah)}
+.btn.grn{background:var(--grn);border-color:var(--grn);color:#fff}
+.btn.grn:hover{background:#15803d}
+.btn.sm{padding:7px 12px;font-size:12px}
+.btn.danger{color:var(--red);border-color:var(--rbdr);background:var(--rdim)}
+.btn.danger:hover{background:rgba(220,38,38,.14)}
+/* toggles */
+.tog{position:relative;width:42px;height:22px;flex-shrink:0}
+.tog input{opacity:0;width:0;height:0}
+.tsl{position:absolute;cursor:pointer;inset:0;background:var(--s3);border-radius:22px;transition:.28s}
+.tsl::before{content:"";position:absolute;height:16px;width:16px;left:3px;bottom:3px;background:var(--w);border-radius:50%;transition:.28s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+input:checked+.tsl{background:var(--grn)}
+input:checked+.tsl::before{transform:translateX(20px)}
+/* card */
+.card{background:var(--w);border:1.5px solid var(--bd);border-radius:var(--rl);box-shadow:var(--sh);margin-bottom:18px;overflow:hidden}
+.card-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--bd);background:var(--s1)}
+.ch-left{display:flex;align-items:center;gap:10px}
+.ch-ico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.ch-title{font-size:15px;font-weight:800;color:var(--tx)}
+.ch-sub{font-size:12px;color:var(--t3);margin-top:1px}
+.card-body{padding:18px}
+/* form */
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.fg:last-child{margin-bottom:0}
+.fl{font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.3px}
+.fi{padding:10px 13px;background:var(--s1);border:1.5px solid var(--bd);border-radius:var(--r);font-family:"Plus Jakarta Sans",sans-serif;font-size:13px;color:var(--tx);outline:none;transition:border-color .2s;width:100%}
+.fi:focus{border-color:var(--ac);background:var(--w)}
+.fi::placeholder{color:var(--t3)}
+select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23a4927e' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;padding-right:30px;cursor:pointer}
+.fg-row{display:grid;gap:14px;margin-bottom:14px}
+.fg-row.c2{grid-template-columns:1fr 1fr}
+.fg-row.c3{grid-template-columns:1fr 1fr 1fr}
+/* ━━━ STATUS ━━━ */
+.status-bar{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:var(--r);font-size:13px;font-weight:600;margin-bottom:16px}
+.sb-ok{background:var(--gdim);border:1px solid var(--gbdr);color:var(--grn)}
+.sb-warn{background:var(--adm2);border:1px solid var(--abdr2);color:var(--amb)}
+.sb-err{background:var(--rdim);border:1px solid var(--rbdr);color:var(--red)}
+.sb-info{background:var(--bdim);border:1px solid var(--bbdr);color:var(--blu)}
+/* pill/badge */
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.pill-g{background:var(--gdim);color:var(--grn);border:1px solid var(--gbdr)}
+.pill-r{background:var(--rdim);color:var(--red);border:1px solid var(--rbdr)}
+.pill-b{background:var(--bdim);color:var(--blu);border:1px solid var(--bbdr)}
+.pill-a{background:var(--adm2);color:var(--amb);border:1px solid var(--abdr2)}
+.pill-ac{background:var(--adim);color:var(--ac);border:1px solid var(--abdr)}
+/* separator */
+.sep{border:none;border-top:1px solid var(--bd);margin:16px 0}
+/* online dot */
+.dot-online{width:8px;height:8px;border-radius:50%;background:var(--grn);display:inline-block;animation:pulse 1.2s infinite}
+.dot-offline{width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block}
+.dot-warn{width:8px;height:8px;border-radius:50%;background:var(--amb);display:inline-block}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+/* ━━━━━━━━━━━━━━━━━━━━━━━━
+   KITCHEN SECTION
+━━━━━━━━━━━━━━━━━━━━━━━━ */
+.kitchen-card{background:var(--w);border:1.5px solid var(--bd);border-radius:var(--rl);margin-bottom:16px;overflow:hidden;box-shadow:var(--sh);transition:all .16s}
+.kitchen-card:hover{box-shadow:var(--sh2)}
+.kc-header{display:flex;align-items:center;gap:12px;padding:16px 18px;cursor:pointer;border-bottom:1px solid transparent;transition:border-color .2s}
+.kitchen-card.open .kc-header{border-bottom-color:var(--bd)}
+.kc-color{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.kc-info{flex:1}
+.kc-name{font-size:15px;font-weight:800;color:var(--tx)}
+.kc-meta{font-size:12px;color:var(--t3);margin-top:2px}
+.kc-badges{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.kc-actions{display:flex;gap:6px;margin-left:8px;flex-shrink:0}
+.kc-expand{display:none;padding:18px}
+.kitchen-card.open .kc-expand{display:block}
+/* cat chips in kitchen */
+.chips-wrap{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
+.chip{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:700;border:1.5px solid var(--bd);background:var(--s1);color:var(--t2);cursor:pointer;transition:all .14s;user-select:none}
+.chip:hover{border-color:var(--bd2);background:var(--w)}
+.chip.on{background:var(--gdim);border-color:var(--gbdr);color:var(--grn)}
+.chip .chip-x{font-size:10px;opacity:.5;margin-left:2px}
+.chip.on .chip-x{opacity:1;color:var(--grn)}
+/* add kitchen form */
+.add-kitchen-form{background:var(--adim);border:1.5px dashed var(--abdr);border-radius:var(--rl);padding:20px;margin-top:4px}
+/* ━━━━━━━━━━━━━━━━━━━━━━━━
+   PRINT SETTINGS - ACCORDION
+━━━━━━━━━━━━━━━━━━━━━━━━ */
+.print-group{background:var(--w);border:1.5px solid var(--bd);border-radius:var(--rl);margin-bottom:12px;overflow:hidden;box-shadow:var(--sh)}
+.pg-trigger{display:flex;align-items:center;gap:12px;padding:15px 18px;cursor:pointer;transition:background .14s;border:none;background:none;width:100%;font-family:"Plus Jakarta Sans",sans-serif;text-align:left}
+.pg-trigger:hover{background:var(--s1)}
+.print-group.open .pg-trigger{background:var(--s1);border-bottom:1px solid var(--bd)}
+.pg-ico{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.pg-title{flex:1}
+.pg-t-name{font-size:14px;font-weight:800;color:var(--tx)}
+.pg-t-sub{font-size:12px;color:var(--t3);margin-top:2px}
+.pg-arrow{font-size:11px;color:var(--t3);transition:transform .22s;flex-shrink:0;margin-left:6px}
+.print-group.open .pg-arrow{transform:rotate(90deg)}
+.pg-content{display:none;padding:18px}
+.print-group.open .pg-content{display:block}
+/* print field row */
+.print-field-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--bd)}
+.print-field-row:last-child{border-bottom:none}
+.pfr-left{display:flex;flex-direction:column;gap:2px}
+.pfr-label{font-size:13.5px;font-weight:700;color:var(--tx)}
+.pfr-sub{font-size:12px;color:var(--t3)}
+.pfr-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+/* ━━━━━━━━━━━━━━━━━━━━━━━━
+   PRINTER SETTING CARDS
+━━━━━━━━━━━━━━━━━━━━━━━━ */
+.printer-btn-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+.printer-btn-card{background:var(--w);border:1.5px solid var(--bd);border-radius:var(--rl);padding:18px;cursor:pointer;transition:all .16s;text-align:center;box-shadow:var(--sh)}
+.printer-btn-card:hover{transform:translateY(-2px);box-shadow:var(--sh2);border-color:var(--bd2)}
+.printer-btn-card.selected{border-color:var(--ac);background:var(--adim);box-shadow:0 0 0 3px var(--adim)}
+.pbc-ico{font-size:32px;margin-bottom:10px}
+.pbc-title{font-size:14px;font-weight:800;color:var(--tx);margin-bottom:4px}
+.pbc-sub{font-size:12px;color:var(--t3)}
+.pbc-status{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:8px;font-size:12px;font-weight:700}
+/* printer setting modal panel */
+.printer-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.printer-modal-overlay.show{display:flex}
+.printer-modal{background:var(--w);border-radius:var(--rxl);width:580px;max-width:96vw;box-shadow:var(--sh3);overflow:hidden;animation:popIn .22s ease;max-height:90vh;display:flex;flex-direction:column}
+@keyframes popIn{from{opacity:0;transform:scale(.92) translateY(16px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.pm-hdr{background:var(--tx);padding:18px 22px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.pm-title{font-size:18px;font-weight:800;color:#fff}
+.pm-sub{font-size:12px;color:rgba(255,255,255,.5);margin-top:3px}
+.pm-close{font-size:20px;color:rgba(255,255,255,.6);cursor:pointer;background:none;border:none;line-height:1;padding:4px}
+.pm-body{padding:22px;overflow-y:auto;flex:1}
+.pm-body::-webkit-scrollbar{width:4px}.pm-body::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:4px}
+.pm-footer{padding:16px 22px;border-top:1px solid var(--bd);display:flex;gap:10px;flex-shrink:0;background:var(--s1)}
+.pm-save-btn{flex:1;padding:13px;background:var(--ac);border:none;border-radius:var(--rl);color:#fff;font-family:"Plus Jakarta Sans",sans-serif;font-weight:800;font-size:14px;cursor:pointer;transition:all .15s;box-shadow:0 3px 10px rgba(255,61,1,.28)}
+.pm-save-btn:hover{background:var(--ah)}
+.pm-cancel-btn{padding:13px 20px;background:var(--s2);border:1.5px solid var(--bd);border-radius:var(--rl);color:var(--t2);font-family:"Plus Jakarta Sans",sans-serif;font-weight:700;font-size:14px;cursor:pointer;transition:all .15s}
+.pm-cancel-btn:hover{background:var(--s3);color:var(--tx)}
+/* print type selector in modal */
+.type-selector{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.type-opt{border:2px solid var(--bd);border-radius:var(--rl);padding:14px;text-align:center;cursor:pointer;transition:all .15s}
+.type-opt:hover{border-color:var(--bd2);background:var(--s1)}
+.type-opt.sel{border-color:var(--ac);background:var(--adim)}
+.type-opt .to-ico{font-size:24px;margin-bottom:7px}
+.type-opt .to-title{font-size:13px;font-weight:800;color:var(--tx)}
+.type-opt .to-sub{font-size:11px;color:var(--t3);margin-top:2px}
+/* scan section */
+.scan-wrap{background:var(--s1);border:1.5px solid var(--bd);border-radius:var(--rl);padding:14px;margin-bottom:14px}
+.scan-tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.scan-tab{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid var(--bd);background:var(--w);color:var(--t2);transition:all .14s;font-family:"Plus Jakarta Sans",sans-serif}
+.scan-tab.active{background:var(--ac);border-color:var(--ac);color:#fff}
+.scan-row{display:flex;gap:8px}
+.scan-input{flex:1;padding:9px 12px;background:var(--w);border:1.5px solid var(--bd);border-radius:var(--r);font-family:"Plus Jakarta Sans",sans-serif;font-size:13px;color:var(--tx);outline:none;transition:border-color .2s}
+.scan-input:focus{border-color:var(--ac)}
+.scan-input::placeholder{color:var(--t3)}
+.scan-btn{padding:9px 16px;background:var(--ac);border:none;border-radius:var(--r);color:#fff;font-family:"Plus Jakarta Sans",sans-serif;font-weight:800;font-size:13px;cursor:pointer;white-space:nowrap;transition:all .14s}
+.scan-btn:hover{background:var(--ah)}
+/* scan progress */
+.scan-progress{height:3px;background:var(--s2);border-radius:3px;overflow:hidden;margin-top:10px;display:none}
+.scan-progress.active{display:block}
+.sp-fill{height:100%;background:linear-gradient(90deg,var(--ac),var(--amb));border-radius:3px;animation:spAnim 2s ease-in-out infinite}
+@keyframes spAnim{0%{width:0;margin-left:0}60%{width:100%;margin-left:0}100%{width:0;margin-left:100%}}
+.found-printer{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--w);border:1.5px solid var(--bd);border-radius:var(--r);margin-top:8px;cursor:pointer;transition:all .15s}
+.found-printer:hover{border-color:var(--ac);background:var(--adim)}
+.found-printer.sel{border-color:var(--ac);background:var(--adim)}
+.fp-ico{font-size:20px;flex-shrink:0}
+.fp-info{flex:1}
+.fp-name{font-size:13px;font-weight:700;color:var(--tx)}
+.fp-addr{font-size:11.5px;color:var(--t3);font-family:"JetBrains Mono",monospace;margin-top:1px}
+.fp-check{width:20px;height:20px;border-radius:50%;border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.found-printer.sel .fp-check{background:var(--grn);border-color:var(--grn);color:#fff;font-size:11px}
+/* ━━━━━━━━━━━━━━━━━━━━━━━━
+   KDS SECTION
+━━━━━━━━━━━━━━━━━━━━━━━━ */
+.kds-main{display:none}.kds-main.active{display:flex;min-height:calc(100vh - 56px)}
+.kds-demo{background:var(--tx);color:#fff;border-radius:var(--rl);padding:20px;margin-bottom:18px}
+.kds-screen-preview{background:#1a1a2e;border-radius:var(--rl);padding:16px;min-height:260px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;align-content:start}
+.kds-card-preview{border-radius:12px;padding:14px;font-size:12px}
+.kds-card-new{background:#1e3a5f;border:1.5px solid #3b82f6}
+.kds-card-prep{background:#2d1f00;border:1.5px solid #fbbf24}
+.kds-card-done{background:#0f2d1a;border:1.5px solid #22c55e}
+.kds-card-preview .kds-id{font-size:13px;font-weight:800;color:#fff;margin-bottom:4px}
+.kds-card-preview .kds-table{font-size:11px;color:rgba(255,255,255,.6);margin-bottom:8px}
+.kds-card-preview .kds-item{font-size:12.5px;color:#fff;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.1)}
+.kds-card-preview .kds-item:last-child{border-bottom:none}
+.kds-timer{font-size:11px;font-weight:800;padding:3px 8px;border-radius:6px;margin-top:8px;display:inline-block}
+.t-ok{background:rgba(34,197,94,.2);color:#4ade80}
+.t-warn{background:rgba(251,191,36,.2);color:#fbbf24}
+.t-red{background:rgba(239,68,68,.2);color:#f87171}
+/* ━━━━━━━━━━━━━━━━━━━━━━━━
+   LED BANNER
+━━━━━━━━━━━━━━━━━━━━━━━━ */
+.led-main{display:none}.led-main.active{display:flex;min-height:calc(100vh - 56px)}
+/* Upload zone */
+.upload-zone{border:2.5px dashed var(--bd2);border-radius:var(--rl);padding:32px;text-align:center;cursor:pointer;transition:all .2s;background:var(--s1)}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--ac);background:var(--adim)}
+.uz-ico{font-size:44px;margin-bottom:12px;opacity:.6}
+.uz-title{font-size:16px;font-weight:800;color:var(--tx);margin-bottom:6px}
+.uz-sub{font-size:13px;color:var(--t3)}
+/* Image list */
+.img-list{display:flex;flex-direction:column;gap:10px}
+.img-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--w);border:1.5px solid var(--bd);border-radius:var(--rl);box-shadow:var(--sh);transition:all .15s}
+.img-item:hover{border-color:var(--bd2);box-shadow:var(--sh2)}
+.img-thumb{width:72px;height:54px;border-radius:9px;object-fit:cover;flex-shrink:0;border:1px solid var(--bd)}
+.img-thumb-placeholder{width:72px;height:54px;border-radius:9px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.img-info{flex:1}
+.img-name{font-size:13.5px;font-weight:700;color:var(--tx)}
+.img-size{font-size:12px;color:var(--t3);margin-top:2px}
+.img-duration{display:flex;align-items:center;gap:6px;margin-top:8px}
+.img-dur-label{font-size:12px;color:var(--t2);font-weight:500}
+.img-dur-input{width:60px;padding:5px 8px;background:var(--s1);border:1.5px solid var(--bd);border-radius:7px;font-family:"Plus Jakarta Sans",sans-serif;font-size:13px;font-weight:700;color:var(--tx);text-align:center;outline:none;transition:border-color .2s}
+.img-dur-input:focus{border-color:var(--ac)}
+.img-actions{display:flex;gap:6px;flex-shrink:0}
+/* LED preview */
+.led-preview{background:#000;border-radius:var(--rl);overflow:hidden;position:relative;aspect-ratio:16/9;width:100%}
+.led-preview-inner{width:100%;height:100%;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.led-img-display{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity .8s ease}
+.led-img-display.active{opacity:1}
+.led-overlay-text{position:absolute;bottom:0;left:0;right:0;padding:12px 16px;background:linear-gradient(transparent,rgba(0,0,0,.7));color:#fff;font-size:14px;font-weight:700}
+.led-no-img{color:rgba(255,255,255,.3);font-size:16px;font-weight:600;text-align:center}
+/* drag handles */
+.drag-handle{cursor:grab;color:var(--t3);font-size:16px;flex-shrink:0}
+.drag-handle:active{cursor:grabbing}
+/* ━━━━━━━━━━━━━━━━━━━━━━━━
+   TOAST
+━━━━━━━━━━━━━━━━━━━━━━━━ */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--grn);color:#fff;padding:12px 24px;border-radius:12px;font-weight:700;font-size:13px;transition:transform .3s;z-index:9999;white-space:nowrap;box-shadow:0 6px 20px rgba(0,0,0,.18);pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.err{background:var(--red)}
+.toast.info{background:var(--blu)}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QBMRXhpZgAATU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAACAKADAAQAAAABAAACAAAAAAD/7QA4UGhvdG9zaG9wIDMuMAA4QklNBAQAAAAAAAA4QklNBCUAAAAAABDUHYzZjwCyBOmACZjs+EJ+/8AAEQgCAAIAAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMAAQEBAQEBAgEBAgMCAgIDBAMDAwMEBgQEBAQEBgcGBgYGBgYHBwcHBwcHBwgICAgICAkJCQkJCwsLCwsLCwsLC//bAEMBAgICAwMDBQMDBQsIBggLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLC//dAAQAIP/aAAwDAQACEQMRAD8A+d6KKK/nM/2cCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD//0Pneiiiv5zP9nAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA//9H53ooor+cz/ZwKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP//S+d6KKK/nM/2cCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD//0/neiiiv5zP9nAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA//9T53ooor+cz/ZwKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP//V+d6KKK/nM/2cCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD//1vneiiiv5zP9nAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA//9f53ooor+cz/ZwKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP//Q+d6KKK/nM/2cCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD//0fneiiiv5zP9nAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA//9L53ooor+cz/ZwKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP//T+d6KKK/nM/2cCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD//1Pneiiiv5zP9nAooooAKKKKACt3SvC3ifXYWudE066vI0bazQQvIobrglQecVhV/Vf8A8EF/+TavF3/YzP8A+ktvXrZLlix+KWHcuW6bva+33H5/4m8by4TyKpnMKHtXGUY8rly/E7XvaW3ofzA/8K7+IH/QC1D/AMBZP/iaP+Fd/ED/AKAWof8AgLJ/8TX+iRSV9n/qDD/oIf8A4D/9sfzT/wATcV/+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Haus/wCH5v7J3/Qu+Lf/AAEs/wD5Nr+VGivqY8ZZkkkmvuPwSt9G3gqrUlUlSqXbbf7x9fkfvl+3R/wVP/Z//ac/Zq1v4N+A9G8Q2ep6lLZyRS39vbRwKLeeOVtzR3MjcqpAwp59OtfgbRRXi5lmdfHVVWxDXMlbRW01f6n6dwXwRlfC2Bll2UxkqUpub5pcz5mop69rRQUUUV559cFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAf/0/neiiiv5zP9nAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA//9T53ooor+cz/ZwKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP//V+d6KKK/nM/2cCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD//1vneiiiv5zP9nAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA//9f53ooor+cz/ZwKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP//Q+d6KKK/nM/2cCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD//0fneiiiv5zP9nAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA//9L53ooor+cz/ZwKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP//T+d6KKK/nM/2cCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD//1Pneiiiv5zP9nAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA//9X53ooor+cz/ZwKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP//W+d6KKK/nM/2cCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD//2Q==" class="t-logo" alt="Bhojpe"/>
+  <div class="t-vsep"></div>
+  <div class="t-breadcrumb">
+    <span class="tb-link" onclick="showToast('Dashboard')">Dashboard</span>
+    <span class="tb-sep">›</span>
+    <span class="tb-current" id="breadcrumb-current">Settings</span>
+  </div>
+  <div class="t-sp"></div>
+  <div class="page-tabs">
+    <button class="pt active" onclick="switchMainPage('main',this)">⚙️ Printer Settings</button>
+    <button class="pt" onclick="switchMainPage('kds',this)">🖥️ KDS Settings</button>
+    <button class="pt" onclick="switchMainPage('led',this)">📺 LED Display</button>
+  </div>
+  <button class="t-save" onclick="saveAll()">💾 Save All</button>
+</div>
+
+<div class="pages-wrap">
+
+<!-- ══════════════════════════════════════════
+     MAIN PAGE — PRINTER SETTINGS
+══════════════════════════════════════════ -->
+<div class="main-page active" id="page-main">
+  <div class="sidebar">
+    <div class="sb-sec">Print Settings</div>
+    <button class="sb-item active" onclick="switchSec('kitchens',this)"><span class="sb-ic">👨‍🍳</span>Kitchen Management<div class="sb-badge badge-grn" id="kitchen-count">2</div></button>
+    <button class="sb-item" onclick="switchSec('printers',this)"><span class="sb-ic">🖨️</span>Printer Config<div class="sb-badge badge-grn">3</div></button>
+    <button class="sb-item" onclick="switchSec('kot-settings',this)"><span class="sb-ic">📋</span>KOT Settings</button>
+    <button class="sb-item" onclick="switchSec('bill-settings',this)"><span class="sb-ic">🧾</span>Bill Settings</button>
+    <button class="sb-item" onclick="switchSec('directprint',this)"><span class="sb-ic">⚡</span>Direct Print</button>
+    <button class="sb-item" onclick="switchSec('paper',this)"><span class="sb-ic">📄</span>Paper & Format</button>
+    <div class="sb-sec">Status</div>
+    <div style="padding:10px 12px;display:flex;flex-direction:column;gap:7px;font-size:12px">
+      <div style="display:flex;align-items:center;justify-content:space-between"><span style="color:var(--t2);font-weight:500">Veg Kitchen</span><span style="display:flex;align-items:center;gap:5px;font-weight:700;color:var(--grn)"><span class="dot-online"></span>Online</span></div>
+      <div style="display:flex;align-items:center;justify-content:space-between"><span style="color:var(--t2);font-weight:500">Non-Veg Kitchen</span><span style="display:flex;align-items:center;gap:5px;font-weight:700;color:var(--grn)"><span class="dot-online"></span>Online</span></div>
+      <div style="display:flex;align-items:center;justify-content:space-between"><span style="color:var(--t2);font-weight:500">Bill Printer</span><span style="display:flex;align-items:center;gap:5px;font-weight:700;color:var(--grn)"><span class="dot-online"></span>Online</span></div>
+      <div style="display:flex;align-items:center;justify-content:space-between"><span style="color:var(--t2);font-weight:500">Cash Drawer</span><span style="display:flex;align-items:center;gap:5px;font-weight:700;color:var(--amb)"><span class="dot-warn"></span>Not set</span></div>
+    </div>
+    <div style="padding:10px 12px;margin-top:auto">
+      <button class="btn grn sm" style="width:100%;justify-content:center" onclick="switchSec('printers',document.querySelector('[onclick*=printers]'))">🔍 Test All Printers</button>
+    </div>
+  </div>
+  <div class="content">
+
+    <!-- ─── SECTION: KITCHEN MANAGEMENT ─── -->
+    <div class="sec-panel active" id="sec-kitchens">
+      <div class="pg-hdr">
+        <div>
+          <div class="pg-title">Kitchen Management</div>
+          <div class="pg-sub">Har kitchen add karo, unhe categories assign karo aur printer link karo</div>
+        </div>
+        <div class="btn-row">
+          <button class="btn" onclick="showToast('Test all kitchen printers 🖨️')">🖨️ Test All</button>
+          <button class="btn pr" onclick="toggleAddKitchen()">+ Add Kitchen</button>
+        </div>
+      </div>
+
+      <!-- Add Kitchen Form -->
+      <div class="add-kitchen-form" id="add-kitchen-form" style="display:none;margin-bottom:18px">
+        <div style="font-size:14px;font-weight:800;color:var(--ac);margin-bottom:14px">➕ New Kitchen Setup</div>
+        <div class="fg-row c3">
+          <div class="fg"><div class="fl">Kitchen Name</div><input class="fi" id="new-kitchen-name" placeholder="e.g. Veg Kitchen"/></div>
+          <div class="fg"><div class="fl">Color / Icon</div>
+            <div style="display:flex;gap:8px;margin-top:4px">
+              <div class="color-opt active" style="width:32px;height:32px;border-radius:8px;background:#16a34a;cursor:pointer;border:2px solid transparent" onclick="selectKColor(this,'#16a34a')"></div>
+              <div class="color-opt" style="width:32px;height:32px;border-radius:8px;background:#dc2626;cursor:pointer;border:2px solid transparent" onclick="selectKColor(this,'#dc2626')"></div>
+              <div class="color-opt" style="width:32px;height:32px;border-radius:8px;background:#2563eb;cursor:pointer;border:2px solid transparent" onclick="selectKColor(this,'#2563eb')"></div>
+              <div class="color-opt" style="width:32px;height:32px;border-radius:8px;background:#d97706;cursor:pointer;border:2px solid transparent" onclick="selectKColor(this,'#d97706')"></div>
+              <div class="color-opt" style="width:32px;height:32px;border-radius:8px;background:#7c3aed;cursor:pointer;border:2px solid transparent" onclick="selectKColor(this,'#7c3aed')"></div>
+              <div class="color-opt" style="width:32px;height:32px;border-radius:8px;background:#0f766e;cursor:pointer;border:2px solid transparent" onclick="selectKColor(this,'#0f766e')"></div>
+            </div>
+          </div>
+          <div class="fg"><div class="fl">Assign Printer</div><select class="fi" id="new-kitchen-printer"><option value="">Select Printer</option><option>Epson TM-T88VI (192.168.1.10)</option><option>Star TSP654IIE (192.168.1.11)</option><option>Bill Printer (USB)</option></select></div>
+        </div>
+        <div class="fg">
+          <div class="fl">Item Categories (click to assign)</div>
+          <div class="chips-wrap" id="new-kitchen-cats">
+            <div class="chip" onclick="toggleChip(this)">🥗 Veg Pizza</div>
+            <div class="chip" onclick="toggleChip(this)">🍗 Chicken Items</div>
+            <div class="chip" onclick="toggleChip(this)">🥘 Paneer</div>
+            <div class="chip" onclick="toggleChip(this)">🥬 South Indian</div>
+            <div class="chip" onclick="toggleChip(this)">🫓 Roti / Naan</div>
+            <div class="chip" onclick="toggleChip(this)">🫕 Dal</div>
+            <div class="chip" onclick="toggleChip(this)">🥩 Non-Veg Biryani</div>
+            <div class="chip" onclick="toggleChip(this)">🥤 Drinks</div>
+            <div class="chip" onclick="toggleChip(this)">🍳 Egg Items</div>
+            <div class="chip" onclick="toggleChip(this)">🍮 Desserts</div>
+            <div class="chip" onclick="toggleChip(this)">🥩 Mutton Items</div>
+            <div class="chip" onclick="toggleChip(this)">🌮 Rolls</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:14px">
+          <button class="btn pr" onclick="addKitchen()">✅ Add Kitchen</button>
+          <button class="btn" onclick="toggleAddKitchen()">Cancel</button>
+        </div>
+      </div>
+
+      <!-- Existing kitchens -->
+      <div id="kitchens-list">
+
+        <!-- Kitchen 1: Veg -->
+        <div class="kitchen-card open" id="kitchen-1">
+          <div class="kc-header" onclick="toggleKitchen('kitchen-1')">
+            <div class="kc-color" style="background:rgba(22,163,74,.15)">🥗</div>
+            <div class="kc-info">
+              <div class="kc-name">Veg Kitchen</div>
+              <div class="kc-meta">Epson TM-T88VI · 192.168.1.10 · WiFi · 5 categories</div>
+            </div>
+            <div class="kc-badges">
+              <span class="pill pill-g"><span class="dot-online" style="width:6px;height:6px"></span>Online</span>
+              <span class="pill pill-ac">5 Categories</span>
+              <span class="pill" style="background:var(--s2);color:var(--t2);border:1px solid var(--bd)">80mm</span>
+            </div>
+            <div class="kc-actions">
+              <button class="btn sm" onclick="event.stopPropagation();openPrinterModal('Veg Kitchen')">⚙️ Printer</button>
+              <button class="btn sm" onclick="event.stopPropagation();showToast('Test KOT sent 🖨️')">🖨️ Test</button>
+              <button class="btn sm danger" onclick="event.stopPropagation();removeKitchen('kitchen-1')">🗑</button>
+            </div>
+          </div>
+          <div class="kc-expand">
+            <div class="fg-row c3">
+              <div class="fg"><div class="fl">Kitchen Name</div><input class="fi" value="Veg Kitchen"/></div>
+              <div class="fg"><div class="fl">Assigned Printer</div><select class="fi"><option selected>Epson TM-T88VI (192.168.1.10)</option><option>Star TSP654IIE (LAN)</option><option>Bill Printer (USB)</option></select></div>
+              <div class="fg"><div class="fl">KOT Copies</div><select class="fi"><option selected>1 Copy</option><option>2 Copies</option></select></div>
+            </div>
+            <div class="fg"><div class="fl">Assigned Item Categories</div>
+              <div class="chips-wrap">
+                <div class="chip on" onclick="toggleChip(this)"><div style="width:6px;height:6px;border-radius:50%;background:var(--grn)"></div>🥗 Veg Pizza<span class="chip-x">✕</span></div>
+                <div class="chip on" onclick="toggleChip(this)"><div style="width:6px;height:6px;border-radius:50%;background:var(--grn)"></div>🥘 Paneer<span class="chip-x">✕</span></div>
+                <div class="chip on" onclick="toggleChip(this)"><div style="width:6px;height:6px;border-radius:50%;background:var(--grn)"></div>🥬 South Indian<span class="chip-x">✕</span></div>
+                <div class="chip on" onclick="toggleChip(this)"><div style="width:6px;height:6px;border-radius:50%;background:var(--grn)"></div>🫓 Roti / Naan<span class="chip-x">✕</span></div>
+                <div class="chip on" onclick="toggleChip(this)"><div style="width:6px;height:6px;border-radius:50%;background:var(--grn)"></div>🫕 Dal<span class="chip-x">✕</span></div>
+                <div class="chip" onclick="toggleChip(this)">🥤 Drinks</div>
+                <div class="chip" onclick="toggleChip(this)">🍮 Desserts</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid var(--bd)">
+              <label style="display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--t2);cursor:pointer"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label>Auto KOT Print</label>
+              <label style="display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--t2);cursor:pointer"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label>Show Notes on KOT</label>
+              <button class="btn pr sm" style="margin-left:auto" onclick="showToast('Veg Kitchen saved ✓')">💾 Save</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Kitchen 2: Non-Veg -->
+        <div class="kitchen-card" id="kitchen-2">
+          <div class="kc-header" onclick="toggleKitchen('kitchen-2')">
+            <div class="kc-color" style="background:rgba(220,38,38,.12)">🍗</div>
+            <div class="kc-info">
+              <div class="kc-name">Non-Veg Kitchen</div>
+              <div class="kc-meta">Star TSP654IIE · 192.168.1.11 · LAN · 4 categories</div>
+            </div>
+            <div class="kc-badges">
+              <span class="pill pill-g"><span class="dot-online" style="width:6px;height:6px"></span>Online</span>
+              <span class="pill pill-ac">4 Categories</span>
+              <span class="pill" style="background:var(--s2);color:var(--t2);border:1px solid var(--bd)">80mm</span>
+            </div>
+            <div class="kc-actions">
+              <button class="btn sm" onclick="event.stopPropagation();openPrinterModal('Non-Veg Kitchen')">⚙️ Printer</button>
+              <button class="btn sm" onclick="event.stopPropagation();showToast('Test KOT sent 🖨️')">🖨️ Test</button>
+              <button class="btn sm danger" onclick="event.stopPropagation();removeKitchen('kitchen-2')">🗑</button>
+            </div>
+          </div>
+          <div class="kc-expand">
+            <div class="fg-row c3">
+              <div class="fg"><div class="fl">Kitchen Name</div><input class="fi" value="Non-Veg Kitchen"/></div>
+              <div class="fg"><div class="fl">Assigned Printer</div><select class="fi"><option>Epson TM-T88VI (192.168.1.10)</option><option selected>Star TSP654IIE (192.168.1.11)</option><option>Bill Printer (USB)</option></select></div>
+              <div class="fg"><div class="fl">KOT Copies</div><select class="fi"><option selected>1 Copy</option><option>2 Copies</option></select></div>
+            </div>
+            <div class="fg"><div class="fl">Assigned Item Categories</div>
+              <div class="chips-wrap">
+                <div class="chip on" onclick="toggleChip(this)"><div style="width:6px;height:6px;border-radius:50%;background:var(--grn)"></div>🍗 Chicken Items<span class="chip-x">✕</span></div>
+                <div class="chip on" onclick="toggleChip(this)"><div style="width:6px;height:6px;border-radius:50%;background:var(--grn)"></div>🥩 Mutton Items<span class="chip-x">✕</span></div>
+                <div class="chip on" onclick="toggleChip(this)"><div style="width:6px;height:6px;border-radius:50%;background:var(--grn)"></div>🍳 Egg Items<span class="chip-x">✕</span></div>
+                <div class="chip on" onclick="toggleChip(this)"><div style="width:6px;height:6px;border-radius:50%;background:var(--grn)"></div>🥩 Non-Veg Biryani<span class="chip-x">✕</span></div>
+                <div class="chip" onclick="toggleChip(this)">🌮 Rolls</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid var(--bd)">
+              <label style="display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--t2);cursor:pointer"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label>Auto KOT Print</label>
+              <label style="display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--t2);cursor:pointer"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label>Show Notes on KOT</label>
+              <button class="btn pr sm" style="margin-left:auto" onclick="showToast('Non-Veg Kitchen saved ✓')">💾 Save</button>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /kitchens-list -->
+
+      <!-- Fallback -->
+      <div class="card" style="margin-top:18px">
+        <div class="card-hdr"><div class="ch-left"><div class="ch-ico" style="background:var(--adm2)">⚠️</div><div><div class="ch-title">Fallback / Default Printer</div><div class="ch-sub">Jab kisi category ka printer assign na ho</div></div></div></div>
+        <div class="card-body" style="display:flex;align-items:center;gap:14px">
+          <div style="flex:1;font-size:13px;color:var(--t2)">Unassigned categories ke KOT is printer se print honge</div>
+          <select class="fi" style="max-width:260px"><option selected>Veg Kitchen Printer (192.168.1.10)</option><option>Non-Veg Kitchen Printer</option><option>Bill Printer (USB)</option></select>
+          <button class="btn pr sm" onclick="showToast('Fallback saved ✓')">💾 Save</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── SECTION: PRINTERS ─── -->
+    <div class="sec-panel" id="sec-printers">
+      <div class="pg-hdr">
+        <div><div class="pg-title">Printer Configuration</div><div class="pg-sub">Sabhi printers setup karo — WiFi, Bluetooth, LAN, USB, Cash Drawer</div></div>
+        <button class="btn pr" onclick="openPrinterModal(null)">+ Add New Printer</button>
+      </div>
+      <div class="printer-btn-grid">
+        <div class="printer-btn-card selected" onclick="selectPrinterCard(this);openPrinterModal('Veg Kitchen Printer')">
+          <div class="pbc-ico">🖨️</div>
+          <div class="pbc-title">Veg Kitchen Printer</div>
+          <div class="pbc-sub">Epson TM-T88VI · WiFi</div>
+          <div class="pbc-status"><span class="dot-online"></span><span style="color:var(--grn);font-weight:700">Online</span></div>
+        </div>
+        <div class="printer-btn-card" onclick="selectPrinterCard(this);openPrinterModal('Non-Veg Kitchen Printer')">
+          <div class="pbc-ico">🖨️</div>
+          <div class="pbc-title">Non-Veg Kitchen Printer</div>
+          <div class="pbc-sub">Star TSP654IIE · LAN</div>
+          <div class="pbc-status"><span class="dot-online"></span><span style="color:var(--grn);font-weight:700">Online</span></div>
+        </div>
+        <div class="printer-btn-card" onclick="selectPrinterCard(this);openPrinterModal('Bill Printer')">
+          <div class="pbc-ico">🧾</div>
+          <div class="pbc-title">Bill / Receipt Printer</div>
+          <div class="pbc-sub">Epson TM-T20III · USB</div>
+          <div class="pbc-status"><span class="dot-online"></span><span style="color:var(--grn);font-weight:700">Online</span></div>
+        </div>
+        <div class="printer-btn-card" onclick="selectPrinterCard(this);openPrinterModal('Cash Drawer')">
+          <div class="pbc-ico">🗄️</div>
+          <div class="pbc-title">Cash Drawer</div>
+          <div class="pbc-sub">Bill Printer se connect</div>
+          <div class="pbc-status"><span class="dot-warn"></span><span style="color:var(--amb);font-weight:700">Not Configured</span></div>
+        </div>
+        <div class="printer-btn-card" onclick="selectPrinterCard(this);openPrinterModal('KDS Display')">
+          <div class="pbc-ico">🖥️</div>
+          <div class="pbc-title">KDS Display</div>
+          <div class="pbc-sub">Kitchen Display System</div>
+          <div class="pbc-status"><span class="dot-offline"></span><span style="color:var(--red);font-weight:700">Offline</span></div>
+        </div>
+        <div class="printer-btn-card" style="border-style:dashed;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center" onclick="openPrinterModal(null)">
+          <div style="font-size:32px;margin-bottom:10px;opacity:.4">➕</div>
+          <div style="font-size:14px;font-weight:700;color:var(--t2)">Add Printer</div>
+          <div style="font-size:12px;color:var(--t3);margin-top:4px">New device setup</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── SECTION: KOT SETTINGS ─── -->
+    <div class="sec-panel" id="sec-kot-settings">
+      <div class="pg-hdr"><div><div class="pg-title">KOT Print Settings</div><div class="pg-sub">Kitchen Order Ticket par kya print hoga — sab manual configure karo</div></div></div>
+      <div class="print-group open">
+        <button class="pg-trigger" onclick="togglePG(this)"><div class="pg-ico" style="background:var(--adim)">🏪</div><div class="pg-title"><div class="pg-t-name">Restaurant Header</div><div class="pg-t-sub">KOT ke upar restaurant info</div></div><label class="tog" onclick="e=arguments[0];e.stopPropagation()"><input type="checkbox" checked><span class="tsl"></span></label><span class="pg-arrow">›</span></button>
+        <div class="pg-content">
+          <div class="fg-row c2">
+            <div class="fg"><div class="fl">Restaurant Name</div><input class="fi" value="Bhojpe Restaurant"/></div>
+            <div class="fg"><div class="fl">Branch Name</div><input class="fi" value="Kap's Cafe, Gwalior"/></div>
+          </div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Print Restaurant Name</div><div class="pfr-sub">KOT ke top par naam dikhe</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Print Branch Name</div><div class="pfr-sub">Branch city/area</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Print Logo on KOT</div><div class="pfr-sub">Bhojpe logo print ho</div></div><div class="pfr-right"><label class="tog"><input type="checkbox"><span class="tsl"></span></label></div></div>
+        </div>
+      </div>
+      <div class="print-group">
+        <button class="pg-trigger" onclick="togglePG(this)"><div class="pg-ico" style="background:var(--bdim)">📋</div><div class="pg-title"><div class="pg-t-name">Order Details</div><div class="pg-t-sub">Table, time, waiter info</div></div><label class="tog" onclick="e=arguments[0];e.stopPropagation()"><input type="checkbox" checked><span class="tsl"></span></label><span class="pg-arrow">›</span></button>
+        <div class="pg-content">
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">KOT Number</div><div class="pfr-sub">Serial KOT number</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Table Number</div><div class="pfr-sub">T-1, T-2 etc.</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Order Type (Dine/Pickup/Delivery)</div><div class="pfr-sub">Order channel print ho</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Date & Time</div><div class="pfr-sub">KOT print time</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Waiter Name</div><div class="pfr-sub">Assigned waiter ka naam</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Pax Count</div><div class="pfr-sub">Kitne customer</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Order ID</div><div class="pfr-sub">#001 order number</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+        </div>
+      </div>
+      <div class="print-group">
+        <button class="pg-trigger" onclick="togglePG(this)"><div class="pg-ico" style="background:var(--gdim)">🍽️</div><div class="pg-title"><div class="pg-t-name">Item Details</div><div class="pg-t-sub">Food items ka format</div></div><label class="tog" onclick="e=arguments[0];e.stopPropagation()"><input type="checkbox" checked><span class="tsl"></span></label><span class="pg-arrow">›</span></button>
+        <div class="pg-content">
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Item Name (Bold)</div><div class="pfr-sub">Item naam bold print ho</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Item Quantity (Large)</div><div class="pfr-sub">Qty number bada dikhe</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Item Price on KOT</div><div class="pfr-sub">Kitchen ko price dikhana</div></div><div class="pfr-right"><label class="tog"><input type="checkbox"><span class="tsl"></span></label></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Item Notes / Customization</div><div class="pfr-sub">"Less spicy", "Extra gravy" etc.</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Modifiers on KOT</div><div class="pfr-sub">Size, toppings etc.</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Veg/Non-Veg Indicator</div><div class="pfr-sub">● symbol print ho</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+        </div>
+      </div>
+      <div class="print-group">
+        <button class="pg-trigger" onclick="togglePG(this)"><div class="pg-ico" style="background:var(--adm2)">📄</div><div class="pg-title"><div class="pg-t-name">Footer</div><div class="pg-t-sub">KOT ke neeche</div></div><label class="tog" onclick="e=arguments[0];e.stopPropagation()"><input type="checkbox" checked><span class="tsl"></span></label><span class="pg-arrow">›</span></button>
+        <div class="pg-content">
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Footer Message</div><div class="pfr-sub">Custom message at bottom</div></div><div class="pfr-right"><input class="fi" value="Please prepare these items" style="max-width:220px"/></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Copy Number</div><div class="pfr-sub">COPY 1/1 ya 1/2</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Cut Paper After KOT</div><div class="pfr-sub">Auto paper cut</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+        </div>
+      </div>
+      <!-- KOT Preview -->
+      <div class="card">
+        <div class="card-hdr"><div class="ch-left"><div class="ch-ico" style="background:var(--s2)">👁</div><div><div class="ch-title">KOT Preview</div><div class="ch-sub">Live preview of KOT ticket</div></div></div><button class="btn sm grn" onclick="showToast('Test KOT printed 🖨️')">🖨️ Print Test KOT</button></div>
+        <div class="card-body" style="display:flex;gap:20px">
+          <div style="flex:1;background:var(--s1);border:1px dashed var(--bd2);border-radius:var(--rl);padding:18px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:2;text-align:center">
+            ================================<br/>
+            &nbsp;&nbsp;<strong>BHOJPE RESTAURANT</strong><br/>
+            &nbsp;&nbsp;Kap's Cafe, Gwalior<br/>
+            ————————————————<br/>
+            <strong>KOT #023 — VEG KITCHEN</strong><br/>
+            ————————————————<br/>
+            Table: T-5 &nbsp;|&nbsp; Pax: 4<br/>
+            Waiter: Sanjay S.<br/>
+            Time: 15/03/26 07:30 PM<br/>
+            Order Type: Dine In<br/>
+            ————————————————<br/>
+            <strong>3 x Butter Paneer Masala</strong><br/>
+            &nbsp;&nbsp;● Spicy · Extra Gravy<br/>
+            <strong>2 x Garlic Naan</strong><br/>
+            <strong>1 x Dal Tadka</strong><br/>
+            &nbsp;&nbsp;● Less salt<br/>
+            ================================<br/>
+            Please prepare these items<br/>
+            COPY 1 / 1<br/>
+            ================================
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── SECTION: BILL SETTINGS ─── -->
+    <div class="sec-panel" id="sec-bill-settings">
+      <div class="pg-hdr"><div><div class="pg-title">Bill Print Settings</div><div class="pg-sub">Customer bill / Tax Invoice par kya print hoga — sab configure karo</div></div></div>
+      <div class="print-group open">
+        <button class="pg-trigger" onclick="togglePG(this)"><div class="pg-ico" style="background:var(--adim)">🏪</div><div class="pg-title"><div class="pg-t-name">Restaurant Header</div><div class="pg-t-sub">Bill ke upar restaurant identity</div></div><label class="tog" onclick="e=arguments[0];e.stopPropagation()"><input type="checkbox" checked><span class="tsl"></span></label><span class="pg-arrow">›</span></button>
+        <div class="pg-content">
+          <div class="fg-row c2">
+            <div class="fg"><div class="fl">Restaurant Name</div><input class="fi" value="Bhojpe Restaurant"/></div>
+            <div class="fg"><div class="fl">Address Line 1</div><input class="fi" value="City Center, Gwalior MP"/></div>
+            <div class="fg"><div class="fl">Phone Number</div><input class="fi" value="+91 94250 08600"/></div>
+            <div class="fg"><div class="fl">GSTIN</div><input class="fi" value="23AAACB1234A1Z5" style="font-family:'JetBrains Mono',monospace"/></div>
+            <div class="fg"><div class="fl">FSSAI Number</div><input class="fi" placeholder="Your FSSAI number"/></div>
+            <div class="fg"><div class="fl">Email</div><input class="fi" value="hello@bhojpe.in"/></div>
+          </div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Print Logo on Bill</div><div class="pfr-sub">Bhojpe logo at top</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Print Restaurant Name</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Print Address</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Print Phone Number</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Print GSTIN</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Print FSSAI</div></div><div class="pfr-right"><label class="tog"><input type="checkbox"><span class="tsl"></span></label></div></div>
+        </div>
+      </div>
+      <div class="print-group">
+        <button class="pg-trigger" onclick="togglePG(this)"><div class="pg-ico" style="background:var(--bdim)">📋</div><div class="pg-title"><div class="pg-t-name">Bill Details</div><div class="pg-t-sub">Bill number, table, waiter info</div></div><label class="tog" onclick="e=arguments[0];e.stopPropagation()"><input type="checkbox" checked><span class="tsl"></span></label><span class="pg-arrow">›</span></button>
+        <div class="pg-content">
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Bill Number</div><div class="pfr-sub">BILL-001 serial</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Table Number</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Date & Time</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Waiter Name</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Pax Count</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Customer Name</div><div class="pfr-sub">Agar customer add kiya ho</div></div><div class="pfr-right"><label class="tog"><input type="checkbox"><span class="tsl"></span></label></div></div>
+        </div>
+      </div>
+      <div class="print-group">
+        <button class="pg-trigger" onclick="togglePG(this)"><div class="pg-ico" style="background:var(--gdim)">💰</div><div class="pg-title"><div class="pg-t-name">Tax & Totals</div><div class="pg-t-sub">GST, discount, total breakdown</div></div><label class="tog" onclick="e=arguments[0];e.stopPropagation()"><input type="checkbox" checked><span class="tsl"></span></label><span class="pg-arrow">›</span></button>
+        <div class="pg-content">
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Show GST Breakup</div><div class="pfr-sub">CGST + SGST alag alag</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Show Discount</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Show Delivery Charges</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Show Round Off</div></div><div class="pfr-right"><label class="tog"><input type="checkbox"><span class="tsl"></span></label></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Amount in Words</div><div class="pfr-sub">Total in Hindi/English words</div></div><div class="pfr-right"><label class="tog"><input type="checkbox"><span class="tsl"></span></label></div></div>
+        </div>
+      </div>
+      <div class="print-group">
+        <button class="pg-trigger" onclick="togglePG(this)"><div class="pg-ico" style="background:var(--pdim)">📱</div><div class="pg-title"><div class="pg-t-name">QR Code & Digital</div><div class="pg-t-sub">UPI QR, website link</div></div><label class="tog" onclick="e=arguments[0];e.stopPropagation()"><input type="checkbox"><span class="tsl"></span></label><span class="pg-arrow">›</span></button>
+        <div class="pg-content">
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Print UPI QR Code</div><div class="pfr-sub">Customer direct pay kar sake</div></div><div class="pfr-right"><label class="tog"><input type="checkbox"><span class="tsl"></span></label></div></div>
+          <div class="fg" style="margin-top:12px"><div class="fl">UPI ID</div><input class="fi" placeholder="yourname@upi" style="font-family:'JetBrains Mono',monospace"/></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Print Website / Social</div></div><div class="pfr-right"><label class="tog"><input type="checkbox"><span class="tsl"></span></label></div></div>
+        </div>
+      </div>
+      <div class="print-group">
+        <button class="pg-trigger" onclick="togglePG(this)"><div class="pg-ico" style="background:var(--adm2)">📝</div><div class="pg-title"><div class="pg-t-name">Footer</div><div class="pg-t-sub">Thank you message, terms</div></div><label class="tog" onclick="e=arguments[0];e.stopPropagation()"><input type="checkbox" checked><span class="tsl"></span></label><span class="pg-arrow">›</span></button>
+        <div class="pg-content">
+          <div class="fg"><div class="fl">Footer Message</div><input class="fi" value="Thank you! Visit us again 🙏"/></div>
+          <div class="fg"><div class="fl">Footer Line 2</div><input class="fi" placeholder="e.g. Follow us @bhojpe"/></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Print "Tax Invoice"</div><div class="pfr-sub">Official tax invoice heading</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Cut Paper After Bill</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+          <div class="fg" style="margin-top:12px"><div class="fl">Bill Copies</div><select class="fi"><option selected>1 Copy</option><option>2 Copies</option><option>3 Copies</option></select></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── SECTION: DIRECT PRINT ─── -->
+    <div class="sec-panel" id="sec-directprint">
+      <div class="pg-hdr"><div><div class="pg-title">Direct Print</div><div class="pg-sub">Popup ke bina seedha print — faster operations ke liye</div></div></div>
+      <div class="status-bar sb-ok">✅ Direct print enabled — KOT & Bill bina popup ke print honge</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="card"><div class="card-body">
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">KOT Direct Print</div><div class="pfr-sub">KOT button → seedha print</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked onchange="showToast('KOT Direct Print '+(this.checked?'On':'Off'))"><span class="tsl"></span></label></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Bill Direct Print</div><div class="pfr-sub">Bill button → seedha print</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked onchange="showToast('Bill Direct Print '+(this.checked?'On':'Off'))"><span class="tsl"></span></label></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Auto KOT on Item Add</div><div class="pfr-sub">Item add → auto KOT</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" onchange="showToast('Auto KOT '+(this.checked?'On':'Off'))"><span class="tsl"></span></label></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Auto Bill on Checkout</div><div class="pfr-sub">Checkout → auto bill</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked onchange="showToast('Auto Bill '+(this.checked?'On':'Off'))"><span class="tsl"></span></label></div></div>
+          <div class="print-field-row" style="border-bottom:none"><div class="pfr-left"><div class="pfr-label">Open Drawer on Cash</div><div class="pfr-sub">Cash payment → drawer open</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked onchange="showToast('Cash Drawer '+(this.checked?'On':'Off'))"><span class="tsl"></span></label></div></div>
+        </div></div>
+        <div class="card"><div class="card-body">
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">E-Bill Auto Send</div><div class="pfr-sub">SMS/WhatsApp bill</div></div><div class="pfr-right"><label class="tog"><input type="checkbox"><span class="tsl"></span></label></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">KOT Sound Alert</div><div class="pfr-sub">Print hone par beep</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">New Order Alert Sound</div><div class="pfr-sub">Online order aane par sound</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+          <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Reprint Confirmation</div><div class="pfr-sub">Dubara print karte waqt confirm</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+          <div class="print-field-row" style="border-bottom:none"><div class="pfr-left"><div class="pfr-label">Partial KOT on Edit</div><div class="pfr-sub">Sirf naye items ka KOT</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- ─── SECTION: PAPER & FORMAT ─── -->
+    <div class="sec-panel" id="sec-paper">
+      <div class="pg-hdr"><div><div class="pg-title">Paper Size & Format</div><div class="pg-sub">Print ka paper width, font, margins configure karo</div></div></div>
+      <div class="card"><div class="card-hdr"><div class="ch-left"><div class="ch-ico" style="background:var(--s2)">📄</div><div><div class="ch-title">Paper Size</div></div></div></div>
+        <div class="card-body">
+          <div style="display:flex;gap:12px;margin-bottom:18px">
+            <div class="type-opt sel" onclick="document.querySelectorAll('.type-opt').forEach(o=>o.classList.remove('sel'));this.classList.add('sel');showToast('80mm selected')"><div class="to-ico">📄</div><div class="to-title">80mm</div><div class="to-sub">Standard · Most printers</div></div>
+            <div class="type-opt" onclick="document.querySelectorAll('.type-opt').forEach(o=>o.classList.remove('sel'));this.classList.add('sel');showToast('58mm selected')"><div class="to-ico">📄</div><div class="to-title">58mm</div><div class="to-sub">Compact printers</div></div>
+            <div class="type-opt" onclick="document.querySelectorAll('.type-opt').forEach(o=>o.classList.remove('sel'));this.classList.add('sel');showToast('A4 selected')"><div class="to-ico">📃</div><div class="to-title">A4</div><div class="to-sub">Full page bills</div></div>
+          </div>
+          <div class="fg-row c3">
+            <div class="fg"><div class="fl">Characters/Line</div><input class="fi" value="48" style="font-family:'JetBrains Mono',monospace"/></div>
+            <div class="fg"><div class="fl">Font Size</div><select class="fi"><option>Small (7pt)</option><option selected>Medium (9pt)</option><option>Large (12pt)</option></select></div>
+            <div class="fg"><div class="fl">Line Spacing</div><select class="fi"><option>Compact</option><option selected>Normal</option><option>Wide</option></select></div>
+          </div>
+          <button class="btn pr" onclick="showToast('Paper settings saved ✓')">💾 Save</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /page-main -->
+
+<!-- ══════════════════════════════════════════
+     KDS PAGE
+══════════════════════════════════════════ -->
+<div class="kds-main" id="page-kds">
+  <div class="sidebar">
+    <div class="sb-sec">KDS Settings</div>
+    <button class="sb-item active" onclick="switchKdsSec('kds-general',this)"><span class="sb-ic">⚙️</span>General</button>
+    <button class="sb-item" onclick="switchKdsSec('kds-display',this)"><span class="sb-ic">🖥️</span>Display Layout</button>
+    <button class="sb-item" onclick="switchKdsSec('kds-timers',this)"><span class="sb-ic">⏱️</span>Timer Settings</button>
+    <button class="sb-item" onclick="switchKdsSec('kds-screens',this)"><span class="sb-ic">📺</span>KDS Screens</button>
+  </div>
+  <div class="content">
+    <div class="sec-panel active" id="sec-kds-general">
+      <div class="pg-hdr"><div><div class="pg-title">KDS — Kitchen Display System</div><div class="pg-sub">Kitchen display screen setup karo — live order status dikhane ke liye</div></div></div>
+      <!-- KDS Preview -->
+      <div style="background:var(--tx);border-radius:var(--rl);padding:18px;margin-bottom:18px">
+        <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,.6);margin-bottom:12px">📺 KDS Screen Live Preview</div>
+        <div class="kds-screen-preview">
+          <div class="kds-card-preview kds-card-new">
+            <div class="kds-id">#201 · Table T-2</div>
+            <div class="kds-table">Dine In · 4 Pax</div>
+            <div class="kds-item">3× Butter Paneer</div>
+            <div class="kds-item">2× Garlic Naan</div>
+            <div class="kds-item">1× Dal Tadka</div>
+            <div class="kds-timer t-ok">⏱ 3 min</div>
+          </div>
+          <div class="kds-card-preview kds-card-prep">
+            <div class="kds-id">#199 · Table T-5</div>
+            <div class="kds-table">Dine In · 2 Pax</div>
+            <div class="kds-item">1× Chicken Biryani</div>
+            <div class="kds-item">2× Raita</div>
+            <div class="kds-timer t-warn">⏱ 18 min</div>
+          </div>
+          <div class="kds-card-preview kds-card-prep">
+            <div class="kds-id">#197 · Swiggy</div>
+            <div class="kds-table">Delivery</div>
+            <div class="kds-item">2× Paneer Pizza</div>
+            <div class="kds-item">1× Cold Coffee</div>
+            <div class="kds-timer t-red">🔥 28 min</div>
+          </div>
+          <div class="kds-card-preview kds-card-done">
+            <div class="kds-id">#195 · Table T-1</div>
+            <div class="kds-table">✅ Ready</div>
+            <div class="kds-item">5× Roti</div>
+            <div class="kds-item">1× Dal Makhani</div>
+            <div class="kds-timer" style="background:rgba(34,197,94,.2);color:#4ade80">✓ Done</div>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="card"><div class="card-hdr"><div class="ch-left"><div class="ch-ico" style="background:var(--bdim)">🖥️</div><div><div class="ch-title">KDS Connection</div></div></div><span class="pill pill-r">Offline</span></div>
+          <div class="card-body">
+            <div class="fg"><div class="fl">KDS Screen IP / URL</div><input class="fi" placeholder="192.168.1.20 or kds.bhojpe.local" style="font-family:'JetBrains Mono',monospace"/></div>
+            <div class="fg"><div class="fl">Connection Type</div><select class="fi"><option selected>WebSocket (LAN)</option><option>HTTP Polling</option><option>HDMI Direct</option></select></div>
+            <div style="display:flex;gap:8px;margin-top:6px">
+              <button class="btn pr sm" onclick="showToast('Connecting to KDS...','info')">🔗 Connect</button>
+              <button class="btn sm grn" onclick="showToast('Test sent to KDS 🖥️')">📤 Test</button>
+            </div>
+          </div>
+        </div>
+        <div class="card"><div class="card-hdr"><div class="ch-left"><div class="ch-ico" style="background:var(--gdim)">⚙️</div><div><div class="ch-title">KDS Behavior</div></div></div></div>
+          <div class="card-body">
+            <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Auto Send to KDS on KOT</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+            <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Show Timer on KDS</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+            <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Sound Alert on New Order</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+            <div class="print-field-row" style="border-bottom:none"><div class="pfr-left"><div class="pfr-label">Auto Remove Done Orders</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sec-panel" id="sec-kds-display">
+      <div class="pg-hdr"><div><div class="pg-title">KDS Display Layout</div></div></div>
+      <div class="card"><div class="card-body">
+        <div class="fg-row c2">
+          <div class="fg"><div class="fl">Columns on KDS Screen</div><select class="fi"><option>2 Columns</option><option>3 Columns</option><option selected>4 Columns</option><option>5 Columns</option></select></div>
+          <div class="fg"><div class="fl">Card Size</div><select class="fi"><option>Small</option><option selected>Medium</option><option>Large</option></select></div>
+          <div class="fg"><div class="fl">Theme</div><select class="fi"><option selected>Dark (Kitchen)</option><option>Light</option><option>High Contrast</option></select></div>
+          <div class="fg"><div class="fl">Font Size</div><select class="fi"><option>Small</option><option selected>Medium</option><option>Large</option></select></div>
+        </div>
+        <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Show Order Type (Dine/Delivery)</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+        <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Show Customer Name</div></div><div class="pfr-right"><label class="tog"><input type="checkbox"><span class="tsl"></span></label></div></div>
+        <div class="print-field-row" style="border-bottom:none"><div class="pfr-left"><div class="pfr-label">Show Platform (Zomato/Swiggy)</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+        <button class="btn pr" style="margin-top:14px" onclick="showToast('Display settings saved ✓')">💾 Save</button>
+      </div></div>
+    </div>
+    <div class="sec-panel" id="sec-kds-timers">
+      <div class="pg-hdr"><div><div class="pg-title">Timer Alert Settings</div></div></div>
+      <div class="card"><div class="card-body">
+        <div class="fg-row c3">
+          <div class="fg"><div class="fl">Normal (Green) — Under</div><div style="display:flex;align-items:center;gap:8px"><input class="fi" value="15" type="number" style="font-family:'JetBrains Mono',monospace"/><span style="font-size:13px;color:var(--t2)">min</span></div></div>
+          <div class="fg"><div class="fl">Warning (Amber) — Under</div><div style="display:flex;align-items:center;gap:8px"><input class="fi" value="25" type="number" style="font-family:'JetBrains Mono',monospace"/><span style="font-size:13px;color:var(--t2)">min</span></div></div>
+          <div class="fg"><div class="fl">Critical (Red) — Over</div><div style="display:flex;align-items:center;gap:8px"><input class="fi" value="25" type="number" style="font-family:'JetBrains Mono',monospace"/><span style="font-size:13px;color:var(--t2)">min</span></div></div>
+        </div>
+        <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Blink on Critical</div><div class="pfr-sub">Red card blink kare</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+        <div class="print-field-row" style="border-bottom:none"><div class="pfr-left"><div class="pfr-label">Sound on Critical</div><div class="pfr-sub">25 min se zyada hone par alarm</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+        <button class="btn pr" style="margin-top:14px" onclick="showToast('Timer settings saved ✓')">💾 Save</button>
+      </div></div>
+    </div>
+    <div class="sec-panel" id="sec-kds-screens">
+      <div class="pg-hdr"><div><div class="pg-title">KDS Screen Management</div></div><button class="btn pr" onclick="showToast('New KDS screen added!')">+ Add KDS Screen</button></div>
+      <div class="card"><div class="card-body">
+        <div style="display:flex;align-items:center;gap:14px;padding:14px;background:var(--s1);border:1.5px solid var(--bd);border-radius:var(--rl);margin-bottom:10px">
+          <span style="font-size:24px">🖥️</span>
+          <div style="flex:1"><div style="font-size:14px;font-weight:700;color:var(--tx)">Veg Kitchen Display</div><div style="font-size:12px;color:var(--t3);margin-top:2px">192.168.1.20 · Shows: Veg items only</div></div>
+          <span class="pill pill-r">Offline</span>
+          <button class="btn sm">⚙️ Configure</button>
+          <button class="btn sm danger">🗑</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;padding:14px;background:var(--s1);border:1.5px solid var(--bd);border-radius:var(--rl)">
+          <span style="font-size:24px">🖥️</span>
+          <div style="flex:1"><div style="font-size:14px;font-weight:700;color:var(--tx)">Non-Veg Kitchen Display</div><div style="font-size:12px;color:var(--t3);margin-top:2px">192.168.1.21 · Shows: Non-veg items</div></div>
+          <span class="pill pill-r">Offline</span>
+          <button class="btn sm">⚙️ Configure</button>
+          <button class="btn sm danger">🗑</button>
+        </div>
+      </div></div>
+    </div>
+  </div>
+</div><!-- /kds-main -->
+
+<!-- ══════════════════════════════════════════
+     LED DISPLAY PAGE
+══════════════════════════════════════════ -->
+<div class="led-main" id="page-led">
+  <div class="sidebar">
+    <div class="sb-sec">LED Banner</div>
+    <button class="sb-item active" onclick="switchLedSec('led-images',this)"><span class="sb-ic">🖼️</span>Image Management</button>
+    <button class="sb-item" onclick="switchLedSec('led-settings',this)"><span class="sb-ic">⚙️</span>Display Settings</button>
+    <button class="sb-item" onclick="switchLedSec('led-preview',this)"><span class="sb-ic">▶️</span>Live Preview</button>
+  </div>
+  <div class="content">
+    <div class="sec-panel active" id="sec-led-images">
+      <div class="pg-hdr"><div><div class="pg-title">LED Display — Image Manager</div><div class="pg-sub">Images upload karo, order set karo, scroll time configure karo</div></div></div>
+      <!-- Upload zone -->
+      <div class="upload-zone" id="uploadZone" onclick="document.getElementById('imgUpload').click()" ondragover="handleDrag(event,true)" ondragleave="handleDrag(event,false)" ondrop="handleDrop(event)">
+        <input type="file" id="imgUpload" accept="image/*" multiple style="display:none" onchange="handleFileSelect(event)"/>
+        <div class="uz-ico">📁</div>
+        <div class="uz-title">Images Yahan Drop Karo</div>
+        <div class="uz-sub">ya click karke select karo · JPG, PNG, GIF · Max 5MB per image</div>
+        <button class="btn pr" style="margin:14px auto 0;display:flex" onclick="event.stopPropagation();document.getElementById('imgUpload').click()">📤 Upload Images</button>
+      </div>
+      <div style="margin-top:18px">
+        <div style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--t3);margin-bottom:10px">Uploaded Images — Drag to reorder</div>
+        <div class="img-list" id="imgList"></div>
+      </div>
+    </div>
+    <div class="sec-panel" id="sec-led-settings">
+      <div class="pg-hdr"><div><div class="pg-title">Display Settings</div></div></div>
+      <div class="card"><div class="card-body">
+        <div class="fg-row c3">
+          <div class="fg"><div class="fl">Default Image Duration</div><div style="display:flex;align-items:center;gap:8px"><input class="fi" id="defaultDuration" type="number" value="5" min="1" max="60"/><span style="font-size:13px;color:var(--t2)">seconds</span></div></div>
+          <div class="fg"><div class="fl">Transition Effect</div><select class="fi"><option selected>Fade</option><option>Slide Left</option><option>Slide Up</option><option>Zoom</option><option>None</option></select></div>
+          <div class="fg"><div class="fl">Transition Speed</div><select class="fi"><option>Fast (0.5s)</option><option selected>Medium (1s)</option><option>Slow (2s)</option></select></div>
+          <div class="fg"><div class="fl">Image Fit</div><select class="fi"><option selected>Cover (Full Screen)</option><option>Contain (Fit)</option><option>Stretch (Fill)</option></select></div>
+          <div class="fg"><div class="fl">Screen Orientation</div><select class="fi"><option selected>Landscape (16:9)</option><option>Portrait (9:16)</option></select></div>
+          <div class="fg"><div class="fl">Loop</div><div style="display:flex;align-items:center;gap:8px;margin-top:8px"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label><span style="font-size:13px;color:var(--t2)">Continuously loop images</span></div></div>
+        </div>
+        <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Show on Customer Display</div><div class="pfr-sub">Customer facing screen par show ho</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+        <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Auto Start on POS Open</div><div class="pfr-sub">POS khulte hi slideshow shuru</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked><span class="tsl"></span></label></div></div>
+        <div class="print-field-row" style="border-bottom:none"><div class="pfr-left"><div class="pfr-label">Pause on Order</div><div class="pfr-sub">Jab order ho tab slideshow ruke</div></div><div class="pfr-right"><label class="tog"><input type="checkbox"><span class="tsl"></span></label></div></div>
+        <button class="btn pr" style="margin-top:14px" onclick="showToast('Display settings saved ✓')">💾 Save Settings</button>
+      </div></div>
+    </div>
+    <div class="sec-panel" id="sec-led-preview">
+      <div class="pg-hdr"><div><div class="pg-title">Live Preview</div><div class="pg-sub">Slideshow ka preview dekho</div></div>
+        <div class="btn-row">
+          <button class="btn grn" id="previewPlayBtn" onclick="togglePreview()">▶️ Play Preview</button>
+          <button class="btn" onclick="showToast('Fullscreen mode (actual LED screen pe hoga)','info')">⛶ Fullscreen</button>
+        </div>
+      </div>
+      <div class="led-preview" id="ledPreview">
+        <div class="led-preview-inner" id="ledPreviewInner">
+          <div class="led-no-img" id="ledNoImg">📷 Koi image nahi — Images upload karein</div>
+        </div>
+      </div>
+      <div style="margin-top:14px;padding:12px 14px;background:var(--w);border:1px solid var(--bd);border-radius:var(--r);display:flex;align-items:center;gap:14px;font-size:13px">
+        <span style="color:var(--t2);font-weight:500">Current image:</span>
+        <span style="font-weight:700;color:var(--tx)" id="currentImgLabel">—</span>
+        <span style="color:var(--t2);font-weight:500;margin-left:auto">Next in:</span>
+        <span style="font-weight:700;color:var(--ac);font-family:'JetBrains Mono',monospace" id="nextInLabel">—</span>
+      </div>
+    </div>
+  </div>
+</div><!-- /led-main -->
+
+</div><!-- /pages-wrap -->
+
+<!-- ══════════════════════════════════════════
+     PRINTER MODAL (Pro-level popup)
+══════════════════════════════════════════ -->
+<div class="printer-modal-overlay" id="printerModalOverlay">
+  <div class="printer-modal">
+    <div class="pm-hdr">
+      <div><div class="pm-title" id="pmTitle">Printer Setup</div><div class="pm-sub" id="pmSub">Configure karein</div></div>
+      <button class="pm-close" onclick="closePrinterModal()">✕</button>
+    </div>
+    <div class="pm-body">
+      <!-- Name & Type -->
+      <div class="fg-row c2" style="margin-bottom:0">
+        <div class="fg"><div class="fl">Printer / Device Name</div><input class="fi" id="pm-name" placeholder="e.g. Veg Kitchen Printer"/></div>
+        <div class="fg"><div class="fl">Kitchen / Function</div><select class="fi" id="pm-function"><option value="">-- Select --</option><option>Veg Kitchen KOT</option><option>Non-Veg Kitchen KOT</option><option>Both Kitchens KOT</option><option>Bill / Receipt</option><option>KOT + Bill (Same Printer)</option><option>Cash Drawer</option><option>KDS Display</option></select></div>
+      </div>
+      <!-- Print Type -->
+      <div class="fg" style="margin-top:14px"><div class="fl">Print Type</div>
+        <div class="type-selector">
+          <div class="type-opt sel" id="pt-kot" onclick="selPrintType('kot')"><div class="to-ico">📋</div><div class="to-title">KOT Only</div><div class="to-sub">Kitchen Order Ticket</div></div>
+          <div class="type-opt" id="pt-bill" onclick="selPrintType('bill')"><div class="to-ico">🧾</div><div class="to-title">Bill Only</div><div class="to-sub">Customer receipt</div></div>
+          <div class="type-opt" id="pt-both" onclick="selPrintType('both')"><div class="to-ico">🖨️</div><div class="to-title">Both</div><div class="to-sub">KOT + Bill same printer</div></div>
+        </div>
+      </div>
+      <!-- Connection Type -->
+      <div class="fg"><div class="fl">Connection Type</div>
+        <div class="scan-tabs" id="connTypeTabs">
+          <button class="scan-tab active" onclick="selConn(this,'wifi')">📶 WiFi</button>
+          <button class="scan-tab" onclick="selConn(this,'lan')">🔌 LAN</button>
+          <button class="scan-tab" onclick="selConn(this,'bt')">🔵 Bluetooth</button>
+          <button class="scan-tab" onclick="selConn(this,'usb')">💾 USB</button>
+          <button class="scan-tab" onclick="selConn(this,'cash')">🗄️ Cash Drawer</button>
+        </div>
+      </div>
+      <!-- Search -->
+      <div class="scan-wrap" id="pm-scan-wrap">
+        <div style="font-size:12.5px;font-weight:700;color:var(--t2);margin-bottom:10px" id="pm-scan-label">📶 WiFi Printer Search</div>
+        <div class="scan-row">
+          <input class="scan-input" placeholder="IP Address (192.168.1.x) ya auto scan" id="pm-ip"/>
+          <input class="scan-input" placeholder="Port: 9100" id="pm-port" value="9100" style="max-width:130px;font-family:'JetBrains Mono',monospace"/>
+          <button class="scan-btn" id="pm-scan-btn" onclick="doModalScan()">🔍 Scan</button>
+        </div>
+        <div class="scan-progress" id="pm-scan-prog"><div class="sp-fill"></div></div>
+        <div id="pm-found-list"></div>
+      </div>
+      <!-- Advanced -->
+      <div class="fg-row c2">
+        <div class="fg"><div class="fl">Paper Size</div><select class="fi"><option selected>80mm</option><option>58mm</option><option>A4</option></select></div>
+        <div class="fg"><div class="fl">Copies</div><select class="fi"><option selected>1 Copy</option><option>2 Copies</option></select></div>
+        <div class="fg"><div class="fl">Brand / Model</div><input class="fi" placeholder="Epson, Star, Generic..." id="pm-model"/></div>
+        <div class="fg"><div class="fl">Encoding</div><select class="fi"><option selected>ESC/POS</option><option>Star Mode</option><option>PCL</option></select></div>
+      </div>
+      <div class="print-field-row"><div class="pfr-left"><div class="pfr-label">Auto Print (no popup)</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked id="pm-autoprint"><span class="tsl"></span></label></div></div>
+      <div class="print-field-row" style="border-bottom:none"><div class="pfr-left"><div class="pfr-label">Active</div></div><div class="pfr-right"><label class="tog"><input type="checkbox" checked id="pm-active"><span class="tsl"></span></label></div></div>
+    </div>
+    <div class="pm-footer">
+      <button class="btn" onclick="showToast('Testing printer...');closePrinterModal()" style="gap:6px">🖨️ Test Print</button>
+      <button class="pm-cancel-btn" onclick="closePrinterModal()">Cancel</button>
+      <button class="pm-save-btn" onclick="savePrinterModal()">💾 Save Printer</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const LOGO = "data:image/png;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QBMRXhpZgAATU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAACAKADAAQAAAABAAACAAAAAAD/7QA4UGhvdG9zaG9wIDMuMAA4QklNBAQAAAAAAAA4QklNBCUAAAAAABDUHYzZjwCyBOmACZjs+EJ+/8AAEQgCAAIAAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMAAQEBAQEBAgEBAgMCAgIDBAMDAwMEBgQEBAQEBgcGBgYGBgYHBwcHBwcHBwgICAgICAkJCQkJCwsLCwsLCwsLC//bAEMBAgICAwMDBQMDBQsIBggLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLC//dAAQAIP/aAAwDAQACEQMRAD8A+d6KKK/nM/2cCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD//0Pneiiiv5zP9nAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA//9H53ooor+cz/ZwKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP//S+d6KKK/nM/2cCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD//0/neiiiv5zP9nAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA//9T53ooor+cz/ZwKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP//V+d6KKK/nM/2cCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD//1vneiiiv5zP9nAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA//9f53ooor+cz/ZwKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP//Q+d6KKK/nM/2cCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD//0fneiiiv5zP9nAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA//9L53ooor+cz/ZwKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP//T+d6KKK/nM/2cCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD//1Pneiiiv5zP9nAooooAKKKKACt3SvC3ifXYWudE066vI0bazQQvIobrglQecVhV/Vf8A8EF/+TavF3/YzP8A+ktvXrZLlix+KWHcuW6bva+33H5/4m8by4TyKpnMKHtXGUY8rly/E7XvaW3ofzA/8K7+IH/QC1D/AMBZP/iaP+Fd/ED/AKAWof8AgLJ/8TX+iRSV9n/qDD/oIf8A4D/9sfzT/wATcV/+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Haus/wCH5v7J3/Qu+Lf/AAEs/wD5Nr+VGivqY8ZZkkkmvuPwSt9G3gqrUlUlSqXbbf7x9fkfvl+3R/wVP/Z//ac/Zq1v4N+A9G8Q2ep6lLZyRS39vbRwKLeeOVtzR3MjcqpAwp59OtfgbRRXi5lmdfHVVWxDXMlbRW01f6n6dwXwRlfC2Bll2UxkqUpub5pcz5mop69rRQUUUV559cFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAf/0/neiiiv5zP9nAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA//9T53ooor+cz/ZwKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP//V+d6KKK/nM/2cCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD//1vneiiiv5zP9nAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA//9f53ooor+cz/ZwKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP//Q+d6KKK/nM/2cCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD//0fneiiiv5zP9nAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA//9L53ooor+cz/ZwKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP//T+d6KKK/nM/2cCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD//1Pneiiiv5zP9nAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA//9X53ooor+cz/ZwKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP//W+d6KKK/nM/2cCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD//2Q==";
+// Set logo
+document.querySelector('.t-logo').src = LOGO;
+
+// ── Navigation ──
+function switchMainPage(p,btn){
+  document.querySelectorAll('.main-page,.kds-main,.led-main').forEach(el=>el.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  document.querySelectorAll('.pt').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('breadcrumb-current').textContent=p==='main'?'Printer Settings':p==='kds'?'KDS Settings':'LED Display';
+}
+function switchSec(id,el){
+  document.querySelectorAll('#page-main .sec-panel').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.sidebar .sb-item').forEach(b=>b.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  el.classList.add('active');
+}
+function switchKdsSec(id,el){
+  document.querySelectorAll('#page-kds .sec-panel').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('#page-kds .sb-item').forEach(b=>b.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  el.classList.add('active');
+}
+function switchLedSec(id,el){
+  document.querySelectorAll('#page-led .sec-panel').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('#page-led .sb-item').forEach(b=>b.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  el.classList.add('active');
+}
+
+// ── Kitchen ──
+function toggleAddKitchen(){
+  const f=document.getElementById('add-kitchen-form');
+  f.style.display=f.style.display==='none'?'block':'none';
+}
+function toggleKitchen(id){
+  document.getElementById(id).classList.toggle('open');
+}
+function removeKitchen(id){
+  if(!confirm('Remove this kitchen?'))return;
+  document.getElementById(id).remove();
+  const cnt=document.querySelectorAll('.kitchen-card').length;
+  document.getElementById('kitchen-count').textContent=cnt;
+  showToast('Kitchen removed');
+}
+let selectedKColor='#16a34a';
+function selectKColor(el,c){
+  selectedKColor=c;
+  document.querySelectorAll('.color-opt').forEach(o=>o.style.border='2px solid transparent');
+  el.style.border='2px solid var(--tx)';
+}
+let kitchenCounter=3;
+function addKitchen(){
+  const name=document.getElementById('new-kitchen-name').value.trim();
+  if(!name){showToast('Kitchen name enter karo','err');return;}
+  const cats=[...document.querySelectorAll('#new-kitchen-cats .chip.on')].map(c=>c.textContent.trim()).join(', ')||'No categories';
+  const printer=document.getElementById('new-kitchen-printer').value||'No printer';
+  const id='kitchen-'+kitchenCounter++;
+  const div=document.createElement('div');
+  div.className='kitchen-card';div.id=id;
+  div.innerHTML=`<div class="kc-header" onclick="toggleKitchen('${id}')"><div class="kc-color" style="background:${selectedKColor}22">🍽️</div><div class="kc-info"><div class="kc-name">${name}</div><div class="kc-meta">${printer}</div></div><div class="kc-badges"><span class="pill" style="background:rgba(220,38,38,.09);color:var(--red);border:1px solid var(--rbdr)"><span class="dot-offline" style="width:6px;height:6px"></span>Offline</span></div><div class="kc-actions"><button class="btn sm" onclick="event.stopPropagation();openPrinterModal('${name}')">⚙️ Printer</button><button class="btn sm" onclick="event.stopPropagation();showToast('Test KOT 🖨️')">🖨️ Test</button><button class="btn sm danger" onclick="event.stopPropagation();removeKitchen('${id}')">🗑</button></div></div><div class="kc-expand"><div class="fg"><div class="fl">Categories assigned</div><div style="font-size:13px;color:var(--t2);margin-top:4px">${cats}</div></div><button class="btn pr sm" style="margin-top:10px" onclick="showToast('Saved ✓')">💾 Save</button></div>`;
+  document.getElementById('kitchens-list').appendChild(div);
+  document.getElementById('kitchen-count').textContent=document.querySelectorAll('.kitchen-card').length;
+  document.getElementById('new-kitchen-name').value='';
+  document.querySelectorAll('#new-kitchen-cats .chip').forEach(c=>c.classList.remove('on'));
+  document.getElementById('add-kitchen-form').style.display='none';
+  showToast(name+' kitchen added ✓');
+}
+
+// ── Chips ──
+function toggleChip(el){
+  el.classList.toggle('on');
+  const n=el.textContent.replace('✕','').trim();
+  showToast(n+(el.classList.contains('on')?' assigned ✓':' removed'));
+}
+
+// ── Print Group Toggle ──
+function togglePG(btn){
+  btn.closest('.print-group').classList.toggle('open');
+}
+
+// ── Printer Cards ──
+function selectPrinterCard(el){
+  document.querySelectorAll('.printer-btn-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// ── Printer Modal ──
+function openPrinterModal(name){
+  document.getElementById('pmTitle').textContent=name?'⚙️ '+name+' Settings':'➕ Add New Printer';
+  document.getElementById('pmSub').textContent=name?'Configure printer settings':'New printer setup';
+  if(name)document.getElementById('pm-name').value=name;
+  document.getElementById('printerModalOverlay').classList.add('show');
+}
+function closePrinterModal(){document.getElementById('printerModalOverlay').classList.remove('show');}
+function savePrinterModal(){
+  const n=document.getElementById('pm-name').value;
+  if(!n){showToast('Printer name enter karo','err');return;}
+  closePrinterModal();
+  showToast(n+' saved successfully ✓');
+}
+function selPrintType(t){
+  ['kot','bill','both'].forEach(x=>document.getElementById('pt-'+x).classList.remove('sel'));
+  document.getElementById('pt-'+t).classList.add('sel');
+}
+function selConn(btn,type){
+  document.querySelectorAll('#connTypeTabs .scan-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const lbl=document.getElementById('pm-scan-label');
+  const ip=document.getElementById('pm-ip');
+  const labels={wifi:'📶 WiFi — Enter IP ya Scan',lan:'🔌 LAN/Ethernet — Enter IP',bt:'🔵 Bluetooth — Scan karo',usb:'💾 USB — Auto detect',cash:'🗄️ Cash Drawer — Bill printer se connect'};
+  const placeholders={wifi:'IP Address (192.168.1.x)',lan:'IP Address (192.168.1.x)',bt:'Scan karke device select karo',usb:'/dev/usb/lp0',cash:'Bill printer port'};
+  if(lbl)lbl.textContent=labels[type]||type;
+  if(ip)ip.placeholder=placeholders[type]||'';
+}
+const SCAN_DATA={wifi:[{ico:'🖨️',nm:'Epson TM-T88VI',addr:'192.168.1.10:9100'},{ico:'🖨️',nm:'Star TSP654IIE',addr:'192.168.1.11:9100'},{ico:'🖨️',nm:'Xprinter XP-365B',addr:'192.168.1.25:9100'}],lan:[{ico:'🔌',nm:'Epson TM-T20III',addr:'192.168.1.50:9100'},{ico:'🔌',nm:'Generic LAN Printer',addr:'192.168.1.55:9100'}],bt:[{ico:'🔵',nm:'BT-Printer-A3B2',addr:'00:1A:7D:DA:71:13'},{ico:'🔵',nm:'Rongta RP80',addr:'AA:BB:CC:DD:EE:FF'}],usb:[{ico:'💾',nm:'USB Thermal Printer',addr:'/dev/usb/lp0'},{ico:'💾',nm:'Generic USB',addr:'/dev/usb/lp1'}]};
+function doModalScan(){
+  const active=document.querySelector('#connTypeTabs .scan-tab.active')?.textContent.trim().split(' ')[0];
+  const typeMap={'📶':'wifi','🔌':'lan','🔵':'bt','💾':'usb'};
+  const t=typeMap[active]||'wifi';
+  const prog=document.getElementById('pm-scan-prog');
+  const btn=document.getElementById('pm-scan-btn');
+  const list=document.getElementById('pm-found-list');
+  if(prog)prog.classList.add('active');
+  if(btn){btn.textContent='⟳ Scanning...';btn.disabled=true;}
+  if(list)list.innerHTML='';
+  setTimeout(()=>{
+    if(prog)prog.classList.remove('active');
+    if(btn){btn.textContent='🔍 Scan';btn.disabled=false;}
+    const results=SCAN_DATA[t]||[];
+    if(list){list.innerHTML='';results.forEach(r=>{const el=document.createElement('div');el.className='found-printer';el.innerHTML=`<span class="fp-ico">${r.ico}</span><div class="fp-info"><div class="fp-name">${r.nm}</div><div class="fp-addr">${r.addr}</div></div><div class="fp-check"></div>`;el.onclick=()=>{document.querySelectorAll('.found-printer').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');document.getElementById('pm-name').value=r.nm;document.getElementById('pm-ip').value=r.addr.split(':')[0];document.getElementById('pm-model').value=r.nm;document.getElementById('pm-port').value=r.addr.split(':')[1]||'9100';el.querySelector('.fp-check').textContent='✓';showToast(r.nm+' selected');};list.appendChild(el);});}
+    showToast(results.length+' printer(s) found');
+  },2200);
+}
+
+// ── Save All ──
+function saveAll(){showToast('✅ All settings saved successfully!');}
+
+// ── LED Display ──
+let ledImages=[];let ledPlaying=false;let ledTimer=null;let ledCurrentIdx=0;let ledCountdown=0;let ledCountdownTimer=null;
+function handleDrag(e,on){e.preventDefault();document.getElementById('uploadZone').classList.toggle('drag',on);}
+function handleDrop(e){e.preventDefault();handleDrag(e,false);handleFilesArr([...e.dataTransfer.files]);}
+function handleFileSelect(e){handleFilesArr([...e.target.files]);}
+function handleFilesArr(files){
+  const imageFiles=files.filter(f=>f.type.startsWith('image/'));
+  if(!imageFiles.length){showToast('Only image files allowed','err');return;}
+  imageFiles.forEach(file=>{
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      const img={id:Date.now()+Math.random(),name:file.name,size:(file.size/1024).toFixed(0)+' KB',src:ev.target.result,duration:5,active:true};
+      ledImages.push(img);
+      renderImgList();
+      showToast(file.name+' uploaded ✓');
+    };
+    reader.readAsDataURL(file);
+  });
+}
+function renderImgList(){
+  const list=document.getElementById('imgList');
+  if(!list)return;
+  if(!ledImages.length){list.innerHTML='<div style="text-align:center;color:var(--t3);padding:24px;font-size:13px;font-weight:600">Koi image nahi — upar se upload karo</div>';return;}
+  list.innerHTML='';
+  ledImages.forEach((img,i)=>{
+    const el=document.createElement('div');el.className='img-item';
+    el.innerHTML=`<span class="drag-handle" title="Drag to reorder">⠿</span><img class="img-thumb" src="${img.src}" alt="${img.name}"/><div class="img-info"><div class="img-name">${img.name}</div><div class="img-size">${img.size}</div><div class="img-duration"><span class="img-dur-label">Show for:</span><input class="img-dur-input" type="number" value="${img.duration}" min="1" max="60" onchange="ledImages[${i}].duration=parseInt(this.value)||5"/><span class="img-dur-label">seconds</span></div></div><div class="img-actions"><label class="tog" title="Active"><input type="checkbox" ${img.active?'checked':''} onchange="ledImages[${i}].active=this.checked;showToast('${img.name.slice(0,18)} '+(this.checked?'enabled':'disabled'))"><span class="tsl"></span></label><button class="btn sm" onclick="previewSingleImg(${i})">👁</button><button class="btn sm danger" onclick="removeImg(${i})">🗑</button></div>`;
+    list.appendChild(el);
+  });
+}
+function removeImg(i){ledImages.splice(i,1);renderImgList();showToast('Image removed');}
+function previewSingleImg(i){
+  switchLedSec('led-preview',document.querySelector('[onclick*=led-preview]'));
+  showImgOnPreview(i);showToast('Previewing: '+ledImages[i].name);
+}
+function showImgOnPreview(idx){
+  const inner=document.getElementById('ledPreviewInner');
+  if(!inner||!ledImages[idx])return;
+  document.querySelectorAll('.led-img-display').forEach(el=>el.classList.remove('active'));
+  let el=document.getElementById('led-slide-'+ledImages[idx].id);
+  if(!el){el=document.createElement('div');el.className='led-img-display';el.id='led-slide-'+ledImages[idx].id;el.style.backgroundImage=`url('${ledImages[idx].src}')`;el.style.backgroundSize='cover';el.style.backgroundPosition='center';inner.appendChild(el);}
+  setTimeout(()=>el.classList.add('active'),50);
+  const noImg=document.getElementById('ledNoImg');if(noImg)noImg.style.display='none';
+  ledCurrentIdx=idx;
+  document.getElementById('currentImgLabel').textContent=ledImages[idx].name;
+}
+function togglePreview(){
+  if(!ledImages.filter(i=>i.active).length){showToast('Pehle images upload karo','err');return;}
+  ledPlaying=!ledPlaying;
+  const btn=document.getElementById('previewPlayBtn');
+  if(ledPlaying){btn.textContent='⏸ Pause';startLedSlideshow();}
+  else{btn.textContent='▶️ Play Preview';stopLedSlideshow();}
+}
+function startLedSlideshow(){
+  const actives=ledImages.filter(i=>i.active);if(!actives.length)return;
+  function next(){
+    if(!ledPlaying)return;
+    const a=ledImages.filter(i=>i.active);if(!a.length)return;
+    ledCurrentIdx=(ledCurrentIdx+1)%a.length;
+    const img=a[ledCurrentIdx];showImgOnPreview(ledImages.indexOf(img));
+    ledCountdown=img.duration;
+    startCountdown(img.duration);
+    ledTimer=setTimeout(next,img.duration*1000);
+  }
+  const first=actives[0];showImgOnPreview(ledImages.indexOf(first));
+  ledCountdown=first.duration;startCountdown(first.duration);
+  ledTimer=setTimeout(next,first.duration*1000);
+}
+function startCountdown(secs){
+  clearInterval(ledCountdownTimer);let c=secs;
+  document.getElementById('nextInLabel').textContent=c+'s';
+  ledCountdownTimer=setInterval(()=>{c--;if(c<=0){clearInterval(ledCountdownTimer);document.getElementById('nextInLabel').textContent='Switching...';}else document.getElementById('nextInLabel').textContent=c+'s';},1000);
+}
+function stopLedSlideshow(){clearTimeout(ledTimer);clearInterval(ledCountdownTimer);document.getElementById('nextInLabel').textContent='—';}
+
+// ── Toast ──
+function showToast(msg,type=''){
+  const t=document.getElementById('toast');t.textContent=msg;
+  t.className='toast'+(type==='err'?' err':type==='info'?' info':'');
+  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600);
+}
+
+// ── Pulse CSS ──
+const s=document.createElement('style');s.textContent='@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.8)}}';document.head.appendChild(s);
+</script>
+</body>
+</html>

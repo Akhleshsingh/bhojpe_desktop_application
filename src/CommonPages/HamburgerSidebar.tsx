@@ -79,6 +79,13 @@ const STATIC_MENU_ITEMS: MenuItem[] = [
     ],
   },
   { label: "Updates", icon: updateIcon, path: "/updates" },
+  {
+    label: "Settings",
+    icon: kitchenIcon,
+    children: [
+      { label: "Printer Settings", path: "/printer-settings" },
+    ],
+  },
 ];
 
 type Props = {

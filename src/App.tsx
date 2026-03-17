@@ -46,6 +46,7 @@ import PrintReceiptPage from "./components/PrintReceiptPage";
 import { Toaster } from "react-hot-toast";
 import AllKitchenKot from "./CommonPages/AllKitchenKot";
 import DeliveryExecutivesPage from "./CommonPages/DeliveryExecutivesPage";
+import PrinterSettings from "./CommonPages/PrinterSettings";
 export default function App() {
   const [savedOrders, setSavedOrders] = useState<Order[]>([]);
 
@@ -298,6 +299,14 @@ export default function App() {
                               element={
                                 <DashboardLayout>
                                   <DeliveryExecutivesPage />
+                                </DashboardLayout>
+                              }
+                            />
+                            <Route
+                              path="/printer-settings"
+                              element={
+                                <DashboardLayout>
+                                  <PrinterSettings />
                                 </DashboardLayout>
                               }
                             />
