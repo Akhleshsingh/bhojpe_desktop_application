@@ -1,0 +1,23 @@
+{
+  "status": true,
+  "message": "Menu fetched successfully",
+  "total_menu": 16,
+  "data": [
+    { "id": 13, "menu_name": { "en": "Snacks" },                  "sort_order": 0 },
+    { "id": 14, "menu_name": { "en": "Charge" },                  "sort_order": 0 },
+    { "id": 15, "menu_name": { "en": "Plate" },                   "sort_order": 0 },
+    { "id": 16, "menu_name": { "en": "Others" },                  "sort_order": 0 },
+    { "id": 11, "menu_name": { "en": "South indian" },            "sort_order": 1 },
+    { "id": 12, "menu_name": { "en": "Main course" },             "sort_order": 2 },
+    { "id": 10, "menu_name": { "en": "Drink" },                   "sort_order": 3 },
+    { "id": 4,  "menu_name": { "en": "North indian delights" },   "sort_order": 4 },
+    { "id": 5,  "menu_name": { "en": "Chinese food" },            "sort_order": 5 },
+    { "id": 6,  "menu_name": { "en": "Pizzaeria" },               "sort_order": 6 },
+    { "id": 7,  "menu_name": { "en": "Street food stories" },     "sort_order": 7 },
+    { "id": 8,  "menu_name": { "en": "Sip & chill (beverages)" },"sort_order": 8 },
+    { "id": 9,  "menu_name": { "en": "Sweet endings (desserts)" },"sort_order": 9 },
+    { "id": 69, "menu_name": { "en": "Testingk" },                "sort_order": 10 },
+    { "id": 70, "menu_name": { "en": "Tea" },                     "sort_order": 11 },
+    { "id": 82, "menu_name": { "en": "Dats" },                    "sort_order": 12 }
+  ]
+}

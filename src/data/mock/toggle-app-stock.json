@@ -1,0 +1,8 @@
+{
+  "status": true,
+  "message": "Stock status updated successfully",
+  "data": {
+    "id": null,
+    "app_status": 1
+  }
+}

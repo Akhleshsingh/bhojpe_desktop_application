@@ -1,10 +1,11 @@
 {
   "status": true,
-  "data": [
-    { "id": 1, "role": "Manager",  "is_active": 1 },
-    { "id": 2, "role": "Waiter",   "is_active": 1 },
-    { "id": 3, "role": "Chef",     "is_active": 1 },
-    { "id": 4, "role": "Cashier",  "is_active": 1 },
-    { "id": 5, "role": "Captain",  "is_active": 1 }
+  "roles": [
+    { "id": 10, "display_name": "Admin" },
+    { "id": 11, "display_name": "Branch Head" },
+    { "id": 76, "display_name": "Caption" },
+    { "id": 13, "display_name": "Chef" },
+    { "id": 75, "display_name": "Delivery" },
+    { "id": 12, "display_name": "Waiter" }
   ]
 }

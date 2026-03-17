@@ -1,0 +1,31 @@
+{
+  "status": true,
+  "message": "Categories fetched successfully",
+  "total_category": 30,
+  "data": [
+    { "id": 40,  "category_name": { "en": "Pizza" },                 "sort_order": 1,  "app_status": 0 },
+    { "id": 41,  "category_name": { "en": "Mojito" },                "sort_order": 2,  "app_status": 0 },
+    { "id": 42,  "category_name": { "en": "Dosa" },                  "sort_order": 3,  "app_status": 0 },
+    { "id": 43,  "category_name": { "en": "Uttapam" },               "sort_order": 4,  "app_status": 1 },
+    { "id": 44,  "category_name": { "en": "Idli" },                  "sort_order": 5,  "app_status": 1 },
+    { "id": 45,  "category_name": { "en": "Upma" },                  "sort_order": 6,  "app_status": 1 },
+    { "id": 46,  "category_name": { "en": "Chaap" },                 "sort_order": 7,  "app_status": 1 },
+    { "id": 47,  "category_name": { "en": "Kabab" },                 "sort_order": 8,  "app_status": 0 },
+    { "id": 48,  "category_name": { "en": "Pulav" },                 "sort_order": 9,  "app_status": 1 },
+    { "id": 49,  "category_name": { "en": "Biriyani" },              "sort_order": 10, "app_status": 0 },
+    { "id": 50,  "category_name": { "en": "Khichdi" },               "sort_order": 11, "app_status": 1 },
+    { "id": 51,  "category_name": { "en": "Naan" },                  "sort_order": 12, "app_status": 1 },
+    { "id": 52,  "category_name": { "en": "Kulcha" },                "sort_order": 13, "app_status": 1 },
+    { "id": 53,  "category_name": { "en": "Tikki" },                 "sort_order": 14, "app_status": 1 },
+    { "id": 54,  "category_name": { "en": "Charge" },                "sort_order": 15, "app_status": 1 },
+    { "id": 55,  "category_name": { "en": "Drink" },                 "sort_order": 16, "app_status": 1 },
+    { "id": 56,  "category_name": { "en": "Chaach" },                "sort_order": 17, "app_status": 1 },
+    { "id": 57,  "category_name": { "en": "Others" },                "sort_order": 18, "app_status": 1 },
+    { "id": 157, "category_name": { "en": "Egg" },                   "sort_order": 25, "app_status": 1 },
+    { "id": 4,   "category_name": { "en": "Tea & coffee" },          "sort_order": 26, "app_status": 1 },
+    { "id": 2,   "category_name": { "en": "Dal" },                   "sort_order": 27, "app_status": 1 },
+    { "id": 5,   "category_name": { "en": "Shakes" },                "sort_order": 28, "app_status": 1 },
+    { "id": 6,   "category_name": { "en": "Soda" },                  "sort_order": 29, "app_status": 1 },
+    { "id": 7,   "category_name": { "en": "Lassi" },                 "sort_order": 30, "app_status": 1 }
+  ]
+}

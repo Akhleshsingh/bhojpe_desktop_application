@@ -1,11 +1,101 @@
 {
   "status": true,
+  "message": "tables fetched successfully",
   "data": [
-    { "id": 1, "table_name": "T-1", "table_capacity": 4, "table_status": "available", "is_active": 1 },
-    { "id": 2, "table_name": "T-2", "table_capacity": 2, "table_status": "occupied",  "is_active": 1 },
-    { "id": 3, "table_name": "T-3", "table_capacity": 6, "table_status": "available", "is_active": 1 },
-    { "id": 4, "table_name": "T-4", "table_capacity": 4, "table_status": "reserved",  "is_active": 1 },
-    { "id": 5, "table_name": "T-5", "table_capacity": 8, "table_status": "available", "is_active": 1 },
-    { "id": 6, "table_name": "T-6", "table_capacity": 2, "table_status": "occupied",  "is_active": 1 }
+    {
+      "id": 2,
+      "table_code": 1,
+      "available_status": "available",
+      "seating_capacity": 4,
+      "active_order": null
+    },
+    {
+      "id": 3,
+      "table_code": "T-2",
+      "available_status": "running",
+      "seating_capacity": 4,
+      "active_order": {
+        "id": 1120,
+        "table_id": 3,
+        "number_of_pax": 1,
+        "order_number": 477,
+        "status": "billed",
+        "total": "220.50",
+        "customer_id": null,
+        "waiter_id": null,
+        "delivery_executive_id": null,
+        "updated_at": "2026-03-13T18:52:41.000000Z",
+        "show_formatted_order_number": "Order #477",
+        "customer": null,
+        "waiter": null,
+        "delivery_executive": null
+      }
+    },
+    {
+      "id": 15,
+      "table_code": "T-3",
+      "available_status": "running",
+      "seating_capacity": 4,
+      "active_order": {
+        "id": 982,
+        "table_id": 15,
+        "number_of_pax": 1,
+        "order_number": 366,
+        "status": "billed",
+        "total": "189.00",
+        "customer_id": null,
+        "waiter_id": null,
+        "delivery_executive_id": null,
+        "updated_at": "2026-02-25T15:03:59.000000Z",
+        "show_formatted_order_number": "Order #366",
+        "customer": null,
+        "waiter": null,
+        "delivery_executive": null
+      }
+    },
+    {
+      "id": 16,
+      "table_code": 4,
+      "available_status": "running",
+      "seating_capacity": 4,
+      "active_order": {
+        "id": 1034,
+        "table_id": 16,
+        "number_of_pax": 1,
+        "order_number": 417,
+        "status": "kot",
+        "total": "220.50",
+        "customer_id": null,
+        "waiter_id": null,
+        "delivery_executive_id": null,
+        "updated_at": "2026-02-28T05:21:09.000000Z",
+        "show_formatted_order_number": "Order #417",
+        "customer": null,
+        "waiter": null,
+        "delivery_executive": null
+      }
+    },
+    {
+      "id": 17,
+      "table_code": 10,
+      "available_status": "running",
+      "seating_capacity": 8,
+      "active_order": {
+        "id": 1132,
+        "table_id": 17,
+        "number_of_pax": 1,
+        "order_number": 486,
+        "status": "kot",
+        "total": "105.00",
+        "customer_id": null,
+        "waiter_id": null,
+        "delivery_executive_id": null,
+        "updated_at": "2026-03-17T10:23:12.000000Z",
+        "show_formatted_order_number": "Order #486",
+        "customer": null,
+        "waiter": null,
+        "delivery_executive": null
+      }
+    }
   ]
 }
