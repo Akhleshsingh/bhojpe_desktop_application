@@ -476,17 +476,23 @@ export default function PrinterSettings() {
   },[ledPlaying,ledCurrentIdx,ledImages]);
 
   const saveKotSettings=async()=>{
-    try{ await apiSaveKot({
+    const payload = {
       restaurant_name:kotRestName, branch_name:kotBranch, footer:kotFooter,
       toggles:{ rest_name:kotToggles.restName, branch_name:kotToggles.branchName, logo:kotToggles.logo, kot_num:kotToggles.kotNum, table:kotToggles.table, order_type:kotToggles.orderType, date_time:kotToggles.dateTime, waiter:kotToggles.waiter, pax:kotToggles.pax, order_id:kotToggles.orderId, item_name_bold:kotToggles.itemNameBold, item_qty_large:kotToggles.itemQtyLarge, item_price:kotToggles.itemPrice, item_notes:kotToggles.itemNotes, modifiers:kotToggles.modifiers, veg_indicator:kotToggles.vegIndicator, footer:kotToggles.footer, copy_num:kotToggles.copyNum, cut_paper:kotToggles.cutPaper },
-    });}catch{/*local*/} showToast("KOT settings saved ✓");
+    };
+    try{ await apiSaveKot(payload); }catch{/*local*/}
+    localStorage.setItem("bhojpe_kot_settings", JSON.stringify(payload));
+    showToast("KOT settings saved ✓");
   };
 
   const saveBillSettings=async()=>{
-    try{ await apiSaveBill({
+    const payload = {
       restaurant_name:billRestName, address:billAddress, phone:billPhone, gstin:billGstin, fssai:billFssai, email:billEmail, upi_id:billUpi, footer_line1:billFooter1, footer_line2:billFooter2, copies:billCopies,
       toggles:{ logo:billToggles.logo, rest_name:billToggles.restName, address:billToggles.address, phone:billToggles.phone, gstin:billToggles.gstin, fssai:billToggles.fssai, bill_num:billToggles.billNum, table:billToggles.table, date_time:billToggles.dateTime, waiter:billToggles.waiter, pax:billToggles.pax, customer:billToggles.customer, gst_breakup:billToggles.gstBreakup, discount:billToggles.discount, delivery:billToggles.delivery, round_off:billToggles.roundOff, amt_words:billToggles.amtWords, upi_qr:billToggles.upiQr, website:billToggles.website, print_invoice:billToggles.printInvoice, cut_paper:billToggles.cutPaper },
-    });}catch{/*local*/} showToast("Bill settings saved ✓");
+    };
+    try{ await apiSaveBill(payload); }catch{/*local*/}
+    localStorage.setItem("bhojpe_bill_settings", JSON.stringify(payload));
+    showToast("Bill settings saved ✓");
   };
 
   const saveDirectPrint=async()=>{
@@ -496,7 +502,10 @@ export default function PrinterSettings() {
   };
 
   const savePaperSettings=async()=>{
-    try{ await apiSavePaper({ paper_size:paperSize, chars_per_line:charsPerLine, font_size:fontSize, line_spacing:lineSpacing });}catch{/*local*/} showToast("Paper settings saved ✓");
+    const payload = { paper_size:paperSize, chars_per_line:charsPerLine, font_size:fontSize, line_spacing:lineSpacing };
+    try{ await apiSavePaper(payload); }catch{/*local*/}
+    localStorage.setItem("bhojpe_paper_settings", JSON.stringify(payload));
+    showToast("Paper settings saved ✓");
   };
 
   const saveKdsSettings=async()=>{
@@ -713,24 +722,53 @@ export default function PrinterSettings() {
         <Box sx={cardHdrSx}>
           <Box sx={{display:"flex",alignItems:"center",gap:"10px"}}>
             <Box sx={{width:36,height:36,borderRadius:"10px",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,background:C.s2}}>👁</Box>
-            <Box><Typography sx={{fontSize:15,fontWeight:800,color:C.tx}}>KOT Preview</Typography><Typography sx={{fontSize:12,color:C.t3,mt:"1px"}}>Live preview of KOT ticket</Typography></Box>
+            <Box><Typography sx={{fontSize:15,fontWeight:800,color:C.tx}}>KOT Live Preview</Typography><Typography sx={{fontSize:12,color:C.t3,mt:"1px"}}>Changes reflect instantly — yahi print hoga</Typography></Box>
           </Box>
           <ABtn sm variant="green" onClick={()=>showToast("Test KOT printed 🖨️")}>🖨️ Print Test KOT</ABtn>
         </Box>
-        <Box sx={{...cardBodySx,display:"flex",gap:"20px"}}>
-          <Box sx={{flex:1,background:C.s1,border:`1px dashed ${C.bd2}`,borderRadius:"14px",p:"18px",fontFamily:"JetBrains Mono,monospace",fontSize:12,lineHeight:2,textAlign:"center",whiteSpace:"pre-line"}}>
-{`================================
-  ${kotRestName}
-  ${kotBranch}
-————————————————
-KOT #023 — VEG KITCHEN
-————————————————
-${kotToggles.table?"Table: T-5  |  Pax: 4\n":""}${kotToggles.waiter?"Waiter: Sanjay S.\n":""}${kotToggles.dateTime?"Time: 15/03/26 07:30 PM\n":""}${kotToggles.orderType?"Order Type: Dine In\n":""}————————————————
-3 x Butter Paneer Masala
-${kotToggles.itemNotes?"  ● Spicy · Extra Gravy\n":""}2 x Garlic Naan
-1 x Dal Tadka
-================================
-${kotToggles.footer?kotFooter+"\n":""}${kotToggles.copyNum?"COPY 1 / 1\n":""}================================`}
+        <Box sx={{...cardBodySx,display:"flex",justifyContent:"center",background:"#e8e0d8",borderRadius:"0 0 14px 14px",py:"28px"}}>
+          {/* Thermal paper receipt visual */}
+          <Box sx={{
+            background:"#fff",
+            width: paperSize==="58mm"?200:paperSize==="A4"?380:260,
+            fontFamily:"'Courier New',Courier,monospace",
+            fontSize: fontSize.includes("7")?10:fontSize.includes("12")?14:11,
+            lineHeight: lineSpacing==="Compact"?1.4:lineSpacing==="Wide"?2:1.7,
+            p:"14px 12px",
+            boxShadow:"0 4px 24px rgba(0,0,0,.18), 0 1px 4px rgba(0,0,0,.12)",
+            color:"#000",
+            position:"relative",
+            "&::before":{content:'""',position:"absolute",top:-6,left:0,right:0,height:6,background:"repeating-linear-gradient(90deg,#e8e0d8 0,#e8e0d8 4px,#fff 4px,#fff 8px)"},
+          }}>
+            {kotToggles.restName && <div style={{textAlign:"center",fontWeight:700,fontSize:"1.2em",textTransform:"uppercase",letterSpacing:"0.5px"}}>{kotRestName}</div>}
+            {kotToggles.branchName && <div style={{textAlign:"center",fontSize:"0.9em"}}>{kotBranch}</div>}
+            <div style={{textAlign:"center",fontWeight:400,fontSize:"1em",marginTop:2}}>KITCHEN ORDER TICKET</div>
+            <div style={{borderTop:"1px dashed #000",margin:"5px 0"}} />
+            {kotToggles.kotNum && <div style={{display:"flex",justifyContent:"space-between"}}><span style={{fontWeight:700}}>KOT #023</span><span>VEG KITCHEN</span></div>}
+            {kotToggles.orderId && <div>Order #156</div>}
+            {(kotToggles.table || kotToggles.pax) && <div>{kotToggles.table?"Table: T-5":""}{kotToggles.table&&kotToggles.pax?"  |  ":""}{kotToggles.pax?"Pax: 4":""}</div>}
+            {kotToggles.waiter && <div>Waiter: Sanjay S.</div>}
+            {kotToggles.dateTime && <div>15/03/26  07:30 PM</div>}
+            {kotToggles.orderType && <div>Order Type: DINE IN</div>}
+            <div style={{borderTop:"1px dashed #000",margin:"5px 0"}} />
+            {[
+              {name:"Butter Paneer Masala",qty:3,price:280,note:"Spicy · Extra Gravy",veg:true},
+              {name:"Garlic Naan",qty:2,price:40,note:"",veg:true},
+              {name:"Chicken Biryani",qty:1,price:220,note:"Less Spicy",veg:false},
+            ].map((item,i)=>(
+              <div key={i} style={{marginBottom:3}}>
+                <div style={{display:"flex",alignItems:"baseline",gap:4}}>
+                  {kotToggles.vegIndicator && <span style={{color:item.veg?"#16a34a":"#dc2626",fontSize:"0.85em"}}>{item.veg?"●":"▲"}</span>}
+                  <span style={{fontWeight:kotToggles.itemNameBold?700:400,fontSize:kotToggles.itemQtyLarge?"1.1em":"1em",flex:1}}>{item.name}</span>
+                  <span style={{fontWeight:800,fontSize:kotToggles.itemQtyLarge?"1.3em":"1em",minWidth:24,textAlign:"right"}}>{item.qty}×</span>
+                  {kotToggles.itemPrice && <span style={{minWidth:42,textAlign:"right"}}>₹{item.qty*item.price}</span>}
+                </div>
+                {kotToggles.itemNotes&&item.note&&<div style={{paddingLeft:12,fontSize:"0.85em",fontStyle:"italic"}}>● {item.note}</div>}
+              </div>
+            ))}
+            <div style={{borderTop:"1px dashed #000",margin:"5px 0"}} />
+            {kotToggles.footer && kotFooter && <div style={{textAlign:"center",fontSize:"0.9em"}}>{kotFooter}</div>}
+            {kotToggles.copyNum && <div style={{textAlign:"center",fontWeight:700}}>— COPY 1 / 1 —</div>}
           </Box>
         </Box>
       </Paper>
@@ -762,6 +800,75 @@ ${kotToggles.footer?kotFooter+"\n":""}${kotToggles.copyNum?"COPY 1 / 1\n":""}===
           </AccordionDetails>
         </Accordion>
       ))}
+      {/* Bill Live Preview */}
+      <Paper elevation={0} sx={cardSx}>
+        <Box sx={cardHdrSx}>
+          <Box sx={{display:"flex",alignItems:"center",gap:"10px"}}>
+            <Box sx={{width:36,height:36,borderRadius:"10px",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,background:C.s2}}>👁</Box>
+            <Box><Typography sx={{fontSize:15,fontWeight:800,color:C.tx}}>Bill Live Preview</Typography><Typography sx={{fontSize:12,color:C.t3,mt:"1px"}}>Changes reflect instantly — yahi print hoga</Typography></Box>
+          </Box>
+          <ABtn sm variant="green" onClick={()=>showToast("Test Bill printed 🖨️")}>🖨️ Print Test Bill</ABtn>
+        </Box>
+        <Box sx={{...cardBodySx,display:"flex",justifyContent:"center",background:"#e8e0d8",borderRadius:"0 0 14px 14px",py:"28px"}}>
+          <Box sx={{
+            background:"#fff",
+            width: paperSize==="58mm"?200:paperSize==="A4"?380:260,
+            fontFamily:"'Courier New',Courier,monospace",
+            fontSize: fontSize.includes("7")?10:fontSize.includes("12")?14:11,
+            lineHeight: lineSpacing==="Compact"?1.4:lineSpacing==="Wide"?2:1.7,
+            p:"14px 12px",
+            boxShadow:"0 4px 24px rgba(0,0,0,.18), 0 1px 4px rgba(0,0,0,.12)",
+            color:"#000",
+            position:"relative",
+            "&::before":{content:'""',position:"absolute",top:-6,left:0,right:0,height:6,background:"repeating-linear-gradient(90deg,#e8e0d8 0,#e8e0d8 4px,#fff 4px,#fff 8px)"},
+          }}>
+            {billToggles.restName && <div style={{textAlign:"center",fontWeight:700,fontSize:"1.2em",textTransform:"uppercase",letterSpacing:"0.5px"}}>{billRestName}</div>}
+            {billToggles.address && <div style={{textAlign:"center",fontSize:"0.85em"}}>{billAddress}</div>}
+            {billToggles.phone && <div style={{textAlign:"center",fontSize:"0.85em"}}>Ph: {billPhone}</div>}
+            {billToggles.gstin && billGstin && <div style={{textAlign:"center",fontSize:"0.8em"}}>GSTIN: {billGstin}</div>}
+            {billToggles.fssai && billFssai && <div style={{textAlign:"center",fontSize:"0.8em"}}>FSSAI: {billFssai}</div>}
+            <div style={{borderTop:"1px dashed #000",margin:"5px 0"}} />
+            {billToggles.printInvoice && <div style={{textAlign:"center",fontWeight:700,letterSpacing:"1px"}}>TAX INVOICE</div>}
+            <div style={{borderTop:"1px dashed #000",margin:"5px 0"}} />
+            {billToggles.billNum && <div style={{display:"flex",justifyContent:"space-between"}}><span>Bill #: 0042</span></div>}
+            {billToggles.dateTime && <div>Date: 17/03/26  08:15 PM</div>}
+            {billToggles.table && <div>Table: T-5{billToggles.pax?"  |  Pax: 4":""}</div>}
+            {billToggles.waiter && <div>Waiter: Sanjay S.</div>}
+            {billToggles.customer && <div>Customer: Walk-in</div>}
+            <div style={{borderTop:"1px dashed #000",margin:"5px 0"}} />
+            <div style={{display:"flex",fontWeight:700,fontSize:"0.9em"}}>
+              <span style={{flex:1}}>Item</span><span style={{width:28,textAlign:"center"}}>Qty</span><span style={{width:54,textAlign:"right"}}>Amt</span>
+            </div>
+            <div style={{borderTop:"1px solid #000",marginBottom:3}} />
+            {[{name:"Butter Paneer Masala",qty:2,price:280},{name:"Garlic Naan",qty:4,price:40},{name:"Chicken Biryani",qty:1,price:220}].map((item,i)=>(
+              <div key={i} style={{display:"flex",fontSize:"0.95em",marginBottom:2}}>
+                <span style={{flex:1}}>{item.name}</span>
+                <span style={{width:28,textAlign:"center"}}>{item.qty}</span>
+                <span style={{width:54,textAlign:"right"}}>₹{item.qty*item.price}</span>
+              </div>
+            ))}
+            <div style={{borderTop:"1px dashed #000",margin:"5px 0"}} />
+            <div style={{display:"flex",justifyContent:"space-between",fontSize:"0.9em"}}>
+              <span>Subtotal</span><span>₹1,020</span>
+            </div>
+            {billToggles.discount && <div style={{display:"flex",justifyContent:"space-between",fontSize:"0.9em"}}><span>Discount (10%)</span><span>-₹102</span></div>}
+            {billToggles.gstBreakup && <>
+              <div style={{display:"flex",justifyContent:"space-between",fontSize:"0.85em"}}><span>CGST 2.5%</span><span>₹23</span></div>
+              <div style={{display:"flex",justifyContent:"space-between",fontSize:"0.85em"}}><span>SGST 2.5%</span><span>₹23</span></div>
+            </>}
+            {billToggles.delivery && <div style={{display:"flex",justifyContent:"space-between",fontSize:"0.9em"}}><span>Delivery Charge</span><span>₹40</span></div>}
+            {billToggles.roundOff && <div style={{display:"flex",justifyContent:"space-between",fontSize:"0.9em"}}><span>Round Off</span><span>-₹0.40</span></div>}
+            <div style={{display:"flex",justifyContent:"space-between",fontWeight:700,fontSize:"1.1em",marginTop:2}}><span>TOTAL</span><span>₹1,004</span></div>
+            {billToggles.amtWords && <div style={{fontSize:"0.8em",fontStyle:"italic",marginTop:2}}>Amount: One Thousand Four Rupees</div>}
+            {billToggles.upiQr && <div style={{textAlign:"center",margin:"6px 0",fontSize:"0.85em"}}>[ QR CODE ]<br/>UPI: {billUpi||"pay@bhojpe"}</div>}
+            <div style={{borderTop:"1px dashed #000",margin:"5px 0"}} />
+            {billFooter1 && <div style={{textAlign:"center",fontSize:"0.85em"}}>{billFooter1}</div>}
+            {billFooter2 && <div style={{textAlign:"center",fontSize:"0.85em"}}>{billFooter2}</div>}
+            {billToggles.website && <div style={{textAlign:"center",fontSize:"0.8em"}}>{billEmail}</div>}
+          </Box>
+        </Box>
+      </Paper>
+
       <Box sx={{display:"flex",justifyContent:"flex-end",mt:"8px"}}>
         <ABtn variant="primary" onClick={saveBillSettings} startIcon={<SaveOutlinedIcon />}>Save Bill Settings</ABtn>
       </Box>
