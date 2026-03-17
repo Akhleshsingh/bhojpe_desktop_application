@@ -20,6 +20,7 @@ import { BASE_URL } from "../utils/api";
 import SecondHeader from "../CommonPages/secondheader";
 import HamburgerSidebar from "../CommonPages/HamburgerSidebar";
 import CheckoutModal from "../components/CheckoutModal";
+import mainLogo from "../assets/mainLogo.png";
 
 // ─── Design Tokens ──────────────────────────────────────────────────────────
 const C = {
@@ -611,9 +612,76 @@ export default function Poss() {
 
   // ─── Loading splash ───────────────────────────────────────────────────────
   if (menuLoading) return (
-    <Box sx={{height:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:C.bg,flexDirection:"column",gap:"16px",fontFamily:FONT}}>
-      <CircularProgress size={36} sx={{color:C.ac}} />
-      <Typography sx={{fontSize:13,fontWeight:600,color:C.t2,fontFamily:FONT}}>POS load ho raha hai…</Typography>
+    <Box sx={{
+      height:"100vh", display:"flex", alignItems:"center", justifyContent:"center",
+      background:`radial-gradient(ellipse at 50% 40%, #fff7f4 0%, ${C.bg} 70%)`,
+      flexDirection:"column", fontFamily:FONT, position:"relative", overflow:"hidden",
+    }}>
+      <style>{`
+        @keyframes pos-pulse{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.06);opacity:1}}
+        @keyframes pos-dot{0%,80%,100%{transform:translateY(0);opacity:.35}40%{transform:translateY(-9px);opacity:1}}
+        @keyframes pos-fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes pos-bar{0%{width:0%}100%{width:100%}}
+        @keyframes pos-shimmer{0%{background-position:-300% center}100%{background-position:300% center}}
+      `}</style>
+
+      {/* subtle background blobs */}
+      <Box sx={{position:"absolute",top:-80,right:-80,width:300,height:300,borderRadius:"50%",background:"rgba(255,61,1,0.04)",pointerEvents:"none"}} />
+      <Box sx={{position:"absolute",bottom:-60,left:-60,width:220,height:220,borderRadius:"50%",background:"rgba(255,61,1,0.03)",pointerEvents:"none"}} />
+
+      {/* logo card */}
+      <Box sx={{
+        animation:"pos-pulse 2.4s ease-in-out infinite",
+        mb:"20px",
+        width:88, height:88, borderRadius:"26px",
+        background:"#ffffff",
+        boxShadow:"0 0 0 1px rgba(255,61,1,0.12), 0 8px 28px rgba(255,61,1,0.16), 0 2px 8px rgba(0,0,0,0.06)",
+        display:"flex", alignItems:"center", justifyContent:"center",
+      }}>
+        <img src={mainLogo} alt="BhojPe" style={{width:54,height:"auto",objectFit:"contain"}} />
+      </Box>
+
+      {/* brand name */}
+      <Typography sx={{
+        fontSize:30, fontWeight:700, fontFamily:SERIF, color:C.tx,
+        letterSpacing:"-0.5px", lineHeight:1,
+        animation:"pos-fade .45s ease-out both",
+        mb:"6px",
+      }}>BhojPe</Typography>
+
+      {/* tagline */}
+      <Typography sx={{
+        fontSize:11, fontWeight:600, color:C.t3, letterSpacing:"2.5px",
+        textTransform:"uppercase", fontFamily:FONT,
+        animation:"pos-fade .55s ease-out both",
+        mb:"36px",
+      }}>Point of Sale</Typography>
+
+      {/* bouncing dots */}
+      <Box sx={{display:"flex",gap:"8px",mb:"28px"}}>
+        {[0,1,2].map(i=>(
+          <Box key={i} sx={{
+            width:8, height:8, borderRadius:"50%", background:C.ac,
+            animation:`pos-dot 1.3s ease-in-out ${i*0.18}s infinite`,
+          }}/>
+        ))}
+      </Box>
+
+      {/* thin progress bar */}
+      <Box sx={{width:160,height:3,borderRadius:4,background:"rgba(255,61,1,0.12)",overflow:"hidden"}}>
+        <Box sx={{
+          height:"100%", borderRadius:4,
+          background:`linear-gradient(90deg, ${C.ac}, #ff7043, ${C.ac})`,
+          backgroundSize:"300% 100%",
+          animation:"pos-bar 1.6s cubic-bezier(.4,0,.2,1) infinite, pos-shimmer 1.6s linear infinite",
+        }}/>
+      </Box>
+
+      {/* status text */}
+      <Typography sx={{
+        fontSize:12, color:C.t3, fontFamily:FONT, fontWeight:500,
+        mt:"14px", animation:"pos-fade .7s ease-out both",
+      }}>Loading your menu…</Typography>
     </Box>
   );
 
