@@ -1,6 +1,7 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
+import { useAuth } from "../context/AuthContext";
 import {
   Box,
   Typography,
@@ -33,6 +34,8 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 import { useTables } from "../context/TablesContext";
 
+const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "/api/v1";
+
 type ReservationStatus = "Confirmed" | "Pending" | "Cancelled" | "No Show";
 
 type Reservation = {
@@ -48,52 +51,21 @@ type Reservation = {
   status: ReservationStatus;
 };
 
-const dummyReservations: Reservation[] = [
-  {
-    id: 1,
-    table: "T-3",
-    guests: 2,
-    date: "Sunday, 25 Jan",
-    time: "01:00 PM",
-    name: "datscvjvkvbkbl",
-    email: "fy@gmail.com",
-    phone: "+919999999999",
-    notes: "testing requirements",
-    status: "Confirmed",
-  },
-  {
-    id: 2,
-    guests: 2,
-    date: "Sunday, 25 Jan",
-    time: "06:00 PM",
-    name: "akhleshsisjdj",
-    email: "akhlesh@gmail.com",
-    phone: "+916260129453",
-    status: "Pending",
-  },
-  {
-    id: 3,
-    table: "T-7",
-    guests: 4,
-    date: "Monday, 26 Jan",
-    time: "07:30 PM",
-    name: "Rahul Sharma",
-    email: "rahul@gmail.com",
-    phone: "+918800123456",
-    notes: "Anniversary dinner, need cake",
-    status: "Confirmed",
-  },
-  {
-    id: 4,
-    guests: 6,
-    date: "Tuesday, 27 Jan",
-    time: "08:00 PM",
-    name: "Priya Mehta",
-    email: "priya@email.com",
-    phone: "+917700987654",
-    status: "Pending",
-  },
-];
+function mapApiReservation(r: any): Reservation {
+  const dt = new Date(r.reservation_date_time);
+  return {
+    id: r.id,
+    name: r.name ?? "",
+    email: r.email ?? "",
+    phone: r.phone ?? "",
+    guests: r.party_size ?? 1,
+    date: dt.toLocaleDateString("en-US", { weekday: "long", day: "numeric", month: "short" }),
+    time: dt.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true }),
+    notes: r.notes ?? undefined,
+    status: (r.status as ReservationStatus) ?? "Pending",
+    table: r.table_code ?? undefined,
+  };
+}
 
 const STATUS_META: Record<ReservationStatus, { bg: string; color: string; border: string }> = {
   Confirmed:  { bg: "#DCFCE7", color: "#15803D", border: "#6EE7B7" },
@@ -711,10 +683,12 @@ const COUNTRY_CODES = ["+91", "+1", "+44", "+61", "+971", "+65"];
 interface NewReservationModalProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (res: Omit<Reservation, "id">) => void;
+  onSaved: () => void;
+  branchId?: number;
+  customers?: Reservation[];
 }
 
-function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalProps) {
+function NewReservationModal({ open, onClose, onSaved, branchId, customers = [] }: NewReservationModalProps) {
   const today = new Date().toISOString().split("T")[0];
 
   const [date, setDate]             = useState(today);
@@ -769,28 +743,49 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
   const handleSubmit = async () => {
     if (!validate()) return;
     setSubmitting(true);
-    /* Simulate API call delay */
-    await new Promise((r) => setTimeout(r, 600));
-    setSubmitting(false);
-    setSuccess(true);
 
-    /* Format date for display */
-    const d = new Date(date);
-    const dateStr = d.toLocaleDateString("en-US", { weekday: "long", day: "numeric", month: "short" });
+    /* Convert "01:00 PM" → "13:00:00" for the API */
+    const [timePart, meridiem] = timeSlot.split(" ");
+    const [rawH, rawM] = timePart.split(":").map(Number);
+    let h = rawH;
+    if (meridiem === "PM" && rawH !== 12) h += 12;
+    if (meridiem === "AM" && rawH === 12) h = 0;
+    const time24 = `${String(h).padStart(2, "0")}:${String(rawM).padStart(2, "0")}:00`;
+    const reservation_date_time = `${date} ${time24}`;
 
-    onSubmit({
-      table: undefined,
-      guests,
-      date: dateStr,
-      time: timeSlot,
-      name: name.trim(),
-      email: email.trim(),
-      phone: `${countryCode}${phone.trim()}`,
-      notes: notes.trim() || undefined,
-      status: "Pending",
-    });
-
-    setTimeout(handleClose, 900);
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`${BASE_URL}/save-reservation`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          branch_id: branchId,
+          reservation_date_time,
+          party_size: guests,
+          reservation_slot_type: "time",
+          slot_time_difference: 60,
+          name: name.trim(),
+          email: email.trim() || undefined,
+          phone: `${countryCode}${phone.trim()}`,
+          notes: notes.trim() || undefined,
+        }),
+      });
+      const data = await res.json();
+      if (data.status) {
+        setSuccess(true);
+        onSaved();
+        setTimeout(handleClose, 900);
+      } else {
+        setErrors({ submit: data.message ?? "Failed to save reservation. Please try again." });
+      }
+    } catch {
+      setErrors({ submit: "Network error. Please try again." });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const fieldSx = {
@@ -1077,9 +1072,9 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
                 value={customerSearch}
                 onChange={(e) => {
                   setCustomerSearch(e.target.value);
-                  /* Auto-fill demo: if user types a known name */
+                  /* Auto-fill: if user types a known customer */
                   const val = e.target.value.toLowerCase();
-                  const match = dummyReservations.find(
+                  const match = customers.find(
                     (r) =>
                       r.name.toLowerCase().includes(val) ||
                       r.phone.includes(val) ||
@@ -1204,10 +1199,16 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
         sx={{
           px: 3, py: 2,
           borderTop: "1px solid #F1F5F9",
-          display: "flex", justifyContent: "flex-end", gap: 1.5,
+          display: "flex", flexDirection: "column", gap: 1.5,
           background: "#FFFFFF", flexShrink: 0,
         }}
       >
+        {errors.submit && (
+          <Typography sx={{ fontSize: 12, color: "#DC2626", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+            {errors.submit}
+          </Typography>
+        )}
+        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1.5 }}>
         <Button
           onClick={handleClose}
           variant="outlined"
@@ -1244,6 +1245,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
             "Reserve Now"
           )}
         </Button>
+        </Box>
       </Box>
     </Dialog>
   );
@@ -1253,6 +1255,9 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
    Main Reservations Page
 ───────────────────────────────────────────────────── */
 export default function Reservations() {
+  const { branchData } = useAuth();
+  const branch_id: number | undefined = branchData?.data?.id;
+
   const [statusMap, setStatusMap] = useState<Record<number, ReservationStatus>>({});
   const [tableMap, setTableMap]   = useState<Record<number, string>>({});
   const [dateRange, setDateRange] = useState("Current Week");
@@ -1264,9 +1269,32 @@ export default function Reservations() {
   const ymd = (d: Date) => d.toISOString().split("T")[0];
   const fmtCal = (s: string) => s ? new Date(s + "T00:00").toLocaleDateString("en-IN", { day: "2-digit", month: "2-digit", year: "numeric" }) : "";
 
+  /* API reservations */
+  const [apiReservations, setApiReservations] = useState<Reservation[]>([]);
+  const [loadingRes, setLoadingRes]           = useState(false);
+
+  const fetchReservations = useCallback(async () => {
+    if (!branch_id) return;
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    setLoadingRes(true);
+    try {
+      const res = await fetch(`${BASE_URL}/get-reservations?branch_id=${branch_id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (data.status && Array.isArray(data.data)) {
+        setApiReservations(data.data.map(mapApiReservation));
+      }
+    } catch { /* silent */ } finally {
+      setLoadingRes(false);
+    }
+  }, [branch_id]);
+
+  useEffect(() => { fetchReservations(); }, [fetchReservations]);
+
   /* New-reservation modal */
   const [newResOpen, setNewResOpen] = useState(false);
-  const [localReservations, setLocalReservations] = useState<Reservation[]>([]);
 
   /* Assign-table modal */
   const [assignOpen, setAssignOpen]           = useState(false);
@@ -1274,13 +1302,6 @@ export default function Reservations() {
 
   const handleStatusChange = useCallback((id: number, status: ReservationStatus) => {
     setStatusMap((prev) => ({ ...prev, [id]: status }));
-  }, []);
-
-  const handleNewReservationSubmit = useCallback((data: Omit<Reservation, "id">) => {
-    setLocalReservations((prev) => [
-      ...prev,
-      { ...data, id: Date.now() },
-    ]);
   }, []);
 
   const handleOpenAssign = useCallback((res: Reservation) => {
@@ -1293,8 +1314,8 @@ export default function Reservations() {
   }, []);
 
   const allReservations = useMemo(
-    () => [...dummyReservations, ...localReservations],
-    [localReservations]
+    () => apiReservations,
+    [apiReservations]
   );
 
   const filteredReservations = useMemo(() => {
@@ -1454,6 +1475,18 @@ export default function Reservations() {
           gap: 2,
         }}
       >
+        {loadingRes && (
+          <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+            <CircularProgress size={28} sx={{ color: "#FF3D01" }} />
+          </Box>
+        )}
+        {!loadingRes && filteredReservations.length === 0 && (
+          <Box sx={{ textAlign: "center", py: 6 }}>
+            <Typography sx={{ color: "#9CA3AF", fontSize: 14, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+              No reservations found.
+            </Typography>
+          </Box>
+        )}
         {filteredReservations.map((res) => {
           const currentStatus = statusMap[res.id] || res.status;
           const meta = STATUS_META[currentStatus];
@@ -1629,7 +1662,9 @@ export default function Reservations() {
       <NewReservationModal
         open={newResOpen}
         onClose={() => setNewResOpen(false)}
-        onSubmit={handleNewReservationSubmit}
+        onSaved={() => { setNewResOpen(false); fetchReservations(); }}
+        branchId={branch_id}
+        customers={allReservations}
       />
 
       {/* ── ASSIGN TABLE MODAL ── */}

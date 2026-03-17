@@ -20,6 +20,8 @@ const ROUTE_MAP: Record<string, string> = {
   "/api/v1/getcategory":          "getcategory",
   "/api/v1/branch-open-close":    "branch-open-close",
   "/api/v1/toggle-app-stock":     "toggle-app-stock",
+  "/api/v1/get-reservations":     "get-reservations",
+  "/api/v1/save-reservation":     "save-reservation",
 };
 
 function findMockFile(urlPath: string): string | null {
