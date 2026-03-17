@@ -100,13 +100,17 @@ export default function StaffPage() {
   const restaurant_id = branchData?.data?.restaurant_id;
   const phone_code    = String(branchData?.data?.restaurant?.phone_code ?? "91");
 
-  /* ── FETCH ROLES (token-only, no branch_id needed) ── */
+  /* ── FETCH ROLES ── */
   const fetchRoles = useCallback(async () => {
     const t = localStorage.getItem("token");
     if (!t) return;
+    const rid = branchData?.data?.restaurant_id;
+    if (!rid) return;
     try {
       const res = await fetch(`${BASE_URL}/restaurant-roles`, {
+        method: "POST",
         headers: { Authorization: `Bearer ${t}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ restaurant_id: rid }),
       });
       if (!res.ok) return;
       const data = await res.json();
@@ -114,7 +118,7 @@ export default function StaffPage() {
         setRoles(data.roles);
       }
     } catch { /* silent */ }
-  }, []);
+  }, [branchData]);
 
   /* ── FETCH STAFF ── */
   const fetchStaff = useCallback(async () => {
