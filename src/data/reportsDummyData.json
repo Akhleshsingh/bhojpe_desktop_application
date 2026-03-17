@@ -1,0 +1,285 @@
+{
+  "meta": {
+    "restaurant": "Bhojpe Restaurant",
+    "branch": "Kap's Cafe, Gwalior",
+    "gstin": "23AAACB1234A1Z5",
+    "periodFrom": "2026-03-09",
+    "periodTo": "2026-03-15",
+    "generatedAt": "2026-03-17T07:00:00Z"
+  },
+  "sales": {
+    "totalSales": 745,
+    "totalOrders": 5,
+    "avgOrderValue": 149,
+    "cashReceived": 745,
+    "upiReceived": 0,
+    "cardReceived": 0,
+    "gatewayReceived": 0,
+    "additionalCharges": 0,
+    "discount": 0,
+    "taxCollected": 192.5,
+    "outstanding": 0,
+    "dailyBreakdown": [
+      { "date": "09/03/2026", "orders": 1, "gst5": 0, "totalTax": 0, "cash": 320, "upi": 0, "card": 0, "due": 0, "discount": 0, "total": 320 },
+      { "date": "11/03/2026", "orders": 2, "gst5": 46.5, "totalTax": 46.5, "cash": 200, "upi": 0, "card": 0, "due": 0, "discount": 0, "total": 200 },
+      { "date": "13/03/2026", "orders": 1, "gst5": 146, "totalTax": 146, "cash": 120, "upi": 0, "card": 0, "due": 0, "discount": 0, "total": 120 },
+      { "date": "14/03/2026", "orders": 1, "gst5": 0, "totalTax": 0, "cash": 105, "upi": 0, "card": 0, "due": 0, "discount": 0, "total": 105 }
+    ],
+    "chartData": [
+      { "day": "Mon 09", "sales": 320 },
+      { "day": "Tue 10", "sales": 0 },
+      { "day": "Wed 11", "sales": 200 },
+      { "day": "Thu 12", "sales": 0 },
+      { "day": "Fri 13", "sales": 120 },
+      { "day": "Sat 14", "sales": 105 },
+      { "day": "Sun 15", "sales": 0 }
+    ],
+    "paymentMethods": [
+      { "method": "Cash", "amount": 745, "pct": 100, "color": "#186b35" },
+      { "method": "UPI", "amount": 0, "pct": 0, "color": "#1a4fcc" },
+      { "method": "Card", "amount": 0, "pct": 0, "color": "#6d28d9" },
+      { "method": "Bank", "amount": 0, "pct": 0, "color": "#0f766e" }
+    ]
+  },
+  "items": {
+    "totalItemsSold": 38,
+    "uniqueItems": 12,
+    "topItem": "Pizza",
+    "vegItems": 24,
+    "vegRevenue": 480,
+    "vegShare": 63,
+    "nonVegItems": 14,
+    "nonVegRevenue": 265,
+    "nonVegShare": 37,
+    "avgItemPrice": 196,
+    "minPrice": 30,
+    "maxPrice": 380,
+    "topItemsChart": [
+      { "name": "Masroom Pizza", "qty": 5 },
+      { "name": "Onion Pizza", "qty": 5 },
+      { "name": "Egg Biryani", "qty": 5 },
+      { "name": "Butter Paneer", "qty": 5 },
+      { "name": "Chicken Burger", "qty": 3 },
+      { "name": "Dal Makhani", "qty": 3 },
+      { "name": "Veg Burger", "qty": 3 },
+      { "name": "Garlic Naan", "qty": 4 }
+    ],
+    "revenueByItem": [
+      { "name": "Masroom Pizza", "revenue": 250, "pct": 100, "color": "#FF3D01" },
+      { "name": "Chicken Biryani", "revenue": 195, "pct": 78, "color": "#1a4fcc" },
+      { "name": "Veg Burger", "revenue": 140, "pct": 55, "color": "#186b35" },
+      { "name": "Paneer Tikka", "revenue": 120, "pct": 48, "color": "#6d28d9" },
+      { "name": "Dal Makhani", "revenue": 90, "pct": 35, "color": "#0f766e" }
+    ],
+    "itemSales": [
+      { "rank": 1, "name": "Masroom Pizza", "category": "Pizza", "type": "Veg", "qty": 5, "unitPrice": 250, "revenue": 250, "tax": 11.9, "share": "33.5%" },
+      { "rank": 2, "name": "Onion Pizza", "category": "Pizza", "type": "Veg", "qty": 5, "unitPrice": 250, "revenue": 250, "tax": 11.9, "share": "33.5%" },
+      { "rank": 3, "name": "Egg Biryani", "category": "Biryani", "type": "Egg", "qty": 5, "unitPrice": 250, "revenue": 250, "tax": 11.9, "share": "33.5%" },
+      { "rank": 4, "name": "Butter Paneer Masala", "category": "Paneer", "type": "Veg", "qty": 5, "unitPrice": 250, "revenue": 250, "tax": 11.9, "share": "33.5%" },
+      { "rank": 5, "name": "Chicken Burger", "category": "Burger", "type": "Non-Veg", "qty": 3, "unitPrice": 220, "revenue": 160, "tax": 7.62, "share": "21.5%" }
+    ]
+  },
+  "categories": {
+    "activeCategories": 8,
+    "totalItemsSold": 38,
+    "topCategory": "Pizza",
+    "topRevenue": 500,
+    "topCategoryShare": 67,
+    "avgPerCategory": 93,
+    "avgOrders": 0.6,
+    "leastOrdered": "Soda",
+    "chartData": [
+      { "name": "Pizza", "revenue": 500, "items": 10 },
+      { "name": "Biryani", "revenue": 250, "items": 5 },
+      { "name": "Paneer", "revenue": 250, "items": 5 },
+      { "name": "Burger", "revenue": 160, "items": 3 },
+      { "name": "Others", "revenue": 85, "items": 4 }
+    ],
+    "breakdown": [
+      { "name": "Pizza", "pct": 100, "revenue": 500, "color": "#FF3D01" },
+      { "name": "Biryani", "pct": 50, "revenue": 250, "color": "#1a4fcc" },
+      { "name": "Burger", "pct": 32, "revenue": 160, "color": "#186b35" },
+      { "name": "Paneer", "pct": 50, "revenue": 250, "color": "#6d28d9" },
+      { "name": "Others", "pct": 15, "revenue": 85, "color": "#0f766e" }
+    ],
+    "categorySales": [
+      { "rank": 1, "category": "Pizza", "items": 10, "orders": 3, "revenue": 500, "tax": 23.8, "discount": 0, "net": 500, "share": "67.1%" },
+      { "rank": 2, "category": "Biryani", "items": 5, "orders": 2, "revenue": 250, "tax": 11.9, "discount": 0, "net": 250, "share": "33.5%" },
+      { "rank": 3, "category": "Burger", "items": 3, "orders": 1, "revenue": 160, "tax": 7.62, "discount": 0, "net": 160, "share": "21.5%" },
+      { "rank": 4, "category": "Paneer", "items": 5, "orders": 2, "revenue": 250, "tax": 11.9, "discount": 0, "net": 250, "share": "33.5%" }
+    ]
+  },
+  "delivery": {
+    "totalDeliveries": 3,
+    "deliveryRevenue": 320,
+    "avgDeliveryAmount": 107,
+    "deliveryChargesTotal": 45,
+    "avgDeliveryCharge": 15,
+    "freeDeliveries": 1,
+    "platformCommission": 32,
+    "commissionRate": "10%",
+    "netAfterCommission": 288,
+    "avgDeliveryTime": 28,
+    "fastestDelivery": 18,
+    "slowestDelivery": 42,
+    "orders": [
+      { "id": "#152", "date": "09/03/2026", "platform": "Direct", "customer": "Rahul S.", "items": 3, "amount": 320, "deliveryFee": 20, "commission": 32, "net": 308, "status": "Delivered" },
+      { "id": "#160", "date": "11/03/2026", "platform": "Swiggy", "customer": "Priya M.", "items": 2, "amount": 200, "deliveryFee": 0, "commission": 20, "net": 180, "status": "Delivered" },
+      { "id": "#175", "date": "13/03/2026", "platform": "Zomato", "customer": "Amit K.", "items": 1, "amount": 120, "deliveryFee": 25, "commission": 12, "net": 133, "status": "Pending" }
+    ]
+  },
+  "expenses": {
+    "totalExpenses": 12450,
+    "vsLastMonth": "+8%",
+    "totalEntries": 14,
+    "rawMaterial": 7200,
+    "rawMaterialShare": "57.8%",
+    "rawMaterialEntries": 6,
+    "utilities": 2800,
+    "utilitiesShare": "22.5%",
+    "utilitiesEntries": 4,
+    "salaryOthers": 2450,
+    "salaryShare": "19.7%",
+    "salaryEntries": 4,
+    "entries": [
+      { "date": "01/03/2026", "description": "Vegetables & Spices", "category": "Raw Material", "vendor": "Sharma Store", "addedBy": "Arjun K.", "amount": 1800, "payment": "Cash", "status": "Paid" },
+      { "date": "03/03/2026", "description": "Gas Cylinders (x3)", "category": "Utilities", "vendor": "HP Gas", "addedBy": "Sanjay S.", "amount": 2400, "payment": "UPI", "status": "Paid" },
+      { "date": "05/03/2026", "description": "Chicken & Mutton", "category": "Raw Material", "vendor": "Meat House", "addedBy": "Arjun K.", "amount": 2200, "payment": "Cash", "status": "Paid" },
+      { "date": "07/03/2026", "description": "Electricity Bill", "category": "Utilities", "vendor": "MPCZ", "addedBy": "Admin", "amount": 400, "payment": "Online", "status": "Paid" },
+      { "date": "10/03/2026", "description": "Staff Salary (Part)", "category": "Salary", "vendor": "Internal", "addedBy": "Admin", "amount": 2000, "payment": "Bank", "status": "Partial" },
+      { "date": "15/03/2026", "description": "Packaging Material", "category": "Raw Material", "vendor": "Pack Co.", "addedBy": "Arjun K.", "amount": 650, "payment": "Cash", "status": "Paid" }
+    ]
+  },
+  "cancelledOrders": {
+    "count": 4,
+    "lostRevenue": 840,
+    "cancelRate": "4.4%",
+    "beforeKot": 3,
+    "beforeKotRevenue": 610,
+    "beforeKotShare": "75%",
+    "afterKot": 1,
+    "afterKotRevenue": 230,
+    "afterKotShare": "25%",
+    "topReason": "No Show",
+    "topReasonCount": 2,
+    "orders": [
+      { "id": "#148", "date": "09/03/2026", "channel": "Dine In", "table": "T-3", "waiter": "Sanjay S.", "items": 2, "value": 320, "cancelledBy": "Manager", "reason": "No Show", "kotStatus": "Before KOT" },
+      { "id": "#155", "date": "11/03/2026", "channel": "Delivery", "table": "—", "waiter": "—", "items": 3, "value": 230, "cancelledBy": "Customer", "reason": "Wrong Order", "kotStatus": "After KOT" },
+      { "id": "#162", "date": "13/03/2026", "channel": "Dine In", "table": "T-1", "waiter": "Arjun K.", "items": 1, "value": 150, "cancelledBy": "Waiter", "reason": "No Show", "kotStatus": "Before KOT" },
+      { "id": "#168", "date": "15/03/2026", "channel": "Pickup", "table": "—", "waiter": "—", "items": 2, "value": 140, "cancelledBy": "Customer", "reason": "Change of Mind", "kotStatus": "Before KOT" }
+    ]
+  },
+  "removedKotItems": {
+    "count": 7,
+    "valueLost": 630,
+    "ordersAffected": 5,
+    "byWaiter": 4,
+    "byWaiterValue": 360,
+    "topWaiter": "Sanjay",
+    "topWaiterCount": 3,
+    "byManager": 3,
+    "byManagerValue": 270,
+    "byManagerReason": "Complaint",
+    "mostRemovedItem": "Pizza",
+    "mostRemovedCount": 3,
+    "mostRemovedValue": 280,
+    "items": [
+      { "orderId": "#152", "datetime": "09/03 02:30 PM", "item": "Masroom Pizza", "qty": 1, "price": 250, "totalLoss": 250, "removedBy": "Sanjay Singh", "reason": "Customer Change", "kot": "KOT-01" },
+      { "orderId": "#153", "datetime": "11/03 01:15 PM", "item": "Egg Biryani", "qty": 1, "price": 250, "totalLoss": 250, "removedBy": "Manager", "reason": "Wrong Item", "kot": "KOT-03" },
+      { "orderId": "#158", "datetime": "11/03 07:45 PM", "item": "Butter Naan", "qty": 2, "price": 40, "totalLoss": 80, "removedBy": "Arjun K.", "reason": "Quality Issue", "kot": "KOT-05" },
+      { "orderId": "#162", "datetime": "13/03 12:30 PM", "item": "Chicken Pizza", "qty": 1, "price": 380, "totalLoss": 380, "removedBy": "Manager", "reason": "Complaint", "kot": "KOT-08" },
+      { "orderId": "#170", "datetime": "14/03 08:00 PM", "item": "Dal Makhani", "qty": 1, "price": 200, "totalLoss": 200, "removedBy": "Sanjay Singh", "reason": "Customer Change", "kot": "KOT-11" }
+    ]
+  },
+  "refunds": {
+    "totalRefunds": 350,
+    "refundCount": 2,
+    "pctOfSales": "4.7%",
+    "fullRefunds": 250,
+    "fullRefundCount": 1,
+    "fullRefundReason": "Quality",
+    "partialRefunds": 100,
+    "partialRefundCount": 1,
+    "partialRefundReason": "Complaint",
+    "refundRate": "2.2%",
+    "transactions": [
+      { "refundId": "REF-001", "orderId": "#153", "date": "11/03/2026", "customer": "Priya M.", "orderAmt": 250, "refundAmt": 250, "method": "UPI", "type": "Full", "reason": "Bad Quality", "status": "Processed" },
+      { "refundId": "REF-002", "orderId": "#162", "date": "13/03/2026", "customer": "Amit K.", "orderAmt": 380, "refundAmt": 100, "method": "Cash", "type": "Partial", "reason": "Wrong Item", "status": "Processed" }
+    ]
+  },
+  "tax": {
+    "totalTaxCollected": 192.5,
+    "taxableSales": 552.5,
+    "taxRate": "5%",
+    "cgst": 96.25,
+    "sgst": 96.25,
+    "nonTaxable": 192.5,
+    "gstSummary": {
+      "totalSales": 745,
+      "taxableAmount": 552.5,
+      "cgst": 96.25,
+      "sgst": 96.25,
+      "totalGst": 192.5
+    },
+    "taxByCategory": [
+      { "category": "Pizza", "tax": 23.8 },
+      { "category": "Biryani", "tax": 11.9 },
+      { "category": "Paneer", "tax": 11.9 },
+      { "category": "Others", "tax": 144.9 }
+    ],
+    "dailyTax": [
+      { "date": "09/03/2026", "orders": 1, "sales": 320, "taxableAmt": 0, "cgst": 0, "sgst": 0, "totalGst": 0, "netSales": 320 },
+      { "date": "11/03/2026", "orders": 2, "sales": 200, "taxableAmt": 186, "cgst": 23.25, "sgst": 23.25, "totalGst": 46.5, "netSales": 200 },
+      { "date": "13/03/2026", "orders": 1, "sales": 120, "taxableAmt": 584, "cgst": 73, "sgst": 73, "totalGst": 146, "netSales": 120 },
+      { "date": "14/03/2026", "orders": 1, "sales": 105, "taxableAmt": 0, "cgst": 0, "sgst": 0, "totalGst": 0, "netSales": 105 }
+    ]
+  },
+  "outstanding": {
+    "totalOutstanding": 0,
+    "outstandingOrders": 0,
+    "overdue": 0,
+    "overdueOrders": 0,
+    "dueThisWeek": 0,
+    "dueThisWeekOrders": 0,
+    "recoveredThisMonth": 450,
+    "recoveredOrders": 3,
+    "orders": []
+  },
+  "inventory": {
+    "totalItems": 48,
+    "lowStockCount": 6,
+    "outOfStockCount": 2,
+    "needsReorder": 4,
+    "criticalCount": 2,
+    "wellStocked": 40,
+    "optimal": 32,
+    "overstocked": 8,
+    "consumedThisMonth": "₹8,400",
+    "consumedPct": "67.3%",
+    "reorderValue": "₹2,200",
+    "items": [
+      { "name": "Tomatoes", "category": "Vegetables", "unit": "kg", "opening": 20, "received": 15, "consumed": 30, "closing": 5, "minStock": 8, "status": "Low Stock" },
+      { "name": "Onions", "category": "Vegetables", "unit": "kg", "opening": 30, "received": 20, "consumed": 38, "closing": 12, "minStock": 10, "status": "Good" },
+      { "name": "Chicken", "category": "Non-Veg", "unit": "kg", "opening": 15, "received": 20, "consumed": 33, "closing": 2, "minStock": 5, "status": "Low Stock" },
+      { "name": "Paneer", "category": "Dairy", "unit": "kg", "opening": 8, "received": 5, "consumed": 13, "closing": 0, "minStock": 3, "status": "Out of Stock" },
+      { "name": "Rice (Basmati)", "category": "Grains", "unit": "kg", "opening": 50, "received": 25, "consumed": 40, "closing": 35, "minStock": 20, "status": "Good" },
+      { "name": "Cooking Oil", "category": "Pantry", "unit": "L", "opening": 20, "received": 10, "consumed": 25, "closing": 5, "minStock": 8, "status": "Low Stock" }
+    ]
+  },
+  "stock": {
+    "totalSKUs": 48,
+    "totalValue": "₹24,600",
+    "totalValueChange": "+5%",
+    "inTransit": 3,
+    "inTransitValue": "₹1,800",
+    "lastUpdated": "15/03/2026",
+    "items": [
+      { "sku": "VEG-001", "name": "Tomatoes", "category": "Vegetables", "unit": "kg", "qty": 5, "unitCost": 40, "totalValue": 200, "reorderLevel": 8, "supplier": "Sharma Store", "lastPurchase": "08/03/2026", "status": "Low" },
+      { "sku": "VEG-002", "name": "Onions", "category": "Vegetables", "unit": "kg", "qty": 12, "unitCost": 30, "totalValue": 360, "reorderLevel": 10, "supplier": "Sharma Store", "lastPurchase": "10/03/2026", "status": "Good" },
+      { "sku": "NVG-001", "name": "Chicken", "category": "Non-Veg", "unit": "kg", "qty": 2, "unitCost": 220, "totalValue": 440, "reorderLevel": 5, "supplier": "Meat House", "lastPurchase": "05/03/2026", "status": "Critical" },
+      { "sku": "DAI-001", "name": "Paneer", "category": "Dairy", "unit": "kg", "qty": 0, "unitCost": 350, "totalValue": 0, "reorderLevel": 3, "supplier": "Fresh Dairy", "lastPurchase": "01/03/2026", "status": "Out" },
+      { "sku": "GRN-001", "name": "Rice (Basmati)", "category": "Grains", "unit": "kg", "qty": 35, "unitCost": 120, "totalValue": 4200, "reorderLevel": 20, "supplier": "Grains Co.", "lastPurchase": "12/03/2026", "status": "Good" },
+      { "sku": "PTR-001", "name": "Cooking Oil", "category": "Pantry", "unit": "L", "qty": 5, "unitCost": 160, "totalValue": 800, "reorderLevel": 8, "supplier": "Oil Depot", "lastPurchase": "06/03/2026", "status": "Low" }
+    ]
+  }
+}
