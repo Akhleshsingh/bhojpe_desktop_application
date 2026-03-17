@@ -631,7 +631,7 @@ export default function Poss() {
               const ft  = foodType(item);
               const hasVariations = (item.variations?.length??0) > 0;
               const rawImg = item.photo_url || item.image || null;
-              const imgSrc = rawImg
+              const imgSrc = rawImg && !rawImg.includes("/img/food.svg")
                 ? (rawImg.startsWith("http") ? rawImg : `https://bhojpe.in${rawImg}`)
                 : null;
               const emoji = foodEmoji(item.item_name);
