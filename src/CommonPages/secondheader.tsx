@@ -47,6 +47,7 @@ export default function SecondHeader({
   const { customers, loading: customersLoading } = useCustomers();
   const { waiters = [], loading: waitersLoading } = useWaiters();
 
+  const isPoss = location.pathname === "/poss";
   const isDashboardFull = location.pathname === "/menudashboard";
   const isMainDashboard = location.pathname === "/main-dashboard";
   const isTableView = location.pathname === "/dashboard";
@@ -274,7 +275,7 @@ export default function SecondHeader({
         </Box>
       </Box>
 
-      {!isMainDashboard && !isDashboardFull && !isTableView && (
+      {!isMainDashboard && !isDashboardFull && !isTableView && !isPoss && (
         <Box
           sx={{
             height: "auto",

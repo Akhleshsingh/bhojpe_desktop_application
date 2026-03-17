@@ -508,22 +508,57 @@ export default function Poss() {
           onToggle={()=>setSidebarCollapsed(v=>!v)}
         />
 
-        {/* ── CATEGORY SIDEBAR with item previews ───────────────────────── */}
-        <PosCategorySidebar
-          categories={categories.map((c:any)=>({
-            id: c.id,
-            category_name: typeof c.category_name==="object" ? c.category_name : { en: c.category_name ?? c.name ?? "Unknown" },
-          }))}
-          menus={menus.map((m:any)=>({
-            id: m.id,
-            menu_name: typeof m.menu_name==="object" ? m.menu_name : { en: m.menu_name ?? m.name ?? "Menu" },
-          }))}
-          menuItems={menuItems}
-          selectedCategoryId={selectedCategoryId}
-          onSelectCategory={(id)=>{ setSelectedCategoryId(id); setSelectedMenuId(null); setActiveMealTime(null); }}
-          selectedMenuId={selectedMenuId}
-          onSelectMenu={(id)=>{ setSelectedMenuId(id); setSelectedCategoryId(null); setActiveMealTime(null); }}
-        />
+        {/* ── CATEGORY / MENU SIDEBAR ─────────────────────────────────────── */}
+        <Box sx={{width:190,minWidth:170,background:C.w,borderRight:`1.5px solid ${C.bd}`,display:"flex",flexDirection:"column",flexShrink:0,overflow:"hidden",boxShadow:"2px 0 8px rgba(0,0,0,.04)"}}>
+          {/* Tab toggle */}
+          <Box sx={{display:"grid",gridTemplateColumns:"1fr 1fr",borderBottom:`1.5px solid ${C.bd}`,flexShrink:0,background:C.s1}}>
+            {(["cat","menu"] as const).map(m=>(
+              <Box key={m} component="button" onClick={()=>{setSideMode(m);setSelectedCategoryId(null);setSelectedMenuId(null);setActiveMealTime(null);}}
+                sx={{py:"10px",textAlign:"center",fontSize:"10.5px",fontWeight:800,cursor:"pointer",color:sideMode===m?C.ac:C.t3,border:"none",background:sideMode===m?C.w:"transparent",fontFamily:FONT,letterSpacing:".6px",textTransform:"uppercase",transition:"all .15s",borderBottom:`2.5px solid ${sideMode===m?C.ac:"transparent"}`,boxShadow:sideMode===m?"0 1px 0 #fff inset":"none"}}>
+                {m==="cat"?"Category":"Menu"}
+              </Box>
+            ))}
+          </Box>
+          {/* List */}
+          <Box sx={{flex:1,overflowY:"auto",py:"6px",px:"8px"}}>
+            {sideMode==="cat" ? (
+              <>
+                {[
+                  { id:null as number|null, label:"All Items", cnt:menuItems.length },
+                  ...categories.map((c:any)=>({
+                    id: c.id as number,
+                    label: (typeof c.category_name==="object" ? c.category_name?.en : c.category_name) ?? c.name ?? "Unknown",
+                    cnt: menuItems.filter((mi:MenuItem)=>mi.item_category_id===c.id||mi.category_id===c.id).length,
+                  }))
+                ].map(cat=>{
+                  const active = selectedCategoryId===cat.id;
+                  return (
+                    <Box key={cat.id??0} onClick={()=>setSelectedCategoryId(cat.id)}
+                      sx={{display:"flex",alignItems:"center",justifyContent:"space-between",px:"10px",py:"9px",borderRadius:"10px",mb:"2px",cursor:"pointer",color:active?C.ac:C.t2,fontWeight:active?700:500,border:`1.5px solid ${active?C.abdr:"transparent"}`,background:active?C.adim:"transparent",transition:"all .13s","&:hover":{background:active?C.adim:C.s2,color:active?C.ac:C.tx}}}>
+                      <Typography sx={{fontSize:"12px",fontWeight:"inherit",color:"inherit",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",maxWidth:120,fontFamily:FONT}}>{cat.label}</Typography>
+                      <Box component="span" sx={{fontSize:"10px",fontWeight:700,minWidth:20,textAlign:"center",px:"5px",py:"1.5px",borderRadius:"8px",background:active?C.amid:C.s2,color:active?C.ac:C.t3,flexShrink:0,ml:"4px"}}>{cat.cnt}</Box>
+                    </Box>
+                  );
+                })}
+              </>
+            ) : (
+              <>
+                {(menus.length > 0 ? menus : MEAL_TIMES.map(mt=>({id:mt.key,menu_name:{en:`${mt.icon} ${mt.key}`}}))).map((menu:any)=>{
+                  const label = (typeof menu.menu_name==="object" ? menu.menu_name?.en : menu.menu_name) ?? menu.name ?? "Menu";
+                  const isActive = typeof menu.id==="number" ? selectedMenuId===menu.id : activeMealTime===menu.id;
+                  const cnt = typeof menu.id==="number" ? menuItems.filter((mi:MenuItem)=>mi.menu_id===menu.id).length : (MEAL_TIMES.find(mt=>mt.key===menu.id)?.cats.length??0);
+                  return (
+                    <Box key={menu.id} onClick={()=>{ if(typeof menu.id==="number"){setSelectedMenuId(isActive?null:menu.id);setActiveMealTime(null);}else{setActiveMealTime(isActive?null:menu.id);setSelectedMenuId(null);}}}
+                      sx={{display:"flex",alignItems:"center",justifyContent:"space-between",px:"10px",py:"9px",borderRadius:"10px",mb:"2px",cursor:"pointer",border:`1.5px solid ${isActive?C.abdr:"transparent"}`,background:isActive?C.adim:"transparent",color:isActive?C.ac:C.t2,transition:"all .13s","&:hover":{background:isActive?C.adim:C.s2}}}>
+                      <Typography sx={{fontSize:"12px",fontWeight:isActive?700:500,color:"inherit",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",maxWidth:120,fontFamily:FONT}}>{label}</Typography>
+                      <Box component="span" sx={{fontSize:"10px",fontWeight:700,minWidth:20,textAlign:"center",px:"5px",py:"1.5px",borderRadius:"8px",background:isActive?C.amid:C.s2,color:isActive?C.ac:C.t3,flexShrink:0,ml:"4px"}}>{cnt}</Box>
+                    </Box>
+                  );
+                })}
+              </>
+            )}
+          </Box>
+        </Box>
 
         {/* ── CENTER (Search + Grid) ─────────────────────────────────────── */}
         <Box sx={{display:"flex",flexDirection:"column",flex:1,overflow:"hidden",minWidth:0}}>
@@ -600,7 +635,15 @@ export default function Poss() {
                   {/* Image area */}
                   <Box sx={{width:"100%",aspectRatio:"16/10",background:`linear-gradient(145deg,${qty>0?"#fff0ea,#fcd8c8":"#fff8f4,#fce8d8"})`,display:"flex",alignItems:"center",justifyContent:"center",position:"relative",overflow:"hidden"}}>
                     <VDot type={ft} />
-                    <Box sx={{fontSize:36,lineHeight:1,transition:"transform .2s","&:hover":{transform:"scale(1.1)"}}}>{emoji}</Box>
+                    <Box sx={{opacity:.55,transition:"transform .2s, opacity .2s","&:hover":{transform:"scale(1.08)",opacity:.7}}}>
+                      <svg width="52" height="52" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 8 L20 28 Q20 36 28 36 L28 56" stroke="#555" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M13 8 L13 24 Q13 28 16.5 28" stroke="#555" strokeWidth="3" strokeLinecap="round"/>
+                        <path d="M27 8 L27 24 Q27 28 23.5 28" stroke="#555" strokeWidth="3" strokeLinecap="round"/>
+                        <path d="M44 8 L44 24 Q44 32 40 36 L40 56" stroke="#555" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M44 24 Q48 20 48 8" stroke="#555" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </Box>
                     {qty>0 && (
                       <Box sx={{position:"absolute",top:6,right:6,minWidth:20,height:20,px:"4px",borderRadius:"10px",background:C.ac,color:"#fff",fontSize:"10px",fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 2px 6px rgba(255,61,1,.4)",border:"1.5px solid #fff"}}>
                         {qty}
@@ -1262,193 +1305,6 @@ export default function Poss() {
   );
 }
 
-// ── Sub-components ─────────────────────────────────────────────────────────
-
-// ─── PosCategorySidebar ──────────────────────────────────────────────────
-// Dark themed category sidebar with item count badges and quick preview
-// strip that appears when a category is selected.
-interface SidebarCategory { id: number; category_name: { en: string } | string; }
-interface SidebarMenu { id: number; menu_name: { en: string } | string; }
-const SB = {
-  base:"#3D3636", header:"#2C2828", active:"#E8353A", hover:"#4A4444",
-  text:"#FFFFFF", dim:"rgba(255,255,255,.55)", border:"rgba(255,255,255,.1)",
-  preview:"#332e2e",
-};
-const getCatLabel = (c: SidebarCategory) =>
-  typeof c.category_name === "object" ? c.category_name.en : (c.category_name ?? "Unknown");
-const getMenuLabel = (m: SidebarMenu) =>
-  typeof m.menu_name === "object" ? m.menu_name.en : (m.menu_name ?? "Menu");
-
-function PosCategorySidebar({
-  categories, menus, menuItems,
-  selectedCategoryId, onSelectCategory,
-  selectedMenuId, onSelectMenu,
-}: {
-  categories: SidebarCategory[];
-  menus: SidebarMenu[];
-  menuItems: MenuItem[];
-  selectedCategoryId: number | null;
-  onSelectCategory: (id: number | null) => void;
-  selectedMenuId: number | null;
-  onSelectMenu: (id: number | null) => void;
-}) {
-  const [menuOpen, setMenuOpen] = React.useState(false);
-
-  const catRows: { id: number | null; label: string }[] = [
-    { id: null, label: "All Items" },
-    ...categories.map(c => ({ id: c.id, label: getCatLabel(c) })),
-  ];
-
-  const activeMenuLabel = selectedMenuId
-    ? getMenuLabel(menus.find(m => m.id === selectedMenuId) ?? menus[0])
-    : "All Menus";
-
-  const getCatItems = (catId: number | null) =>
-    catId === null ? menuItems : menuItems.filter(i => i.item_category_id === catId || i.category_id === catId);
-
-  return (
-    <Box sx={{
-      width: "clamp(160px, 12vw, 200px)",
-      flexShrink: 0,
-      background: SB.base,
-      display: "flex",
-      flexDirection: "column",
-      height: "100%",
-      overflowY: "auto",
-      fontFamily: "Poppins, sans-serif",
-      "&::-webkit-scrollbar": { width: 3 },
-      "&::-webkit-scrollbar-thumb": { background: "#555", borderRadius: 2 },
-    }}>
-      {/* ── Menu filter header ── */}
-      <Box sx={{
-        position: "relative",
-        px: 1.5, py: 1.2,
-        background: SB.header,
-        borderBottom: `1px solid ${SB.border}`,
-        flexShrink: 0,
-      }}>
-        <Box onClick={() => setMenuOpen(v => !v)} sx={{
-          display: "flex", alignItems: "center", gap: 0.6,
-          cursor: "pointer", userSelect: "none",
-          "&:hover": { opacity: 0.8 },
-        }}>
-          <Typography sx={{ fontSize: 11, color: SB.text, fontWeight: 600, flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-            {activeMenuLabel}
-          </Typography>
-          <Box component="span" sx={{ fontSize: 10, color: SB.dim, transform: menuOpen ? "rotate(180deg)" : "none", display: "inline-block", transition: "transform .2s" }}>▼</Box>
-        </Box>
-        {/* Dropdown */}
-        {menuOpen && (
-          <Box sx={{
-            position: "absolute", top: "100%", left: 0, right: 0, zIndex: 100,
-            background: SB.header, borderTop: `1px solid ${SB.border}`,
-            boxShadow: "0 8px 24px rgba(0,0,0,.4)", maxHeight: 200, overflowY: "auto",
-          }}>
-            {[{ id: null, label: "All Menus" }, ...menus.map(m => ({ id: m.id, label: getMenuLabel(m) }))].map(m => (
-              <Box key={m.id ?? "all"} onClick={() => { onSelectMenu(m.id); setMenuOpen(false); }}
-                sx={{
-                  px: 1.5, py: 1,
-                  fontSize: 11, fontWeight: selectedMenuId === m.id ? 700 : 400,
-                  color: selectedMenuId === m.id ? "#E8353A" : SB.dim,
-                  cursor: "pointer",
-                  background: selectedMenuId === m.id ? "rgba(232,53,58,.12)" : "transparent",
-                  "&:hover": { background: SB.hover, color: SB.text },
-                  borderBottom: `1px solid ${SB.border}`,
-                }}>
-                {m.label}
-              </Box>
-            ))}
-          </Box>
-        )}
-      </Box>
-
-      {/* ── Category list ── */}
-      {catRows.map(cat => {
-        const isActive = selectedCategoryId === cat.id;
-        const catItems = getCatItems(cat.id);
-        const menuFiltered = selectedMenuId
-          ? catItems.filter(i => i.menu_id === selectedMenuId)
-          : catItems;
-        const count = menuFiltered.length;
-        const previewItems = menuFiltered.slice(0, 4);
-
-        return (
-          <Box key={cat.id ?? "all"}>
-            {/* Category row */}
-            <Box onClick={() => onSelectCategory(cat.id)}
-              sx={{
-                display: "flex", alignItems: "center",
-                px: 1.5, py: 1.1,
-                cursor: "pointer",
-                background: isActive ? SB.active : "transparent",
-                borderBottom: `1px solid ${SB.border}`,
-                transition: "background .13s",
-                "&:hover": { background: isActive ? SB.active : SB.hover },
-              }}>
-              <Typography sx={{
-                fontSize: 11.5, fontWeight: isActive ? 700 : 400,
-                color: SB.text, flex: 1, lineHeight: 1.3,
-                overflow: "hidden", textOverflow: "ellipsis",
-                display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
-              }}>
-                {cat.label}
-              </Typography>
-              <Box component="span" sx={{
-                ml: 0.5, flexShrink: 0, minWidth: 18,
-                px: "4px", py: "1px", borderRadius: "8px",
-                background: isActive ? "rgba(255,255,255,.25)" : "rgba(255,255,255,.1)",
-                fontSize: 9, fontWeight: 700, color: SB.text, textAlign: "center",
-              }}>
-                {count}
-              </Box>
-            </Box>
-
-            {/* Preview strip — shown when category is selected */}
-            {isActive && previewItems.length > 0 && (
-              <Box sx={{ background: SB.preview, borderBottom: `1px solid ${SB.border}`, py: 0.8, px: 1 }}>
-                {previewItems.map(item => {
-                  const ft = foodType(item);
-                  return (
-                    <Box key={item.id} sx={{
-                      display: "flex", alignItems: "center", gap: 0.8,
-                      py: "4px",
-                      borderBottom: `1px solid rgba(255,255,255,.05)`,
-                      "&:last-child": { borderBottom: "none" },
-                    }}>
-                      {/* Veg/Non-veg dot */}
-                      <Box sx={{
-                        width: 8, height: 8, borderRadius: "2px", flexShrink: 0,
-                        border: `1.5px solid ${foodColor(ft)}`,
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                      }}>
-                        <Box sx={{ width: 3, height: 3, borderRadius: "50%", background: foodColor(ft) }} />
-                      </Box>
-                      <Typography sx={{
-                        fontSize: 10, color: "rgba(255,255,255,.75)", flex: 1,
-                        overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-                        lineHeight: 1.3,
-                      }}>
-                        {item.item_name}
-                      </Typography>
-                      <Typography sx={{ fontSize: 10, fontWeight: 700, color: "#E8353A", flexShrink: 0 }}>
-                        ₹{item.price}
-                      </Typography>
-                    </Box>
-                  );
-                })}
-                {menuFiltered.length > 4 && (
-                  <Typography sx={{ fontSize: 9, color: SB.dim, textAlign: "center", pt: "3px" }}>
-                    +{menuFiltered.length - 4} more
-                  </Typography>
-                )}
-              </Box>
-            )}
-          </Box>
-        );
-      })}
-    </Box>
-  );
-}
 
 function CustPillBtn({ pill, onClick }: { pill:{filled:boolean;label:string;initials:string}; onClick:()=>void }) {
   return (
