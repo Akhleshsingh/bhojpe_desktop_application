@@ -146,14 +146,25 @@ export default function Poss() {
     return { dine: find("dine_in"), pickup: find("pickup"), delivery: find("delivery") };
   }, [orderTypes]);
 
-  // ── Menu Items ──
-  const [menuItems, setMenuItems]       = useState<MenuItem[]>(() => {
+  // ── Menu Items — stale-while-revalidate ──────────────────────────────────
+  // Initialize from cache immediately so the page renders without waiting for the API.
+  // menuLoading is only true on the very first load (empty cache). Subsequent opens
+  // render instantly from cache and refresh silently in the background.
+  const [menuItems, setMenuItems] = useState<MenuItem[]>(() => {
     try { return JSON.parse(localStorage.getItem("menuItems") || "[]"); } catch { return []; }
   });
-  const [menuLoading, setMenuLoading]   = useState(true);
+  const [menuLoading, setMenuLoading] = useState<boolean>(() => {
+    try { return (JSON.parse(localStorage.getItem("menuItems") || "[]") as any[]).length === 0; }
+    catch { return true; }
+  });
+  const [menuRefreshing, setMenuRefreshing] = useState(false);
 
   useEffect(() => {
     if (!token) { setMenuLoading(false); return; }
+    // If cache is empty we show the full loading screen; otherwise just a silent refresh
+    const hasCache = menuItems.length > 0;
+    if (!hasCache) setMenuLoading(true);
+    else setMenuRefreshing(true);
     fetch(`${BASE_URL}/menu-items`, { headers: { Authorization:`Bearer ${token}` } })
       .then(r => r.json())
       .then(d => {
@@ -162,8 +173,9 @@ export default function Poss() {
           localStorage.setItem("menuItems", JSON.stringify(d.data));
         }
       })
-      .catch(() => { /* use cached */ })
-      .finally(() => setMenuLoading(false));
+      .catch(() => { /* keep cached data */ })
+      .finally(() => { setMenuLoading(false); setMenuRefreshing(false); });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   // ── Body overflow hidden for POS ──
@@ -600,7 +612,6 @@ export default function Poss() {
     <Box sx={{height:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:C.bg,flexDirection:"column",gap:"16px",fontFamily:FONT}}>
       <CircularProgress size={36} sx={{color:C.ac}} />
       <Typography sx={{fontSize:13,fontWeight:600,color:C.t2,fontFamily:FONT}}>POS load ho raha hai…</Typography>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');`}</style>
     </Box>
   );
 
@@ -608,7 +619,6 @@ export default function Poss() {
   return (
     <Box sx={{fontFamily:FONT,background:C.bg,color:C.tx,height:"100vh",overflow:"hidden",display:"flex",flexDirection:"column"}}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
         @keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
         @keyframes popIn{from{opacity:0;transform:scale(.93) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
         @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
@@ -719,7 +729,10 @@ export default function Poss() {
                 );
               })}
             </Box>
-            <Typography sx={{fontSize:"11px",color:C.t3,flexShrink:0,fontWeight:600}}>{gridItems.length} items</Typography>
+            <Box sx={{display:"flex",alignItems:"center",gap:"6px",flexShrink:0}}>
+              {menuRefreshing && <CircularProgress size={10} sx={{color:C.t3}} />}
+              <Typography sx={{fontSize:"11px",color:C.t3,fontWeight:600}}>{gridItems.length} items</Typography>
+            </Box>
           </Box>
 
           {/* Product Grid — responsive columns, uniform row heights, scrollable */}
