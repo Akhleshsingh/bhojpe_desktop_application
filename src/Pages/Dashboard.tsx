@@ -141,7 +141,7 @@ export default function Dashboard() {
 
   /* ── navigation ── */
   const gotoMenu = (table: any, mode: string) => {
-    navigate("/menudashboard", {
+    navigate("/poss", {
       state: {
         mode,
         tableId: table.id,

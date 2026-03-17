@@ -1165,7 +1165,7 @@ toast.success("KOT created successfully");
   await fetchOrders({ page: 1, per_page: 10 });
    await fetchTables();
     const updatedOrder = res.data;
-    navigate("/menudashboard", {
+    navigate("/poss", {
       replace: true,
       state: {
         // mode: "kot",

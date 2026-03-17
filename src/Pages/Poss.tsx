@@ -8,6 +8,7 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { Box, Typography, Dialog, CircularProgress } from "@mui/material";
 import toast from "react-hot-toast";
+import { useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useWaiters } from "../context/WaitersContext";
 import { useDeliveryExecutives } from "../context/DeliveryExecutive";
@@ -130,6 +131,7 @@ export default function Poss() {
   const { deliveryExecutives } = useDeliveryExecutives();
   const { customers, searchCustomers, saveCustomer } = useCustomers();
   const { tables: flatTables, fetchTables } = useTables();
+  const location = useLocation();
 
   // ── Branch-derived data ──
   const branchId      = branchData?.data?.id;
@@ -195,6 +197,25 @@ export default function Poss() {
   const [selectedWaiter, setSelectedWaiter]     = useState<Staff|null>(null);
   const [selectedDelExec, setSelectedDelExec]   = useState<Staff|null>(null);
   const [assignedTable, setAssignedTable]       = useState<PosTable|null>(null);
+
+  // ── Auto-assign table from navigation state (when redirected from table view) ──
+  useEffect(() => {
+    const st = location.state as any;
+    if (!st) return;
+    if (st.tableId) {
+      const allTables: PosTable[] = areas.flatMap((a:any) => (a.tables ?? []).map((t:any) => ({ ...t, area_name: typeof a.area_name === "object" ? a.area_name.en : a.area_name })));
+      const found = allTables.find(t => t.id === st.tableId) ?? flatTables.find(t => t.id === st.tableId);
+      if (found) {
+        setAssignedTable(found as PosTable);
+        setChannel("dine");
+      } else if (st.tableNo) {
+        setAssignedTable({ id: st.tableId, table_no: st.tableNo, capacity: st.seating ?? 1, area_name: st.area_name ?? "" });
+        setChannel("dine");
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.state, areas, flatTables]);
+
   const [channelNotes, setChannelNotes] = useState({dine:"",pickup:"",delivery:""});
   const [custByChannel, setCustByChannel] = useState<{dine:Customer|null;pickup:Customer|null;delivery:Customer|null}>({dine:null,pickup:null,delivery:null});
   const [platform, setPlatform] = useState("bhojpe");

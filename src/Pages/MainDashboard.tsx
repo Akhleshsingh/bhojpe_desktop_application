@@ -470,7 +470,7 @@ export default function MainDashboard() {
               return (
                 <Box
                   key={order.id}
-                  onClick={() => navigate("/menudashboard", { state: { activeOrder: order, mode: "kot", tableId: order.table_id } })}
+                  onClick={() => navigate("/poss", { state: { activeOrder: order, mode: "kot", tableId: order.table_id } })}
                   sx={{
                     p: "12px", border: `1.5px solid ${BORDER}`,
                     borderRadius: "12px", mb: "8px",
@@ -535,7 +535,7 @@ export default function MainDashboard() {
                         cursor: "pointer",
                         "&:hover": { background: "#e6dfd6", color: "#1a1208" },
                       }}
-                        onClick={e => { e.stopPropagation(); navigate("/menudashboard", { state: { activeOrder: order, mode: "kot", tableId: order.table_id } }); }}
+                        onClick={e => { e.stopPropagation(); navigate("/poss", { state: { activeOrder: order, mode: "kot", tableId: order.table_id } }); }}
                       >
                         New KOT
                       </Box>

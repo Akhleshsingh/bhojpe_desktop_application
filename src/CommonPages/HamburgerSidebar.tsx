@@ -51,7 +51,7 @@ type MenuItem =
 
 const STATIC_MENU_ITEMS: MenuItem[] = [
   { label: "Dashboard",           icon: dashboardicon,    path: "/main-dashboard"            },
-  { label: "POS",                 icon: posicon,          path: "/menudashboard"             },
+  { label: "POS",                 icon: posicon,          path: "/poss"                      },
   { label: "Orders",              icon: ordersIcon,       path: "/ordershistory"             },
   { label: "Delivery Executive",  icon: deliveryExecIcon, path: "/delivery-executives"       },
   { label: "Waiter Requests",     icon: waiterreq,        path: "/waiter-requests"           },

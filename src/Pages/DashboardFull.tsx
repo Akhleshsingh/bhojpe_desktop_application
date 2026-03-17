@@ -383,7 +383,7 @@ useEffect(() => {
       areaName: draftOrder.areaName,
     });
   }
-  navigate("/menudashboard", {
+  navigate("/poss", {
     replace: true,
     state: {
       mode: "new",
