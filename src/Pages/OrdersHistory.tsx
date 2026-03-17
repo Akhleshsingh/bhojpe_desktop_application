@@ -254,7 +254,6 @@ export default function OrdersHistory() {
 
   const handleOrderClick = useCallback((order: any) => {
     if (order.mode === "draft") { navigate("/poss", { state: { draftOrder: order } }); return; }
-    if (order.status === "billed" || order.status === "paid") { setBilledOrderData(order); setBillDrawerOpen(true); return; }
     navigate("/poss", { state: { mode: "kot", tableId: order.table_id, activeOrder: order, orderId: order.id, orderNumber: order.order_number } });
   }, [navigate]);
 

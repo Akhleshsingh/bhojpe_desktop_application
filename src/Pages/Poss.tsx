@@ -221,6 +221,82 @@ export default function Poss() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.state, areas, flatTables]);
 
+  // ── Restore order from Orders history (activeOrder in nav state) ──────────
+  const loadedOrderIdRef = useRef<number|null>(null);
+  useEffect(() => {
+    if (menuLoading) return;
+    const st = location.state as any;
+    if (!st?.activeOrder) return;
+    const order = st.activeOrder;
+    if (loadedOrderIdRef.current === order.id) return;
+    loadedOrderIdRef.current = order.id;
+
+    // 1. Channel
+    const typeName = (order.order_type?.order_type_name || "").toLowerCase();
+    const ch: "dine"|"pickup"|"delivery" =
+      typeName.includes("pickup") ? "pickup" :
+      typeName.includes("delivery") ? "delivery" : "dine";
+    setChannel(ch);
+
+    // 2. Pax
+    if (order.pax) setPax(Number(order.pax) || 1);
+
+    // 3. Table (dine-in)
+    if (ch === "dine" && order.table_id) {
+      const allT = areas.flatMap((a: any) =>
+        (a.tables ?? []).map((t: any) => ({ ...t, area_name: typeof a.area_name === "object" ? a.area_name.en : a.area_name }))
+      );
+      const tbl = (flatTables as PosTable[]).find(t => t.id === order.table_id) ?? allT.find((t: any) => t.id === order.table_id);
+      if (tbl) setAssignedTable(tbl as PosTable);
+      else if (order.table?.table_no) setAssignedTable({ id: order.table_id, table_no: order.table.table_no, capacity: order.table.capacity ?? 1, area_name: "" });
+    }
+
+    // 4. Customer
+    if (order.customer) setCustByChannel(prev => ({ ...prev, [ch]: order.customer as Customer }));
+
+    // 5. Waiter
+    if (order.waiter_id && (waiters as Staff[]).length) {
+      const w = (waiters as Staff[]).find(w => w.id === order.waiter_id);
+      if (w) setSelectedWaiter(w);
+    } else if (order.waiter) {
+      setSelectedWaiter(order.waiter as Staff);
+    }
+
+    // 6. Discount
+    if (order.discount && Number(order.discount) > 0) {
+      setDiscAmt(Number(order.discount));
+      setDiscLabel(order.discount_reason || "Discount");
+      setDiscType(order.discount_type === "fixed" ? "fixed" : "percent");
+    }
+
+    // 7. Delivery charge
+    if (ch === "delivery" && order.delivery_charges) setDelCharge(Number(order.delivery_charges) || 40);
+
+    // 8. Build cart — merge all KOT items, deduplicate by menu_item_id
+    const allKotItems: any[] = (order.kot || []).flatMap((k: any) => k.items || []);
+    const itemMap: Record<number, any> = {};
+    allKotItems.forEach((ki: any) => {
+      const mid = ki.menu_item_id;
+      if (!mid) return;
+      if (itemMap[mid]) { itemMap[mid].qty += ki.quantity || 1; }
+      else              { itemMap[mid] = { ...ki, qty: ki.quantity || 1 }; }
+    });
+    const newCart: CartItem[] = Object.values(itemMap).map((ki: any) => {
+      const found = menuItems.find(m => m.id === ki.menu_item_id);
+      const item: MenuItem = found ?? {
+        id: ki.menu_item_id,
+        item_name: ki.menu_item?.item_name ?? ki.menu_item?.translations?.[0]?.item_name ?? `Item #${ki.menu_item_id}`,
+        price: Number(ki.price) || Number(ki.menu_item?.price) || 0,
+        item_category_id: ki.menu_item?.item_category_id || 0,
+        is_veg: ki.menu_item?.is_veg ?? 0,
+      } as MenuItem;
+      return { item, qty: ki.qty, note: ki.notes || "", price: Number(ki.price) || item.price } as CartItem;
+    });
+    if (newCart.length > 0) setCart(newCart);
+    toast.success("Order loaded ✓", { duration: 1500 });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.state, menuLoading, menuItems]);
+
   const [channelNotes, setChannelNotes] = useState({dine:"",pickup:"",delivery:""});
   const [custByChannel, setCustByChannel] = useState<{dine:Customer|null;pickup:Customer|null;delivery:Customer|null}>({dine:null,pickup:null,delivery:null});
   const [platform, setPlatform] = useState("bhojpe");
