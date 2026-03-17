@@ -6,3 +6,4 @@ export * from "./endpoints/customers";
 export * from "./endpoints/staff";
 export * from "./endpoints/delivery";
 export * from "./endpoints/printerSettings";
+export * from "./endpoints/pos";

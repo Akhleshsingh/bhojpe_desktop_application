@@ -47,6 +47,7 @@ import { Toaster } from "react-hot-toast";
 import AllKitchenKot from "./CommonPages/AllKitchenKot";
 import DeliveryExecutivesPage from "./CommonPages/DeliveryExecutivesPage";
 import PrinterSettings from "./CommonPages/PrinterSettings";
+import Poss from "./Pages/Poss";
 export default function App() {
   const [savedOrders, setSavedOrders] = useState<Order[]>([]);
 
@@ -192,6 +193,7 @@ export default function App() {
                               }
                             />
 
+                            <Route path="/poss" element={<Poss />} />
                             <Route path="/print" element={<PrintReceipt />} />
                             <Route path="/print-kot" element={<PrintKot />} />
                             <Route
