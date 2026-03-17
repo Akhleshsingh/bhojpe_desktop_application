@@ -142,7 +142,7 @@ export default function MyOrders() {
               variant="outlined"
               startIcon={<ArrowBackIcon />}
               sx={{ textTransform: "none" }}
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate("/tables")}
             >
               Back
             </Button>

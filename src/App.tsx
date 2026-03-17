@@ -91,7 +91,7 @@ export default function App() {
                             <Route path="/" element={<Login />} />
 
                             <Route
-                              path="/dashboard"
+                              path="/tables"
                               element={
                                 <DashboardLayout>
                                   <Dashboard />
@@ -99,7 +99,7 @@ export default function App() {
                               }
                             />
                             <Route
-                              path="/main-dashboard"
+                              path="/dashboard"
                               element={
                                 <DashboardLayout>
                                   <MainDashboard />
@@ -144,7 +144,7 @@ export default function App() {
                             />
                             {/* Orders History Page */}
                             <Route
-                              path="/ordershistory"
+                              path="/orders"
                               element={
                                 <DashboardLayout>
                                   <OrdersHistory />
@@ -161,7 +161,7 @@ export default function App() {
                               }
                             />
                             <Route
-                              path="/tables"
+                              path="/manage-tables"
                               element={
                                 <DashboardLayout>
                                   <Tables />
@@ -281,7 +281,7 @@ export default function App() {
                               }
                             />
                             <Route
-                              path="/kitchens/all-kitchens-kot"
+                              path="/kots"
                               element={
                                 <DashboardLayout>
                                   <AllKitchenKot />

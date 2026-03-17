@@ -8,7 +8,7 @@ const Footer: React.FC = () => {
   const { branchData } = useAuth();
 
   const goToDashboard = () => {
-    navigate("/dashboard");
+    navigate("/tables");
   };
 
   return (

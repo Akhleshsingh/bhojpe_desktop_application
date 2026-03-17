@@ -68,7 +68,7 @@ const Login: React.FC = () => {
       }
       if (passcode === savedPasskey) {
         localStorage.setItem("offline_login", "true");
-        navigate("/main-dashboard");
+        navigate("/tables");
         return;
       } else {
         toast.error("Wrong passkey");
@@ -85,7 +85,7 @@ const Login: React.FC = () => {
       }
       fetchOrders();
       fetchWaiters();
-      navigate("/main-dashboard");
+      navigate("/tables");
     } else {
       toast.error("Invalid credentials");
     }

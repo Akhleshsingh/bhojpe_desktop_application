@@ -47,7 +47,7 @@ export default function SecondHeader({
 
   const isPoss = location.pathname === "/poss";
   const isDashboardFull = location.pathname === "/menudashboard";
-  const isMainDashboard = location.pathname === "/main-dashboard";
+  const isMainDashboard = location.pathname === "/dashboard";
 
   const handleNewKot = () => {
     if (onNewOrder) { onNewOrder(); return; }
@@ -55,8 +55,8 @@ export default function SecondHeader({
   };
 
   const handleQuickIconClick = (index: number) => {
-    if (index === 0) navigate("/kitchens/all-kitchens-kot");
-    else if (index === 1) navigate("/dashboard");
+    if (index === 0) navigate("/kots");
+    else if (index === 1) navigate("/tables");
     else if (index === 2) navigate("/inventory");
   };
 
@@ -106,7 +106,7 @@ export default function SecondHeader({
             src={Bhojpeblack}
             alt="App Logo"
             style={{ width: 130, cursor: "pointer" }}
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate("/tables")}
             onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.7")}
             onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
           />
@@ -140,7 +140,7 @@ export default function SecondHeader({
                   from_date: "",
                   to_date: "",
                 });
-                navigate("/ordershistory", { replace: true });
+                navigate("/orders", { replace: true });
               }}
               className="clickable"
             >
@@ -179,7 +179,7 @@ export default function SecondHeader({
             {/* Tables */}
             <Box
               className="clickable"
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate("/tables")}
               sx={{
                 display: "flex",
                 alignItems: "center",
@@ -207,7 +207,7 @@ export default function SecondHeader({
 
             {/* All KOT Button */}
             <Button
-              onClick={() => navigate("/kitchens/all-kitchens-kot")}
+              onClick={() => navigate("/kots")}
               sx={{
                 backgroundColor: "#fff",
                 color: "#FF3D01",

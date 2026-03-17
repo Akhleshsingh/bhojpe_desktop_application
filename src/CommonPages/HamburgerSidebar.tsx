@@ -50,9 +50,9 @@ type MenuItem =
   | { label: string; icon: string; action: () => Promise<void>; path?: undefined; children?: undefined };
 
 const STATIC_MENU_ITEMS: MenuItem[] = [
-  { label: "Dashboard",           icon: dashboardicon,    path: "/main-dashboard"            },
+  { label: "Dashboard",           icon: dashboardicon,    path: "/dashboard"            },
   { label: "POS",                 icon: posicon,          path: "/poss"                      },
-  { label: "Orders",              icon: ordersIcon,       path: "/ordershistory"             },
+  { label: "Orders",              icon: ordersIcon,       path: "/orders"             },
   { label: "Delivery Executive",  icon: deliveryExecIcon, path: "/delivery-executives"       },
   { label: "Waiter Requests",     icon: waiterreq,        path: "/waiter-requests"           },
   { label: "Reservations",        icon: reservicon,       path: "/reservations"              },
@@ -73,7 +73,7 @@ const STATIC_MENU_ITEMS: MenuItem[] = [
     icon: kitchenIcon,
     children: [
       { label: "Kitchen Settings",   path: "/kitchens"                    },
-      { label: "All Kitchen KOT",    path: "/kitchens/all-kitchens-kot"   },
+      { label: "All Kitchen KOT",    path: "/kots"   },
       { label: "Default Kitchen",    path: "/kitchens/default"            },
       { label: "Non Veg Kitchen",    path: "/kitchens/non-veg"            },
       { label: "Veg Kitchen",        path: "/kitchens/veg"                },

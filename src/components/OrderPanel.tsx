@@ -1897,7 +1897,7 @@ const showPaxDropdown =
     <Box
       sx={headerTextStyle}
       onClick={() => {
-        navigate("/dashboard", {
+        navigate("/tables", {
           state: { tableView: true },
         });
       }}
@@ -2251,7 +2251,7 @@ const showPaxDropdown =
   <Box
     sx={headerTextStyle}
     onClick={() => {
-      navigate("/dashboard", {
+      navigate("/tables", {
         state: {
           openMerge: true,              
           sourceTableId:
