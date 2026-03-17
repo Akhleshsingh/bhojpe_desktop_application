@@ -6,6 +6,8 @@
  *           useCustomers, useTables
  */
 import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
 import { Box, Typography, Dialog, CircularProgress } from "@mui/material";
 import toast from "react-hot-toast";
 import { useLocation } from "react-router-dom";
@@ -1306,7 +1308,7 @@ export default function Poss() {
       {/* Pickup Date / Time Popups */}
       {[{ open:pickupDatePopup, close:()=>setPickupDatePopup(false), title:"📅 Pickup Date", apply:applyPickupDate,
           body:<>
-            <Box component="input" type="date" value={dateInput} onChange={(e:any)=>setDateInput(e.target.value)} sx={{width:"100%",px:"12px",py:"10px",background:C.s1,border:`1.5px solid ${C.bd}`,borderRadius:"10px",fontFamily:FONT,fontSize:15,color:C.tx,outline:"none","&:focus":{borderColor:C.ac}}} />
+            <Calendar onChange={(d) => setDateInput((d as Date).toISOString().split("T")[0])} value={dateInput ? new Date(dateInput) : new Date()} />
             <Box sx={{display:"flex",gap:"6px",mt:"10px",flexWrap:"wrap"}}>
               {[{l:"Today",d:0},{l:"Tomorrow",d:1},{l:"+2 Days",d:2}].map(p=>(
                 <Box key={p.l} component="button" onClick={()=>{const d=new Date();d.setDate(d.getDate()+p.d);setDateInput(d.toISOString().split("T")[0]);}} sx={{px:"10px",py:"6px",background:C.adim,border:`1.5px solid ${C.abdr}`,borderRadius:"8px",fontSize:11,fontWeight:700,color:C.ac,cursor:"pointer",fontFamily:FONT}}>{p.l}</Box>

@@ -63,21 +63,21 @@ function PinInput({
   return (
     <Box>
       <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1 }}>
-        <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#374151", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+        <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#6b5c4a", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
           {label}
         </Typography>
         <Box onClick={onToggleShow} sx={{ display: "flex", alignItems: "center", gap: 0.4, cursor: "pointer" }}>
           {show
-            ? <VisibilityOffOutlinedIcon sx={{ fontSize: 15, color: "#9CA3AF" }} />
-            : <VisibilityOutlinedIcon sx={{ fontSize: 15, color: "#9CA3AF" }} />}
-          <Typography sx={{ fontSize: 11, color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+            ? <VisibilityOffOutlinedIcon sx={{ fontSize: 15, color: "#a08c7c" }} />
+            : <VisibilityOutlinedIcon sx={{ fontSize: 15, color: "#a08c7c" }} />}
+          <Typography sx={{ fontSize: 11, color: "#a08c7c", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
             {show ? "Hide" : "Show"}
           </Typography>
         </Box>
       </Box>
 
       {hint && (
-        <Typography sx={{ fontSize: 11, color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans', sans-serif", mb: 0.8 }}>
+        <Typography sx={{ fontSize: 11, color: "#a08c7c", fontFamily: "'Plus Jakarta Sans', sans-serif", mb: 0.8 }}>
           {hint}
         </Typography>
       )}
@@ -91,8 +91,8 @@ function PinInput({
               sx={{
                 width: 64, height: 64,
                 borderRadius: "12px",
-                border: `2px solid ${error ? "#FECACA" : filled ? "#FF3D01" : "#E5E7EB"}`,
-                backgroundColor: error ? "#FEF2F2" : filled ? "#FEF2F2" : "#F9FAFB",
+                border: `2px solid ${error ? "#FECACA" : filled ? "#FF3D01" : "#e2d9d0"}`,
+                backgroundColor: error ? "#FEF2F2" : filled ? "#FEF2F2" : "#faf7f3",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 position: "relative",
                 transition: "all .15s",
@@ -158,7 +158,7 @@ export default function ResetPasskey() {
 
   return (
     <Box sx={{
-      minHeight: "100vh", backgroundColor: "#F4F6F9",
+      minHeight: "100vh", backgroundColor: "#f5f0ea",
       display: "flex", alignItems: "center", justifyContent: "center",
       fontFamily: "'Plus Jakarta Sans', sans-serif", p: 3,
     }}>
@@ -166,13 +166,13 @@ export default function ResetPasskey() {
         width: "100%", maxWidth: 420,
         backgroundColor: "#FFFFFF",
         borderRadius: "20px",
-        border: "1px solid #E5E7EB",
+        border: "1px solid #e2d9d0",
         boxShadow: "0 8px 40px rgba(0,0,0,0.10)",
         overflow: "hidden",
       }}>
         {/* ── Card header ── */}
         <Box sx={{
-          background: "linear-gradient(135deg,#1F2937 0%,#374151 100%)",
+          background: "linear-gradient(135deg,#2c1a0e 0%,#3d2810 100%)",
           px: 3, py: 3,
           display: "flex", alignItems: "center", justifyContent: "space-between",
         }}>
@@ -189,7 +189,7 @@ export default function ResetPasskey() {
               <Typography sx={{ fontSize: 16, fontWeight: 700, color: "#FFFFFF", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                 Reset Passkey
               </Typography>
-              <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+              <Typography sx={{ fontSize: 12, color: "#a08c7c", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                 Verify current &amp; set new passkey
               </Typography>
             </Box>
@@ -203,8 +203,8 @@ export default function ResetPasskey() {
               "&:hover": { backgroundColor: "rgba(255,255,255,0.08)" },
             }}
           >
-            <ArrowBackIcon sx={{ fontSize: 16, color: "#9CA3AF" }} />
-            <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Back</Typography>
+            <ArrowBackIcon sx={{ fontSize: 16, color: "#a08c7c" }} />
+            <Typography sx={{ fontSize: 12, color: "#a08c7c", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Back</Typography>
           </Box>
         </Box>
 
@@ -253,9 +253,9 @@ export default function ResetPasskey() {
 
               {/* Divider */}
               <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-                <Box sx={{ flex: 1, height: 1, backgroundColor: "#F3F4F6" }} />
-                <Typography sx={{ fontSize: 11, color: "#D1D5DB", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>NEW PASSKEY</Typography>
-                <Box sx={{ flex: 1, height: 1, backgroundColor: "#F3F4F6" }} />
+                <Box sx={{ flex: 1, height: 1, backgroundColor: "#e2d9d0" }} />
+                <Typography sx={{ fontSize: 11, color: "#a08c7c", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>NEW PASSKEY</Typography>
+                <Box sx={{ flex: 1, height: 1, backgroundColor: "#e2d9d0" }} />
               </Box>
 
               {/* New passkey */}
@@ -305,7 +305,7 @@ export default function ResetPasskey() {
                 Reset Passkey
               </Button>
 
-              <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans', sans-serif", textAlign: "center", lineHeight: 1.6 }}>
+              <Typography sx={{ fontSize: 12, color: "#a08c7c", fontFamily: "'Plus Jakarta Sans', sans-serif", textAlign: "center", lineHeight: 1.6 }}>
                 After resetting, your new passkey will immediately protect POS access.
               </Typography>
             </>

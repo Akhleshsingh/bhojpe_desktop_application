@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
 import {
   Box, Typography, Button, Paper, Chip, Table, TableHead, TableBody, TableRow,
   TableCell, TableContainer, Select, MenuItem, Divider, Stack,
@@ -228,6 +230,52 @@ const info2 = { display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: "16p
 const trHover = { "&:hover td": { background: T.s1 }, "&:last-child td": { borderBottom: "none" } };
 const totalRowSx = { background: T.s1 };
 
+// ── Date range picker ──────────────────────────────────────────────────────
+const calBtnSx = {
+  display: "flex", alignItems: "center", gap: "5px", px: "10px", py: "6px",
+  background: T.s1, border: `1.5px solid ${T.bd}`, borderRadius: "8px",
+  cursor: "pointer", userSelect: "none" as const,
+  fontSize: 12.5, fontWeight: 600, color: T.tx, fontFamily: "Plus Jakarta Sans,sans-serif",
+  "&:hover": { borderColor: T.bd2 },
+} as const;
+const calDropSx = {
+  position: "absolute" as const, top: 38, left: 0, zIndex: 2000,
+  boxShadow: "0 8px 24px rgba(0,0,0,.15)", borderRadius: "10px", overflow: "hidden",
+};
+function DateRange() {
+  const [from, setFrom] = useState<Date>(new Date("2026-03-09"));
+  const [to, setTo] = useState<Date>(new Date("2026-03-15"));
+  const [showFrom, setShowFrom] = useState(false);
+  const [showTo, setShowTo] = useState(false);
+  const fmt = (d: Date) => d.toLocaleDateString("en-IN", { day: "2-digit", month: "2-digit", year: "numeric" });
+  return (
+    <>
+      <Typography sx={fSepSx}>From</Typography>
+      <Box sx={{ position: "relative" }}>
+        <Box sx={calBtnSx} onClick={() => { setShowFrom(v => !v); setShowTo(false); }}>
+          <span>📅</span><span>{fmt(from)}</span>
+        </Box>
+        {showFrom && (
+          <Box sx={calDropSx}>
+            <Calendar value={from} onChange={(d) => { setFrom(d as Date); setShowFrom(false); }} />
+          </Box>
+        )}
+      </Box>
+      <Typography sx={fSepSx}>To</Typography>
+      <Box sx={{ position: "relative" }}>
+        <Box sx={calBtnSx} onClick={() => { setShowTo(v => !v); setShowFrom(false); }}>
+          <span>📅</span><span>{fmt(to)}</span>
+        </Box>
+        {showTo && (
+          <Box sx={calDropSx}>
+            <Calendar minDate={from} value={to} onChange={(d) => { setTo(d as Date); setShowTo(false); }} />
+          </Box>
+        )}
+      </Box>
+    </>
+  );
+}
+
 // ── 12 Report Sections ─────────────────────────────────────────────────────
 
 function SalesReport() {
@@ -239,10 +287,7 @@ function SalesReport() {
       <FilterBar>
         <Typography sx={flSx}>Period:</Typography>
         <FiltSel value={period} onChange={setPeriod}><MenuItem value="Current Week">Current Week</MenuItem><MenuItem value="Today">Today</MenuItem><MenuItem value="Last 30 Days">Last 30 Days</MenuItem></FiltSel>
-        <Typography sx={fSepSx}>From</Typography>
-        <input type="date" defaultValue="2026-03-09" style={{ padding: "7px 10px", background: T.s1, border: `1.5px solid ${T.bd}`, borderRadius: 8, fontFamily: "inherit", fontSize: 12.5, color: T.tx, outline: "none" }} />
-        <Typography sx={fSepSx}>To</Typography>
-        <input type="date" defaultValue="2026-03-15" style={{ padding: "7px 10px", background: T.s1, border: `1.5px solid ${T.bd}`, borderRadius: 8, fontFamily: "inherit", fontSize: 12.5, color: T.tx, outline: "none" }} />
+        <DateRange />
       </FilterBar>
       <Box sx={sg6}>
         <StatCard label="Total Sales" value="₹745" icon="💰" variant="ac" rows={[{ key: "Orders", value: <SChip color={T.blu} bg={T.bluDim}>5</SChip> }, { key: "Avg/Order", value: <b>₹149</b> }]} />
@@ -327,10 +372,7 @@ function ItemReport() {
       <FilterBar>
         <Typography sx={flSx}>Period:</Typography>
         <Select defaultValue="Current Week" size="small" sx={fSelSx}><MenuItem value="Current Week">Current Week</MenuItem><MenuItem value="Today">Today</MenuItem></Select>
-        <Typography sx={fSepSx}>From</Typography>
-        <input type="date" defaultValue="2026-03-09" style={{ padding: "7px 10px", background: T.s1, border: `1.5px solid ${T.bd}`, borderRadius: 8, fontFamily: "inherit", fontSize: 12.5, color: T.tx, outline: "none" }} />
-        <Typography sx={fSepSx}>To</Typography>
-        <input type="date" defaultValue="2026-03-15" style={{ padding: "7px 10px", background: T.s1, border: `1.5px solid ${T.bd}`, borderRadius: 8, fontFamily: "inherit", fontSize: 12.5, color: T.tx, outline: "none" }} />
+        <DateRange />
       </FilterBar>
       <Box sx={sg4}>
         <StatCard label="Total Items Sold" value={d.totalItemsSold} icon="🍽️" variant="ac" rows={[{ key: "Unique Items", value: <b>{d.uniqueItems}</b> }, { key: "Top Item", value: <SChip color={T.blu} bg={T.bluDim}>{d.topItem}</SChip> }]} />
@@ -387,8 +429,7 @@ function CategoryReport() {
       <FilterBar>
         <Typography sx={flSx}>Period:</Typography>
         <Select defaultValue="Current Week" size="small" sx={fSelSx}><MenuItem value="Current Week">Current Week</MenuItem><MenuItem value="Today">Today</MenuItem></Select>
-        <Typography sx={fSepSx}>From</Typography><input type="date" defaultValue="2026-03-09" style={{ padding: "7px 10px", background: T.s1, border: `1.5px solid ${T.bd}`, borderRadius: 8, fontFamily: "inherit", fontSize: 12.5, color: T.tx, outline: "none" }} />
-        <Typography sx={fSepSx}>To</Typography><input type="date" defaultValue="2026-03-15" style={{ padding: "7px 10px", background: T.s1, border: `1.5px solid ${T.bd}`, borderRadius: 8, fontFamily: "inherit", fontSize: 12.5, color: T.tx, outline: "none" }} />
+        <DateRange />
       </FilterBar>
       <Box sx={sg4}>
         <StatCard label="Categories Active" value={d.activeCategories} icon="📂" variant="ac" rows={[{ key: "Total Items", value: <b>{d.totalItemsSold}</b> }, { key: "Top Category", value: <SChip color={T.blu} bg={T.bluDim}>{d.topCategory}</SChip> }]} />
@@ -454,8 +495,7 @@ function DeliveryReport() {
       <FilterBar>
         <Typography sx={flSx}>Platform:</Typography>
         <Select defaultValue="All Platforms" size="small" sx={fSelSx}><MenuItem value="All Platforms">All Platforms</MenuItem><MenuItem value="Swiggy">Swiggy</MenuItem><MenuItem value="Zomato">Zomato</MenuItem><MenuItem value="Direct">Direct</MenuItem></Select>
-        <Typography sx={fSepSx}>From</Typography><input type="date" defaultValue="2026-03-09" style={{ padding: "7px 10px", background: T.s1, border: `1.5px solid ${T.bd}`, borderRadius: 8, fontFamily: "inherit", fontSize: 12.5, color: T.tx, outline: "none" }} />
-        <Typography sx={fSepSx}>To</Typography><input type="date" defaultValue="2026-03-15" style={{ padding: "7px 10px", background: T.s1, border: `1.5px solid ${T.bd}`, borderRadius: 8, fontFamily: "inherit", fontSize: 12.5, color: T.tx, outline: "none" }} />
+        <DateRange />
       </FilterBar>
       <Box sx={sg4}>
         <StatCard label="Total Deliveries" value={d.totalDeliveries} icon="🛵" variant="ac" rows={[{ key: "Revenue", value: <b>₹{d.deliveryRevenue}</b> }, { key: "Avg Delivery", value: <b>₹{d.avgDeliveryAmount}</b> }]} />
@@ -546,8 +586,7 @@ function CancelledReport() {
       <FilterBar>
         <Typography sx={flSx}>Channel:</Typography>
         <Select defaultValue="All Channels" size="small" sx={fSelSx}><MenuItem value="All Channels">All Channels</MenuItem><MenuItem value="Dine In">Dine In</MenuItem><MenuItem value="Delivery">Delivery</MenuItem><MenuItem value="Pickup">Pickup</MenuItem></Select>
-        <Typography sx={fSepSx}>From</Typography><input type="date" defaultValue="2026-03-09" style={{ padding: "7px 10px", background: T.s1, border: `1.5px solid ${T.bd}`, borderRadius: 8, fontFamily: "inherit", fontSize: 12.5, color: T.tx, outline: "none" }} />
-        <Typography sx={fSepSx}>To</Typography><input type="date" defaultValue="2026-03-15" style={{ padding: "7px 10px", background: T.s1, border: `1.5px solid ${T.bd}`, borderRadius: 8, fontFamily: "inherit", fontSize: 12.5, color: T.tx, outline: "none" }} />
+        <DateRange />
       </FilterBar>
       <Box sx={sg4}>
         <StatCard label="Cancelled Orders" value={d.count} icon="❌" variant="ac" rows={[{ key: "Lost Revenue", value: <Typography sx={{ fontWeight: 700, color: T.red, fontSize: 11.5 }}>₹{d.lostRevenue}</Typography> }, { key: "Cancel Rate", value: <SChip color={T.red} bg={T.redDim}>{d.cancelRate}</SChip> }]} />
@@ -593,8 +632,7 @@ function RemovedKotReport() {
       <FilterBar>
         <Typography sx={flSx}>Period:</Typography>
         <Select defaultValue="Current Week" size="small" sx={fSelSx}><MenuItem value="Current Week">Current Week</MenuItem><MenuItem value="Today">Today</MenuItem></Select>
-        <Typography sx={fSepSx}>From</Typography><input type="date" defaultValue="2026-03-09" style={{ padding: "7px 10px", background: T.s1, border: `1.5px solid ${T.bd}`, borderRadius: 8, fontFamily: "inherit", fontSize: 12.5, color: T.tx, outline: "none" }} />
-        <Typography sx={fSepSx}>To</Typography><input type="date" defaultValue="2026-03-15" style={{ padding: "7px 10px", background: T.s1, border: `1.5px solid ${T.bd}`, borderRadius: 8, fontFamily: "inherit", fontSize: 12.5, color: T.tx, outline: "none" }} />
+        <DateRange />
       </FilterBar>
       <Box sx={sg4}>
         <StatCard label="Items Removed" value={d.count} icon="🗑️" variant="ac" rows={[{ key: "Value Lost", value: <Typography sx={{ fontWeight: 700, color: T.red, fontSize: 11.5 }}>₹{d.valueLost}</Typography> }, { key: "Orders Affected", value: <b>{d.ordersAffected}</b> }]} />
@@ -639,8 +677,7 @@ function RefundReport() {
       <FilterBar>
         <Typography sx={flSx}>Type:</Typography>
         <Select defaultValue="All Refunds" size="small" sx={fSelSx}><MenuItem value="All Refunds">All Refunds</MenuItem><MenuItem value="Full Refund">Full Refund</MenuItem><MenuItem value="Partial Refund">Partial Refund</MenuItem></Select>
-        <Typography sx={fSepSx}>From</Typography><input type="date" defaultValue="2026-03-09" style={{ padding: "7px 10px", background: T.s1, border: `1.5px solid ${T.bd}`, borderRadius: 8, fontFamily: "inherit", fontSize: 12.5, color: T.tx, outline: "none" }} />
-        <Typography sx={fSepSx}>To</Typography><input type="date" defaultValue="2026-03-15" style={{ padding: "7px 10px", background: T.s1, border: `1.5px solid ${T.bd}`, borderRadius: 8, fontFamily: "inherit", fontSize: 12.5, color: T.tx, outline: "none" }} />
+        <DateRange />
       </FilterBar>
       <Box sx={sg4}>
         <StatCard label="Total Refunds" value={`₹${d.totalRefunds}`} icon="↩️" variant="ac" rows={[{ key: "Count", value: <b>{d.refundCount}</b> }, { key: "% of Sales", value: <SChip color={T.red} bg={T.redDim}>{d.pctOfSales}</SChip> }]} />

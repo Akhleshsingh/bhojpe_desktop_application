@@ -1,4 +1,6 @@
 import React, { useState, useCallback, useMemo } from "react";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
 import {
   Box,
   Typography,
@@ -716,6 +718,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
   const today = new Date().toISOString().split("T")[0];
 
   const [date, setDate]             = useState(today);
+  const [showDateCal, setShowDateCal] = useState(false);
   const [guests, setGuests]         = useState(1);
   const [mealType, setMealType]     = useState("Lunch");
   const [timeSlot, setTimeSlot]     = useState("");
@@ -883,28 +886,31 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
           <Box sx={{ display: "flex", gap: 1.5, mb: 2.5, flexWrap: "wrap" }}>
 
             {/* Date */}
-            <Box
-              sx={{
-                display: "flex", alignItems: "center", gap: 1,
-                border: "1.5px solid #E5E7EB", borderRadius: "10px",
-                px: 1.5, height: 46, background: "#FAFAFA",
-                flex: "1 1 140px", minWidth: 130,
-                "&:focus-within": { borderColor: "#FF3D01" },
-                transition: "border-color .15s",
-              }}
-            >
-              <CalendarTodayOutlinedIcon sx={{ fontSize: 16, color: "#6B7280", flexShrink: 0 }} />
-              <input
-                type="date"
-                value={date}
-                min={today}
-                onChange={(e) => setDate(e.target.value)}
-                style={{
-                  border: "none", outline: "none", fontSize: 13,
-                  fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#374151",
-                  background: "transparent", cursor: "pointer", width: "100%",
+            <Box sx={{ position: "relative", flex: "1 1 140px", minWidth: 130 }}>
+              <Box
+                onClick={() => setShowDateCal(v => !v)}
+                sx={{
+                  display: "flex", alignItems: "center", gap: 1,
+                  border: `1.5px solid ${showDateCal ? "#FF3D01" : "#E5E7EB"}`,
+                  borderRadius: "10px", px: 1.5, height: 46, background: "#FAFAFA",
+                  cursor: "pointer", transition: "border-color .15s",
+                  "&:hover": { borderColor: "#FF3D01" },
                 }}
-              />
+              >
+                <CalendarTodayOutlinedIcon sx={{ fontSize: 16, color: "#6B7280", flexShrink: 0 }} />
+                <Typography sx={{ fontSize: 13, fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#374151" }}>
+                  {date ? new Date(date + "T00:00").toLocaleDateString("en-US", { weekday: "short", day: "numeric", month: "short" }) : "Select date"}
+                </Typography>
+              </Box>
+              {showDateCal && (
+                <Box sx={{ position: "absolute", top: 52, left: 0, zIndex: 2000, boxShadow: "0 8px 24px rgba(0,0,0,.15)", borderRadius: "10px", overflow: "hidden" }}>
+                  <Calendar
+                    minDate={new Date(today)}
+                    value={date ? new Date(date + "T00:00") : new Date()}
+                    onChange={(d) => { setDate((d as Date).toISOString().split("T")[0]); setShowDateCal(false); }}
+                  />
+                </Box>
+              )}
             </Box>
 
             {/* Guests */}
