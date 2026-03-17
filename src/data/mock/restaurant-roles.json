@@ -1,11 +1,29 @@
 {
   "status": true,
   "roles": [
-    { "id": 10, "display_name": "Admin" },
-    { "id": 11, "display_name": "Branch Head" },
-    { "id": 76, "display_name": "Caption" },
-    { "id": 13, "display_name": "Chef" },
-    { "id": 75, "display_name": "Delivery" },
-    { "id": 12, "display_name": "Waiter" }
+    {
+      "id": 10,
+      "display_name": "Admin"
+    },
+    {
+      "id": 11,
+      "display_name": "Branch Head"
+    },
+    {
+      "id": 76,
+      "display_name": "Caption"
+    },
+    {
+      "id": 13,
+      "display_name": "Chef"
+    },
+    {
+      "id": 75,
+      "display_name": "Delivery"
+    },
+    {
+      "id": 12,
+      "display_name": "Waiter"
+    }
   ]
 }

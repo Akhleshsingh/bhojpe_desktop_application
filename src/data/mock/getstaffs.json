@@ -2,22 +2,158 @@
   "status": true,
   "message": "Staff fetched successfully",
   "data": [
-    { "id": 6,   "name": "ashish",               "email": "ashish@foodscaner.com",           "phone_number": "6260129457", "branch_id": 4, "role_id": 12, "role_name": "Waiter" },
-    { "id": 45,  "name": "chandu waiter",         "email": "sawariyajob56@gmail.com",         "phone_number": "6269871425", "branch_id": 4, "role_id": 12, "role_name": "Waiter" },
-    { "id": 107, "name": "darshan Savaliya",      "email": "savaliyadarshan291124@gmail.com", "phone_number": "9998887770", "branch_id": 4, "role_id": 75, "role_name": "Delivery" },
-    { "id": 57,  "name": "delivery boy",          "email": "deliveryboy@gmail.com",           "phone_number": "9165210808", "branch_id": 4, "role_id": 75, "role_name": "Delivery" },
-    { "id": 96,  "name": "drdr",                  "email": "anjali129@gmail.com",             "phone_number": "0987654320", "branch_id": 4, "role_id": 75, "role_name": "Delivery" },
-    { "id": 94,  "name": "hjklioo",               "email": "shruti679pan@gmail.com",          "phone_number": "1234567899", "branch_id": 4, "role_id": 75, "role_name": "Delivery" },
-    { "id": 111, "name": "jeetu ojha",            "email": "jeetu@gmail.com",                 "phone_number": "8602790073", "branch_id": 4, "role_id": 75, "role_name": "Delivery" },
-    { "id": 62,  "name": "mohan Sharma",          "email": "mohan@gmail.com",                 "phone_number": "9876543218", "branch_id": 4, "role_id": 13, "role_name": "Chef" },
-    { "id": 7,   "name": "pawan",                 "email": "pawan@foodscaner.com",            "phone_number": "6260129455", "branch_id": 4, "role_id": 13, "role_name": "Chef" },
-    { "id": 53,  "name": "pooja singhhgu",        "email": "pooja@gmail.com",                 "phone_number": "9293008767", "branch_id": 4, "role_id": 12, "role_name": "Waiter" },
-    { "id": 58,  "name": "Rahul kushwah",         "email": "rahul@gmail.com",                 "phone_number": "9876543210", "branch_id": 4, "role_id": 75, "role_name": "Delivery" },
-    { "id": 93,  "name": "scscs",                 "email": "zxzc@gmail.co",                  "phone_number": "2132312349", "branch_id": 4, "role_id": 12, "role_name": "Waiter" },
-    { "id": 8,   "name": "sooraj",                "email": "sooraj@foodscaner.com",           "phone_number": "6260129455", "branch_id": 4, "role_id": 11, "role_name": "Branch Head" },
-    { "id": 108, "name": "tes",                   "email": "savaliyadarshan9699@gmail.com",  "phone_number": "7537537530", "branch_id": 4, "role_id": 12, "role_name": "Waiter" },
-    { "id": 60,  "name": "testing",               "email": "test@gmail.com",                  "phone_number": "9639639630", "branch_id": 4, "role_id": 75, "role_name": "Delivery" },
-    { "id": 106, "name": "testing delivery boy",  "email": "boy@gmail.com",                  "phone_number": "9669453963", "branch_id": 4, "role_id": 75, "role_name": "Delivery" },
-    { "id": 63,  "name": "testing with role",     "email": "testrole@gmail.com",              "phone_number": "8528520009", "branch_id": 4, "role_id": 75, "role_name": "Delivery" }
+    {
+      "id": 6,
+      "name": "ashish",
+      "email": "ashish@foodscaner.com",
+      "phone_number": "6260129457",
+      "branch_id": 4,
+      "role_id": 12,
+      "role_name": "Waiter"
+    },
+    {
+      "id": 45,
+      "name": "chandu waiter",
+      "email": "sawariyajob56@gmail.com",
+      "phone_number": "6269871425",
+      "branch_id": 4,
+      "role_id": 12,
+      "role_name": "Waiter"
+    },
+    {
+      "id": 107,
+      "name": "darshan Savaliya",
+      "email": "savaliyadarshan291124@gmail.com",
+      "phone_number": "9998887770",
+      "branch_id": 4,
+      "role_id": 75,
+      "role_name": "Delivery"
+    },
+    {
+      "id": 57,
+      "name": "delivery boy",
+      "email": "deliveryboy@gmail.com",
+      "phone_number": "9165210808",
+      "branch_id": 4,
+      "role_id": 75,
+      "role_name": "Delivery"
+    },
+    {
+      "id": 96,
+      "name": "drdr",
+      "email": "anjali129@gmail.com",
+      "phone_number": "0987654320",
+      "branch_id": 4,
+      "role_id": 75,
+      "role_name": "Delivery"
+    },
+    {
+      "id": 94,
+      "name": "hjklioo",
+      "email": "shruti679pan@gmail.com",
+      "phone_number": "1234567899",
+      "branch_id": 4,
+      "role_id": 75,
+      "role_name": "Delivery"
+    },
+    {
+      "id": 111,
+      "name": "jeetu ojha",
+      "email": "jeetu@gmail.com",
+      "phone_number": "8602790073",
+      "branch_id": 4,
+      "role_id": 75,
+      "role_name": "Delivery"
+    },
+    {
+      "id": 62,
+      "name": "mohan Sharma",
+      "email": "mohan@gmail.com",
+      "phone_number": "9876543218",
+      "branch_id": 4,
+      "role_id": 13,
+      "role_name": "Chef"
+    },
+    {
+      "id": 7,
+      "name": "pawan",
+      "email": "pawan@foodscaner.com",
+      "phone_number": "6260129455",
+      "branch_id": 4,
+      "role_id": 13,
+      "role_name": "Chef"
+    },
+    {
+      "id": 53,
+      "name": "pooja singhhgu",
+      "email": "pooja@gmail.com",
+      "phone_number": "9293008767",
+      "branch_id": 4,
+      "role_id": 12,
+      "role_name": "Waiter"
+    },
+    {
+      "id": 58,
+      "name": "Rahul kushwah",
+      "email": "rahul@gmail.com",
+      "phone_number": "9876543210",
+      "branch_id": 4,
+      "role_id": 75,
+      "role_name": "Delivery"
+    },
+    {
+      "id": 93,
+      "name": "scscs",
+      "email": "zxzc@gmail.co",
+      "phone_number": "2132312349",
+      "branch_id": 4,
+      "role_id": 12,
+      "role_name": "Waiter"
+    },
+    {
+      "id": 8,
+      "name": "sooraj",
+      "email": "sooraj@foodscaner.com",
+      "phone_number": "6260129455",
+      "branch_id": 4,
+      "role_id": 11,
+      "role_name": "Branch Head"
+    },
+    {
+      "id": 108,
+      "name": "tes",
+      "email": "savaliyadarshan9699@gmail.com",
+      "phone_number": "7537537530",
+      "branch_id": 4,
+      "role_id": 12,
+      "role_name": "Waiter"
+    },
+    {
+      "id": 60,
+      "name": "testing",
+      "email": "test@gmail.com",
+      "phone_number": "9639639630",
+      "branch_id": 4,
+      "role_id": 75,
+      "role_name": "Delivery"
+    },
+    {
+      "id": 106,
+      "name": "testing delivery boy",
+      "email": "boy@gmail.com",
+      "phone_number": "9669453963",
+      "branch_id": 4,
+      "role_id": 75,
+      "role_name": "Delivery"
+    },
+    {
+      "id": 63,
+      "name": "testing with role",
+      "email": "testrole@gmail.com",
+      "phone_number": "8528520009",
+      "branch_id": 4,
+      "role_id": 75,
+      "role_name": "Delivery"
+    }
   ]
 }

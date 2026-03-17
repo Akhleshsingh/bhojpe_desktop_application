@@ -1,10 +1,30 @@
 {
   "status": true,
+  "message": "Order status fetched successfully",
   "data": [
-    { "id": 1, "status_name": "pending",   "label": "Pending",   "color": "#F59E0B" },
-    { "id": 2, "status_name": "preparing", "label": "Preparing", "color": "#3B82F6" },
-    { "id": 3, "status_name": "ready",     "label": "Ready",     "color": "#8B5CF6" },
-    { "id": 4, "status_name": "done",      "label": "Done",      "color": "#10B981" },
-    { "id": 5, "status_name": "cancelled", "label": "Cancelled", "color": "#EF4444" }
+    {
+      "key": "placed",
+      "label": "Placed"
+    },
+    {
+      "key": "confirmed",
+      "label": "Confirmed"
+    },
+    {
+      "key": "preparing",
+      "label": "Preparing"
+    },
+    {
+      "key": "food_ready",
+      "label": "Food is Ready"
+    },
+    {
+      "key": "served",
+      "label": "served"
+    },
+    {
+      "key": "cancelled",
+      "label": "Cancelled"
+    }
   ]
 }

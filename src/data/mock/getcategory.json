@@ -1,31 +1,543 @@
 {
   "status": true,
   "message": "Categories fetched successfully",
-  "total_category": 30,
+  "total_category": 67,
   "data": [
-    { "id": 40,  "category_name": { "en": "Pizza" },                 "sort_order": 1,  "app_status": 0 },
-    { "id": 41,  "category_name": { "en": "Mojito" },                "sort_order": 2,  "app_status": 0 },
-    { "id": 42,  "category_name": { "en": "Dosa" },                  "sort_order": 3,  "app_status": 0 },
-    { "id": 43,  "category_name": { "en": "Uttapam" },               "sort_order": 4,  "app_status": 1 },
-    { "id": 44,  "category_name": { "en": "Idli" },                  "sort_order": 5,  "app_status": 1 },
-    { "id": 45,  "category_name": { "en": "Upma" },                  "sort_order": 6,  "app_status": 1 },
-    { "id": 46,  "category_name": { "en": "Chaap" },                 "sort_order": 7,  "app_status": 1 },
-    { "id": 47,  "category_name": { "en": "Kabab" },                 "sort_order": 8,  "app_status": 0 },
-    { "id": 48,  "category_name": { "en": "Pulav" },                 "sort_order": 9,  "app_status": 1 },
-    { "id": 49,  "category_name": { "en": "Biriyani" },              "sort_order": 10, "app_status": 0 },
-    { "id": 50,  "category_name": { "en": "Khichdi" },               "sort_order": 11, "app_status": 1 },
-    { "id": 51,  "category_name": { "en": "Naan" },                  "sort_order": 12, "app_status": 1 },
-    { "id": 52,  "category_name": { "en": "Kulcha" },                "sort_order": 13, "app_status": 1 },
-    { "id": 53,  "category_name": { "en": "Tikki" },                 "sort_order": 14, "app_status": 1 },
-    { "id": 54,  "category_name": { "en": "Charge" },                "sort_order": 15, "app_status": 1 },
-    { "id": 55,  "category_name": { "en": "Drink" },                 "sort_order": 16, "app_status": 1 },
-    { "id": 56,  "category_name": { "en": "Chaach" },                "sort_order": 17, "app_status": 1 },
-    { "id": 57,  "category_name": { "en": "Others" },                "sort_order": 18, "app_status": 1 },
-    { "id": 157, "category_name": { "en": "Egg" },                   "sort_order": 25, "app_status": 1 },
-    { "id": 4,   "category_name": { "en": "Tea & coffee" },          "sort_order": 26, "app_status": 1 },
-    { "id": 2,   "category_name": { "en": "Dal" },                   "sort_order": 27, "app_status": 1 },
-    { "id": 5,   "category_name": { "en": "Shakes" },                "sort_order": 28, "app_status": 1 },
-    { "id": 6,   "category_name": { "en": "Soda" },                  "sort_order": 29, "app_status": 1 },
-    { "id": 7,   "category_name": { "en": "Lassi" },                 "sort_order": 30, "app_status": 1 }
+    {
+      "id": 40,
+      "category_name": {
+        "en": "Pizza"
+      },
+      "sort_order": 1,
+      "app_status": 0
+    },
+    {
+      "id": 41,
+      "category_name": {
+        "en": "Mojito"
+      },
+      "sort_order": 2,
+      "app_status": 0
+    },
+    {
+      "id": 42,
+      "category_name": {
+        "en": "Dosa"
+      },
+      "sort_order": 3,
+      "app_status": 0
+    },
+    {
+      "id": 43,
+      "category_name": {
+        "en": "Uttapam"
+      },
+      "sort_order": 4,
+      "app_status": 1
+    },
+    {
+      "id": 44,
+      "category_name": {
+        "en": "Idli"
+      },
+      "sort_order": 5,
+      "app_status": 1
+    },
+    {
+      "id": 45,
+      "category_name": {
+        "en": "Upma"
+      },
+      "sort_order": 6,
+      "app_status": 1
+    },
+    {
+      "id": 46,
+      "category_name": {
+        "en": "Chaap"
+      },
+      "sort_order": 7,
+      "app_status": 1
+    },
+    {
+      "id": 47,
+      "category_name": {
+        "en": "Kabab"
+      },
+      "sort_order": 8,
+      "app_status": 0
+    },
+    {
+      "id": 48,
+      "category_name": {
+        "en": "Pulav"
+      },
+      "sort_order": 9,
+      "app_status": 1
+    },
+    {
+      "id": 49,
+      "category_name": {
+        "en": "Biriyani"
+      },
+      "sort_order": 10,
+      "app_status": 0
+    },
+    {
+      "id": 50,
+      "category_name": {
+        "en": "Khichdi"
+      },
+      "sort_order": 11,
+      "app_status": 1
+    },
+    {
+      "id": 51,
+      "category_name": {
+        "en": "Naan"
+      },
+      "sort_order": 12,
+      "app_status": 1
+    },
+    {
+      "id": 52,
+      "category_name": {
+        "en": "Kulcha"
+      },
+      "sort_order": 13,
+      "app_status": 1
+    },
+    {
+      "id": 53,
+      "category_name": {
+        "en": "Tikki"
+      },
+      "sort_order": 14,
+      "app_status": 1
+    },
+    {
+      "id": 54,
+      "category_name": {
+        "en": "Charge"
+      },
+      "sort_order": 15,
+      "app_status": 1
+    },
+    {
+      "id": 55,
+      "category_name": {
+        "en": "Drink"
+      },
+      "sort_order": 16,
+      "app_status": 1
+    },
+    {
+      "id": 56,
+      "category_name": {
+        "en": "Chaach"
+      },
+      "sort_order": 17,
+      "app_status": 1
+    },
+    {
+      "id": 57,
+      "category_name": {
+        "en": "Others"
+      },
+      "sort_order": 18,
+      "app_status": 1
+    },
+    {
+      "id": 58,
+      "category_name": {
+        "en": "Pastry"
+      },
+      "sort_order": 19,
+      "app_status": 1
+    },
+    {
+      "id": 59,
+      "category_name": {
+        "en": "Chaat"
+      },
+      "sort_order": 20,
+      "app_status": 1
+    },
+    {
+      "id": 60,
+      "category_name": {
+        "en": "Bread"
+      },
+      "sort_order": 21,
+      "app_status": 1
+    },
+    {
+      "id": 154,
+      "category_name": {
+        "en": "Cakes"
+      },
+      "sort_order": 22,
+      "app_status": 1
+    },
+    {
+      "id": 155,
+      "category_name": {
+        "en": "Egg curry"
+      },
+      "sort_order": 23,
+      "app_status": 1
+    },
+    {
+      "id": 156,
+      "category_name": {
+        "en": "Chicken"
+      },
+      "sort_order": 24,
+      "app_status": 1
+    },
+    {
+      "id": 157,
+      "category_name": {
+        "en": "Egg"
+      },
+      "sort_order": 25,
+      "app_status": 1
+    },
+    {
+      "id": 4,
+      "category_name": {
+        "en": "Tea & coffee"
+      },
+      "sort_order": 26,
+      "app_status": 1
+    },
+    {
+      "id": 2,
+      "category_name": {
+        "en": "Dal"
+      },
+      "sort_order": 27,
+      "app_status": 1
+    },
+    {
+      "id": 5,
+      "category_name": {
+        "en": "Shakes"
+      },
+      "sort_order": 28,
+      "app_status": 1
+    },
+    {
+      "id": 6,
+      "category_name": {
+        "en": "Soda"
+      },
+      "sort_order": 29,
+      "app_status": 1
+    },
+    {
+      "id": 7,
+      "category_name": {
+        "en": "Lassi"
+      },
+      "sort_order": 30,
+      "app_status": 1
+    },
+    {
+      "id": 8,
+      "category_name": {
+        "en": "Sandwich"
+      },
+      "sort_order": 31,
+      "app_status": 1
+    },
+    {
+      "id": 9,
+      "category_name": {
+        "en": "Burger"
+      },
+      "sort_order": 32,
+      "app_status": 1
+    },
+    {
+      "id": 10,
+      "category_name": {
+        "en": "Pasta"
+      },
+      "sort_order": 33,
+      "app_status": 1
+    },
+    {
+      "id": 11,
+      "category_name": {
+        "en": "Fries"
+      },
+      "sort_order": 34,
+      "app_status": 1
+    },
+    {
+      "id": 12,
+      "category_name": {
+        "en": "Maggie"
+      },
+      "sort_order": 35,
+      "app_status": 1
+    },
+    {
+      "id": 13,
+      "category_name": {
+        "en": "Soup"
+      },
+      "sort_order": 36,
+      "app_status": 1
+    },
+    {
+      "id": 14,
+      "category_name": {
+        "en": "Noodles"
+      },
+      "sort_order": 37,
+      "app_status": 1
+    },
+    {
+      "id": 15,
+      "category_name": {
+        "en": "Momos"
+      },
+      "sort_order": 38,
+      "app_status": 1
+    },
+    {
+      "id": 16,
+      "category_name": {
+        "en": "Roll"
+      },
+      "sort_order": 39,
+      "app_status": 1
+    },
+    {
+      "id": 17,
+      "category_name": {
+        "en": "Chinese"
+      },
+      "sort_order": 40,
+      "app_status": 1
+    },
+    {
+      "id": 18,
+      "category_name": {
+        "en": "Tandoori snacks"
+      },
+      "sort_order": 41,
+      "app_status": 1
+    },
+    {
+      "id": 19,
+      "category_name": {
+        "en": "Snacks"
+      },
+      "sort_order": 42,
+      "app_status": 1
+    },
+    {
+      "id": 20,
+      "category_name": {
+        "en": "Punjabi"
+      },
+      "sort_order": 43,
+      "app_status": 1
+    },
+    {
+      "id": 21,
+      "category_name": {
+        "en": "Paneer special course"
+      },
+      "sort_order": 44,
+      "app_status": 1
+    },
+    {
+      "id": 22,
+      "category_name": {
+        "en": "Vegetable main course"
+      },
+      "sort_order": 45,
+      "app_status": 1
+    },
+    {
+      "id": 23,
+      "category_name": {
+        "en": "Kofta"
+      },
+      "sort_order": 46,
+      "app_status": 1
+    },
+    {
+      "id": 24,
+      "category_name": {
+        "en": "Raita"
+      },
+      "sort_order": 47,
+      "app_status": 1
+    },
+    {
+      "id": 25,
+      "category_name": {
+        "en": "Sweets"
+      },
+      "sort_order": 48,
+      "app_status": 1
+    },
+    {
+      "id": 26,
+      "category_name": {
+        "en": "Rice"
+      },
+      "sort_order": 49,
+      "app_status": 1
+    },
+    {
+      "id": 27,
+      "category_name": {
+        "en": "Roti"
+      },
+      "sort_order": 50,
+      "app_status": 1
+    },
+    {
+      "id": 28,
+      "category_name": {
+        "en": "Paratha"
+      },
+      "sort_order": 51,
+      "app_status": 1
+    },
+    {
+      "id": 29,
+      "category_name": {
+        "en": "Papad"
+      },
+      "sort_order": 52,
+      "app_status": 1
+    },
+    {
+      "id": 30,
+      "category_name": {
+        "en": "Salad"
+      },
+      "sort_order": 53,
+      "app_status": 1
+    },
+    {
+      "id": 31,
+      "category_name": {
+        "en": "Thali"
+      },
+      "sort_order": 54,
+      "app_status": 1
+    },
+    {
+      "id": 32,
+      "category_name": {
+        "en": "Cold drink"
+      },
+      "sort_order": 55,
+      "app_status": 1
+    },
+    {
+      "id": 33,
+      "category_name": {
+        "en": "Water"
+      },
+      "sort_order": 56,
+      "app_status": 1
+    },
+    {
+      "id": 34,
+      "category_name": {
+        "en": "Ice cream"
+      },
+      "sort_order": 57,
+      "app_status": 1
+    },
+    {
+      "id": 35,
+      "category_name": {
+        "en": "Chocolate"
+      },
+      "sort_order": 58,
+      "app_status": 1
+    },
+    {
+      "id": 36,
+      "category_name": {
+        "en": "Charges"
+      },
+      "sort_order": 59,
+      "app_status": 1
+    },
+    {
+      "id": 37,
+      "category_name": {
+        "en": "Cake"
+      },
+      "sort_order": 60,
+      "app_status": 1
+    },
+    {
+      "id": 38,
+      "category_name": {
+        "en": "Plates"
+      },
+      "sort_order": 61,
+      "app_status": 1
+    },
+    {
+      "id": 39,
+      "category_name": {
+        "en": "Party item"
+      },
+      "sort_order": 62,
+      "app_status": 1
+    },
+    {
+      "id": 164,
+      "category_name": {
+        "en": "Testing"
+      },
+      "sort_order": 63,
+      "app_status": 1
+    },
+    {
+      "id": 165,
+      "category_name": {
+        "en": "Testing cate"
+      },
+      "sort_order": 64,
+      "app_status": 1
+    },
+    {
+      "id": 166,
+      "category_name": {
+        "en": "Testing category edit"
+      },
+      "sort_order": 65,
+      "app_status": 1
+    },
+    {
+      "id": 168,
+      "category_name": {
+        "en": "Tg"
+      },
+      "sort_order": 66,
+      "app_status": 1
+    },
+    {
+      "id": 194,
+      "category_name": {
+        "en": "Testing yamm"
+      },
+      "sort_order": 67,
+      "app_status": 1
+    }
   ]
 }
