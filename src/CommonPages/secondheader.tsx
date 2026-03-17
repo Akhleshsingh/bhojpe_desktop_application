@@ -215,6 +215,28 @@ export default function SecondHeader({
               </Typography>
             </Box>
 
+            {/* All KOT Button */}
+            <Button
+              onClick={() => navigate("/kitchens/all-kitchens-kot")}
+              sx={{
+                backgroundColor: "#fff",
+                color: "#E8353A",
+                fontFamily: "Poppins, sans-serif",
+                fontWeight: 600,
+                fontSize: "13px",
+                borderRadius: "6px",
+                padding: "6px 16px",
+                textTransform: "none",
+                whiteSpace: "nowrap",
+                border: "1.5px solid #E8353A",
+                boxShadow: "none",
+                "&:hover": { backgroundColor: "#FFF0EE", boxShadow: "none" },
+              }}
+              variant="outlined"
+            >
+              All KOT
+            </Button>
+
             {/* New Order Button */}
             <Button
               onClick={handleNewKot}
