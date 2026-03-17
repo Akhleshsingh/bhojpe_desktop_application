@@ -11,9 +11,10 @@ files:
   - "package.json"
 
 # Windows configuration
+# To use a custom icon, place a 256x256 PNG or .ico file at build/icon.ico
+# and uncomment: icon: build/icon.ico
 win:
   target: nsis
-  icon: public/2.svg
   forceCodeSigning: false
   requestedExecutionLevel: asInvoker
   signAndEditExecutable: false
