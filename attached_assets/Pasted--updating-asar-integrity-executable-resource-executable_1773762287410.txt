@@ -1,0 +1,42 @@
+  • updating asar integrity executable resource  executablePath=dist-electron\win-unpacked\BhojPe.exe
+  • building        target=nsis file=dist-electron\BhojPe Setup 1.0.0.exe archs=x64 oneClick=true perMachine=false
+  ⨯ open : The system cannot find the file specified.
+github.com/develar/app-builder/pkg/icons.LoadImage
+        /Users/runner/work/app-builder/app-builder/pkg/icons/image-util.go:27
+github.com/develar/app-builder/pkg/icons.loadImage
+        /Users/runner/work/app-builder/app-builder/pkg/icons/icon-converter.go:342
+github.com/develar/app-builder/pkg/icons.(*InputFileInfo).GetMaxImage
+        /Users/runner/work/app-builder/app-builder/pkg/icons/icons-api.go:51
+github.com/develar/app-builder/pkg/icons.convertSingleFile
+        /Users/runner/work/app-builder/app-builder/pkg/icons/icon-converter.go:301
+github.com/develar/app-builder/pkg/icons.doConvertIcon
+        /Users/runner/work/app-builder/app-builder/pkg/icons/icon-converter.go:255
+github.com/develar/app-builder/pkg/icons.ConvertIcon
+        /Users/runner/work/app-builder/app-builder/pkg/icons/icon-converter.go:56
+github.com/develar/app-builder/pkg/icons.ConfigureCommand.func1
+        /Users/runner/work/app-builder/app-builder/pkg/icons/icon-converter.go:33
+github.com/alecthomas/kingpin.(*actionMixin).applyActions
+        /Users/runner/go/pkg/mod/github.com/alecthomas/kingpin@v2.2.6+incompatible/actions.go:28
+github.com/alecthomas/kingpin.(*Application).applyActions
+        /Users/runner/go/pkg/mod/github.com/alecthomas/kingpin@v2.2.6+incompatible/app.go:557
+github.com/alecthomas/kingpin.(*Application).execute
+        /Users/runner/go/pkg/mod/github.com/alecthomas/kingpin@v2.2.6+incompatible/app.go:390
+github.com/alecthomas/kingpin.(*Application).Parse
+        /Users/runner/go/pkg/mod/github.com/alecthomas/kingpin@v2.2.6+incompatible/app.go:222
+main.main
+        /Users/runner/work/app-builder/app-builder/main.go:90
+runtime.main
+        /Users/runner/hostedtoolcache/go/1.21.13/arm64/src/runtime/proc.go:267
+runtime.goexit
+        /Users/runner/hostedtoolcache/go/1.21.13/arm64/src/runtime/asm_amd64.s:1650  
+  ⨯ D:\bhojpe\bhojpe_desktop_application\node_modules\app-builder-bin\win\x64\app-builder.exe process failed ERR_ELECTRON_BUILDER_CANNOT_EXECUTE
+Exit code:
+1  failedTask=build stackTrace=Error: D:\bhojpe\bhojpe_desktop_application\node_modules\app-builder-bin\win\x64\app-builder.exe process failed ERR_ELECTRON_BUILDER_CANNOT_EXECUTE
+Exit code:
+1
+    at ChildProcess.<anonymous> (D:\bhojpe\bhojpe_desktop_application\node_modules\builder-util\src\util.ts:272:14)
+    at Object.onceWrapper (node:events:623:12)
+    at ChildProcess.emit (node:events:508:20)
+    at ChildProcess.cp.emit (D:\bhojpe\bhojpe_desktop_application\node_modules\cross-spawn\lib\enoent.js:34:29)
+    at maybeClose (node:internal/child_process:1084:16)
+    at Process.ChildProcess._handle.onexit (node:internal/child_process:304:5)
