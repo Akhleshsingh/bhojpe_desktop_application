@@ -1050,7 +1050,7 @@ export default function Poss() {
                 {icon:"🕐",label:"KOT",     fn:()=>placeOrder("kot"),       disabledIn:["view"] as const},
                 {icon:"🖨️",label:"KOT+🖨️", fn:()=>placeOrder("kot_print"), disabledIn:["view"] as const},
               ].map(b=>{
-                const isDisabled = placing || (b.disabledIn as string[]).includes(posMode);
+                const isDisabled = placing || (b.disabledIn as readonly string[]).includes(posMode);
                 return (
                   <Box key={b.label} component="button" onClick={b.fn} disabled={isDisabled}
                     sx={{py:"8px",px:"2px",background:C.dk3,border:"1.5px solid rgba(255,255,255,.1)",borderRadius:"9px",fontSize:"11px",fontWeight:700,color:"rgba(255,255,255,.6)",cursor:"pointer",fontFamily:FONT,display:"flex",flexDirection:"column",alignItems:"center",gap:"3px",transition:"all .14s","&:hover":{background:"#4a4038",color:"#fff",borderColor:"rgba(255,255,255,.2)"},"&:disabled":{opacity:.3,cursor:"not-allowed"}}}>
@@ -1070,7 +1070,7 @@ export default function Poss() {
                  label:channel==="delivery"?"Dispatch & Pay":channel==="pickup"?"Ready & Pay":"Bill & Pay",
                  fn:()=>placeOrder("bill"), primary:true, disabledIn:["view","new_kot"] as const},
               ].map((b,i)=>{
-                const isDisabled = placing || (b.disabledIn as string[]).includes(posMode);
+                const isDisabled = placing || (b.disabledIn as readonly string[]).includes(posMode);
                 return (
                   <Box key={b.label} component="button" onClick={b.fn} disabled={isDisabled}
                     sx={{py:"14px",px:"4px",textAlign:"center",fontSize:b.primary?"12px":"10.5px",fontWeight:800,cursor:"pointer",transition:"all .14s",border:"none",fontFamily:FONT,background:b.primary?C.ac:C.dk4,color:b.primary?"#fff":"rgba(255,255,255,.55)",borderRight:i<2?"1px solid rgba(255,255,255,.07)":"none",borderTop:"1px solid rgba(255,255,255,.07)",display:"flex",flexDirection:"column",alignItems:"center",gap:"3px","&:hover":{background:b.primary?C.ah:"#3a322a",color:b.primary?"#fff":"rgba(255,255,255,.85)"},"&:disabled":{opacity:.3,cursor:"not-allowed"}}}>
