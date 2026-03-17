@@ -52,6 +52,7 @@ interface MenuItem {
   is_veg: number;
   description?: string;
   image?: string;
+  photo_url?: string;
   variations?: { id: number; variation: string; price: number }[];
   [key: string]: any;
 }
@@ -629,8 +630,9 @@ export default function Poss() {
               const qty = cartQtyMap[item.id] ?? 0;
               const ft  = foodType(item);
               const hasVariations = (item.variations?.length??0) > 0;
-              const imgSrc = item.image
-                ? (item.image.startsWith("http") ? item.image : `https://bhojpe.in${item.image}`)
+              const rawImg = item.photo_url || item.image || null;
+              const imgSrc = rawImg
+                ? (rawImg.startsWith("http") ? rawImg : `https://bhojpe.in${rawImg}`)
                 : null;
               return (
                 <Box key={item.id} onClick={()=>addItem(item)}

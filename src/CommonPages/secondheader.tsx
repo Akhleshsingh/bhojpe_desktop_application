@@ -66,7 +66,7 @@ export default function SecondHeader({
 
   const handleNewKot = () => {
     if (onNewOrder) { onNewOrder(); return; }
-    navigate("/menudashboard", {});
+    navigate("/poss");
   };
 
   const handleQuickIconClick = (index: number) => {
