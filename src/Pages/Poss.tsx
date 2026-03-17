@@ -231,6 +231,12 @@ export default function Poss() {
     if (loadedOrderIdRef.current === order.id) return;
     loadedOrderIdRef.current = order.id;
 
+    // Mode: "view" = billed/paid (no cart), "new_kot" = add new KOT only, else normal
+    const navMode: "view"|"new_kot"|"normal" =
+      st.mode === "view" ? "view" :
+      st.mode === "new_kot" ? "new_kot" : "normal";
+    setPosMode(navMode);
+
     // 1. Channel
     const typeName = (order.order_type?.order_type_name || "").toLowerCase();
     const ch: "dine"|"pickup"|"delivery" =
@@ -272,7 +278,11 @@ export default function Poss() {
     // 7. Delivery charge
     if (ch === "delivery" && order.delivery_charges) setDelCharge(Number(order.delivery_charges) || 40);
 
-    // 8. Build cart — merge all KOT items, deduplicate by menu_item_id
+    // 8. Build cart — only for new_kot and normal modes (not for view/billed orders)
+    if (navMode === "view") {
+      toast("📋 Billed order — view only", { duration: 2000, icon: "🔒" });
+      return;
+    }
     const allKotItems: any[] = (order.kot || []).flatMap((k: any) => k.items || []);
     const itemMap: Record<number, any> = {};
     allKotItems.forEach((ki: any) => {
@@ -293,7 +303,7 @@ export default function Poss() {
       return { item, qty: ki.qty, note: ki.notes || "", price: Number(ki.price) || item.price } as CartItem;
     });
     if (newCart.length > 0) setCart(newCart);
-    toast.success("Order loaded ✓", { duration: 1500 });
+    toast.success(navMode === "new_kot" ? "Items loaded — Add New KOT ✓" : "Order loaded ✓", { duration: 1500 });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.state, menuLoading, menuItems]);
 
@@ -371,6 +381,7 @@ export default function Poss() {
   const [variationPopup, setVariationPopup] = useState<MenuItem|null>(null);
   const [selVariation, setSelVariation] = useState<number|null>(null);
 
+  const [posMode, setPosMode]           = useState<"normal"|"view"|"new_kot">("normal");
   const [placing, setPlacing]           = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [checkoutModal, setCheckoutModal] = useState<{open:boolean;orderId:number;orderNo:number;total:number}|null>(null);
@@ -399,6 +410,7 @@ export default function Poss() {
 
   // ── Cart operations ──
   const addItem = useCallback((item: MenuItem, variation?: {id:number;variation:string;price:number}) => {
+    if (posMode === "view") { toast("🔒 Billed order — cannot add items", { duration: 1200 }); return; }
     if ((item.variations?.length ?? 0) > 0 && !variation) {
       setVariationPopup(item); setSelVariation(null); return;
     }
@@ -412,7 +424,7 @@ export default function Poss() {
       return [...prev, { item, qty:1, note:"", variationId:variation?.id, variationName:variation?.variation, price }];
     });
     toast.success(`${item.item_name}${variation?` (${variation.variation})`:""} added!`, { duration:900, style:{fontSize:12} });
-  }, []);
+  }, [posMode]);
 
   const changeQty = useCallback((idx:number, d:number) => {
     setCart(prev => {
@@ -432,6 +444,7 @@ export default function Poss() {
     setAssignedTable(null); setCustByChannel({dine:null,pickup:null,delivery:null});
     setChannelNotes({dine:"",pickup:"",delivery:""}); setDiscAmt(0); setDiscLabel("");
     setPayMode("Cash"); setSummaryOpen(false);
+    setPosMode("normal"); loadedOrderIdRef.current = null;
     setOrderNo(n => n+1);
   }, []);
 
@@ -1007,37 +1020,65 @@ export default function Poss() {
               </Box>
             </Box>
 
+            {/* View-only banner for billed orders */}
+            {posMode === "view" && (
+              <Box sx={{mx:"12px",mt:"8px",mb:"4px",px:"12px",py:"8px",background:"rgba(37,99,235,.13)",border:"1.5px solid rgba(37,99,235,.3)",borderRadius:"9px",display:"flex",alignItems:"center",gap:"8px"}}>
+                <span style={{fontSize:14}}>🔒</span>
+                <Box>
+                  <Typography sx={{fontSize:"11px",fontWeight:800,color:"#93c5fd",fontFamily:FONT}}>Billed Order — View Only</Typography>
+                  <Typography sx={{fontSize:"10px",color:"rgba(147,197,253,.65)",fontFamily:FONT}}>Items add ya KOT/Bill nahi ho sakta</Typography>
+                </Box>
+              </Box>
+            )}
+
+            {/* New-KOT mode banner */}
+            {posMode === "new_kot" && (
+              <Box sx={{mx:"12px",mt:"8px",mb:"4px",px:"12px",py:"8px",background:"rgba(245,158,11,.12)",border:"1.5px solid rgba(245,158,11,.3)",borderRadius:"9px",display:"flex",alignItems:"center",gap:"8px"}}>
+                <span style={{fontSize:14}}>🔖</span>
+                <Box>
+                  <Typography sx={{fontSize:"11px",fontWeight:800,color:"#fcd34d",fontFamily:FONT}}>New KOT Mode</Typography>
+                  <Typography sx={{fontSize:"10px",color:"rgba(252,211,77,.65)",fontFamily:FONT}}>Sirf KOT button active hai — Bill disabled</Typography>
+                </Box>
+              </Box>
+            )}
+
             {/* Action row — KOT actions */}
             <Box sx={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:"4px",px:"12px",py:"8px",borderBottom:`1px solid rgba(255,255,255,.07)`}}>
               {[
-                {icon:"⏸️",label:"Hold",   fn:()=>toast("Order held ⏸")},
-                {icon:"💾",label:"Draft",   fn:()=>toast("Draft saved 💾")},
-                {icon:"🕐",label:"KOT",    fn:()=>placeOrder("kot")},
-                {icon:"🖨️",label:"KOT+🖨️",fn:()=>placeOrder("kot_print")},
-              ].map(b=>(
-                <Box key={b.label} component="button" onClick={b.fn} disabled={placing}
-                  sx={{py:"8px",px:"2px",background:C.dk3,border:"1.5px solid rgba(255,255,255,.1)",borderRadius:"9px",fontSize:"11px",fontWeight:700,color:"rgba(255,255,255,.6)",cursor:"pointer",fontFamily:FONT,display:"flex",flexDirection:"column",alignItems:"center",gap:"3px",transition:"all .14s","&:hover":{background:"#4a4038",color:"#fff",borderColor:"rgba(255,255,255,.2)"},"&:disabled":{opacity:.5,cursor:"not-allowed"}}}>
-                  <span style={{fontSize:14}}>{b.icon}</span>
-                  <span style={{fontSize:"9.5px"}}>{b.label}</span>
-                </Box>
-              ))}
+                {icon:"⏸️",label:"Hold",    fn:()=>toast("Order held ⏸"),   disabledIn:["view","new_kot"] as const},
+                {icon:"💾",label:"Draft",   fn:()=>toast("Draft saved 💾"), disabledIn:["view"] as const},
+                {icon:"🕐",label:"KOT",     fn:()=>placeOrder("kot"),       disabledIn:["view"] as const},
+                {icon:"🖨️",label:"KOT+🖨️", fn:()=>placeOrder("kot_print"), disabledIn:["view"] as const},
+              ].map(b=>{
+                const isDisabled = placing || (b.disabledIn as string[]).includes(posMode);
+                return (
+                  <Box key={b.label} component="button" onClick={b.fn} disabled={isDisabled}
+                    sx={{py:"8px",px:"2px",background:C.dk3,border:"1.5px solid rgba(255,255,255,.1)",borderRadius:"9px",fontSize:"11px",fontWeight:700,color:"rgba(255,255,255,.6)",cursor:"pointer",fontFamily:FONT,display:"flex",flexDirection:"column",alignItems:"center",gap:"3px",transition:"all .14s","&:hover":{background:"#4a4038",color:"#fff",borderColor:"rgba(255,255,255,.2)"},"&:disabled":{opacity:.3,cursor:"not-allowed"}}}>
+                    <span style={{fontSize:14}}>{b.icon}</span>
+                    <span style={{fontSize:"9.5px"}}>{b.label}</span>
+                  </Box>
+                );
+              })}
             </Box>
 
             {/* Bill row */}
             <Box sx={{display:"grid",gridTemplateColumns:"1fr 1fr 1.6fr"}}>
               {[
-                {icon:"🧾",label:"Bill",   fn:()=>placeOrder("bill"),    primary:false},
-                {icon:"🖨️",label:"Bill+Print",fn:()=>placeOrder("bill_print"),primary:false},
+                {icon:"🧾",label:"Bill",       fn:()=>placeOrder("bill"),       primary:false, disabledIn:["view","new_kot"] as const},
+                {icon:"🖨️",label:"Bill+Print", fn:()=>placeOrder("bill_print"), primary:false, disabledIn:["view","new_kot"] as const},
                 {icon:placing?"⏳":(channel==="delivery"?"🛵":channel==="pickup"?"🥡":"✅"),
                  label:channel==="delivery"?"Dispatch & Pay":channel==="pickup"?"Ready & Pay":"Bill & Pay",
-                 fn:()=>placeOrder("bill"), primary:true},
-              ].map((b,i)=>(
-                <Box key={b.label} component="button" onClick={b.fn} disabled={placing}
-                  sx={{py:"14px",px:"4px",textAlign:"center",fontSize:b.primary?"12px":"10.5px",fontWeight:800,cursor:"pointer",transition:"all .14s",border:"none",fontFamily:FONT,background:b.primary?C.ac:C.dk4,color:b.primary?"#fff":"rgba(255,255,255,.55)",borderRight:i<2?"1px solid rgba(255,255,255,.07)":"none",borderTop:"1px solid rgba(255,255,255,.07)",display:"flex",flexDirection:"column",alignItems:"center",gap:"3px","&:hover":{background:b.primary?C.ah:"#3a322a",color:b.primary?"#fff":"rgba(255,255,255,.85)"},"&:disabled":{opacity:.65,cursor:"not-allowed"}}}>
-                  {placing && b.primary ? <CircularProgress size={14} sx={{color:"#fff",mb:"2px"}} /> : <span style={{fontSize:b.primary?18:14,lineHeight:1}}>{b.icon}</span>}
-                  {b.label}
-                </Box>
-              ))}
+                 fn:()=>placeOrder("bill"), primary:true, disabledIn:["view","new_kot"] as const},
+              ].map((b,i)=>{
+                const isDisabled = placing || (b.disabledIn as string[]).includes(posMode);
+                return (
+                  <Box key={b.label} component="button" onClick={b.fn} disabled={isDisabled}
+                    sx={{py:"14px",px:"4px",textAlign:"center",fontSize:b.primary?"12px":"10.5px",fontWeight:800,cursor:"pointer",transition:"all .14s",border:"none",fontFamily:FONT,background:b.primary?C.ac:C.dk4,color:b.primary?"#fff":"rgba(255,255,255,.55)",borderRight:i<2?"1px solid rgba(255,255,255,.07)":"none",borderTop:"1px solid rgba(255,255,255,.07)",display:"flex",flexDirection:"column",alignItems:"center",gap:"3px","&:hover":{background:b.primary?C.ah:"#3a322a",color:b.primary?"#fff":"rgba(255,255,255,.85)"},"&:disabled":{opacity:.3,cursor:"not-allowed"}}}>
+                    {placing && b.primary ? <CircularProgress size={14} sx={{color:"#fff",mb:"2px"}} /> : <span style={{fontSize:b.primary?18:14,lineHeight:1}}>{b.icon}</span>}
+                    {b.label}
+                  </Box>
+                );
+              })}
             </Box>
           </Box>
         </Box>

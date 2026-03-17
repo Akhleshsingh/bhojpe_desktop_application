@@ -254,12 +254,13 @@ export default function OrdersHistory() {
 
   const handleOrderClick = useCallback((order: any) => {
     if (order.mode === "draft") { navigate("/poss", { state: { draftOrder: order } }); return; }
-    navigate("/poss", { state: { mode: "kot", tableId: order.table_id, activeOrder: order, orderId: order.id, orderNumber: order.order_number } });
+    const isBilled = order.status === "billed" || order.status === "paid";
+    navigate("/poss", { state: { mode: isBilled ? "view" : "kot", tableId: order.table_id, activeOrder: order, orderId: order.id, orderNumber: order.order_number } });
   }, [navigate]);
 
   const handleNewKot = useCallback((e: React.MouseEvent, order: any) => {
     e.stopPropagation();
-    navigate("/poss", { state: { mode: "kot", tableId: order.table_id, activeOrder: order, orderId: order.id, orderNumber: order.order_number } });
+    navigate("/poss", { state: { mode: "new_kot", tableId: order.table_id, activeOrder: order, orderId: order.id, orderNumber: order.order_number } });
   }, [navigate]);
 
   const moveDrawerToNextStep = useCallback(async () => {
