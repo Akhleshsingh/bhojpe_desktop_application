@@ -58,7 +58,7 @@ interface MenuItem {
   [key: string]: any;
 }
 interface CartItem  { item: MenuItem; qty: number; note: string; variationId?: number; variationName?: string; price: number; }
-interface Customer  { id: number; name: string; phone: string; email?: string; delivery_address?: string; [k:string]:any; }
+interface Customer  { id: number; name: string; phone: string | number | null; email?: string | null; delivery_address?: string | null; [k:string]:any; }
 interface Staff     { id: number; name: string; [k:string]:any; }
 interface PosTable  { id: number; table_no: string; capacity: number; area_name: string; status?: string; is_available?: number; [k:string]:any; }
 interface OrderType { id: number; type: string; slug?: string; name?: string; is_active?: number; }
@@ -204,7 +204,7 @@ export default function Poss() {
     if (!st) return;
     if (st.tableId) {
       const allTables: PosTable[] = areas.flatMap((a:any) => (a.tables ?? []).map((t:any) => ({ ...t, area_name: typeof a.area_name === "object" ? a.area_name.en : a.area_name })));
-      const found = allTables.find(t => t.id === st.tableId) ?? flatTables.find(t => t.id === st.tableId);
+      const found = allTables.find(t => t.id === st.tableId) ?? flatTables.find((t: PosTable) => t.id === st.tableId);
       if (found) {
         setAssignedTable(found as PosTable);
         setChannel("dine");
@@ -1276,7 +1276,7 @@ export default function Poss() {
           ))}
           {/* Quick-fill from channel customer */}
           {custByChannel[channel] && (
-            <Box component="button" onClick={()=>{const c=custByChannel[channel]!;setEbillName(c.name);setEbillPhone(c.phone);}} sx={{px:"10px",py:"5px",background:C.adim,border:`1px solid ${C.abdr}`,borderRadius:"8px",fontSize:11,fontWeight:600,color:C.ac,cursor:"pointer",fontFamily:FONT,mb:"4px"}}>
+            <Box component="button" onClick={()=>{const c=custByChannel[channel]!;setEbillName(c.name);setEbillPhone(String(c.phone??""));}} sx={{px:"10px",py:"5px",background:C.adim,border:`1px solid ${C.abdr}`,borderRadius:"8px",fontSize:11,fontWeight:600,color:C.ac,cursor:"pointer",fontFamily:FONT,mb:"4px"}}>
               Use {custByChannel[channel]!.name.split(" ")[0]}'s details
             </Box>
           )}
