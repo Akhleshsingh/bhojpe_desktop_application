@@ -73,6 +73,16 @@ const NoteIcon = () => (
   </svg>
 );
 
+const ForkKnifeIcon = () => (
+  <svg width="52" height="52" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M20 8 L20 28 Q20 36 28 36 L28 56" stroke="#888" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M13 8 L13 24 Q13 28 16.5 28" stroke="#888" strokeWidth="2.8" strokeLinecap="round"/>
+    <path d="M27 8 L27 24 Q27 28 23.5 28" stroke="#888" strokeWidth="2.8" strokeLinecap="round"/>
+    <path d="M44 8 L44 24 Q44 32 40 36 L40 56" stroke="#888" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M44 24 Q48 20 48 8" stroke="#888" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
 const VDot = ({ type }: { type: "veg"|"nonveg" }) => (
   <Box sx={{
     position:"absolute", top:6, left:6, width:14, height:14, borderRadius:"3px",
@@ -276,6 +286,13 @@ export default function Poss() {
     }
     return items;
   }, [menuItems, vegFilter, srchQ, selectedCategoryId, selectedMenuId, activeMealTime, sideMode]);
+
+  // ── Cart qty lookup map — O(1) per card instead of O(n) scan ──
+  const cartQtyMap = useMemo(() => {
+    const m: Record<number, number> = {};
+    cart.forEach(c => { m[c.item.id] = (m[c.item.id] ?? 0) + c.qty; });
+    return m;
+  }, [cart]);
 
   // ── Cart operations ──
   const addItem = useCallback((item: MenuItem, variation?: {id:number;variation:string;price:number}) => {
@@ -589,10 +606,11 @@ export default function Poss() {
             <Typography sx={{fontSize:"11px",color:C.t3,flexShrink:0,fontWeight:600}}>{gridItems.length} items</Typography>
           </Box>
 
-          {/* Product Grid — responsive columns, scrollable */}
+          {/* Product Grid — responsive columns, uniform row heights, scrollable */}
           <Box sx={{
             display:"grid",
             gridTemplateColumns:"repeat(auto-fill, minmax(155px, 1fr))",
+            gridAutoRows:"180px",
             gap:"10px",
             px:"12px",
             py:"12px",
@@ -608,11 +626,12 @@ export default function Poss() {
                 {srchQ && <Box component="button" onClick={()=>setSrchQ("")} sx={{px:"12px",py:"6px",background:C.adim,border:`1px solid ${C.abdr}`,borderRadius:"8px",fontSize:12,fontWeight:700,color:C.ac,cursor:"pointer",fontFamily:FONT}}>Clear search</Box>}
               </Box>
             ) : gridItems.map((item: MenuItem) => {
-              const cartEntry = cart.filter(c=>c.item.id===item.id);
-              const qty = cartEntry.reduce((s,c)=>s+c.qty,0);
-              const ft    = foodType(item);
-              const emoji = foodEmoji(item.item_name);
+              const qty = cartQtyMap[item.id] ?? 0;
+              const ft  = foodType(item);
               const hasVariations = (item.variations?.length??0) > 0;
+              const imgSrc = item.image
+                ? (item.image.startsWith("http") ? item.image : `https://bhojpe.in${item.image}`)
+                : null;
               return (
                 <Box key={item.id} onClick={()=>addItem(item)}
                   sx={{
@@ -621,44 +640,49 @@ export default function Poss() {
                     borderRadius:"14px",
                     overflow:"hidden",
                     cursor:"pointer",
-                    transition:"all .16s ease",
+                    transition:"border-color .16s ease, box-shadow .16s ease, transform .16s ease",
                     display:"flex",
                     flexDirection:"column",
                     boxShadow:qty>0?"0 0 0 3px rgba(255,61,1,.1), 0 2px 8px rgba(0,0,0,.08)":"0 1px 4px rgba(0,0,0,.05)",
                     position:"relative",
+                    contain:"layout style",
                     "&:hover":{
-                      transform:"translateY(-3px)",
-                      boxShadow:qty>0?"0 0 0 3px rgba(255,61,1,.12), 0 12px 28px rgba(0,0,0,.12)":"0 8px 24px rgba(0,0,0,.1)",
+                      transform:"translateY(-2px)",
+                      boxShadow:qty>0?"0 0 0 3px rgba(255,61,1,.12), 0 8px 20px rgba(0,0,0,.1)":"0 6px 18px rgba(0,0,0,.09)",
                       borderColor:qty>0?C.ac:C.bd2,
                     },
                   }}>
-                  {/* Image area */}
-                  <Box sx={{width:"100%",aspectRatio:"16/10",background:`linear-gradient(145deg,${qty>0?"#fff0ea,#fcd8c8":"#fff8f4,#fce8d8"})`,display:"flex",alignItems:"center",justifyContent:"center",position:"relative",overflow:"hidden"}}>
+                  {/* Image area — fixed height for uniform cards */}
+                  <Box sx={{width:"100%",height:110,background:`linear-gradient(145deg,${qty>0?"#fff0ea,#fcd8c8":"#fff8f4,#fce8d8"})`,display:"flex",alignItems:"center",justifyContent:"center",position:"relative",overflow:"hidden",flexShrink:0}}>
                     <VDot type={ft} />
-                    <Box sx={{opacity:.55,transition:"transform .2s, opacity .2s","&:hover":{transform:"scale(1.08)",opacity:.7}}}>
-                      <svg width="52" height="52" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M20 8 L20 28 Q20 36 28 36 L28 56" stroke="#555" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-                        <path d="M13 8 L13 24 Q13 28 16.5 28" stroke="#555" strokeWidth="3" strokeLinecap="round"/>
-                        <path d="M27 8 L27 24 Q27 28 23.5 28" stroke="#555" strokeWidth="3" strokeLinecap="round"/>
-                        <path d="M44 8 L44 24 Q44 32 40 36 L40 56" stroke="#555" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-                        <path d="M44 24 Q48 20 48 8" stroke="#555" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
+                    {imgSrc ? (
+                      <Box
+                        component="img"
+                        src={imgSrc}
+                        loading="lazy"
+                        alt={item.item_name}
+                        onError={(e:any)=>{ e.currentTarget.style.display="none"; (e.currentTarget.nextSibling as HTMLElement)?.style && ((e.currentTarget.nextSibling as HTMLElement).style.display="flex"); }}
+                        sx={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}
+                      />
+                    ) : null}
+                    <Box sx={{opacity:.5,display:imgSrc?"none":"flex",alignItems:"center",justifyContent:"center",position:"absolute",inset:0}}>
+                      <ForkKnifeIcon />
                     </Box>
                     {qty>0 && (
-                      <Box sx={{position:"absolute",top:6,right:6,minWidth:20,height:20,px:"4px",borderRadius:"10px",background:C.ac,color:"#fff",fontSize:"10px",fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 2px 6px rgba(255,61,1,.4)",border:"1.5px solid #fff"}}>
+                      <Box sx={{position:"absolute",top:6,right:6,minWidth:20,height:20,px:"4px",borderRadius:"10px",background:C.ac,color:"#fff",fontSize:"10px",fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 2px 6px rgba(255,61,1,.4)",border:"1.5px solid #fff",zIndex:1}}>
                         {qty}
                       </Box>
                     )}
                     {hasVariations && (
-                      <Box sx={{position:"absolute",bottom:5,left:6,fontSize:"8px",fontWeight:800,px:"5px",py:"2px",borderRadius:"5px",background:"rgba(0,0,0,.6)",color:"#fff",letterSpacing:".4px",textTransform:"uppercase"}}>Options</Box>
+                      <Box sx={{position:"absolute",bottom:5,left:6,fontSize:"8px",fontWeight:800,px:"5px",py:"2px",borderRadius:"5px",background:"rgba(0,0,0,.6)",color:"#fff",letterSpacing:".4px",textTransform:"uppercase",zIndex:1}}>Options</Box>
                     )}
                   </Box>
-                  {/* Info */}
-                  <Box sx={{px:"10px",pt:"8px",pb:"10px",flex:1,display:"flex",flexDirection:"column",gap:"3px"}}>
-                    <Typography sx={{fontSize:"12px",fontWeight:700,color:C.tx,lineHeight:1.35,fontFamily:FONT,display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical",overflow:"hidden"}}>{item.item_name}</Typography>
-                    <Box sx={{display:"flex",alignItems:"center",justifyContent:"space-between",mt:"auto",pt:"4px"}}>
+                  {/* Info — fixed height so all cards are equal */}
+                  <Box sx={{px:"10px",pt:"7px",pb:"9px",height:70,display:"flex",flexDirection:"column",flexShrink:0}}>
+                    <Typography sx={{fontSize:"12px",fontWeight:700,color:C.tx,lineHeight:1.3,fontFamily:FONT,display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical",overflow:"hidden",flex:1}}>{item.item_name}</Typography>
+                    <Box sx={{display:"flex",alignItems:"center",justifyContent:"space-between",pt:"5px"}}>
                       <Typography sx={{fontSize:"13px",fontWeight:800,color:C.ac,fontFamily:FONT}}>₹{item.price}</Typography>
-                      <Box sx={{width:22,height:22,borderRadius:"6px",background:qty>0?C.ac:C.s2,border:`1.5px solid ${qty>0?C.ac:C.bd}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:800,color:qty>0?"#fff":C.t2,flexShrink:0,transition:"all .14s"}}>
+                      <Box sx={{width:22,height:22,borderRadius:"6px",background:qty>0?C.ac:C.s2,border:`1.5px solid ${qty>0?C.ac:C.bd}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:800,color:qty>0?"#fff":C.t2,flexShrink:0,transition:"background .14s"}}>
                         {qty>0?"✓":"+"}
                       </Box>
                     </Box>
@@ -670,7 +694,7 @@ export default function Poss() {
         </Box>
 
         {/* ── CART ──────────────────────────────────────────────────────── */}
-        <Box sx={{width:420,minWidth:360,background:C.w,borderLeft:`1.5px solid ${C.bd}`,display:"flex",flexDirection:"column",flexShrink:0,boxShadow:"-4px 0 20px rgba(0,0,0,.07)",minHeight:0,overflow:"hidden"}}>
+        <Box sx={{width:550,minWidth:420,background:C.w,borderLeft:`1.5px solid ${C.bd}`,display:"flex",flexDirection:"column",flexShrink:0,boxShadow:"-4px 0 20px rgba(0,0,0,.07)",minHeight:0,overflow:"hidden"}}>
           {/* Channel strip */}
           <Box sx={{height:3,background:chStripColor,transition:"background .2s",flexShrink:0}} />
 
