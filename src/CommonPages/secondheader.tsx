@@ -4,7 +4,6 @@ import Sidebar from "../assets/hamburgericon.png";
 import Bhojpeblack from "../assets/mainLogo.png";
 import cart from "../assets/image 2.png";
 import person from "../assets/image 4.png";
-import waiter from "../assets/image 8.png";
 import onlineicon from "../assets/frequency (1).png";
 import offlineicon from "../assets/offlineicon.png";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -18,7 +17,7 @@ import image4 from "../assets/image 309.png";
 import image5 from "../assets/image 308.png";
 import image6 from "../assets/image 307.png";
 import { useCustomers } from "../context/CustomerContext.tsx";
-import { useWaiters } from "../context/WaitersContext.tsx";
+import { useTables } from "../context/TablesContext.tsx";
 
 const QUICK_ICONS = [image1, image2, image3, image4, image5, image6];
 
@@ -44,7 +43,7 @@ export default function SecondHeader({
   const { isOnline } = useNetwork();
   const { loading, ordersTotal, fetchOrders } = useOrders();
   const { customers, loading: customersLoading } = useCustomers();
-  const { waiters = [], loading: waitersLoading } = useWaiters();
+  const { tables, loading: tablesLoading } = useTables();
 
   const isPoss = location.pathname === "/poss";
   const isDashboardFull = location.pathname === "/menudashboard";
@@ -177,10 +176,10 @@ export default function SecondHeader({
               </Typography>
             </Box>
 
-            {/* Waiters */}
+            {/* Tables */}
             <Box
               className="clickable"
-              onClick={() => navigate("/waiters")}
+              onClick={() => navigate("/dashboard")}
               sx={{
                 display: "flex",
                 alignItems: "center",
@@ -193,11 +192,16 @@ export default function SecondHeader({
                 "&:hover": { opacity: 0.7 },
               }}
             >
-              <img src={waiter} alt="Waiter" style={{ width: 22 }} />
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="2" y="7" width="20" height="3" rx="1.5" fill="#9CAB84"/>
+                <rect x="4" y="10" width="2.5" height="7" rx="1.2" fill="#9CAB84"/>
+                <rect x="17.5" y="10" width="2.5" height="7" rx="1.2" fill="#9CAB84"/>
+                <rect x="3" y="5" width="18" height="2.5" rx="1.2" fill="#b8c8a4"/>
+              </svg>
               <Typography
                 sx={{ fontSize: 12, fontWeight: 700, color: "#9CAB84" }}
               >
-                {waitersLoading ? "…" : waiters.length}
+                {tablesLoading ? "…" : tables.length}
               </Typography>
             </Box>
 
