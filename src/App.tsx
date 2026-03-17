@@ -1,5 +1,5 @@
 import { HashRouter, Routes, Route } from "react-router-dom";
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Login from "./Pages/Login";
 import Dashboard from "./Pages/Dashboard";
@@ -24,30 +24,41 @@ import Customers from "./Pages/Customers";
 import { KotProvider } from "./context/KotContext";
 import KOTPage from "./components/KOTPage";
 import { InventoryProvider } from "./context/InventoryContext";
-import InventoryPage from "./CommonPages/InventoryPage";
-import WaiterRequests from "./CommonPages/WaiterRequests";
-import Reservations from "./CommonPages/Reservations";
-import Operations from "./CommonPages/Operations";
-import Reports from "./CommonPages/Reports";
-import Kitchens from "./CommonPages/Kitchens";
-import Updates from "./CommonPages/Updates";
-import Payments from "./CommonPages/Payments";
 import "react-datepicker/dist/react-datepicker.css";
 import PrintReceipt from "./components/PrintReceipt";
-import DuePayments from "./CommonPages/DuePayments";
 import PrintKot from "./components/PrintKot";
 import SetPasskey from "./Pages/setPasskey";
 import ResetPasskey from "./Pages/ResetPasskey";
 import ProtectedRoute from "./ProtectedRoute";
 import PrintAllKot from "./components/PrintAllKot";
 import { DeliveryExecutivesProvider } from "./context/DeliveryExecutive";
-import StaffPage from "./CommonPages/StaffPage";
 import PrintReceiptPage from "./components/PrintReceiptPage";
 import { Toaster } from "react-hot-toast";
-import AllKitchenKot from "./CommonPages/AllKitchenKot";
-import DeliveryExecutivesPage from "./CommonPages/DeliveryExecutivesPage";
-import PrinterSettings from "./CommonPages/PrinterSettings";
 import Poss from "./Pages/Poss";
+import { CircularProgress, Box } from "@mui/material";
+
+/* ── Lazy-loaded secondary pages ── */
+const Reservations         = React.lazy(() => import("./CommonPages/Reservations"));
+const AllKitchenKot        = React.lazy(() => import("./CommonPages/AllKitchenKot"));
+const InventoryPage        = React.lazy(() => import("./CommonPages/InventoryPage"));
+const WaiterRequests       = React.lazy(() => import("./CommonPages/WaiterRequests"));
+const Operations           = React.lazy(() => import("./CommonPages/Operations"));
+const Reports              = React.lazy(() => import("./CommonPages/Reports"));
+const Kitchens             = React.lazy(() => import("./CommonPages/Kitchens"));
+const Updates              = React.lazy(() => import("./CommonPages/Updates"));
+const Payments             = React.lazy(() => import("./CommonPages/Payments"));
+const DuePayments          = React.lazy(() => import("./CommonPages/DuePayments"));
+const StaffPage            = React.lazy(() => import("./CommonPages/StaffPage"));
+const DeliveryExecutivesPage = React.lazy(() => import("./CommonPages/DeliveryExecutivesPage"));
+const PrinterSettings      = React.lazy(() => import("./CommonPages/PrinterSettings"));
+
+function PageLoader() {
+  return (
+    <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", height: "60vh" }}>
+      <CircularProgress sx={{ color: "#FF3D01" }} />
+    </Box>
+  );
+}
 export default function App() {
   const [savedOrders, setSavedOrders] = useState<Order[]>([]);
 
@@ -87,6 +98,7 @@ export default function App() {
                       <div className="app-wrapper" style={{ overflow: "auto" }}>
                         <ClickSoundProvider />
                         <HashRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+                          <Suspense fallback={<PageLoader />}>
                           <Routes>
                             <Route path="/" element={<Login />} />
 
@@ -313,6 +325,7 @@ export default function App() {
                               }
                             />
                           </Routes>
+                          </Suspense>
                         </HashRouter>
                       </div>
                     </NetworkProvider>
