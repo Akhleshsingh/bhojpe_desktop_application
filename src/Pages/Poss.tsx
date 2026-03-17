@@ -634,6 +634,7 @@ export default function Poss() {
               const imgSrc = rawImg
                 ? (rawImg.startsWith("http") ? rawImg : `https://bhojpe.in${rawImg}`)
                 : null;
+              const emoji = foodEmoji(item.item_name);
               return (
                 <Box key={item.id} onClick={()=>addItem(item)}
                   sx={{
@@ -667,8 +668,8 @@ export default function Poss() {
                         sx={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}
                       />
                     ) : null}
-                    <Box sx={{opacity:.5,display:imgSrc?"none":"flex",alignItems:"center",justifyContent:"center",position:"absolute",inset:0}}>
-                      <ForkKnifeIcon />
+                    <Box sx={{display:imgSrc?"none":"flex",alignItems:"center",justifyContent:"center",position:"absolute",inset:0,fontSize:38,lineHeight:1}}>
+                      {emoji}
                     </Box>
                     {qty>0 && (
                       <Box sx={{position:"absolute",top:6,right:6,minWidth:20,height:20,px:"4px",borderRadius:"10px",background:C.ac,color:"#fff",fontSize:"10px",fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 2px 6px rgba(255,61,1,.4)",border:"1.5px solid #fff",zIndex:1}}>
