@@ -339,7 +339,33 @@ export default function Dashboard() {
           <Typography sx={{ fontFamily: SERIF, fontSize: 22, fontWeight: 700, color: "#1a1208" }}>
             Table View
           </Typography>
-          <Box sx={{ display: "flex", gap: 1 }}>
+          <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+            {/* Pickup shortcut */}
+            <Button
+              onClick={() => navigate("/poss", { state: { channel: "pickup" } })}
+              sx={{
+                fontFamily: FONT, fontWeight: 700, fontSize: 13, textTransform: "none",
+                background: "#fff", color: "#2563eb",
+                border: "1.5px solid #2563eb",
+                borderRadius: "9px", px: "16px", py: "7px",
+                "&:hover": { background: "rgba(37,99,235,.07)" },
+              }}
+            >
+              🛍️ Pickup
+            </Button>
+            {/* Delivery shortcut */}
+            <Button
+              onClick={() => navigate("/poss", { state: { channel: "delivery" } })}
+              sx={{
+                fontFamily: FONT, fontWeight: 700, fontSize: 13, textTransform: "none",
+                background: "#fff", color: "#16a34a",
+                border: "1.5px solid #16a34a",
+                borderRadius: "9px", px: "16px", py: "7px",
+                "&:hover": { background: "rgba(22,163,74,.07)" },
+              }}
+            >
+              🛵 Delivery
+            </Button>
             <Button
               onClick={() => { setAddArea(""); setAddCode(""); setAddSeats(""); setAddStatus("active"); setAddError(""); setAddOpen(true); }}
               sx={{

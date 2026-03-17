@@ -202,15 +202,20 @@ export default function Poss() {
   useEffect(() => {
     const st = location.state as any;
     if (!st) return;
+    // Handle direct channel navigation (Pickup / Delivery shortcuts from table view)
+    if (st.channel && !st.tableId) {
+      setChannel(st.channel as "dine"|"pickup"|"delivery");
+      return;
+    }
     if (st.tableId) {
       const allTables: PosTable[] = areas.flatMap((a:any) => (a.tables ?? []).map((t:any) => ({ ...t, area_name: typeof a.area_name === "object" ? a.area_name.en : a.area_name })));
       const found = allTables.find(t => t.id === st.tableId) ?? flatTables.find((t: PosTable) => t.id === st.tableId);
       if (found) {
         setAssignedTable(found as PosTable);
-        setChannel("dine");
+        setChannel(st.channel ?? "dine");
       } else if (st.tableNo) {
         setAssignedTable({ id: st.tableId, table_no: st.tableNo, capacity: st.seating ?? 1, area_name: st.area_name ?? "" });
-        setChannel("dine");
+        setChannel(st.channel ?? "dine");
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
