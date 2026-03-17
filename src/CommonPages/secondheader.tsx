@@ -18,7 +18,6 @@ import image4 from "../assets/image 309.png";
 import image5 from "../assets/image 308.png";
 import image6 from "../assets/image 307.png";
 import { useCustomers } from "../context/CustomerContext.tsx";
-import OrderTypeSwitcher from "../CommonPages/OrderTypeSwitcher.tsx";
 import { useWaiters } from "../context/WaitersContext.tsx";
 
 const QUICK_ICONS = [image1, image2, image3, image4, image5, image6];
@@ -50,19 +49,6 @@ export default function SecondHeader({
   const isPoss = location.pathname === "/poss";
   const isDashboardFull = location.pathname === "/menudashboard";
   const isMainDashboard = location.pathname === "/main-dashboard";
-  const isTableView = location.pathname === "/dashboard";
-  const isOrder = location.pathname === "/ordershistory";
-  const isMyOrder = location.pathname === "/myorders";
-  const isNewOrder = location.pathname === "/neworders";
-
-  const isOrderHistory = isOrder;
-  const isWaiterPage = location.pathname === "/waiters";
-  const isCustomerPage = location.pathname === "/customers";
-
-  const hideOrderControls = useMemo(
-    () => isMainDashboard || isOrderHistory || isWaiterPage || isCustomerPage,
-    [isMainDashboard, isOrderHistory, isWaiterPage, isCustomerPage],
-  );
 
   const handleNewKot = () => {
     if (onNewOrder) { onNewOrder(); return; }
@@ -297,54 +283,6 @@ export default function SecondHeader({
         </Box>
       </Box>
 
-      {!isMainDashboard && !isDashboardFull && !isTableView && !isPoss && (
-        <Box
-          sx={{
-            height: "auto",
-            py: "10px",
-            backgroundColor: "var(--card-bg)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            px: 2,
-            borderTop: "1px solid #E5E5E5",
-          }}
-        >
-          <Typography sx={{ fontSize: 16, fontWeight: 600 }}>
-            {isTableView ? "Table View" : isOrder ? "Order" : ""}
-          </Typography>
-
-          <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
-            {!hideOrderControls && (
-              <OrderTypeSwitcher
-                activeType={orderType}
-                onSelect={(type) => {
-                  setOrderType?.(type);
-                  navigate("/menudashboard");
-                }}
-                isTableView={false}
-              />
-            )}
-            {isOrder && (
-              <Button
-                onClick={handleNewKot}
-                style={{
-                  backgroundColor: "#5A7863",
-                  border: "none",
-                  borderRadius: "5px",
-                  padding: "6px 16px",
-                  fontWeight: 600,
-                  height: 36,
-                  whiteSpace: "nowrap",
-                  color: "#fff",
-                }}
-              >
-                + New Order
-              </Button>
-            )}
-          </Box>
-        </Box>
-      )}
     </Box>
   );
 }
