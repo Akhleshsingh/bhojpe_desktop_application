@@ -1662,7 +1662,7 @@ export default function Reservations() {
       <NewReservationModal
         open={newResOpen}
         onClose={() => setNewResOpen(false)}
-        onSaved={() => { setNewResOpen(false); fetchReservations(); }}
+        onSaved={fetchReservations}
         branchId={branch_id}
         customers={allReservations}
       />

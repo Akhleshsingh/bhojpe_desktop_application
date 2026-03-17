@@ -35,6 +35,13 @@ function findMockFile(urlPath: string): string | null {
   return null;
 }
 
+/* Routes that always use mock data even when the user has a valid token.
+   Use for endpoints the demo backend doesn't fully support. */
+const ALWAYS_MOCK = new Set([
+  "/api/v1/save-reservation",
+  "/api/v1/get-reservations",
+]);
+
 function isValidToken(authHeader: string): boolean {
   if (!authHeader.startsWith("Bearer ")) return false;
   const token = authHeader.slice(7).trim();
@@ -49,8 +56,11 @@ export function mockApiPlugin(): Plugin {
         const url = req.url || "";
         if (!url.startsWith("/api/v1/")) { next(); return; }
 
+        const cleanPath = url.split("?")[0];
+        const alwaysMock = ALWAYS_MOCK.has(cleanPath);
+
         const authHeader = (req.headers["authorization"] || "") as string;
-        if (isValidToken(authHeader)) { next(); return; }
+        if (!alwaysMock && isValidToken(authHeader)) { next(); return; }
 
         const mockFile = findMockFile(url);
         if (!mockFile) { next(); return; }
