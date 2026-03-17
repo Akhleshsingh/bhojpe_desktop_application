@@ -1,0 +1,17 @@
+{
+  "status": true,
+  "data": [
+    { "id": 1,  "item_name": "Paneer Butter Masala", "price": 180, "item_category_id": 1, "category_name": "Main Course", "is_veg": 1, "is_active": 1, "description": "Rich creamy paneer curry" },
+    { "id": 2,  "item_name": "Dal Makhani",           "price": 160, "item_category_id": 1, "category_name": "Main Course", "is_veg": 1, "is_active": 1, "description": "Slow-cooked black lentils" },
+    { "id": 3,  "item_name": "Chicken Tikka Masala",  "price": 250, "item_category_id": 1, "category_name": "Main Course", "is_veg": 0, "is_active": 1, "description": "Tandoor-smoked chicken in spiced gravy" },
+    { "id": 4,  "item_name": "Mutton Rogan Josh",     "price": 320, "item_category_id": 1, "category_name": "Main Course", "is_veg": 0, "is_active": 1, "description": "Kashmiri style mutton curry" },
+    { "id": 5,  "item_name": "Butter Naan",            "price": 30,  "item_category_id": 2, "category_name": "Breads",      "is_veg": 1, "is_active": 1, "description": "Soft leavened flatbread" },
+    { "id": 6,  "item_name": "Tandoori Roti",           "price": 25,  "item_category_id": 2, "category_name": "Breads",      "is_veg": 1, "is_active": 1, "description": "Whole wheat tandoor bread" },
+    { "id": 7,  "item_name": "Veg Biryani",            "price": 200, "item_category_id": 3, "category_name": "Rice",        "is_veg": 1, "is_active": 1, "description": "Fragrant basmati with vegetables" },
+    { "id": 8,  "item_name": "Chicken Biryani",        "price": 260, "item_category_id": 3, "category_name": "Rice",        "is_veg": 0, "is_active": 1, "description": "Dum-cooked chicken biryani" },
+    { "id": 9,  "item_name": "Lassi",                  "price": 80,  "item_category_id": 4, "category_name": "Beverages",   "is_veg": 1, "is_active": 1, "description": "Chilled yoghurt drink" },
+    { "id": 10, "item_name": "Masala Chai",             "price": 40,  "item_category_id": 4, "category_name": "Beverages",   "is_veg": 1, "is_active": 1, "description": "Spiced Indian tea" },
+    { "id": 11, "item_name": "Gulab Jamun",             "price": 70,  "item_category_id": 5, "category_name": "Desserts",    "is_veg": 1, "is_active": 1, "description": "Soft milk-solid dumplings in syrup" },
+    { "id": 12, "item_name": "Raita",                  "price": 60,  "item_category_id": 6, "category_name": "Sides",       "is_veg": 1, "is_active": 1, "description": "Chilled yoghurt with cucumber" }
+  ]
+}

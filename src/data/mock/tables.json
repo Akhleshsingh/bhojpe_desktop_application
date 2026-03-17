@@ -1,0 +1,11 @@
+{
+  "status": true,
+  "data": [
+    { "id": 1, "table_name": "T-1", "table_capacity": 4, "table_status": "available", "is_active": 1 },
+    { "id": 2, "table_name": "T-2", "table_capacity": 2, "table_status": "occupied",  "is_active": 1 },
+    { "id": 3, "table_name": "T-3", "table_capacity": 6, "table_status": "available", "is_active": 1 },
+    { "id": 4, "table_name": "T-4", "table_capacity": 4, "table_status": "reserved",  "is_active": 1 },
+    { "id": 5, "table_name": "T-5", "table_capacity": 8, "table_status": "available", "is_active": 1 },
+    { "id": 6, "table_name": "T-6", "table_capacity": 2, "table_status": "occupied",  "is_active": 1 }
+  ]
+}

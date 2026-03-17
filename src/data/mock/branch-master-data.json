@@ -1,0 +1,13 @@
+{
+  "status": true,
+  "data": {
+    "id": 1,
+    "restaurant_id": 1,
+    "branch_name": "Main Branch",
+    "branch_address": "123, MG Road, Lucknow, UP",
+    "currency": "₹",
+    "timezone": "Asia/Kolkata",
+    "gst_number": "09AABCU9603R1ZX",
+    "is_active": 1
+  }
+}

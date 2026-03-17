@@ -1,0 +1,8 @@
+{
+  "status": true,
+  "data": [
+    { "id": 1, "name": "Rinku Sharma",  "email": "rinku@bhojpe.in",  "phone": "9999999901", "is_active": 1, "role_id": 2 },
+    { "id": 2, "name": "Sunita Devi",   "email": "sunita@bhojpe.in", "phone": "9999999902", "is_active": 1, "role_id": 2 },
+    { "id": 3, "name": "Aakash Gupta",  "email": "aakash@bhojpe.in", "phone": "9999999903", "is_active": 1, "role_id": 2 }
+  ]
+}

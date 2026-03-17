@@ -1,0 +1,54 @@
+{
+  "status": true,
+  "data": {
+    "today_overview": {
+      "total_orders": 24,
+      "total_sales": 18540,
+      "total_customers": 38,
+      "avg_daily_earnings": 14200,
+      "orders_change": 8,
+      "earnings_change": 15,
+      "customers_change": 5,
+      "avg_earnings_change": -2
+    },
+    "monthly_sales": {
+      "2026-03-01": 12000,
+      "2026-03-02": 15500,
+      "2026-03-03": 9800,
+      "2026-03-04": 18200,
+      "2026-03-05": 21000,
+      "2026-03-06": 13400,
+      "2026-03-07": 11200,
+      "2026-03-08": 17800,
+      "2026-03-09": 14600,
+      "2026-03-10": 19200,
+      "2026-03-11": 16000,
+      "2026-03-12": 22500,
+      "2026-03-13": 13800,
+      "2026-03-14": 17400,
+      "2026-03-15": 20100,
+      "2026-03-16": 15900,
+      "2026-03-17": 18540
+    },
+    "payment_method_today": [
+      { "method": "Cash",         "total": 8200  },
+      { "method": "UPI",          "total": 6800  },
+      { "method": "Card",         "total": 2900  },
+      { "method": "Wallet",       "total": 640   }
+    ],
+    "top_selling_dish": [
+      { "item_name": "Chicken Tikka Masala", "qty": 18, "total": 4500 },
+      { "item_name": "Paneer Butter Masala", "qty": 15, "total": 2700 },
+      { "item_name": "Butter Naan",           "qty": 42, "total": 1260 },
+      { "item_name": "Dal Makhani",           "qty": 12, "total": 1920 },
+      { "item_name": "Chicken Biryani",       "qty": 10, "total": 2600 }
+    ],
+    "top_selling_tables": [
+      { "table_name": "T-2", "total": 4800 },
+      { "table_name": "T-5", "total": 3600 },
+      { "table_name": "T-1", "total": 3200 },
+      { "table_name": "T-3", "total": 2900 },
+      { "table_name": "T-6", "total": 2400 }
+    ]
+  }
+}

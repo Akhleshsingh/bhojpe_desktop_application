@@ -1,0 +1,11 @@
+{
+  "status": true,
+  "data": [
+    { "id": 1, "name": "Anita Singh",   "email": "anita@bhojpe.in",   "phone": "9700000001", "role_id": 1, "role": "Manager", "is_active": 1 },
+    { "id": 2, "name": "Rinku Sharma",  "email": "rinku@bhojpe.in",   "phone": "9700000002", "role_id": 2, "role": "Waiter",  "is_active": 1 },
+    { "id": 3, "name": "Sunita Devi",   "email": "sunita@bhojpe.in",  "phone": "9700000003", "role_id": 2, "role": "Waiter",  "is_active": 1 },
+    { "id": 4, "name": "Aakash Gupta",  "email": "aakash@bhojpe.in",  "phone": "9700000004", "role_id": 2, "role": "Waiter",  "is_active": 0 },
+    { "id": 5, "name": "Priya Mishra",  "email": "priya@bhojpe.in",   "phone": "9700000005", "role_id": 3, "role": "Chef",    "is_active": 1 },
+    { "id": 6, "name": "Vikram Tiwari", "email": "vikram@bhojpe.in",  "phone": "9700000006", "role_id": 4, "role": "Cashier", "is_active": 1 }
+  ]
+}

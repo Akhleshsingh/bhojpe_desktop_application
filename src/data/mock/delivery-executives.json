@@ -1,0 +1,8 @@
+{
+  "status": true,
+  "data": [
+    { "id": 1, "name": "Ramesh Kumar",  "phone": "9888801001", "is_active": 1, "current_orders": 2 },
+    { "id": 2, "name": "Suresh Yadav",  "phone": "9888801002", "is_active": 1, "current_orders": 0 },
+    { "id": 3, "name": "Mohan Prasad",  "phone": "9888801003", "is_active": 1, "current_orders": 1 }
+  ]
+}

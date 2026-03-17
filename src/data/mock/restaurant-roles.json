@@ -1,0 +1,10 @@
+{
+  "status": true,
+  "data": [
+    { "id": 1, "role": "Manager",  "is_active": 1 },
+    { "id": 2, "role": "Waiter",   "is_active": 1 },
+    { "id": 3, "role": "Chef",     "is_active": 1 },
+    { "id": 4, "role": "Cashier",  "is_active": 1 },
+    { "id": 5, "role": "Captain",  "is_active": 1 }
+  ]
+}

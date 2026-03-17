@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
 import {
   Box,
   Typography,
@@ -141,6 +143,10 @@ export default function AllKitchenKot() {
   const [waiterFilter, setWaiterFilter] = useState("all_waiter");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
+  const [showFromCal, setShowFromCal] = useState(false);
+  const [showToCal, setShowToCal] = useState(false);
+  const ymd = (d: Date) => d.toISOString().split("T")[0];
+  const fmtCal = (s: string) => s ? new Date(s + "T00:00").toLocaleDateString("en-IN", { day: "2-digit", month: "2-digit", year: "numeric" }) : "";
 
   const [selectedItem, setSelectedItem] = useState<{ kotId: number; itemId: number } | null>(null);
 
@@ -279,51 +285,48 @@ export default function AllKitchenKot() {
         </FormControl>
 
         {/* From date */}
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 1,
-            border: `1px solid ${BDR}`,
-            borderRadius: "8px",
-            px: 1.5,
-            height: 36,
-            background: "#fff",
-          }}
-        >
-          <CalendarTodayIcon sx={{ fontSize: 14, color: TX3 }} />
-          <input
-            type="date"
-            value={fromDate}
-            onChange={(e) => { setFromDate(e.target.value); if (toDate && e.target.value > toDate) setToDate(e.target.value); }}
-            max={toDate || undefined}
-            style={{ border: "none", outline: "none", fontSize: 13, fontFamily: "'Plus Jakarta Sans', sans-serif", color: TX2, background: "transparent", cursor: "pointer" }}
-          />
+        <Box sx={{ position: "relative" }}>
+          <Box
+            onClick={() => { setShowFromCal(v => !v); setShowToCal(false); }}
+            sx={{ display: "flex", alignItems: "center", gap: 1, border: `1px solid ${showFromCal ? "#FF3D01" : BDR}`, borderRadius: "8px", px: 1.5, height: 36, background: "#fff", cursor: "pointer", "&:hover": { borderColor: TX3 } }}
+          >
+            <CalendarTodayIcon sx={{ fontSize: 14, color: TX3 }} />
+            <Typography sx={{ fontSize: 13, color: fromDate ? TX2 : TX3, fontFamily: FONT, minWidth: 80 }}>
+              {fromDate ? fmtCal(fromDate) : "From date"}
+            </Typography>
+          </Box>
+          {showFromCal && (
+            <Box sx={{ position: "absolute", top: 42, left: 0, zIndex: 2000, boxShadow: "0 8px 24px rgba(0,0,0,.15)", borderRadius: "10px", overflow: "hidden" }}>
+              <Calendar
+                value={fromDate ? new Date(fromDate + "T00:00") : null}
+                onChange={(d) => { const v = ymd(d as Date); setFromDate(v); if (toDate && v > toDate) setToDate(v); setShowFromCal(false); }}
+              />
+            </Box>
+          )}
         </Box>
 
         <Typography sx={{ fontSize: 13, color: TX2, fontFamily: FONT }}>To</Typography>
 
         {/* To date */}
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 1,
-            border: `1px solid ${BDR}`,
-            borderRadius: "8px",
-            px: 1.5,
-            height: 36,
-            background: "#fff",
-          }}
-        >
-          <CalendarTodayIcon sx={{ fontSize: 14, color: TX3 }} />
-          <input
-            type="date"
-            value={toDate}
-            onChange={(e) => setToDate(e.target.value)}
-            min={fromDate || undefined}
-            style={{ border: "none", outline: "none", fontSize: 13, fontFamily: "'Plus Jakarta Sans', sans-serif", color: TX2, background: "transparent", cursor: "pointer" }}
-          />
+        <Box sx={{ position: "relative" }}>
+          <Box
+            onClick={() => { setShowToCal(v => !v); setShowFromCal(false); }}
+            sx={{ display: "flex", alignItems: "center", gap: 1, border: `1px solid ${showToCal ? "#FF3D01" : BDR}`, borderRadius: "8px", px: 1.5, height: 36, background: "#fff", cursor: "pointer", "&:hover": { borderColor: TX3 } }}
+          >
+            <CalendarTodayIcon sx={{ fontSize: 14, color: TX3 }} />
+            <Typography sx={{ fontSize: 13, color: toDate ? TX2 : TX3, fontFamily: FONT, minWidth: 80 }}>
+              {toDate ? fmtCal(toDate) : "To date"}
+            </Typography>
+          </Box>
+          {showToCal && (
+            <Box sx={{ position: "absolute", top: 42, left: 0, zIndex: 2000, boxShadow: "0 8px 24px rgba(0,0,0,.15)", borderRadius: "10px", overflow: "hidden" }}>
+              <Calendar
+                minDate={fromDate ? new Date(fromDate + "T00:00") : undefined}
+                value={toDate ? new Date(toDate + "T00:00") : null}
+                onChange={(d) => { setToDate(ymd(d as Date)); setShowToCal(false); }}
+              />
+            </Box>
+          )}
         </Box>
 
         <FormControl size="small">
