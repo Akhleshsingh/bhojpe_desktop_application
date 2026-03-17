@@ -1,0 +1,133 @@
+{
+  "__comment": "BhojPe POS — Dummy API Responses",
+
+  "menu_items": {
+    "success": true,
+    "data": [
+      {"id":1,  "name":"Veg Burger",          "price":160, "cat":"Burger",       "type":"veg",    "img":"🍔", "active":true},
+      {"id":2,  "name":"Chicken Burger",      "price":220, "cat":"Burger",       "type":"nonveg", "img":"🍔", "active":true},
+      {"id":3,  "name":"Egg Burger",          "price":180, "cat":"Burger",       "type":"egg",    "img":"🍔", "active":true},
+      {"id":4,  "name":"Margherita Pizza",    "price":280, "cat":"Pizza",        "type":"veg",    "img":"🍕", "active":true},
+      {"id":5,  "name":"Paneer Pizza",        "price":320, "cat":"Pizza",        "type":"veg",    "img":"🍕", "active":true},
+      {"id":6,  "name":"Chicken Pizza",       "price":380, "cat":"Pizza",        "type":"nonveg", "img":"🍕", "active":true},
+      {"id":7,  "name":"Mushroom Pizza",      "price":280, "cat":"Pizza",        "type":"veg",    "img":"🍕", "active":true},
+      {"id":8,  "name":"Veg Fried Rice",      "price":180, "cat":"South Indian", "type":"veg",    "img":"🍛", "active":true},
+      {"id":9,  "name":"Egg Curry",           "price":220, "cat":"South Indian", "type":"egg",    "img":"🍛", "active":true},
+      {"id":10, "name":"Sambar Rice",         "price":140, "cat":"South Indian", "type":"veg",    "img":"🍛", "active":true},
+      {"id":11, "name":"Chicken Kadhai",      "price":340, "cat":"Punjabi",      "type":"nonveg", "img":"🍲", "active":true},
+      {"id":12, "name":"Sarson Ka Saag",      "price":200, "cat":"Punjabi",      "type":"veg",    "img":"🥬", "active":true},
+      {"id":13, "name":"Paneer Thali",        "price":320, "cat":"Thali",        "type":"veg",    "img":"🍱", "active":true},
+      {"id":14, "name":"Veg Thali",           "price":280, "cat":"Thali",        "type":"veg",    "img":"🍱", "active":true},
+      {"id":15, "name":"Masala Chai",         "price":40,  "cat":"Soda",         "type":"veg",    "img":"🍵", "active":true},
+      {"id":16, "name":"Cold Coffee",         "price":120, "cat":"Soda",         "type":"veg",    "img":"☕", "active":true},
+      {"id":17, "name":"Lemonade",            "price":70,  "cat":"Soda",         "type":"veg",    "img":"🍋", "active":true},
+      {"id":18, "name":"Mango Lassi",         "price":90,  "cat":"Lassi",        "type":"veg",    "img":"🥭", "active":true},
+      {"id":19, "name":"Sweet Lassi",         "price":80,  "cat":"Lassi",        "type":"veg",    "img":"🥛", "active":true},
+      {"id":20, "name":"Hakka Noodles",       "price":160, "cat":"Noodles",      "type":"veg",    "img":"🍜", "active":true},
+      {"id":21, "name":"Chicken Noodles",     "price":200, "cat":"Noodles",      "type":"nonveg", "img":"🍜", "active":true},
+      {"id":22, "name":"Gulab Jamun",         "price":80,  "cat":"Sweets",       "type":"veg",    "img":"🍮", "active":true},
+      {"id":23, "name":"Rasgulla",            "price":90,  "cat":"Sweets",       "type":"veg",    "img":"🧆", "active":true},
+      {"id":24, "name":"Mango Ice Cream",     "price":100, "cat":"Ice-cream",    "type":"veg",    "img":"🍨", "active":true},
+      {"id":25, "name":"Choco Ice Cream",     "price":110, "cat":"Ice-cream",    "type":"veg",    "img":"🍦", "active":true},
+      {"id":26, "name":"Veg Biryani",         "price":220, "cat":"Biryani",      "type":"veg",    "img":"🍚", "active":true},
+      {"id":27, "name":"Chicken Biryani",     "price":320, "cat":"Biryani",      "type":"nonveg", "img":"🍚", "active":true},
+      {"id":28, "name":"Egg Biryani",         "price":250, "cat":"Biryani",      "type":"egg",    "img":"🍚", "active":true},
+      {"id":29, "name":"Butter Naan",         "price":40,  "cat":"Roti",         "type":"veg",    "img":"🫓", "active":true},
+      {"id":30, "name":"Tandoori Roti",       "price":30,  "cat":"Roti",         "type":"veg",    "img":"🫓", "active":true}
+    ]
+  },
+
+  "tables": {
+    "success": true,
+    "data": [
+      {
+        "floor": "Ground Floor",
+        "tables": [
+          {"id":"t1",  "name":"T1",  "seats":4, "status":"running",  "kots":2, "time":"32m"},
+          {"id":"t2",  "name":"T2",  "seats":2, "status":"avail",    "kots":0, "time":""},
+          {"id":"t3",  "name":"T3",  "seats":6, "status":"print",    "kots":1, "time":"58m"},
+          {"id":"t4",  "name":"T4",  "seats":4, "status":"avail",    "kots":0, "time":""},
+          {"id":"t5",  "name":"T5",  "seats":2, "status":"running",  "kots":1, "time":"15m"},
+          {"id":"t6",  "name":"T6",  "seats":4, "status":"reserved", "kots":0, "time":""},
+          {"id":"t7",  "name":"T7",  "seats":4, "status":"avail",    "kots":0, "time":""},
+          {"id":"t8",  "name":"T8",  "seats":6, "status":"avail",    "kots":0, "time":""}
+        ]
+      },
+      {
+        "floor": "First Floor",
+        "tables": [
+          {"id":"t9",  "name":"F1",  "seats":4, "status":"avail",    "kots":0, "time":""},
+          {"id":"t10", "name":"F2",  "seats":4, "status":"running",  "kots":3, "time":"45m"},
+          {"id":"t11", "name":"F3",  "seats":2, "status":"avail",    "kots":0, "time":""},
+          {"id":"t12", "name":"F4",  "seats":8, "status":"avail",    "kots":0, "time":""},
+          {"id":"t13", "name":"F5",  "seats":4, "status":"print",    "kots":2, "time":"1h 10m"},
+          {"id":"t14", "name":"F6",  "seats":2, "status":"avail",    "kots":0, "time":""}
+        ]
+      },
+      {
+        "floor": "Roof Top",
+        "tables": [
+          {"id":"t15", "name":"R1",  "seats":4, "status":"avail",    "kots":0, "time":""},
+          {"id":"t16", "name":"R2",  "seats":6, "status":"reserved", "kots":0, "time":""},
+          {"id":"t17", "name":"R3",  "seats":4, "status":"avail",    "kots":0, "time":""},
+          {"id":"t18", "name":"R4",  "seats":4, "status":"avail",    "kots":0, "time":""}
+        ]
+      }
+    ]
+  },
+
+  "customers": {
+    "success": true,
+    "data": [
+      {"id":1, "name":"Rahul Sharma",   "phone":"98765 43210", "addr":"42 MG Road, Gwalior",     "orders":12, "initials":"RS"},
+      {"id":2, "name":"Priya Malhotra", "phone":"87654 32109", "addr":"15 Lashkar Colony",        "orders":8,  "initials":"PM"},
+      {"id":3, "name":"Amit Kumar",     "phone":"76543 21098", "addr":"8 Civil Lines",             "orders":5,  "initials":"AK"},
+      {"id":4, "name":"Sneha Gupta",    "phone":"65432 10987", "addr":"22 Morar, Gwalior",        "orders":3,  "initials":"SG"},
+      {"id":5, "name":"Vikram Singh",   "phone":"54321 09876", "addr":"Padav, Gwalior",           "orders":15, "initials":"VS"}
+    ]
+  },
+
+  "waiters": {
+    "success": true,
+    "data": [
+      {"id":"w1", "name":"Sanjay Singh"},
+      {"id":"w2", "name":"Arjun Kumar"},
+      {"id":"w3", "name":"Pooja Mehta"},
+      {"id":"w4", "name":"Raju Verma"},
+      {"id":"w5", "name":"Deepak Sharma"}
+    ]
+  },
+
+  "delivery_executives": {
+    "success": true,
+    "data": [
+      {"id":"d1", "name":"Ravi Kumar"},
+      {"id":"d2", "name":"Suresh Yadav"},
+      {"id":"d3", "name":"Ramesh Singh"},
+      {"id":"d4", "name":"Deepak Verma"},
+      {"id":"d5", "name":"Anil Sharma"}
+    ]
+  },
+
+  "orders": {
+    "success": true,
+    "data": [
+      {"id":"ORD-001", "channel":"dine",     "table":"T1",  "customer":"Rahul Sharma",   "waiter":"Sanjay Singh", "status":"running",   "total":720,  "items":4, "time":"12:32 PM"},
+      {"id":"ORD-002", "channel":"pickup",   "table":"",    "customer":"Priya Malhotra", "waiter":"",             "status":"running",   "total":380,  "items":2, "time":"12:45 PM"},
+      {"id":"ORD-003", "channel":"delivery", "table":"",    "customer":"Amit Kumar",     "waiter":"",             "status":"running",   "total":540,  "items":3, "time":"1:10 PM"},
+      {"id":"ORD-004", "channel":"dine",     "table":"T3",  "customer":"Sneha Gupta",    "waiter":"Arjun Kumar",  "status":"billed",    "total":920,  "items":5, "time":"11:58 AM"},
+      {"id":"ORD-005", "channel":"dine",     "table":"F2",  "customer":"Vikram Singh",   "waiter":"Pooja Mehta",  "status":"running",   "total":1240, "items":6, "time":"1:00 PM"},
+      {"id":"ORD-006", "channel":"delivery", "table":"",    "customer":"Rahul Sharma",   "waiter":"",             "status":"paid",      "total":280,  "items":2, "time":"11:30 AM"}
+    ]
+  },
+
+  "create_order_response": {
+    "success": true,
+    "message": "Order created successfully",
+    "data": {
+      "order_id": "ORD-007",
+      "kot_token": "T-007",
+      "status": "running"
+    }
+  }
+}

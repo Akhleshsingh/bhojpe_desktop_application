@@ -4,7 +4,6 @@ import Sidebar from "../assets/hamburgericon.png";
 import Bhojpeblack from "../assets/mainLogo.png";
 import cart from "../assets/image 2.png";
 import person from "../assets/image 4.png";
-import waiter from "../assets/image 8.png";
 import onlineicon from "../assets/frequency (1).png";
 import offlineicon from "../assets/offlineicon.png";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -18,8 +17,7 @@ import image4 from "../assets/image 309.png";
 import image5 from "../assets/image 308.png";
 import image6 from "../assets/image 307.png";
 import { useCustomers } from "../context/CustomerContext.tsx";
-import OrderTypeSwitcher from "../CommonPages/OrderTypeSwitcher.tsx";
-import { useWaiters } from "../context/WaitersContext.tsx";
+import { useTables } from "../context/TablesContext.tsx";
 
 const QUICK_ICONS = [image1, image2, image3, image4, image5, image6];
 
@@ -29,6 +27,7 @@ export default function SecondHeader({
   sidebarOpen,
   setSidebarOpen,
   orderType,
+  onNewOrder,
 }: {
   orderType?: any;
   setOrderType?: (type: any) => void;
@@ -37,37 +36,27 @@ export default function SecondHeader({
   waiters?: any;
   sidebarOpen?: boolean;
   setSidebarOpen?: (v: boolean) => void;
+  onNewOrder?: () => void;
 }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { isOnline } = useNetwork();
   const { loading, ordersTotal, fetchOrders } = useOrders();
   const { customers, loading: customersLoading } = useCustomers();
-  const { waiters = [], loading: waitersLoading } = useWaiters();
+  const { tables, loading: tablesLoading } = useTables();
 
+  const isPoss = location.pathname === "/poss";
   const isDashboardFull = location.pathname === "/menudashboard";
-  const isMainDashboard = location.pathname === "/main-dashboard";
-  const isTableView = location.pathname === "/dashboard";
-  const isOrder = location.pathname === "/ordershistory";
-  const isMyOrder = location.pathname === "/myorders";
-  const isNewOrder = location.pathname === "/neworders";
-
-  const isOrderHistory = isOrder;
-  const isWaiterPage = location.pathname === "/waiters";
-  const isCustomerPage = location.pathname === "/customers";
-
-  const hideOrderControls = useMemo(
-    () => isMainDashboard || isOrderHistory || isWaiterPage || isCustomerPage,
-    [isMainDashboard, isOrderHistory, isWaiterPage, isCustomerPage],
-  );
+  const isMainDashboard = location.pathname === "/dashboard";
 
   const handleNewKot = () => {
-    navigate("/menudashboard", {});
+    if (onNewOrder) { onNewOrder(); return; }
+    navigate("/poss");
   };
 
   const handleQuickIconClick = (index: number) => {
-    if (index === 0) navigate("/kitchens/all-kitchens-kot");
-    else if (index === 1) navigate("/dashboard");
+    if (index === 0) navigate("/kots");
+    else if (index === 1) navigate("/tables");
     else if (index === 2) navigate("/inventory");
   };
 
@@ -117,7 +106,7 @@ export default function SecondHeader({
             src={Bhojpeblack}
             alt="App Logo"
             style={{ width: 130, cursor: "pointer" }}
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate("/tables")}
             onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.7")}
             onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
           />
@@ -151,7 +140,7 @@ export default function SecondHeader({
                   from_date: "",
                   to_date: "",
                 });
-                navigate("/ordershistory", { replace: true });
+                navigate("/orders", { replace: true });
               }}
               className="clickable"
             >
@@ -187,10 +176,10 @@ export default function SecondHeader({
               </Typography>
             </Box>
 
-            {/* Waiters */}
+            {/* Tables */}
             <Box
               className="clickable"
-              onClick={() => navigate("/waiters")}
+              onClick={() => navigate("/tables")}
               sx={{
                 display: "flex",
                 alignItems: "center",
@@ -203,21 +192,48 @@ export default function SecondHeader({
                 "&:hover": { opacity: 0.7 },
               }}
             >
-              <img src={waiter} alt="Waiter" style={{ width: 22 }} />
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="2" y="7" width="20" height="3" rx="1.5" fill="#9CAB84"/>
+                <rect x="4" y="10" width="2.5" height="7" rx="1.2" fill="#9CAB84"/>
+                <rect x="17.5" y="10" width="2.5" height="7" rx="1.2" fill="#9CAB84"/>
+                <rect x="3" y="5" width="18" height="2.5" rx="1.2" fill="#b8c8a4"/>
+              </svg>
               <Typography
                 sx={{ fontSize: 12, fontWeight: 700, color: "#9CAB84" }}
               >
-                {waitersLoading ? "…" : waiters.length}
+                {tablesLoading ? "…" : tables.length}
               </Typography>
             </Box>
+
+            {/* All KOT Button */}
+            <Button
+              onClick={() => navigate("/kots")}
+              sx={{
+                backgroundColor: "#fff",
+                color: "#FF3D01",
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
+                fontWeight: 600,
+                fontSize: "13px",
+                borderRadius: "6px",
+                padding: "6px 16px",
+                textTransform: "none",
+                whiteSpace: "nowrap",
+                border: "1.5px solid #FF3D01",
+                boxShadow: "none",
+                "&:hover": { backgroundColor: "#FFF0EE", boxShadow: "none" },
+              }}
+              variant="outlined"
+            >
+              All KOT
+            </Button>
 
             {/* New Order Button */}
             <Button
               onClick={handleNewKot}
               sx={{
-                backgroundColor: "#E8353A",
+                backgroundColor: "#FF3D01",
                 color: "#fff",
-                fontFamily: "Poppins, sans-serif",
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
                 fontWeight: 600,
                 fontSize: "13px",
                 borderRadius: "6px",
@@ -225,7 +241,7 @@ export default function SecondHeader({
                 textTransform: "none",
                 whiteSpace: "nowrap",
                 boxShadow: "none",
-                "&:hover": { backgroundColor: "#C62828", boxShadow: "none" },
+                "&:hover": { backgroundColor: "#e63500", boxShadow: "none" },
               }}
               variant="contained"
             >
@@ -271,54 +287,6 @@ export default function SecondHeader({
         </Box>
       </Box>
 
-      {!isMainDashboard && !isDashboardFull && !isTableView && (
-        <Box
-          sx={{
-            height: "auto",
-            py: "10px",
-            backgroundColor: "var(--card-bg)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            px: 2,
-            borderTop: "1px solid #E5E5E5",
-          }}
-        >
-          <Typography sx={{ fontSize: 16, fontWeight: 600 }}>
-            {isTableView ? "Table View" : isOrder ? "Order" : ""}
-          </Typography>
-
-          <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
-            {!hideOrderControls && (
-              <OrderTypeSwitcher
-                activeType={orderType}
-                onSelect={(type) => {
-                  setOrderType?.(type);
-                  navigate("/menudashboard");
-                }}
-                isTableView={false}
-              />
-            )}
-            {isOrder && (
-              <Button
-                onClick={handleNewKot}
-                style={{
-                  backgroundColor: "#5A7863",
-                  border: "none",
-                  borderRadius: "5px",
-                  padding: "6px 16px",
-                  fontWeight: 600,
-                  height: 36,
-                  whiteSpace: "nowrap",
-                  color: "#fff",
-                }}
-              >
-                + New Order
-              </Button>
-            )}
-          </Box>
-        </Box>
-      )}
     </Box>
   );
 }

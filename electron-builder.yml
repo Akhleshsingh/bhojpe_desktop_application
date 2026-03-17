@@ -1,36 +1,30 @@
-appId: com.example.bhojpeapp
-productName: BhojPeApp
+appId: com.BhojPe.desktop
+productName: BhojPe
 directories:
-  output: dist
+  output: dist-electron
   buildResources: build
+
+files:
+  - "dist/**/*"
+  - "main.cjs"
+  - "preload.cjs"
+  - "package.json"
 
 # Windows configuration
 win:
   target: nsis
-  icon: icon.ico
-  forceCodeSigning: false   # Skip code signing
+  icon: public/2.svg
+  forceCodeSigning: false
   requestedExecutionLevel: asInvoker
-  signAndEditExecutable: false   # Optional: disable rcedit edits if you want
+  signAndEditExecutable: false
   verifyUpdateCodeSignature: false
+
+# macOS configuration
+mac:
+  target: dmg
 
 # Linux configuration
 linux:
   target: AppImage
-  icon: build/icon.png
   category: Utility
-  synopsis: "BhojPeApp - Your app description"
-
-# Files to include
-files:
-  - "**/*"
-  - "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md}"
-  - "!**/node_modules/*/{test,__tests__,tests,example,examples}"
-  - "!**/*.d.ts"
-  - "!**/.gitignore"
-  - "!**/.npmrc"
-  - "!**/yarn.lock"
-
-# Extra resources if needed
-extraResources:
-  - from: assets/
-    to: assets/
+  synopsis: "BhojPe - Restaurant POS Desktop Application"

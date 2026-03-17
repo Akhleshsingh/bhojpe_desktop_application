@@ -1,874 +1,778 @@
-import { Box, Typography, Button } from "@mui/material";
+import {
+  Box, Typography, Button, Dialog, DialogTitle, DialogContent,
+  DialogActions, TextField, Select, MenuItem, FormControl,
+  InputLabel, ToggleButton, ToggleButtonGroup, CircularProgress,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import eyeicon from "../assets/Group 314.png";
 import printicon from "../assets/Group 315.png";
-import mergeicon from "../assets/image 330.png";
 import { useAuth } from "../context/AuthContext";
 import { useTables } from "../context/TablesContext";
-type TableStatus = "all" | "available" | "running" | "kot";
 import { useOrders } from "../context/OrdersContext";
 import { useLocation } from "react-router-dom";
+import { BASE_URL } from "../utils/api";
 
+/* ── design tokens ── */
+const ACCENT = "#FF3D01";
+const ACCENT_H = "#e63500";
+const ACCENT_DIM = "rgba(255,61,1,0.08)";
+const FONT = "'Plus Jakarta Sans', sans-serif";
+const SERIF = "'Playfair Display', serif";
 
-const TABLE_STATUS_COLOR: Record<string, string> = {
-  available: "#FFFFFF",
-  running: "#CBDBF8",
-  kot: "#FAC9BB",
-  print: "#F6F0D7",
+const STATUS_STYLES: Record<string, { bg: string; border: string; text: string }> = {
+  available:  { bg: "#ffffff",   border: "#d1d5db",  text: "#9ca3af"  },
+  running:    { bg: "#dbeafe",   border: "#93c5fd",  text: "#1d4ed8"  },
+  kot:        { bg: "#ffe4d6",   border: "#fdba74",  text: "#c2410c"  },
+  print:      { bg: "#fef9c3",   border: "#fde047",  text: "#a16207"  },
 };
-
-const areaBoxStyle = {
-  width: 100,
-  height: 32,
-  borderRadius: "5px",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  cursor: "pointer",
-  fontSize: "14px",
-};
+const LEGEND_ITEMS = [
+  { key: "available", label: "Available" },
+  { key: "running",   label: "Running"   },
+  { key: "kot",       label: "Reserved"  },
+  { key: "print",     label: "Bill Print"},
+];
 
 export default function Dashboard() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { branchData } = useAuth();
-  const { orders } = useOrders();
-   const { tables :liveTables , loading , fetchTables} = useTables();
-const [mergeOpen, setMergeOpen] = useState(false);
-const [selectedTables, setSelectedTables] = useState<number[]>([]);
-const [kotMoveOpen, setKotMoveOpen] = useState(false);
-const [sourceTable, setSourceTable] = useState<any>(null);
-const [targetTableId, setTargetTableId] = useState<number | null>(null);
-const [sourceSelectOpen, setSourceSelectOpen] = useState(false);
-  const [selectedArea, setSelectedArea] = useState<
-    "all" | "ground" | "first" | "roof"
-  >("all");
-  const [selectedStatus, setSelectedStatus] = useState<
-  "all" | "available" | "running" | "kot"
->("all");
-const deriveTableStatus = (
-  availableStatus: string,
-  order: any
-) => {
-  if (order) {
-    if (order.status === "billed") return "print";
-    if (order.status === "kot") return "kot";
-    return "running";
-  }
+  const navigate  = useNavigate();
+  const location  = useLocation();
+  const { branchData, token } = useAuth();
+  const { orders }  = useOrders();
+  const { tables: liveTables, fetchTables } = useTables();
 
-  if (availableStatus === "reserved") return "kot";
+  /* ── merge / KOT-move state ── */
+  const [mergeOpen,       setMergeOpen]       = useState(false);
+  const [selectedTables,  setSelectedTables]  = useState<number[]>([]);
+  const [kotMoveOpen,     setKotMoveOpen]     = useState(false);
+  const [sourceTable,     setSourceTable]     = useState<any>(null);
+  const [targetTableId,   setTargetTableId]   = useState<number | null>(null);
+  const [sourceSelectOpen,setSourceSelectOpen]= useState(false);
 
-  return "available";
-};
-const getOrderByTableId = (tableId: number) => {
-  return orders.find(
-    (o: any) =>
+  /* ── filter state ── */
+  const [selectedAreaId,  setSelectedAreaId]  = useState<number | "all">("all");
+  const [selectedStatus,  setSelectedStatus]  = useState<string>("all");
+
+  /* ── add-table popup ── */
+  const [addOpen,     setAddOpen]     = useState(false);
+  const [addArea,     setAddArea]     = useState<number | "">("");
+  const [addCode,     setAddCode]     = useState("");
+  const [addSeats,    setAddSeats]    = useState("");
+  const [addStatus,   setAddStatus]   = useState<"active" | "inactive">("active");
+  const [addSaving,   setAddSaving]   = useState(false);
+  const [addError,    setAddError]    = useState("");
+
+  /* ── areas from branchData ── */
+  const areas: any[] = branchData?.data?.area ?? [];
+
+  /* ── live table map ── */
+  const liveTableMap = React.useMemo(() => {
+    const m = new Map<number, any>();
+    liveTables.forEach((t: any) => m.set(t.id, t));
+    return m;
+  }, [liveTables]);
+
+  /* ── helpers ── */
+  const deriveStatus = (availStatus: string, order: any) => {
+    if (order) {
+      if (order.status === "billed") return "print";
+      if (order.status === "kot")    return "kot";
+      return "running";
+    }
+    if (availStatus === "reserved") return "kot";
+    return "available";
+  };
+
+  const getFullOrder = (tableId: number) => {
+    const liveOrder = liveTableMap.get(tableId)?.active_order;
+    if (liveOrder) {
+      return orders.find((o: any) =>
+        o.id === liveOrder.id || o.order_number === liveOrder.order_number
+      ) || liveOrder;
+    }
+    return orders.find((o: any) =>
       o.table_id === tableId &&
       o.order_type?.slug === "dine_in" &&
       o.status !== "cancelled"
-  ) || null;
-};
-const getFullActiveOrderByTableId = (tableId: number) => {
-  const liveOrder = liveTableMap.get(tableId)?.active_order;
+    ) || null;
+  };
 
-  if (liveOrder) {
-        return (
-      orders.find(
-        (o: any) =>
-          o.id === liveOrder.id ||
-          o.order_number === liveOrder.order_number
-      ) || liveOrder
-    );
-  }
+  const getActiveOrder = (tableId: number) =>
+    liveTableMap.get(tableId)?.active_order ?? null;
 
-  // 2️⃣ Fallback → derive from orders API
-  return getOrderByTableId(tableId);
-};
+  /* ── mapped tables (area-enriched) ── */
+  const mappedTables = areas.flatMap((area: any) =>
+    (area.tables || []).map((table: any) => {
+      const order = getFullOrder(table.id);
+      return {
+        id:          table.id,
+        tableNo:     table.table_code,
+        seating:     table.seating_capacity,
+        areaId:      area.id,
+        areaName:    typeof area.area_name === "object"
+                       ? (area.area_name.en ?? Object.values(area.area_name)[0])
+                       : area.area_name,
+        activeOrder: order,
+        kotCount:    order?.kot?.length ?? 0,
+        amount:      order?.total ?? null,
+        status:      deriveStatus(table.available_status, order),
+      };
+    })
+  );
 
-const liveTableMap = React.useMemo(() => {
-  const map = new Map<number, any>();
-  liveTables.forEach((t: any) => map.set(t.id, t));
-  return map;
-}, [liveTables]);
-useEffect(() => {
-}, [liveTables]);
+  /* ── filtered tables ── */
+  const byArea = selectedAreaId === "all"
+    ? mappedTables
+    : mappedTables.filter((t: any) => t.areaId === selectedAreaId);
 
-const getActiveOrderByTableId = (tableId: number) => {
-  return liveTableMap.get(tableId)?.active_order ?? null;
-};
-  const areas = branchData?.data?.area ?? [];
+  const byStatus = selectedStatus === "all"
+    ? byArea
+    : byArea.filter((t: any) => t.status === selectedStatus);
 
-const mappedTables = areas.flatMap((area: any) =>
-  (area.tables || []).map((table: any) => {
-    const liveTable = liveTableMap.get(table.id);
+  /* ── grouped by areaId for "All Area" view ── */
+  const groupedByArea = areas.map((area: any) => ({
+    area,
+    tables: byStatus.filter((t: any) => t.areaId === area.id),
+  })).filter(g => g.tables.length > 0);
 
-   const fullActiveOrder = getFullActiveOrderByTableId(table.id);
+  /* ── area tabs ── */
+  React.useEffect(() => {
+    if (selectedAreaId === "all") setSelectedStatus("all");
+  }, [selectedAreaId]);
 
-return {
-  id: table.id,
-  tableNo: table.table_code,
-  seating: table.seating_capacity,
-    activeOrder: fullActiveOrder,
-  kotCount: fullActiveOrder?.kot?.length ?? 0,
-  amount: fullActiveOrder?.total ?? null,
-  area: area.area_name.toLowerCase().includes("ground")
-    ? "ground"
-    : area.area_name.toLowerCase().includes("first")
-    ? "first"
-    : area.area_name.toLowerCase().includes("roof")
-    ? "roof"
-    : "other",
-  status: deriveTableStatus(
-    table.available_status,
-    fullActiveOrder
-  ),
-
-
-};
-
-  })
-);
-React.useEffect(() => {
-  if (selectedArea === "all") {
-    setSelectedStatus("all");
-  }
-}, [selectedArea]);
-  const visibleTables =
-    selectedArea === "all"
-      ? mappedTables
-      : mappedTables.filter((t: any) => t.area === selectedArea);
-
-const statusFilteredTables =
-  selectedStatus === "all"
-    ? visibleTables
-    : visibleTables.filter(
-        (t: any) => t.status === selectedStatus
-      );
-
-  const handleTableClick = (table: any) => {
-    navigate("/menudashboard", {
+  /* ── navigation ── */
+  const gotoMenu = (table: any, mode: string) => {
+    navigate("/poss", {
       state: {
+        mode,
         tableId: table.id,
         tableNo: table.tableNo,
         seating: table.seating,
-         fromTable: true,
+        fromTable: true,
+        activeOrder: getActiveOrder(table.id),
       },
     });
   };
-const areaTitleMap: Record<string, string> = {
-  ground: "Ground Floor",
-  first: "First Floor",
-  roof: "Roof Top",
-};
 
-const groupedTables = statusFilteredTables.reduce((acc: any, table: any) => {
-  if (!acc[table.area]) acc[table.area] = [];
-  acc[table.area].push(table);
-  return acc;
-}, {});
-
-const handleNewOrder = (table: any) => {
-  navigate("/menudashboard", {
-    state: {
-      mode: "new",
-      tableId: table.id,
-      tableNo: table.tableNo,
-      seating: table.seating,
-       fromTable: true,
-    },
-  });
-};
-
-const handleViewOrder = (table: any) => {
-const activeOrder = getActiveOrderByTableId(table.id);
-  navigate("/menudashboard", {
-    state: {
-      mode: "view",
-      tableId: table.id,
-    activeOrder: activeOrder,
-        tableNo: table.tableNo,
-        seating: table.seating,
-         fromTable: true,
-    },
-  });
-};
-
-const handleNewKot = (table: any) => {
-const activeOrder = getActiveOrderByTableId(table.id);
-  navigate("/menudashboard", {
-    state: {
-      mode: "kot",
-      tableId: table.id,
-     activeOrder: activeOrder,
-        tableNo: table.tableNo,
-        seating: table.seating,
-         fromTable: true,
-    },
-  });
-};
-const mergeableTables = mappedTables.filter(
-  (t: any) => t.status === "running" || t.status === "kot"
-);
-const toggleTableSelect = (tableId: number) => {
-  setSelectedTables((prev) =>
-    prev.includes(tableId)
-      ? prev.filter((id) => id !== tableId)
-      : [...prev, tableId]
+  /* ── merge ── */
+  const mergeableTables = mappedTables.filter(
+    (t: any) => t.status === "running" || t.status === "kot"
   );
-};
-const handleMergeTables = () => {
-  if (selectedTables.length < 2) {
-    alert("Select at least 2 tables to merge");
-    return;
-  }
+  const toggleMergeSelect = (id: number) =>
+    setSelectedTables(prev =>
+      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+    );
+  const handleMergeTables = () => {
+    if (selectedTables.length < 2) { alert("Select at least 2 tables"); return; }
+    setMergeOpen(false);
+    setSelectedTables([]);
+  };
 
-  setMergeOpen(false);
-  setSelectedTables([]);
-};
-const availableTables = mappedTables.filter(
-  (t: any) =>
-    t.status === "available" &&
-    t.id !== sourceTable?.id
-);
-
-const handleKotMove = async () => {
-  if (!sourceTable || !targetTableId) return;
-
-
-  alert(
-    `KOT moved from Table ${sourceTable.tableNo} → ${targetTableId}`
+  /* ── KOT move ── */
+  const availableTables = mappedTables.filter(
+    (t: any) => t.status === "available" && t.id !== sourceTable?.id
   );
+  const handleKotMove = async () => {
+    if (!sourceTable || !targetTableId) return;
+    alert(`KOT moved from Table ${sourceTable.tableNo} → ${targetTableId}`);
+    setKotMoveOpen(false);
+    setTargetTableId(null);
+    setSourceTable(null);
+  };
 
-  setKotMoveOpen(false);
-  setTargetTableId(null);
-  setSourceTable(null);
-};
-useEffect(() => {
-  if (location.state?.openMerge) {
-    setMergeOpen(true);
-    if (location.state?.sourceTableId) {
-      const table = mappedTables.find(
-        (t: any) => t.id === location.state.sourceTableId
-      );
-
-      if (table) {
-        setSelectedTables([table.id]);
+  /* ── open merge from route state ── */
+  useEffect(() => {
+    if (location.state?.openMerge) {
+      setMergeOpen(true);
+      if (location.state?.sourceTableId) {
+        const t = mappedTables.find((t: any) => t.id === location.state.sourceTableId);
+        if (t) setSelectedTables([t.id]);
       }
+      navigate(location.pathname, { replace: true });
     }
-    navigate(location.pathname, { replace: true });
-  }
-}, [location.state, mappedTables, navigate, location.pathname]);
+  }, [location.state, mappedTables, navigate, location.pathname]);
 
-  return (
-    <Box sx={{ minHeight: "100vh", backgroundColor: "#FFFFFF", overflow: "auto", fontFamily: "Poppins, sans-serif" }}>
-      <Box sx={{ padding: 2 }}>
-        {/* Page title row */}
-        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1.5, px: 1, pb: 1.5, borderBottom: "1px solid #E5E5E5" }}>
-          <Typography sx={{ fontWeight: 700, fontSize: 18, fontFamily: "Poppins, sans-serif" }}>
-            Table View
+  /* ── add table ── */
+  const handleAddTable = async () => {
+    if (!addCode.trim() || !addSeats || !addArea) {
+      setAddError("Please fill all fields");
+      return;
+    }
+    setAddSaving(true);
+    setAddError("");
+    try {
+      const res = await fetch(`${BASE_URL}/tables/store`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          area_id: addArea,
+          table_code: addCode.trim(),
+          seating_capacity: Number(addSeats),
+          available_status: addStatus === "active" ? "available" : "inactive",
+        }),
+      });
+      const json = await res.json();
+      if (json.status || res.ok) {
+        await fetchTables();
+        setAddOpen(false);
+        setAddCode(""); setAddSeats(""); setAddArea(""); setAddStatus("active");
+      } else {
+        setAddError(json.message || "Failed to add table");
+      }
+    } catch {
+      setAddError("Network error, please try again");
+    } finally {
+      setAddSaving(false);
+    }
+  };
+
+  /* ── table card renderer ── */
+  const TableCard = ({ table }: { table: any }) => {
+    const s = STATUS_STYLES[table.status] ?? STATUS_STYLES.available;
+    const isOccupied = table.status !== "available";
+    return (
+      <Box
+        onClick={() => gotoMenu(table, isOccupied ? "view" : "new")}
+        sx={{
+          border: `1.5px solid ${s.border}`,
+          borderRadius: "14px",
+          padding: "13px",
+          cursor: "pointer",
+          minHeight: 110,
+          background: s.bg,
+          display: "flex",
+          flexDirection: "column",
+          transition: "all .18s",
+          "&:hover": { transform: "translateY(-2px)", boxShadow: "0 4px 16px rgba(0,0,0,0.10)" },
+        }}
+      >
+        {/* row 1: seats + KOT */}
+        <Box sx={{ display: "flex", justifyContent: "space-between", mb: "4px" }}>
+          <Typography sx={{ fontSize: 11, fontWeight: 600, color: s.text, fontFamily: FONT }}>
+            {table.seating} Seat(s)
           </Typography>
-          <Box sx={{ display: "flex", gap: 1 }}>
-            <Button variant="outlined" sx={{ textTransform: "none", borderRadius: "6px", borderColor: "#DADADA", color: "#333", fontFamily: "Poppins, sans-serif", fontSize: 13, px: 2, "&:hover": { borderColor: "#999", backgroundColor: "#F5F5F5" } }}>Pickup</Button>
-            <Button variant="outlined" sx={{ textTransform: "none", borderRadius: "6px", borderColor: "#DADADA", color: "#333", fontFamily: "Poppins, sans-serif", fontSize: 13, px: 2, "&:hover": { borderColor: "#999", backgroundColor: "#F5F5F5" } }}>Delivery</Button>
-            <Button variant="contained" sx={{ textTransform: "none", borderRadius: "6px", backgroundColor: "#E8353A", fontFamily: "Poppins, sans-serif", fontSize: 13, px: 2, boxShadow: "none", "&:hover": { backgroundColor: "#C62828", boxShadow: "none" } }}>Add Table</Button>
-          </Box>
+          <Typography sx={{ fontSize: 11, fontWeight: 700, color: s.text, fontFamily: FONT }}>
+            {isOccupied ? `${table.kotCount} KOT` : ""}
+          </Typography>
         </Box>
 
-        {/* Filters row */}
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mt: 1, p: 1.5 }}>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 0 }}>
-            {[
-              { key: "all", label: "All Area" },
-              { key: "ground", label: "Ground Floor" },
-              { key: "first", label: "First Floor" },
-              { key: "roof", label: "Roof Top" },
-            ].map((area) => (
+        {/* table number */}
+        <Typography sx={{ fontFamily: SERIF, fontSize: 26, fontWeight: 700, color: s.text, mb: "2px" }}>
+          {table.tableNo}
+        </Typography>
+
+        {/* time / pax placeholder */}
+        <Typography sx={{ fontSize: 12, fontWeight: 700, color: s.text, mb: "auto", fontFamily: FONT }}>
+          {table.amount ? `₹${table.amount}` : ""}
+        </Typography>
+
+        {/* row bottom: action icons + pax */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
+          {isOccupied && (
+            <>
               <Box
-                key={area.key}
-                onClick={() => setSelectedArea(area.key as any)}
+                component="span"
+                onClick={e => { e.stopPropagation(); gotoMenu(table, "view"); }}
                 sx={{
-                  ...areaBoxStyle,
-                  fontFamily: "Poppins, sans-serif",
-                  backgroundColor: selectedArea === area.key ? "#C5D89D" : "transparent",
-                  fontWeight: selectedArea === area.key ? 600 : 400,
-                  border: selectedArea === area.key ? "1px solid #DADADA" : "none",
+                  width: 30, height: 30, borderRadius: "8px",
+                  border: `1px solid ${s.border}`, background: "rgba(255,255,255,0.7)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  cursor: "pointer", "&:hover": { opacity: 0.75 },
                 }}
               >
-                {area.label}
+                <img src={eyeicon} width={16} alt="view" />
               </Box>
-            ))}
-          </Box>
-
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-            {[
-              { key: "available", label: "Available",  color: "#FFFFFF" },
-              { key: "running",   label: "Running",    color: "#CBDBF8" },
-              { key: "kot",       label: "Reserved",   color: "#FAC9BB" },
-              { key: "print",     label: "Bill Print", color: "#F6F0D7" },
-            ].map((item) => (
               <Box
-                key={item.label}
-                onClick={() => setSelectedStatus(item.key as any)}
+                component="span"
+                onClick={e => { e.stopPropagation(); gotoMenu(table, "kot"); }}
                 sx={{
-                  display: "flex", alignItems: "center", gap: 1,
-                  padding: "4px 10px",
-                  border: "1px solid #00000030",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                  fontFamily: "Poppins, sans-serif",
-                  backgroundColor: selectedStatus === item.key ? "#F5F5F5" : "transparent",
+                  width: 30, height: 30, borderRadius: "8px",
+                  border: `1px solid ${s.border}`, background: "rgba(255,255,255,0.7)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  cursor: "pointer", "&:hover": { opacity: 0.75 },
                 }}
               >
-                <Box sx={{ width: 26, height: 26, backgroundColor: item.color, borderRadius: "4px", boxShadow: "0px 0px 4px 0px #00000040", border: "1px solid #E0E0E0" }} />
-                <Typography fontSize="13px" fontFamily="Poppins, sans-serif">{item.label}</Typography>
+                <img src={printicon} width={16} alt="kot" />
               </Box>
-            ))}
-          </Box>
+            </>
+          )}
+          {table.activeOrder?.number_of_pax && (
+            <Box sx={{ ml: "auto", display: "flex", alignItems: "center", gap: 0.5 }}>
+              <span style={{ fontSize: 13 }}>👥</span>
+              <Typography sx={{ fontSize: 12, fontWeight: 600, color: s.text, fontFamily: FONT }}>
+                {table.activeOrder.number_of_pax}
+              </Typography>
+            </Box>
+          )}
+        </Box>
+      </Box>
+    );
+  };
 
-          <Box sx={{ display: "flex", gap: 1 }}>
-            <Button variant="contained" onClick={() => setSourceSelectOpen(true)} sx={{ textTransform: "none", backgroundColor: "#FFFFFF", border: "1px solid #DADADA", color: "#333", borderRadius: "5px", fontFamily: "Poppins, sans-serif", fontSize: 13, boxShadow: "none", "&:hover": { backgroundColor: "#C5D89D", boxShadow: "none" } }}>Items/KOT Move</Button>
-            <Button variant="contained" onClick={() => setMergeOpen(true)} sx={{ textTransform: "none", backgroundColor: "#FFFFFF", border: "1px solid #DADADA", color: "#333", borderRadius: "5px", fontFamily: "Poppins, sans-serif", fontSize: 13, boxShadow: "none", display: "flex", alignItems: "center", gap: "6px", "&:hover": { backgroundColor: "#C5D89D", boxShadow: "none" } }}>
-              <img src={mergeicon} alt="merge" width={20} height={20} />
-              Merge Table
+  /* ── area tab area name helper ── */
+  const areaLabel = (area: any) =>
+    typeof area.area_name === "object"
+      ? (area.area_name.en ?? Object.values(area.area_name)[0])
+      : area.area_name;
+
+  /* ────────────────── RENDER ────────────────── */
+  return (
+    <Box sx={{
+      minHeight: "100vh",
+      background: "#f5f0ea",
+      fontFamily: FONT,
+      display: "flex",
+      flexDirection: "column",
+      overflow: "hidden",
+    }}>
+
+      {/* ── CONTENT ── */}
+      <Box sx={{ flex: 1, overflowY: "auto", px: "22px", py: "20px",
+        "&::-webkit-scrollbar": { width: 5 },
+        "&::-webkit-scrollbar-thumb": { background: "#cfc5ba", borderRadius: 4 },
+      }}>
+
+        {/* PAGE HEADER */}
+        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: "16px" }}>
+          <Typography sx={{ fontFamily: SERIF, fontSize: 22, fontWeight: 700, color: "#1a1208" }}>
+            Table View
+          </Typography>
+          <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+            {/* Pickup shortcut */}
+            <Button
+              onClick={() => navigate("/poss", { state: { channel: "pickup" } })}
+              sx={{
+                fontFamily: FONT, fontWeight: 700, fontSize: 13, textTransform: "none",
+                background: "#fff", color: "#2563eb",
+                border: "1.5px solid #2563eb",
+                borderRadius: "9px", px: "16px", py: "7px",
+                "&:hover": { background: "rgba(37,99,235,.07)" },
+              }}
+            >
+              🛍️ Pickup
+            </Button>
+            {/* Delivery shortcut */}
+            <Button
+              onClick={() => navigate("/poss", { state: { channel: "delivery" } })}
+              sx={{
+                fontFamily: FONT, fontWeight: 700, fontSize: 13, textTransform: "none",
+                background: "#fff", color: "#16a34a",
+                border: "1.5px solid #16a34a",
+                borderRadius: "9px", px: "16px", py: "7px",
+                "&:hover": { background: "rgba(22,163,74,.07)" },
+              }}
+            >
+              🛵 Delivery
+            </Button>
+            <Button
+              onClick={() => { setAddArea(""); setAddCode(""); setAddSeats(""); setAddStatus("active"); setAddError(""); setAddOpen(true); }}
+              sx={{
+                fontFamily: FONT, fontWeight: 700, fontSize: 13, textTransform: "none",
+                background: ACCENT, color: "#fff", borderRadius: "9px", px: "18px", py: "8px",
+                boxShadow: "0 3px 10px rgba(255,61,1,0.25)",
+                "&:hover": { background: ACCENT_H },
+              }}
+            >
+              + Add Table
             </Button>
           </Box>
         </Box>
-<Box sx={{ mt: 3, px: 2 }}>
-  {selectedArea === "all" ? (
-    Object.entries(groupedTables).map(([areaKey, tables]: any) => (
-      <Box key={areaKey} sx={{ mb: 4 }}>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2 }}>
-          <Typography sx={{ fontSize: "16px", fontWeight: 600, color: "#111111", fontFamily: "Poppins, sans-serif" }}>
-            {areaTitleMap[areaKey] ?? areaKey}
-          </Typography>
-          <Box sx={{ px: 1, py: "2px", backgroundColor: "#F0F0F0", borderRadius: "4px", fontSize: 12, color: "#555", fontFamily: "Poppins, sans-serif" }}>
-            Table {tables.length}
+
+        {/* CONTROLS ROW */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: "10px", mb: "20px", flexWrap: "wrap" }}>
+
+          {/* Area tabs */}
+          <Box sx={{ display: "flex", gap: "6px" }}>
+            {[{ id: "all", label: "All Area" }, ...areas.map(a => ({ id: a.id, label: areaLabel(a) }))].map(tab => {
+              const active = selectedAreaId === tab.id;
+              return (
+                <Box
+                  key={tab.id}
+                  onClick={() => setSelectedAreaId(tab.id as any)}
+                  sx={{
+                    px: "16px", py: "7px", borderRadius: "20px", fontSize: 12, fontWeight: 600,
+                    cursor: "pointer", fontFamily: FONT,
+                    border: `1.5px solid ${active ? ACCENT : "#e2d9d0"}`,
+                    background: active ? ACCENT : "#ffffff",
+                    color: active ? "#fff" : "#6b5c4a",
+                    boxShadow: active ? "0 2px 8px rgba(255,61,1,0.25)" : "none",
+                    transition: "all .15s",
+                    "&:hover": active ? {} : { borderColor: "#cfc5ba", color: "#1a1208" },
+                  }}
+                >
+                  {tab.label}
+                </Box>
+              );
+            })}
           </Box>
-        </Box>
-        <Box
-          sx={{
-            display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, 250px)",
-            gap: 2, cursor: "pointer",
-          }}
-        >
-          {tables.map((table: any, i: number) => (
+
+          <Box sx={{ flex: 1 }} />
+
+          {/* Legend */}
+          <Box sx={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
+            {LEGEND_ITEMS.map(item => {
+              const s = STATUS_STYLES[item.key];
+              const active = selectedStatus === item.key;
+              return (
+                <Box
+                  key={item.key}
+                  onClick={() => setSelectedStatus(prev => prev === item.key ? "all" : item.key)}
+                  sx={{
+                    display: "flex", alignItems: "center", gap: "6px",
+                    fontSize: 12, color: "#6b5c4a", fontWeight: 500, fontFamily: FONT,
+                    cursor: "pointer",
+                    px: "8px", py: "4px", borderRadius: "6px",
+                    background: active ? ACCENT_DIM : "transparent",
+                    border: `1px solid ${active ? "rgba(255,61,1,0.3)" : "transparent"}`,
+                    transition: "all .15s",
+                  }}
+                >
+                  <Box sx={{
+                    width: 12, height: 12, borderRadius: "3px",
+                    background: s.bg, border: `1.5px solid ${s.border}`,
+                  }} />
+                  {item.label}
+                </Box>
+              );
+            })}
+          </Box>
+
+          {/* Action chips */}
+          <Box sx={{ display: "flex", gap: "8px" }}>
             <Box
-              key={i}
-            onClick={() => handleNewOrder(table)}
+              onClick={() => setSourceSelectOpen(true)}
               sx={{
-                width: "250px",
-                height: "122px",
-                borderRadius: "10px",
-                padding: "8px",
-                border: "1px solid #DADADA",
-                backgroundColor: TABLE_STATUS_COLOR[table.status],
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between", cursor: "pointer",
+                display: "flex", alignItems: "center", gap: "6px",
+                px: "14px", py: "7px", background: "#fff",
+                border: "1.5px solid #e2d9d0", borderRadius: "9px",
+                fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: FONT, color: "#6b5c4a",
+                transition: "all .15s", "&:hover": { borderColor: "#cfc5ba", color: "#1a1208" },
               }}
             >
-<Box
-  sx={{
-    display: "grid",
-    gridTemplateColumns: "1fr auto 1fr",
-    alignItems: "center",
-  }}
->
-  <Typography
-    sx={{
-      fontWeight: 600,
-      fontSize: 13,
-      textAlign: "left",
-    }}
-  >
-    {table.seating} Seat(s)
-  </Typography>
+              🔀 Items/KOT Move
+            </Box>
+            <Box
+              onClick={() => setMergeOpen(true)}
+              sx={{
+                display: "flex", alignItems: "center", gap: "6px",
+                px: "14px", py: "7px", background: "#fff",
+                border: "1.5px solid #e2d9d0", borderRadius: "9px",
+                fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: FONT, color: "#6b5c4a",
+                transition: "all .15s", "&:hover": { borderColor: "#cfc5ba", color: "#1a1208" },
+              }}
+            >
+              ⇄ Merge Table
+            </Box>
+          </Box>
+        </Box>
 
-  <Typography
-    sx={{
-      fontWeight: 700,
-      fontSize: 16,
-      textAlign: "center",
-    }}
-  >
-    {table.tableNo}
-  </Typography>
+        {/* TABLE SECTIONS */}
+        {selectedAreaId === "all" ? (
+          groupedByArea.length === 0 ? (
+            <Typography sx={{ color: "#a8978a", fontFamily: FONT, mt: 4, textAlign: "center" }}>
+              No tables found
+            </Typography>
+          ) : (
+            groupedByArea.map(({ area, tables }) => (
+              <Box key={area.id} sx={{ mb: "24px" }}>
+                {/* Floor header */}
+                <Box sx={{ display: "flex", alignItems: "center", gap: "12px", mb: "12px" }}>
+                  <Typography sx={{ fontFamily: SERIF, fontSize: 17, fontWeight: 700, color: "#1a1208" }}>
+                    {areaLabel(area)}
+                  </Typography>
+                  <Box sx={{
+                    fontSize: 11, fontWeight: 700, px: "10px", py: "3px",
+                    borderRadius: "20px", background: "#f0ebe3", color: "#6b5c4a",
+                    border: "1px solid #e2d9d0", fontFamily: FONT,
+                  }}>
+                    {tables.length} Tables
+                  </Box>
+                </Box>
 
-  {/* RIGHT → Pax + KOT */}
-  <Box
-    sx={{
-      display: "flex",
-      justifyContent: "flex-end",
-      alignItems: "center",
-      gap: 1,
-    }}
-  >
+                {/* Table grid */}
+                <Box sx={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fill, minmax(150px, 180px))",
+                  gap: "12px",
+                }}>
+                  {tables.map((table: any) => (
+                    <TableCard key={table.id} table={table} />
+                  ))}
+                </Box>
+              </Box>
+            ))
+          )
+        ) : (
+          <Box sx={{ mb: "24px" }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: "12px", mb: "12px" }}>
+              <Typography sx={{ fontFamily: SERIF, fontSize: 17, fontWeight: 700, color: "#1a1208" }}>
+                {areaLabel(areas.find((a: any) => a.id === selectedAreaId) ?? {})}
+              </Typography>
+              <Box sx={{
+                fontSize: 11, fontWeight: 700, px: "10px", py: "3px",
+                borderRadius: "20px", background: "#f0ebe3", color: "#6b5c4a",
+                border: "1px solid #e2d9d0", fontFamily: FONT,
+              }}>
+                {byStatus.length} Tables
+              </Box>
+            </Box>
+            <Box sx={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(150px, 180px))",
+              gap: "12px",
+            }}>
+              {byStatus.map((table: any) => (
+                <TableCard key={table.id} table={table} />
+              ))}
+            </Box>
+          </Box>
+        )}
+      </Box>
 
-    {/* KOT */}
-    <Typography
-      sx={{
-        fontWeight: 600,
-        fontSize: 12,
-        color: "#555",
-      }}
-    >
-      {table.kotCount} KOT
-    </Typography>
-  </Box>
-</Box>
+      {/* ══════════════════ ADD TABLE DIALOG ══════════════════ */}
+      <Dialog
+        open={addOpen}
+        onClose={() => setAddOpen(false)}
+        PaperProps={{
+          sx: {
+            width: 480, borderRadius: "14px",
+            fontFamily: FONT, p: 1,
+          },
+        }}
+      >
+        <DialogTitle sx={{ fontFamily: FONT, fontWeight: 700, fontSize: 20, pb: 0 }}>
+          Add Table
+        </DialogTitle>
+        <DialogContent sx={{ pt: "20px !important", display: "flex", flexDirection: "column", gap: 2.5 }}>
 
-              <Box
+          {/* Choose Area */}
+          <FormControl fullWidth>
+            <InputLabel sx={{ fontFamily: FONT, fontSize: 13 }}>Choose Area</InputLabel>
+            <Select
+              value={addArea}
+              label="Choose Area"
+              onChange={e => setAddArea(e.target.value as number)}
+              sx={{ fontFamily: FONT, fontSize: 13, borderRadius: "8px" }}
+            >
+              <MenuItem value="" disabled>--</MenuItem>
+              {areas.map((area: any) => (
+                <MenuItem key={area.id} value={area.id} sx={{ fontFamily: FONT, fontSize: 13 }}>
+                  {areaLabel(area)}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          {/* Table Code */}
+          <TextField
+            label="Table Code"
+            placeholder="e.g. T01"
+            value={addCode}
+            onChange={e => setAddCode(e.target.value)}
+            fullWidth
+            InputProps={{ sx: { fontFamily: FONT, fontSize: 13, borderRadius: "8px" } }}
+            InputLabelProps={{ sx: { fontFamily: FONT, fontSize: 13 } }}
+          />
+
+          {/* Seating Capacity */}
+          <TextField
+            label="Seating Capacity"
+            placeholder="Enter number of seats (e.g., 4)"
+            type="number"
+            value={addSeats}
+            onChange={e => setAddSeats(e.target.value)}
+            fullWidth
+            InputProps={{ sx: { fontFamily: FONT, fontSize: 13, borderRadius: "8px" } }}
+            InputLabelProps={{ sx: { fontFamily: FONT, fontSize: 13 } }}
+          />
+
+          {/* Status */}
+          <Box>
+            <Typography sx={{ fontSize: 13, fontWeight: 600, fontFamily: FONT, mb: 1 }}>
+              Status
+            </Typography>
+            <ToggleButtonGroup
+              exclusive
+              value={addStatus}
+              onChange={(_e, v) => { if (v) setAddStatus(v); }}
+              sx={{ gap: 1 }}
+            >
+              <ToggleButton
+                value="active"
                 sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
+                  fontFamily: FONT, fontSize: 13, textTransform: "none",
+                  borderRadius: "8px !important", px: 3, border: "1.5px solid #d1d5db !important",
+                  "&.Mui-selected": {
+                    borderColor: `${ACCENT} !important`,
+                    color: ACCENT, background: ACCENT_DIM,
+                  },
                 }}
               >
-                <Box sx={{ display: "flex", gap: 2 ,cursor: "pointer",}}>
-                  {(table.status === "running" ||
-                    table.status === "print" ||
-                    table.status === "kot") && (
-                    <>
-                      <img src={eyeicon} style={{cursor :"pointer"}} width={30}  onClick={(e) => {
-    e.stopPropagation();
-    handleViewOrder(table);
-  }} />
-                      <img src={printicon}  style={{cursor :"pointer"}}  onClick={(e) => {
-    e.stopPropagation();
-    handleNewKot(table);
-  }} width={30} />
-                    </>
-                  )}
-                </Box>
- {/* Pax */}
-    {table.activeOrder?.number_of_pax && (
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: 0.5,
-        }}
-      >
-        {/* Dummy icon – replace later */}
-        <span style={{ fontSize: 14 }}>👥</span>
-
-        <Typography
-          sx={{
-            fontSize: 12,
-            fontWeight: 600,
-          }}
-        >
-          {table.activeOrder.number_of_pax}
-        </Typography>
-      </Box>
-    )}
-                {table.amount && (
-                  <Typography fontWeight={600}>
-                    ₹{table.amount}
-                  </Typography>
-                )}
-              </Box>
-            </Box>
-          ))}
-        </Box>
-      </Box>
-    ))
-  ) : (
-    <>
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2 }}>
-        <Typography sx={{ fontSize: "16px", fontWeight: 600, color: "#111111", fontFamily: "Poppins, sans-serif" }}>
-          {areaTitleMap[selectedArea]}
-        </Typography>
-        <Box sx={{ px: 1, py: "2px", backgroundColor: "#F0F0F0", borderRadius: "4px", fontSize: 12, color: "#555", fontFamily: "Poppins, sans-serif" }}>
-          Table {statusFilteredTables.length}
-        </Box>
-      </Box>
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, 250px)",
-          gap: 2,
-        }}
-      >
-        {statusFilteredTables.map((table: any, i: number) => (
-          <Box
-            key={i}
-            onClick={() => handleTableClick(table)}
-            sx={{
-              width: "250px",
-              height: "122px",
-              borderRadius: "10px",
-              padding: "8px",
-              border: "1px solid #DADADA",
-              backgroundColor: TABLE_STATUS_COLOR[table.status],
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-            }}
-          >
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              <Typography fontWeight={600}>{table.seating}</Typography>
-              <Typography fontWeight={700}>{table.tableNo}</Typography>
-            </Box>
-
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <Box sx={{ display: "flex", gap: 2 }}>
-                {(table.status === "running" ||
-                  table.status === "print" ||
-                  table.status === "kot") && (
-                  <>
-                    <img src={eyeicon}  style={{cursor :"pointer"}}  width={30} />
-                    <img src={printicon}  style={{cursor :"pointer"}}  width={30} />
-                  </>
-                )}
-              </Box>
-
-              {table.amount && (
-                <Typography fontWeight={600}>
-                  ₹{table.amount}
-                </Typography>
-              )}
-            </Box>
+                Active
+              </ToggleButton>
+              <ToggleButton
+                value="inactive"
+                sx={{
+                  fontFamily: FONT, fontSize: 13, textTransform: "none",
+                  borderRadius: "8px !important", px: 3, border: "1.5px solid #d1d5db !important",
+                  "&.Mui-selected": {
+                    borderColor: "#d1d5db !important",
+                    color: "#374151", background: "#f3f4f6",
+                  },
+                }}
+              >
+                Inactive
+              </ToggleButton>
+            </ToggleButtonGroup>
           </Box>
-        ))}
-      </Box>
-    </>
-  )}
-</Box>
-{mergeOpen && (
-  <Box
-    sx={{
-      position: "fixed",
-      inset: 0,
-      background: "rgba(0,0,0,0.45)",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      zIndex: 4000,
-    }}
-  >
-    <Box
-      sx={{
-        width: 440,
-        background: "#FFFFFF",
-        borderRadius: "12px",
-        boxShadow: "0px 10px 30px rgba(0,0,0,0.2)",
-        p: 3,
-      }}
-    >
-      {/* 🔹 HEADER */}
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1 }}>
-        <Box
-          sx={{
-            width: 36,
-            height: 36,
-            borderRadius: "8px",
-            background: "#E8F0FE",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: 18,
-          }}
-        >
-          🔀
-        </Box>
 
-        <Typography fontSize={18} fontWeight={700}>
-          Merge Tables
-        </Typography>
-      </Box>
-
-      {/* 🔹 SUBTITLE */}
-      <Typography
-        fontSize={13}
-        color="#6B7280"
-        sx={{ mb: 2.5, lineHeight: 1.5 }}
-      >
-        Select one or more tables with unpaid orders to merge
-        into the current order:
-      </Typography>
-
-      {/* 🔹 TABLE LIST */}
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-        {mergeableTables.map((table: any) => (
-          <Box
-            key={table.id}
-            sx={{
-              border: "1px solid #E5E7EB",
-              borderRadius: "10px",
-              px: 2,
-              py: 1.5,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              transition: "0.2s",
-              "&:hover": {
-                borderColor: "#C5D89D",
-                background: "#FAFAFA",
-              },
-            }}
-          >
-            {/* LEFT */}
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-              <input
-                type="checkbox"
-                checked={selectedTables.includes(table.id)}
-                onChange={() => toggleTableSelect(table.id)}
-                style={{ width: 16, height: 16 }}
-              />
-
-              <Typography fontWeight={600}>
-                {table.tableNo}
-              </Typography>
-            </Box>
-
-            {/* RIGHT */}
-            <Typography
-              fontSize={12}
-              color="#9CA3AF"
-              fontWeight={600}
-            >
-              Kot
+          {addError && (
+            <Typography sx={{ fontSize: 12, color: "red", fontFamily: FONT }}>
+              {addError}
             </Typography>
-          </Box>
-        ))}
-      </Box>
-
-      {/* 🔹 FOOTER */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "flex-end",
-          gap: 1.5,
-          mt: 3,
-        }}
-      >
-        <Button
-          variant="outlined"
-          onClick={() => setMergeOpen(false)}
-          sx={{
-            textTransform: "none",
-            borderRadius: "8px",
-            px: 2.5,
-          }}
-        >
-          Cancel
-        </Button>
-
-       <Button
-  variant="contained"
-  disabled={selectedTables.length < 2}
-  onClick={handleMergeTables}
-  sx={{
-    textTransform: "none",
-    borderRadius: "8px",
-    px: 2.5,
-    bgcolor: selectedTables.length < 2 ? "#E5E7EB" : "#5A7863",
-    color: selectedTables.length < 2 ? "#9CA3AF" : "#FFFFFF",
-    boxShadow: "none",
-  }}
->
-  MERGE TABLES
-</Button>
-
-      </Box>
-    </Box>
-  </Box>
-)}
-{sourceSelectOpen && (
-  <Box
-    sx={{
-      position: "fixed",
-      inset: 0,
-      background: "rgba(0,0,0,0.45)",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      zIndex: 5000,
-    }}
-  >
-    <Box
-      sx={{
-        width: 420,
-        background: "#FFF",
-        borderRadius: "12px",
-        p: 3,
-      }}
-    >
-      <Typography fontWeight={700} mb={2}>
-        Select Table to Move KOT
-      </Typography>
-
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
-          gap: 1.5,
-        }}
-      >
-        {mappedTables
-          .filter(
-            (t: any) =>
-              t.status === "running" || t.status === "kot"
-          )
-          .map((table: any) => (
-            <Box
-              key={table.id}
-              onClick={() => {
-                setSourceTable(table);
-                setSourceSelectOpen(false);
-                setKotMoveOpen(true);
-              }}
-              sx={{
-                height: 60,
-                borderRadius: "8px",
-                background: "#CBDBF8",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontWeight: 700,
-                cursor: "pointer",
-              }}
-            >
-              {table.tableNo}
-            </Box>
-          ))}
-      </Box>
-    </Box>
-  </Box>
-)}
-
-{kotMoveOpen && (
-  <Box
-    sx={{
-      position: "fixed",
-      inset: 0,
-      background: "rgba(0,0,0,0.45)",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      zIndex: 5000,
-    }}
-  >
-    <Box
-      sx={{
-        width: 420,
-        background: "#FFFFFF",
-        borderRadius: "12px",
-        boxShadow: "0px 10px 30px rgba(0,0,0,0.2)",
-        p: 3,
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      {/* 🔹 HEADER */}
-      <Typography fontSize={18} fontWeight={700} mb={1}>
-        Move KOT
-      </Typography>
-
-      <Typography fontSize={13} color="#6B7280" mb={2}>
-        Move order from Table{" "}
-        <strong>{sourceTable?.tableNo}</strong>
-      </Typography>
-
-      {/* 🔹 TABLE GRID */}
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
-          gap: 1.5,
-          maxHeight: 220,
-          overflowY: "auto",
-        }}
-      >
-        {availableTables.length === 0 && (
-          <Typography fontSize={12}>
-            No available tables
-          </Typography>
-        )}
-
-        {availableTables.map((table: any) => (
-          <Box
-            key={table.id}
-            onClick={() => setTargetTableId(table.id)}
+          )}
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2.5, gap: 1 }}>
+          <Button
+            variant="contained"
+            onClick={handleAddTable}
+            disabled={addSaving}
             sx={{
-              height: 60,
-              borderRadius: "8px",
-              border:
-                targetTableId === table.id
-                  ? "2px solid #5A7863"
-                  : "1px solid #E5E7EB",
-              background:
-                targetTableId === table.id
-                  ? "#EBF4DD"
-                  : "#FFFFFF",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontWeight: 700,
-              cursor: "pointer",
+              fontFamily: FONT, fontWeight: 700, textTransform: "none",
+              background: ACCENT, borderRadius: "8px", px: 3,
+              boxShadow: "none",
+              "&:hover": { background: ACCENT_H, boxShadow: "none" },
+              "&.Mui-disabled": { background: "#e5e7eb", color: "#9ca3af" },
             }}
           >
-            {table.tableNo}
+            {addSaving ? <CircularProgress size={18} sx={{ color: "#fff" }} /> : "Save"}
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={() => setAddOpen(false)}
+            sx={{
+              fontFamily: FONT, textTransform: "none", borderRadius: "8px",
+              borderColor: "#d1d5db", color: "#374151",
+              "&:hover": { borderColor: "#9ca3af", background: "#f9fafb" },
+            }}
+          >
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* ══════════════════ MERGE TABLES DIALOG ══════════════════ */}
+      {mergeOpen && (
+        <Box sx={{
+          position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)",
+          display: "flex", alignItems: "center", justifyContent: "center", zIndex: 4000,
+        }}>
+          <Box sx={{ width: 440, background: "#fff", borderRadius: "12px", boxShadow: "0 10px 30px rgba(0,0,0,0.2)", p: 3 }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1 }}>
+              <Box sx={{ width: 36, height: 36, borderRadius: "8px", background: "#E8F0FE", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>🔀</Box>
+              <Typography fontSize={18} fontWeight={700} fontFamily={FONT}>Merge Tables</Typography>
+            </Box>
+            <Typography fontSize={13} color="#6B7280" sx={{ mb: 2.5, lineHeight: 1.5, fontFamily: FONT }}>
+              Select one or more tables with unpaid orders to merge into the current order:
+            </Typography>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+              {mergeableTables.map((table: any) => (
+                <Box key={table.id} sx={{
+                  border: "1px solid #E5E7EB", borderRadius: "10px", px: 2, py: 1.5,
+                  display: "flex", alignItems: "center", justifyContent: "space-between", transition: "0.2s",
+                  "&:hover": { borderColor: "#c5d89d", background: "#FAFAFA" },
+                }}>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                    <input type="checkbox" checked={selectedTables.includes(table.id)} onChange={() => toggleMergeSelect(table.id)} style={{ width: 16, height: 16 }} />
+                    <Typography fontWeight={600} fontFamily={FONT}>{table.tableNo}</Typography>
+                  </Box>
+                  <Typography fontSize={12} color="#9CA3AF" fontWeight={600} fontFamily={FONT}>Kot</Typography>
+                </Box>
+              ))}
+            </Box>
+            <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1.5, mt: 3 }}>
+              <Button variant="outlined" onClick={() => setMergeOpen(false)} sx={{ textTransform: "none", borderRadius: "8px", px: 2.5, fontFamily: FONT }}>Cancel</Button>
+              <Button variant="contained" disabled={selectedTables.length < 2} onClick={handleMergeTables}
+                sx={{
+                  textTransform: "none", borderRadius: "8px", px: 2.5, boxShadow: "none", fontFamily: FONT,
+                  bgcolor: selectedTables.length < 2 ? "#E5E7EB" : "#5A7863",
+                  color: selectedTables.length < 2 ? "#9CA3AF" : "#fff",
+                }}>
+                MERGE TABLES
+              </Button>
+            </Box>
           </Box>
-        ))}
-      </Box>
+        </Box>
+      )}
 
-      {/* 🔹 FOOTER (UPDATED) */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "flex-end",
-          gap: 1.5,
-          mt: 3,
-        }}
-      >
-        {/* ✅ CANCEL BUTTON */}
-        <Button
-          variant="outlined"
-          onClick={() => {
-            setKotMoveOpen(false);
-            setTargetTableId(null);
-            setSourceTable(null);
-          }}
-          sx={{
-            textTransform: "none",
-            borderRadius: "8px",
-            px: 2.5,
-          }}
-        >
-          Cancel
-        </Button>
+      {/* ══════════════════ KOT MOVE — SOURCE SELECT ══════════════════ */}
+      {sourceSelectOpen && (
+        <Box sx={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 5000 }}>
+          <Box sx={{ width: 420, background: "#FFF", borderRadius: "12px", p: 3 }}>
+            <Typography fontWeight={700} mb={2} fontFamily={FONT}>Select Table to Move KOT</Typography>
+            <Box sx={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 1.5 }}>
+              {mappedTables.filter((t: any) => t.status === "running" || t.status === "kot")
+                .map((table: any) => {
+                  const s = STATUS_STYLES[table.status];
+                  return (
+                    <Box key={table.id} onClick={() => { setSourceTable(table); setSourceSelectOpen(false); setKotMoveOpen(true); }}
+                      sx={{
+                        border: `1.5px solid ${s.border}`, borderRadius: "10px", p: 1.5,
+                        background: s.bg, cursor: "pointer", textAlign: "center",
+                        "&:hover": { transform: "scale(1.03)" }, transition: "0.15s",
+                      }}>
+                      <Typography fontWeight={700} fontFamily={SERIF} fontSize={20} color={s.text}>{table.tableNo}</Typography>
+                      <Typography fontSize={11} color={s.text} fontFamily={FONT}>{table.kotCount} KOT</Typography>
+                    </Box>
+                  );
+                })}
+            </Box>
+            <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+              <Button variant="outlined" onClick={() => setSourceSelectOpen(false)} sx={{ textTransform: "none", borderRadius: "8px", fontFamily: FONT }}>Cancel</Button>
+            </Box>
+          </Box>
+        </Box>
+      )}
 
-        {/* ✅ MOVE BUTTON */}
-        <Button
-          variant="contained"
-          disabled={!targetTableId}
-          onClick={handleKotMove}
-          sx={{
-            bgcolor: "#5A7863",
-            textTransform: "none",
-            borderRadius: "8px",
-            px: 2.5,
-          }}
-        >
-          Move KOT
-        </Button>
-      </Box>
-    </Box>
-  </Box>
-)}
-      </Box>
+      {/* ══════════════════ KOT MOVE — TARGET SELECT ══════════════════ */}
+      {kotMoveOpen && (
+        <Box sx={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 5000 }}>
+          <Box sx={{ width: 420, background: "#FFF", borderRadius: "12px", p: 3 }}>
+            <Typography fontWeight={700} mb={1} fontFamily={FONT}>
+              Move KOT from <span style={{ color: ACCENT }}>{sourceTable?.tableNo}</span> to:
+            </Typography>
+            <Typography fontSize={13} color="#6B7280" mb={2} fontFamily={FONT}>Select an available table</Typography>
+            <Box sx={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 1.5 }}>
+              {availableTables.map((table: any) => (
+                <Box key={table.id} onClick={() => setTargetTableId(table.id)}
+                  sx={{
+                    border: `1.5px solid ${targetTableId === table.id ? ACCENT : "#d1d5db"}`,
+                    borderRadius: "10px", p: 1.5, background: targetTableId === table.id ? ACCENT_DIM : "#fff",
+                    cursor: "pointer", textAlign: "center", transition: "0.15s",
+                    "&:hover": { borderColor: ACCENT },
+                  }}>
+                  <Typography fontWeight={700} fontFamily={SERIF} fontSize={20} color={targetTableId === table.id ? ACCENT : "#1a1208"}>{table.tableNo}</Typography>
+                  <Typography fontSize={11} color="#6b5c4a" fontFamily={FONT}>{table.seating} Seats</Typography>
+                </Box>
+              ))}
+            </Box>
+            <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1.5, mt: 3 }}>
+              <Button variant="outlined" onClick={() => { setKotMoveOpen(false); setTargetTableId(null); }} sx={{ textTransform: "none", borderRadius: "8px", fontFamily: FONT }}>Cancel</Button>
+              <Button variant="contained" disabled={!targetTableId} onClick={handleKotMove}
+                sx={{
+                  textTransform: "none", borderRadius: "8px", px: 2.5, boxShadow: "none", fontFamily: FONT,
+                  bgcolor: targetTableId ? ACCENT : "#E5E7EB",
+                  color: targetTableId ? "#fff" : "#9CA3AF",
+                  "&:hover": { bgcolor: targetTableId ? ACCENT_H : "#E5E7EB" },
+                }}>
+                Move KOT
+              </Button>
+            </Box>
+          </Box>
+        </Box>
+      )}
     </Box>
   );
 }
-
-

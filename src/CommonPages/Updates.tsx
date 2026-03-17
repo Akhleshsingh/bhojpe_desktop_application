@@ -14,7 +14,7 @@ import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 
 const FONT = "Poppins, sans-serif";
-const RED = "#E8353A";
+const RED = "#FF3D01";
 
 type ChangeType = "new" | "fixed" | "improved" | "security" | "removed";
 
@@ -148,7 +148,7 @@ const RELEASES: VersionEntry[] = [
       { type: "new", text: "Complete codebase rewrite in React 18 + TypeScript + Vite" },
       { type: "new", text: "HashRouter-based routing for static hosting compatibility" },
       { type: "new", text: "Multi-context architecture: Auth, Customer, Inventory, KOT, Orders, Tables, Waiters" },
-      { type: "new", text: "MUI v6 as primary UI library with brand #E8353A theming" },
+      { type: "new", text: "MUI v6 as primary UI library with brand #FF3D01 theming" },
       { type: "new", text: "Vite proxy configuration to forward /api/v1 to bhojpe.in backend" },
       { type: "improved", text: "Login page with passcode support and 'Remember me' option" },
       { type: "improved", text: "Print receipt component with thermal-printer-optimised layout" },

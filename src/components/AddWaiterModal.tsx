@@ -109,7 +109,7 @@ export default function AddWaiterModal({ open, onClose, onSave, anchorEl }: any)
                       fontSize={13}
                       fontWeight={selectedWaiter?.id === w.id ? 600 : 400}
                       color={
-                        selectedWaiter?.id === w.id ? "#E8353A" : "inherit"
+                        selectedWaiter?.id === w.id ? "#FF3D01" : "inherit"
                       }
                     >
                       {w.name}
@@ -129,7 +129,7 @@ export default function AddWaiterModal({ open, onClose, onSave, anchorEl }: any)
             disabled={!selectedWaiter}
             onClick={handleSave}
             sx={{
-              bgcolor: "#E8353A",
+              bgcolor: "#FF3D01",
               "&:hover": { bgcolor: "#c62a2f" },
               textTransform: "none",
               fontSize: 13,

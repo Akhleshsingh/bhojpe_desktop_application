@@ -6,7 +6,7 @@ import {
   Typography,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import "../styles/dashboardFull.css";
+
 import ItemCard from "../components/ItemCard";
 import OrderPanel from "../components/OrderPanel";
 import Sidebar from "../components/Sidebar";
@@ -383,7 +383,7 @@ useEffect(() => {
       areaName: draftOrder.areaName,
     });
   }
-  navigate("/menudashboard", {
+  navigate("/poss", {
     replace: true,
     state: {
       mode: "new",

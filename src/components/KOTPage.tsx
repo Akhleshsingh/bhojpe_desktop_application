@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useMemo } from "react";
 import "./kot.css";
 
 type KotItem = {
@@ -61,14 +61,36 @@ const KOT_DATA: Kot[] = [
 ];
 
 export default function KOTPage() {
+  const [searchQ, setSearchQ] = useState("");
+  const [orderTypeFilter, setOrderTypeFilter] = useState("All");
+
+  const filtered = useMemo(() => {
+    const q = searchQ.trim().toLowerCase();
+    return KOT_DATA.filter((kot) => {
+      const matchesSearch =
+        !q ||
+        kot.kotNumber.toLowerCase().includes(q) ||
+        kot.orderNumber.toLowerCase().includes(q);
+      const matchesType =
+        orderTypeFilter === "All" ||
+        kot.orderType.toLowerCase().replace(/\s/g, "_") ===
+          orderTypeFilter.toLowerCase().replace(/\s/g, "_");
+      return matchesSearch && matchesType;
+    });
+  }, [searchQ, orderTypeFilter]);
+
   return (
     <div className="kot-page">
       {/* HEADER */}
       <div className="kot-header">
-        <h2>KOT ( {KOT_DATA.length} )</h2>
+        <h2>KOT ( {filtered.length} )</h2>
 
         <div className="kot-header-actions">
-          <select className="kot-filter">
+          <select
+            className="kot-filter"
+            value={orderTypeFilter}
+            onChange={(e) => setOrderTypeFilter(e.target.value)}
+          >
             <option>All</option>
             <option>Dine In</option>
             <option>Delivery</option>
@@ -89,11 +111,39 @@ export default function KOTPage() {
         <select className="kot-filter-input">
           <option>Show All Waiter</option>
         </select>
+
+        {/* Search box — after Show All Waiter */}
+        <div className="kot-search-wrapper">
+          <span className="kot-search-icon">🔍</span>
+          <input
+            type="text"
+            className="kot-search-input"
+            placeholder="Search by KOT # or Order #…"
+            value={searchQ}
+            onChange={(e) => setSearchQ(e.target.value)}
+          />
+          {searchQ && (
+            <button className="kot-search-clear" onClick={() => setSearchQ("")}>
+              ✕
+            </button>
+          )}
+        </div>
       </div>
+
+      {/* EMPTY STATE */}
+      {filtered.length === 0 && (
+        <div className="kot-empty">
+          <span className="kot-empty-icon">🔖</span>
+          <p>No KOTs found for <strong>"{searchQ}"</strong></p>
+          <button className="kot-empty-clear" onClick={() => setSearchQ("")}>
+            Clear search
+          </button>
+        </div>
+      )}
 
       {/* GRID */}
       <div className="kot-grid">
-        {KOT_DATA.map((kot, index) => (
+        {filtered.map((kot, index) => (
           <div className="kot-card" key={index}>
             {/* CARD HEADER */}
             <div className="kot-card-header">

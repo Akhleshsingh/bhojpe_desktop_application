@@ -140,7 +140,7 @@ export default function DuePayments() {
           {paginated.length === 0 && (
             <Box sx={{ py: 6, display: "flex", flexDirection: "column", alignItems: "center", gap: 1.5 }}>
               <Box sx={{ width: 52, height: 52, borderRadius: "50%", backgroundColor: "#FEF2F2", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <ReceiptLongOutlinedIcon sx={{ fontSize: 26, color: "#E8353A" }} />
+                <ReceiptLongOutlinedIcon sx={{ fontSize: 26, color: "#FF3D01" }} />
               </Box>
               <Typography sx={{ fontSize: 14, fontWeight: 600, color: "#374151", fontFamily: "Poppins, sans-serif" }}>No due payments found</Typography>
               <Typography sx={{ fontSize: 13, color: "#9CA3AF", fontFamily: "Poppins, sans-serif" }}>
@@ -218,8 +218,8 @@ export default function DuePayments() {
                   sx={{
                     width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center",
                     borderRadius: "6px", cursor: "pointer",
-                    border: `1px solid ${p === page ? "#E8353A" : "#D1D5DB"}`,
-                    backgroundColor: p === page ? "#E8353A" : "#FFFFFF",
+                    border: `1px solid ${p === page ? "#FF3D01" : "#D1D5DB"}`,
+                    backgroundColor: p === page ? "#FF3D01" : "#FFFFFF",
                     "&:hover": { backgroundColor: p === page ? "#c62a2f" : "#F3F4F6" },
                   }}>
                   <Typography sx={{ fontSize: 13, fontWeight: 600, color: p === page ? "#FFF" : "#374151", fontFamily: "Poppins, sans-serif" }}>{p}</Typography>

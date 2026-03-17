@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bhojpe — Reports</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --accent:#FF3D01;--accent-h:#e03500;--accent-dim:rgba(255,61,1,0.07);--accent-mid:rgba(255,61,1,0.13);--accent-bdr:rgba(255,61,1,0.25);
+  --bg:#f5f0ea;--white:#ffffff;--s1:#faf7f3;--s2:#f0ebe3;--s3:#e5ded5;
+  --border:#e2d9d0;--border2:#cec4b8;
+  --green:#186b35;--green-dim:rgba(24,107,53,0.09);--green-bdr:rgba(24,107,53,0.22);
+  --blue:#1a4fcc;--blue-dim:rgba(26,79,204,0.08);--blue-bdr:rgba(26,79,204,0.22);
+  --purple:#6d28d9;--purple-dim:rgba(109,40,217,0.08);
+  --amber:#92400e;--amber-dim:rgba(146,64,14,0.08);
+  --teal:#0f766e;--teal-dim:rgba(15,118,110,0.08);
+  --red:#b91c1c;--red-dim:rgba(185,28,28,0.08);--red-bdr:rgba(185,28,28,0.22);
+  --orange:#c2410c;--orange-dim:rgba(194,65,12,0.08);
+  --text:#16100a;--text2:#6b5c48;--text3:#a4927e;
+  --sh:0 1px 4px rgba(0,0,0,0.06);--sh2:0 6px 22px rgba(0,0,0,0.10);
+  --r:10px;--r-lg:14px;
+}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden;font-size:14px}
+
+/* ══ TOPBAR ══ */
+.topbar{display:flex;align-items:center;padding:0 18px;height:54px;background:var(--white);border-bottom:1px solid var(--border);gap:10px;flex-shrink:0;box-shadow:0 1px 8px rgba(0,0,0,0.06);z-index:10}
+.logo-wrap{display:flex;align-items:center;gap:9px}
+.logo-icon{width:34px;height:34px;background:var(--accent);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 3px 10px rgba(255,61,1,0.28)}
+.logo-col{display:flex;flex-direction:column;line-height:1.1}
+.logo-name{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--accent)}
+.logo-sub{font-size:8.5px;color:var(--text3);margin-top:1px}
+.vsep{width:1px;height:22px;background:var(--border);margin:0 4px;flex-shrink:0}
+.pill-group{display:flex;gap:6px}
+.pill{display:flex;align-items:center;gap:5px;padding:4px 11px 4px 8px;background:var(--s1);border:1px solid var(--border);border-radius:30px;cursor:pointer;font-size:11.5px;color:var(--text2);font-weight:500;transition:all .15s}
+.pill:hover{border-color:var(--border2)}
+.pb{min-width:16px;height:16px;border-radius:8px;padding:0 4px;background:var(--accent);color:#fff;font-size:9.5px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.pb.z{background:var(--s3);color:var(--text3)}
+.new-btn{padding:6px 14px;background:var(--accent);border:none;border-radius:8px;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:12.5px;cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap;box-shadow:0 2px 8px rgba(255,61,1,0.28);transition:background .15s}
+.new-btn:hover{background:var(--accent-h)}
+.tsp{flex:1}
+.ticons{display:flex;align-items:center;gap:2px}
+.ti{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:14px;cursor:pointer;border:none;background:none;transition:all .15s}
+.ti:hover{background:var(--s2)}
+.ti.on{color:var(--accent);background:var(--accent-dim)}
+
+/* ══ BODY ══ */
+.body{display:flex;flex:1;overflow:hidden}
+
+/* ══ SIDEBAR ══ */
+.sidebar{width:210px;background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden}
+.sb-head{padding:14px 14px 6px;font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--text)}
+.sb-div{margin:0 14px 8px;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--accent),transparent)}
+.sb-section{padding:8px 20px 3px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:var(--text3)}
+.sb-scroll{flex:1;overflow-y:auto;padding-bottom:10px}
+.sb-scroll::-webkit-scrollbar{width:3px}
+.sb-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:var(--r);margin:1px 8px;cursor:pointer;font-size:12.5px;color:var(--text2);font-weight:500;transition:all .14s}
+.nav-item:hover{background:var(--s2);color:var(--text)}
+.nav-item.active{background:var(--accent);color:#fff;font-weight:700;box-shadow:0 3px 10px rgba(255,61,1,0.22)}
+.nav-icon{width:18px;text-align:center;flex-shrink:0;font-size:14px}
+.sb-footer{padding:10px 12px;border-top:1px solid var(--border);flex-shrink:0}
+.cust-btn{display:flex;align-items:center;gap:7px;padding:8px 12px;background:var(--s1);border:1.5px solid var(--border);border-radius:var(--r);cursor:pointer;font-size:12px;font-weight:600;color:var(--text2);transition:all .14s}
+.cust-btn:hover{border-color:var(--border2);color:var(--text)}
+
+/* ══ CONTENT ══ */
+.content{flex:1;overflow-y:auto;padding:20px 22px}
+.content::-webkit-scrollbar{width:5px}
+.content::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+
+/* Page sections */
+.rpage{display:none}
+.rpage.active{display:block}
+
+/* Common page header */
+.page-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px}
+.page-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--text)}
+.page-sub{font-size:12px;color:var(--text3);margin-top:4px;font-weight:500}
+.page-sub b{color:var(--text2)}
+.hdr-btns{display:flex;gap:8px;align-items:center}
+.ebtn{display:flex;align-items:center;gap:6px;padding:8px 14px;background:var(--white);border:1.5px solid var(--border);border-radius:9px;font-size:12.5px;font-weight:700;cursor:pointer;color:var(--text2);transition:all .14s;font-family:'Plus Jakarta Sans',sans-serif}
+.ebtn:hover{border-color:var(--border2);color:var(--text)}
+.ebtn.primary{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(255,61,1,0.25)}
+.ebtn.primary:hover{background:var(--accent-h)}
+
+/* Filter bar */
+.filter-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:11px 16px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--r-lg);margin-bottom:18px;box-shadow:var(--sh)}
+.fsel{padding:7px 26px 7px 10px;background:var(--s1);border:1.5px solid var(--border);border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12.5px;font-weight:600;color:var(--text);outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23a4927e' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 9px center}
+.finput{padding:7px 10px;background:var(--s1);border:1.5px solid var(--border);border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12.5px;color:var(--text);outline:none;transition:border-color .15s}
+.finput:focus{border-color:var(--accent)}
+.fsep{color:var(--text3);font-size:12px;font-weight:500}
+.flabel{font-size:12px;font-weight:600;color:var(--text2);white-space:nowrap}
+
+/* Stat cards grid */
+.sg4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.sg3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+.sg6{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:18px}
+.sg2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:18px}
+.sc{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:15px 16px;box-shadow:var(--sh);transition:transform .15s,box-shadow .15s;position:relative;overflow:hidden}
+.sc:hover{transform:translateY(-2px);box-shadow:var(--sh2)}
+.sc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;border-radius:0 0 var(--r-lg) var(--r-lg)}
+.cr::after{background:var(--accent)}
+.cg::after{background:var(--green)}
+.cb::after{background:var(--blue)}
+.cp::after{background:var(--purple)}
+.ct::after{background:var(--teal)}
+.ca::after{background:var(--amber)}
+.co::after{background:var(--orange)}
+.sc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.sc-label{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)}
+.sc-ico{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.cr .sc-ico{background:var(--accent-dim)}
+.cg .sc-ico{background:var(--green-dim)}
+.cb .sc-ico{background:var(--blue-dim)}
+.cp .sc-ico{background:var(--purple-dim)}
+.ct .sc-ico{background:var(--teal-dim)}
+.ca .sc-ico{background:var(--amber-dim)}
+.co .sc-ico{background:var(--orange-dim)}
+.sc-val{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--text);margin-bottom:8px}
+.cr .sc-val{color:var(--accent)}
+.cg .sc-val{color:var(--green)}
+.cb .sc-val{color:var(--blue)}
+.sc-rows{display:flex;flex-direction:column;gap:4px;border-top:1px solid var(--border);padding-top:7px}
+.sr{display:flex;align-items:center;justify-content:space-between;font-size:11.5px}
+.sk{color:var(--text3);font-weight:500}
+.sv{font-weight:700;color:var(--text)}
+.badge{padding:1px 7px;border-radius:8px;font-size:10px;font-weight:700}
+.bg{background:var(--green-dim);color:var(--green)}
+.br{background:var(--red-dim);color:var(--red)}
+.bb{background:var(--blue-dim);color:var(--blue)}
+.ba{background:var(--amber-dim);color:var(--amber)}
+.bt{background:var(--teal-dim);color:var(--teal)}
+
+/* Table card */
+.tcard{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh);overflow:hidden;margin-bottom:18px}
+.t-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border)}
+.t-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--text)}
+.t-badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent-bdr)}
+.t-wrap{overflow-x:auto}
+.t-wrap::-webkit-scrollbar{height:4px}
+.t-wrap::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+table{width:100%;border-collapse:collapse;min-width:700px}
+thead tr{background:var(--s1)}
+th{padding:10px 14px;text-align:left;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);border-bottom:1.5px solid var(--border);white-space:nowrap}
+th.r{text-align:right}
+td{padding:11px 14px;font-size:13px;color:var(--text);border-bottom:1px solid var(--border)}
+td.r{text-align:right;font-weight:700;font-family:'Playfair Display',serif;font-size:13px}
+td.acc{color:var(--accent)}
+td.grn{color:var(--green)}
+td.red{color:var(--red)}
+td.blu{color:var(--blue)}
+tbody tr{transition:background .12s}
+tbody tr:hover{background:var(--s1)}
+tbody tr:last-child td{border-bottom:none}
+.dc{font-weight:700}
+.obadge{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;border-radius:6px;background:var(--blue-dim);color:var(--blue);font-size:12px;font-weight:800;padding:0 5px}
+.status-pill{display:inline-flex;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.sp-green{background:var(--green-dim);color:var(--green)}
+.sp-red{background:var(--red-dim);color:var(--red)}
+.sp-amber{background:var(--amber-dim);color:var(--amber)}
+.sp-blue{background:var(--blue-dim);color:var(--blue)}
+
+/* Chart card */
+.chart-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:18px;box-shadow:var(--sh);margin-bottom:18px}
+.cc-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
+.cc-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--text)}
+.cc-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.cc-right{text-align:right}
+.cc-total{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--accent)}
+.cc-sub2{font-size:11px;color:var(--text3);margin-top:2px}
+.chart-wrap{position:relative;height:200px}
+.chart-row2{display:grid;grid-template-columns:1fr 280px;gap:16px;margin-bottom:18px}
+
+/* Progress bars */
+.pbar-section{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:18px;box-shadow:var(--sh)}
+.pbar-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--text);margin-bottom:14px}
+.pbar-item{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.pbar-label{font-size:12px;font-weight:600;color:var(--text2);min-width:90px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pbar-track{flex:1;height:8px;background:var(--s2);border-radius:4px;overflow:hidden}
+.pbar-fill{height:100%;border-radius:4px;transition:width .6s ease}
+.pbar-val{font-size:12px;font-weight:800;min-width:60px;text-align:right}
+
+/* Info grid */
+.info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:18px}
+.info-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:18px;box-shadow:var(--sh)}
+.info-card-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--text);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.info-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px}
+.info-row:last-child{border-bottom:none}
+.info-key{color:var(--text2);font-weight:500}
+.info-val{font-weight:700;color:var(--text)}
+.info-val.acc{color:var(--accent)}
+.info-val.grn{color:var(--green)}
+.info-val.red{color:var(--red)}
+
+/* Toast */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--green);color:#fff;padding:11px 22px;border-radius:11px;font-weight:700;font-size:13px;transition:transform .3s;z-index:999;white-space:nowrap;box-shadow:0 6px 20px rgba(0,0,0,.13)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo-wrap">
+    <div class="logo-icon">🍽️</div>
+    <div class="logo-col">
+      <div class="logo-name">Bhojpe</div>
+      <div class="logo-sub">by Nepson Infotech LLP</div>
+    </div>
+  </div>
+  <div class="vsep"></div>
+  <div class="pill-group">
+    <div class="pill">📋 All Orders <div class="pb">14</div></div>
+    <div class="pill">📅 Table Booking <div class="pb z">0</div></div>
+    <div class="pill">🙋 Waiter Request <div class="pb">1</div></div>
+  </div>
+  <button class="new-btn">+ New Order</button>
+  <div class="tsp"></div>
+  <div class="ticons">
+    <button class="ti">🧾</button><button class="ti">💳</button>
+    <button class="ti">🖥️</button><button class="ti on">📊</button>
+    <button class="ti">🔄</button><button class="ti">🔔</button>
+    <button class="ti">⚙️</button>
+  </div>
+</div>
+
+<div class="body">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sb-head">Reports<span style="color:var(--accent)">.</span></div>
+    <div class="sb-div"></div>
+    <div class="sb-scroll">
+      <div class="sb-section">Sales</div>
+      <div class="nav-item active" onclick="nav(this,'sales')"><span class="nav-icon">📈</span>Sales Report</div>
+      <div class="nav-item" onclick="nav(this,'item')"><span class="nav-icon">🍽️</span>Item Report</div>
+      <div class="nav-item" onclick="nav(this,'category')"><span class="nav-icon">📂</span>Category Report</div>
+      <div class="sb-section">Delivery & Expenses</div>
+      <div class="nav-item" onclick="nav(this,'delivery')"><span class="nav-icon">🛵</span>Delivery App Report</div>
+      <div class="nav-item" onclick="nav(this,'expense')"><span class="nav-icon">💸</span>Expense Reports</div>
+      <div class="sb-section">Orders</div>
+      <div class="nav-item" onclick="nav(this,'cancelled')"><span class="nav-icon">❌</span>Cancelled Orders</div>
+      <div class="nav-item" onclick="nav(this,'removedkot')"><span class="nav-icon">🗑️</span>Removed KOT Items</div>
+      <div class="nav-item" onclick="nav(this,'refund')"><span class="nav-icon">↩️</span>Refund Report</div>
+      <div class="sb-section">Finance</div>
+      <div class="nav-item" onclick="nav(this,'tax')"><span class="nav-icon">🧾</span>Tax Report</div>
+      <div class="nav-item" onclick="nav(this,'outstanding')"><span class="nav-icon">⏳</span>Outstanding Payments</div>
+      <div class="sb-section">Inventory</div>
+      <div class="nav-item" onclick="nav(this,'inventory')"><span class="nav-icon">📦</span>Inventory Report</div>
+      <div class="nav-item" onclick="nav(this,'stock')"><span class="nav-icon">🗄️</span>Stock Report</div>
+    </div>
+    <div class="sb-footer">
+      <div class="cust-btn">🛒 Customer Site
+        <svg style="margin-left:auto;opacity:.4" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- Common filter bar template injected per page via JS -->
+
+    <!-- ══════════ 1. SALES REPORT ══════════ -->
+    <div class="rpage active" id="p-sales">
+      <div class="page-hdr">
+        <div><div class="page-title">Sales Report</div><div class="page-sub">Sales data <b>09/03/2026 – 15/03/2026</b> · Each day 12:00 AM – 11:59 PM</div></div>
+        <div class="hdr-btns"><button class="ebtn" onclick="showToast('CSV Exported!')">⬇ Export CSV</button><button class="ebtn primary" onclick="showToast('PDF Generated!')">🖨 Print PDF</button></div>
+      </div>
+      <div class="filter-bar"><span class="flabel">Period:</span><select class="fsel"><option>Current Week</option><option>Today</option><option>Last 30 Days</option></select><span class="fsep">From</span><input class="finput" type="date" value="2026-03-09"/><span class="fsep">To</span><input class="finput" type="date" value="2026-03-15"/><select class="fsel"><option>All Users</option><option>Sanjay Singh</option></select></div>
+      <div class="sg6">
+        <div class="sc cr"><div class="sc-top"><div class="sc-label">Total Sales</div><div class="sc-ico">💰</div></div><div class="sc-val">₹745</div><div class="sc-rows"><div class="sr"><span class="sk">Orders</span><span class="badge bb">5</span></div><div class="sr"><span class="sk">Avg/Order</span><span class="sv">₹149</span></div></div></div>
+        <div class="sc cg"><div class="sc-top"><div class="sc-label">Cash Received</div><div class="sc-ico">💵</div></div><div class="sc-val">₹745</div><div class="sc-rows"><div class="sr"><span class="sk">Cash</span><span class="sv">₹745</span></div><div class="sr"><span class="sk">Other</span><span class="sv">₹0</span></div></div></div>
+        <div class="sc cb"><div class="sc-top"><div class="sc-label">Gateway</div><div class="sc-ico">🔗</div></div><div class="sc-val">₹0</div><div class="sc-rows"><div class="sr"><span class="sk">Razorpay</span><span class="sv">₹0</span></div><div class="sr"><span class="sk">Status</span><span class="badge bg">Active</span></div></div></div>
+        <div class="sc cp"><div class="sc-top"><div class="sc-label">Additional</div><div class="sc-ico">➕</div></div><div class="sc-val">₹0</div><div class="sc-rows"><div class="sr"><span class="sk">Charges</span><span class="sv">₹0</span></div><div class="sr"><span class="sk">Discount</span><span class="sv">₹0</span></div></div></div>
+        <div class="sc ct"><div class="sc-top"><div class="sc-label">Tax (GST 5%)</div><div class="sc-ico">🧾</div></div><div class="sc-val">₹192.50</div><div class="sc-rows"><div class="sr"><span class="sk">Mode</span><span class="badge bb">Item</span></div><div class="sr"><span class="sk">Total Tax</span><span class="sv">₹192.50</span></div></div></div>
+        <div class="sc ca"><div class="sc-top"><div class="sc-label">Outstanding</div><div class="sc-ico">⏳</div></div><div class="sc-val">₹0</div><div class="sc-rows"><div class="sr"><span class="sk">Orders</span><span class="badge bg">0</span></div><div class="sr"><span class="sk">Status</span><span class="badge bg">Clear</span></div></div></div>
+      </div>
+      <div class="chart-row2">
+        <div class="chart-card" style="margin:0"><div class="cc-hdr"><div><div class="cc-title">Daily Sales Trend</div><div class="cc-sub">Revenue per day this week</div></div><div class="cc-right"><div class="cc-total">₹745</div><div class="cc-sub2">Period Total</div></div></div><div class="chart-wrap"><canvas id="salesChart"></canvas></div></div>
+        <div class="pbar-section"><div class="pbar-title">Payment Methods</div>
+          <div class="pbar-item"><div class="pbar-label">Cash</div><div class="pbar-track"><div class="pbar-fill" style="width:100%;background:var(--green)"></div></div><div class="pbar-val" style="color:var(--green)">₹745</div></div>
+          <div class="pbar-item"><div class="pbar-label">UPI</div><div class="pbar-track"><div class="pbar-fill" style="width:0%;background:var(--blue)"></div></div><div class="pbar-val" style="color:var(--text3)">₹0</div></div>
+          <div class="pbar-item"><div class="pbar-label">Card</div><div class="pbar-track"><div class="pbar-fill" style="width:0%;background:var(--purple)"></div></div><div class="pbar-val" style="color:var(--text3)">₹0</div></div>
+          <div class="pbar-item"><div class="pbar-label">Bank</div><div class="pbar-track"><div class="pbar-fill" style="width:0%;background:var(--teal)"></div></div><div class="pbar-val" style="color:var(--text3)">₹0</div></div>
+          <div style="border-top:1px solid var(--border);margin-top:8px;padding-top:8px">
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><span style="color:var(--text3)">Total Tax</span><span style="font-weight:800;color:var(--teal)">₹192.50</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text3)">Discount</span><span style="font-weight:800;color:var(--red)">₹0</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="tcard"><div class="t-hdr"><div class="t-title">Detailed Sales</div><div class="t-badge">5 records</div></div><div class="t-wrap"><table><thead><tr><th>Date</th><th class="r">Orders</th><th class="r">GST 5%</th><th class="r">Total Tax</th><th class="r">Cash</th><th class="r">UPI</th><th class="r">Card</th><th class="r">Due</th><th class="r">Discount</th><th class="r">Total</th></tr></thead><tbody>
+        <tr><td class="dc">09/03/2026</td><td class="r"><div class="obadge">1</div></td><td class="r">₹0.00</td><td class="r">₹0.00</td><td class="r grn">₹320.00</td><td class="r">₹0</td><td class="r">₹0</td><td class="r">₹0</td><td class="r">₹0</td><td class="r acc">₹320.00</td></tr>
+        <tr><td class="dc">11/03/2026</td><td class="r"><div class="obadge">2</div></td><td class="r">₹46.50</td><td class="r">₹46.50</td><td class="r grn">₹200.00</td><td class="r">₹0</td><td class="r">₹0</td><td class="r">₹0</td><td class="r">₹0</td><td class="r acc">₹200.00</td></tr>
+        <tr><td class="dc">13/03/2026</td><td class="r"><div class="obadge">1</div></td><td class="r">₹146.00</td><td class="r">₹146.00</td><td class="r grn">₹120.00</td><td class="r">₹0</td><td class="r">₹0</td><td class="r">₹0</td><td class="r">₹0</td><td class="r acc">₹120.00</td></tr>
+        <tr><td class="dc">14/03/2026</td><td class="r"><div class="obadge">1</div></td><td class="r">₹0.00</td><td class="r">₹0.00</td><td class="r grn">₹105.00</td><td class="r">₹0</td><td class="r">₹0</td><td class="r">₹0</td><td class="r">₹0</td><td class="r acc">₹105.00</td></tr>
+        <tr style="background:var(--s1)"><td style="font-weight:800;color:var(--accent)">Total</td><td class="r"><div class="obadge" style="background:var(--accent-dim);color:var(--accent)">5</div></td><td class="r" style="font-weight:800">₹192.50</td><td class="r" style="font-weight:800">₹192.50</td><td class="r grn" style="font-size:14px">₹745.00</td><td class="r">₹0</td><td class="r">₹0</td><td class="r">₹0</td><td class="r">₹0</td><td class="r acc" style="font-size:15px">₹745.00</td></tr>
+      </tbody></table></div></div>
+    </div>
+
+    <!-- ══════════ 2. ITEM REPORT ══════════ -->
+    <div class="rpage" id="p-item">
+      <div class="page-hdr">
+        <div><div class="page-title">Item Report</div><div class="page-sub">Best selling items · <b>09/03/2026 – 15/03/2026</b></div></div>
+        <div class="hdr-btns"><button class="ebtn" onclick="showToast('Exported!')">⬇ Export</button><button class="ebtn primary" onclick="showToast('PDF!')">🖨 Print</button></div>
+      </div>
+      <div class="filter-bar"><span class="flabel">Period:</span><select class="fsel"><option>Current Week</option><option>Today</option><option>Last 30 Days</option></select><span class="fsep">From</span><input class="finput" type="date" value="2026-03-09"/><span class="fsep">To</span><input class="finput" type="date" value="2026-03-15"/></div>
+      <div class="sg4">
+        <div class="sc cr"><div class="sc-top"><div class="sc-label">Total Items Sold</div><div class="sc-ico">🍽️</div></div><div class="sc-val">38</div><div class="sc-rows"><div class="sr"><span class="sk">Unique Items</span><span class="sv">12</span></div><div class="sr"><span class="sk">Top Item</span><span class="badge bb">Pizza</span></div></div></div>
+        <div class="sc cg"><div class="sc-top"><div class="sc-label">Veg Items</div><div class="sc-ico">🥦</div></div><div class="sc-val">24</div><div class="sc-rows"><div class="sr"><span class="sk">Revenue</span><span class="sv">₹480</span></div><div class="sr"><span class="sk">Share</span><span class="badge bg">63%</span></div></div></div>
+        <div class="sc cb"><div class="sc-top"><div class="sc-label">Non-Veg Items</div><div class="sc-ico">🍗</div></div><div class="sc-val">14</div><div class="sc-rows"><div class="sr"><span class="sk">Revenue</span><span class="sv">₹265</span></div><div class="sr"><span class="sk">Share</span><span class="badge bb">37%</span></div></div></div>
+        <div class="sc ca"><div class="sc-top"><div class="sc-label">Avg Item Price</div><div class="sc-ico">💲</div></div><div class="sc-val">₹196</div><div class="sc-rows"><div class="sr"><span class="sk">Min Price</span><span class="sv">₹30</span></div><div class="sr"><span class="sk">Max Price</span><span class="sv">₹380</span></div></div></div>
+      </div>
+      <div class="chart-row2">
+        <div class="chart-card" style="margin:0"><div class="cc-hdr"><div><div class="cc-title">Top Items by Quantity</div><div class="cc-sub">Most ordered this period</div></div></div><div class="chart-wrap"><canvas id="itemChart"></canvas></div></div>
+        <div class="pbar-section"><div class="pbar-title">Revenue by Item</div>
+          <div class="pbar-item"><div class="pbar-label">Masroom Pizza</div><div class="pbar-track"><div class="pbar-fill" style="width:100%;background:var(--accent)"></div></div><div class="pbar-val" style="color:var(--accent)">₹250</div></div>
+          <div class="pbar-item"><div class="pbar-label">Chicken Biryani</div><div class="pbar-track"><div class="pbar-fill" style="width:78%;background:var(--blue)"></div></div><div class="pbar-val" style="color:var(--blue)">₹195</div></div>
+          <div class="pbar-item"><div class="pbar-label">Veg Burger</div><div class="pbar-track"><div class="pbar-fill" style="width:55%;background:var(--green)"></div></div><div class="pbar-val" style="color:var(--green)">₹140</div></div>
+          <div class="pbar-item"><div class="pbar-label">Paneer Tikka</div><div class="pbar-track"><div class="pbar-fill" style="width:48%;background:var(--purple)"></div></div><div class="pbar-val" style="color:var(--purple)">₹120</div></div>
+          <div class="pbar-item"><div class="pbar-label">Dal Makhani</div><div class="pbar-track"><div class="pbar-fill" style="width:35%;background:var(--teal)"></div></div><div class="pbar-val" style="color:var(--teal)">₹90</div></div>
+        </div>
+      </div>
+      <div class="tcard"><div class="t-hdr"><div class="t-title">Item-wise Sales</div><div class="t-badge">12 items</div></div><div class="t-wrap"><table><thead><tr><th>#</th><th>Item Name</th><th>Category</th><th>Type</th><th class="r">Qty Sold</th><th class="r">Unit Price</th><th class="r">Total Revenue</th><th class="r">Tax</th><th class="r">Share</th></tr></thead><tbody>
+        <tr><td>1</td><td class="dc">Masroom Pizza</td><td>Pizza</td><td><span class="status-pill sp-green">Veg</span></td><td class="r"><div class="obadge">5</div></td><td class="r">₹250</td><td class="r acc">₹250</td><td class="r">₹11.90</td><td class="r grn">33.5%</td></tr>
+        <tr><td>2</td><td class="dc">Onion Pizza</td><td>Pizza</td><td><span class="status-pill sp-green">Veg</span></td><td class="r"><div class="obadge">5</div></td><td class="r">₹250</td><td class="r acc">₹250</td><td class="r">₹11.90</td><td class="r grn">33.5%</td></tr>
+        <tr><td>3</td><td class="dc">Egg Biryani</td><td>Biryani</td><td><span class="status-pill sp-amber">Egg</span></td><td class="r"><div class="obadge">5</div></td><td class="r">₹250</td><td class="r acc">₹250</td><td class="r">₹11.90</td><td class="r grn">33.5%</td></tr>
+        <tr><td>4</td><td class="dc">Butter Paneer Masala</td><td>Paneer</td><td><span class="status-pill sp-green">Veg</span></td><td class="r"><div class="obadge">5</div></td><td class="r">₹250</td><td class="r acc">₹250</td><td class="r">₹11.90</td><td class="r grn">33.5%</td></tr>
+        <tr><td>5</td><td class="dc">Chicken Burger</td><td>Burger</td><td><span class="status-pill sp-red">Non-Veg</span></td><td class="r"><div class="obadge">3</div></td><td class="r">₹220</td><td class="r acc">₹160</td><td class="r">₹7.62</td><td class="r">21.5%</td></tr>
+      </tbody></table></div></div>
+    </div>
+
+    <!-- ══════════ 3. CATEGORY REPORT ══════════ -->
+    <div class="rpage" id="p-category">
+      <div class="page-hdr">
+        <div><div class="page-title">Category Report</div><div class="page-sub">Sales by menu category · <b>09/03/2026 – 15/03/2026</b></div></div>
+        <div class="hdr-btns"><button class="ebtn" onclick="showToast('Exported!')">⬇ Export</button><button class="ebtn primary" onclick="showToast('PDF!')">🖨 Print</button></div>
+      </div>
+      <div class="filter-bar"><span class="flabel">Period:</span><select class="fsel"><option>Current Week</option><option>Today</option><option>Last 30 Days</option></select><span class="fsep">From</span><input class="finput" type="date" value="2026-03-09"/><span class="fsep">To</span><input class="finput" type="date" value="2026-03-15"/></div>
+      <div class="sg4">
+        <div class="sc cr"><div class="sc-top"><div class="sc-label">Categories Active</div><div class="sc-ico">📂</div></div><div class="sc-val">8</div><div class="sc-rows"><div class="sr"><span class="sk">Total Items</span><span class="sv">38</span></div><div class="sr"><span class="sk">Top Category</span><span class="badge bb">Pizza</span></div></div></div>
+        <div class="sc cg"><div class="sc-top"><div class="sc-label">Top Revenue</div><div class="sc-ico">🥇</div></div><div class="sc-val">₹500</div><div class="sc-rows"><div class="sr"><span class="sk">Category</span><span class="sv">Pizza</span></div><div class="sr"><span class="sk">Share</span><span class="badge bg">67%</span></div></div></div>
+        <div class="sc cb"><div class="sc-top"><div class="sc-label">Avg per Cat</div><div class="sc-ico">📊</div></div><div class="sc-val">₹93</div><div class="sc-rows"><div class="sr"><span class="sk">Avg Orders</span><span class="sv">0.6</span></div><div class="sr"><span class="sk">Variance</span><span class="badge ba">High</span></div></div></div>
+        <div class="sc ct"><div class="sc-top"><div class="sc-label">Least Ordered</div><div class="sc-ico">📉</div></div><div class="sc-val">Soda</div><div class="sc-rows"><div class="sr"><span class="sk">Orders</span><span class="sv">0</span></div><div class="sr"><span class="sk">Revenue</span><span class="sv">₹0</span></div></div></div>
+      </div>
+      <div class="chart-row2">
+        <div class="chart-card" style="margin:0"><div class="cc-hdr"><div><div class="cc-title">Revenue by Category</div><div class="cc-sub">Comparison this period</div></div></div><div class="chart-wrap"><canvas id="catChart"></canvas></div></div>
+        <div class="pbar-section"><div class="pbar-title">Category Breakdown</div>
+          <div class="pbar-item"><div class="pbar-label">Pizza</div><div class="pbar-track"><div class="pbar-fill" style="width:100%;background:var(--accent)"></div></div><div class="pbar-val" style="color:var(--accent)">₹500</div></div>
+          <div class="pbar-item"><div class="pbar-label">Biryani</div><div class="pbar-track"><div class="pbar-fill" style="width:50%;background:var(--blue)"></div></div><div class="pbar-val" style="color:var(--blue)">₹250</div></div>
+          <div class="pbar-item"><div class="pbar-label">Burger</div><div class="pbar-track"><div class="pbar-fill" style="width:32%;background:var(--green)"></div></div><div class="pbar-val" style="color:var(--green)">₹160</div></div>
+          <div class="pbar-item"><div class="pbar-label">Paneer</div><div class="pbar-track"><div class="pbar-fill" style="width:50%;background:var(--purple)"></div></div><div class="pbar-val" style="color:var(--purple)">₹250</div></div>
+          <div class="pbar-item"><div class="pbar-label">Others</div><div class="pbar-track"><div class="pbar-fill" style="width:15%;background:var(--teal)"></div></div><div class="pbar-val" style="color:var(--teal)">₹85</div></div>
+        </div>
+      </div>
+      <div class="tcard"><div class="t-hdr"><div class="t-title">Category-wise Sales</div><div class="t-badge">8 categories</div></div><div class="t-wrap"><table><thead><tr><th>#</th><th>Category</th><th class="r">Items Sold</th><th class="r">Orders</th><th class="r">Revenue</th><th class="r">Tax</th><th class="r">Discount</th><th class="r">Net Total</th><th class="r">Share</th></tr></thead><tbody>
+        <tr><td>1</td><td class="dc">Pizza</td><td class="r"><div class="obadge">10</div></td><td class="r">3</td><td class="r grn">₹500</td><td class="r">₹23.80</td><td class="r">₹0</td><td class="r acc">₹500</td><td class="r">67.1%</td></tr>
+        <tr><td>2</td><td class="dc">Biryani</td><td class="r"><div class="obadge">5</div></td><td class="r">2</td><td class="r grn">₹250</td><td class="r">₹11.90</td><td class="r">₹0</td><td class="r acc">₹250</td><td class="r">33.5%</td></tr>
+        <tr><td>3</td><td class="dc">Burger</td><td class="r"><div class="obadge">3</div></td><td class="r">1</td><td class="r grn">₹160</td><td class="r">₹7.62</td><td class="r">₹0</td><td class="r acc">₹160</td><td class="r">21.5%</td></tr>
+        <tr><td>4</td><td class="dc">Paneer</td><td class="r"><div class="obadge">5</div></td><td class="r">2</td><td class="r grn">₹250</td><td class="r">₹11.90</td><td class="r">₹0</td><td class="r acc">₹250</td><td class="r">33.5%</td></tr>
+        <tr style="background:var(--s1)"><td colspan="4" style="font-weight:800;color:var(--accent)">Total</td><td class="r grn" style="font-size:14px">₹1160</td><td class="r" style="font-weight:800">₹55.22</td><td class="r">₹0</td><td class="r acc" style="font-size:14px">₹745</td><td class="r">100%</td></tr>
+      </tbody></table></div></div>
+    </div>
+
+    <!-- ══════════ 4. DELIVERY REPORT ══════════ -->
+    <div class="rpage" id="p-delivery">
+      <div class="page-hdr">
+        <div><div class="page-title">Delivery App Report</div><div class="page-sub">Online delivery platform orders · <b>09/03/2026 – 15/03/2026</b></div></div>
+        <div class="hdr-btns"><button class="ebtn" onclick="showToast('Exported!')">⬇ Export</button><button class="ebtn primary" onclick="showToast('PDF!')">🖨 Print</button></div>
+      </div>
+      <div class="filter-bar"><span class="flabel">Platform:</span><select class="fsel"><option>All Platforms</option><option>Swiggy</option><option>Zomato</option><option>Direct</option></select><span class="fsep">From</span><input class="finput" type="date" value="2026-03-09"/><span class="fsep">To</span><input class="finput" type="date" value="2026-03-15"/></div>
+      <div class="sg4">
+        <div class="sc cr"><div class="sc-top"><div class="sc-label">Total Deliveries</div><div class="sc-ico">🛵</div></div><div class="sc-val">3</div><div class="sc-rows"><div class="sr"><span class="sk">Revenue</span><span class="sv">₹320</span></div><div class="sr"><span class="sk">Avg Delivery</span><span class="sv">₹107</span></div></div></div>
+        <div class="sc cg"><div class="sc-top"><div class="sc-label">Delivery Charges</div><div class="sc-ico">🏷️</div></div><div class="sc-val">₹45</div><div class="sc-rows"><div class="sr"><span class="sk">Avg Charge</span><span class="sv">₹15</span></div><div class="sr"><span class="sk">Free Deliveries</span><span class="sv">1</span></div></div></div>
+        <div class="sc cb"><div class="sc-top"><div class="sc-label">Platform Commission</div><div class="sc-ico">💸</div></div><div class="sc-val">₹32</div><div class="sc-rows"><div class="sr"><span class="sk">Rate</span><span class="sv">10%</span></div><div class="sr"><span class="sk">Net After</span><span class="sv">₹288</span></div></div></div>
+        <div class="sc ct"><div class="sc-top"><div class="sc-label">Avg Delivery Time</div><div class="sc-ico">⏱️</div></div><div class="sc-val">28 min</div><div class="sc-rows"><div class="sr"><span class="sk">Fastest</span><span class="sv">18 min</span></div><div class="sr"><span class="sk">Slowest</span><span class="sv">42 min</span></div></div></div>
+      </div>
+      <div class="tcard"><div class="t-hdr"><div class="t-title">Delivery Orders</div><div class="t-badge">3 orders</div></div><div class="t-wrap"><table><thead><tr><th>Order #</th><th>Date</th><th>Platform</th><th>Customer</th><th class="r">Items</th><th class="r">Order Amount</th><th class="r">Delivery Fee</th><th class="r">Commission</th><th class="r">Net Amount</th><th>Status</th></tr></thead><tbody>
+        <tr><td class="dc">#152</td><td>09/03/2026</td><td>Direct</td><td>Rahul S.</td><td class="r"><div class="obadge">3</div></td><td class="r grn">₹320</td><td class="r">₹20</td><td class="r red">₹32</td><td class="r acc">₹308</td><td><span class="status-pill sp-green">Delivered</span></td></tr>
+        <tr><td class="dc">#160</td><td>11/03/2026</td><td>Swiggy</td><td>Priya M.</td><td class="r"><div class="obadge">2</div></td><td class="r grn">₹200</td><td class="r">₹0</td><td class="r red">₹20</td><td class="r acc">₹180</td><td><span class="status-pill sp-green">Delivered</span></td></tr>
+        <tr><td class="dc">#175</td><td>13/03/2026</td><td>Zomato</td><td>Amit K.</td><td class="r"><div class="obadge">1</div></td><td class="r grn">₹120</td><td class="r">₹25</td><td class="r red">₹12</td><td class="r acc">₹133</td><td><span class="status-pill sp-amber">Pending</span></td></tr>
+      </tbody></table></div></div>
+    </div>
+
+    <!-- ══════════ 5. EXPENSE REPORT ══════════ -->
+    <div class="rpage" id="p-expense">
+      <div class="page-hdr">
+        <div><div class="page-title">Expense Reports</div><div class="page-sub">Business expenses & overheads · <b>March 2026</b></div></div>
+        <div class="hdr-btns"><button class="ebtn" onclick="showToast('Exported!')">⬇ Export</button><button class="ebtn primary" onclick="showToast('PDF!')">🖨 Print</button></div>
+      </div>
+      <div class="filter-bar"><span class="flabel">Category:</span><select class="fsel"><option>All Categories</option><option>Raw Material</option><option>Utilities</option><option>Salary</option></select><span class="fsep">Month:</span><select class="fsel"><option>March 2026</option><option>February 2026</option></select></div>
+      <div class="sg4">
+        <div class="sc cr"><div class="sc-top"><div class="sc-label">Total Expenses</div><div class="sc-ico">💸</div></div><div class="sc-val">₹12,450</div><div class="sc-rows"><div class="sr"><span class="sk">vs Last Month</span><span class="badge br">+8%</span></div><div class="sr"><span class="sk">Entries</span><span class="sv">14</span></div></div></div>
+        <div class="sc cg"><div class="sc-top"><div class="sc-label">Raw Material</div><div class="sc-ico">🛒</div></div><div class="sc-val">₹7,200</div><div class="sc-rows"><div class="sr"><span class="sk">Share</span><span class="badge bg">57.8%</span></div><div class="sr"><span class="sk">Entries</span><span class="sv">6</span></div></div></div>
+        <div class="sc cb"><div class="sc-top"><div class="sc-label">Utilities</div><div class="sc-ico">💡</div></div><div class="sc-val">₹2,800</div><div class="sc-rows"><div class="sr"><span class="sk">Share</span><span class="badge bb">22.5%</span></div><div class="sr"><span class="sk">Entries</span><span class="sv">4</span></div></div></div>
+        <div class="sc ca"><div class="sc-top"><div class="sc-label">Salary & Others</div><div class="sc-ico">👨‍💼</div></div><div class="sc-val">₹2,450</div><div class="sc-rows"><div class="sr"><span class="sk">Share</span><span class="badge ba">19.7%</span></div><div class="sr"><span class="sk">Entries</span><span class="sv">4</span></div></div></div>
+      </div>
+      <div class="tcard"><div class="t-hdr"><div class="t-title">Expense Entries</div><div class="t-badge">14 entries</div></div><div class="t-wrap"><table><thead><tr><th>Date</th><th>Description</th><th>Category</th><th>Vendor</th><th>Added By</th><th class="r">Amount</th><th>Payment</th><th>Status</th></tr></thead><tbody>
+        <tr><td class="dc">01/03/2026</td><td>Vegetables & Spices</td><td>Raw Material</td><td>Sharma Store</td><td>Arjun K.</td><td class="r acc">₹1,800</td><td>Cash</td><td><span class="status-pill sp-green">Paid</span></td></tr>
+        <tr><td class="dc">03/03/2026</td><td>Gas Cylinders (x3)</td><td>Utilities</td><td>HP Gas</td><td>Sanjay S.</td><td class="r acc">₹2,400</td><td>UPI</td><td><span class="status-pill sp-green">Paid</span></td></tr>
+        <tr><td class="dc">05/03/2026</td><td>Chicken & Mutton</td><td>Raw Material</td><td>Meat House</td><td>Arjun K.</td><td class="r acc">₹2,200</td><td>Cash</td><td><span class="status-pill sp-green">Paid</span></td></tr>
+        <tr><td class="dc">07/03/2026</td><td>Electricity Bill</td><td>Utilities</td><td>MPCZ</td><td>Admin</td><td class="r acc">₹400</td><td>Online</td><td><span class="status-pill sp-green">Paid</span></td></tr>
+        <tr><td class="dc">10/03/2026</td><td>Staff Salary (Part)</td><td>Salary</td><td>Internal</td><td>Admin</td><td class="r acc">₹2,000</td><td>Bank</td><td><span class="status-pill sp-amber">Partial</span></td></tr>
+        <tr><td class="dc">15/03/2026</td><td>Packaging Material</td><td>Raw Material</td><td>Pack Co.</td><td>Arjun K.</td><td class="r acc">₹650</td><td>Cash</td><td><span class="status-pill sp-green">Paid</span></td></tr>
+      </tbody></table></div></div>
+    </div>
+
+    <!-- ══════════ 6. CANCELLED ORDERS ══════════ -->
+    <div class="rpage" id="p-cancelled">
+      <div class="page-hdr">
+        <div><div class="page-title">Cancelled Order Report</div><div class="page-sub">Orders cancelled before completion · <b>09/03/2026 – 15/03/2026</b></div></div>
+        <div class="hdr-btns"><button class="ebtn" onclick="showToast('Exported!')">⬇ Export</button><button class="ebtn primary" onclick="showToast('PDF!')">🖨 Print</button></div>
+      </div>
+      <div class="filter-bar"><span class="flabel">Channel:</span><select class="fsel"><option>All Channels</option><option>Dine In</option><option>Delivery</option><option>Pickup</option></select><span class="fsep">From</span><input class="finput" type="date" value="2026-03-09"/><span class="fsep">To</span><input class="finput" type="date" value="2026-03-15"/></div>
+      <div class="sg4">
+        <div class="sc cr"><div class="sc-top"><div class="sc-label">Cancelled Orders</div><div class="sc-ico">❌</div></div><div class="sc-val">4</div><div class="sc-rows"><div class="sr"><span class="sk">Lost Revenue</span><span class="sv red">₹840</span></div><div class="sr"><span class="sk">Cancel Rate</span><span class="badge br">4.4%</span></div></div></div>
+        <div class="sc ca"><div class="sc-top"><div class="sc-label">Before KOT</div><div class="sc-ico">🕐</div></div><div class="sc-val">3</div><div class="sc-rows"><div class="sr"><span class="sk">Revenue Impact</span><span class="sv">₹610</span></div><div class="sr"><span class="sk">Share</span><span class="badge ba">75%</span></div></div></div>
+        <div class="sc cb"><div class="sc-top"><div class="sc-label">After KOT</div><div class="sc-ico">🍳</div></div><div class="sc-val">1</div><div class="sc-rows"><div class="sr"><span class="sk">Food Wasted</span><span class="sv">₹230</span></div><div class="sr"><span class="sk">Share</span><span class="badge bb">25%</span></div></div></div>
+        <div class="sc ct"><div class="sc-top"><div class="sc-label">Top Reason</div><div class="sc-ico">📝</div></div><div class="sc-val" style="font-size:16px">No Show</div><div class="sc-rows"><div class="sr"><span class="sk">Count</span><span class="sv">2</span></div><div class="sr"><span class="sk">Other</span><span class="sv">Wrong Order</span></div></div></div>
+      </div>
+      <div class="tcard"><div class="t-hdr"><div class="t-title">Cancelled Orders</div><div class="t-badge">4 orders</div></div><div class="t-wrap"><table><thead><tr><th>Order #</th><th>Date</th><th>Channel</th><th>Table</th><th>Waiter</th><th class="r">Items</th><th class="r">Order Value</th><th>Cancelled By</th><th>Reason</th><th>KOT Status</th></tr></thead><tbody>
+        <tr><td class="dc">#148</td><td>09/03/2026</td><td>Dine In</td><td>T-3</td><td>Sanjay S.</td><td class="r"><div class="obadge">2</div></td><td class="r red">₹320</td><td>Manager</td><td>No Show</td><td><span class="status-pill sp-green">Before KOT</span></td></tr>
+        <tr><td class="dc">#155</td><td>11/03/2026</td><td>Delivery</td><td>—</td><td>—</td><td class="r"><div class="obadge">3</div></td><td class="r red">₹230</td><td>Customer</td><td>Wrong Order</td><td><span class="status-pill sp-red">After KOT</span></td></tr>
+        <tr><td class="dc">#162</td><td>13/03/2026</td><td>Dine In</td><td>T-1</td><td>Arjun K.</td><td class="r"><div class="obadge">1</div></td><td class="r red">₹150</td><td>Waiter</td><td>No Show</td><td><span class="status-pill sp-green">Before KOT</span></td></tr>
+        <tr><td class="dc">#168</td><td>15/03/2026</td><td>Pickup</td><td>—</td><td>—</td><td class="r"><div class="obadge">2</div></td><td class="r red">₹140</td><td>Customer</td><td>Change of Mind</td><td><span class="status-pill sp-green">Before KOT</span></td></tr>
+      </tbody></table></div></div>
+    </div>
+
+    <!-- ══════════ 7. REMOVED KOT ITEMS ══════════ -->
+    <div class="rpage" id="p-removedkot">
+      <div class="page-hdr">
+        <div><div class="page-title">Removed KOT Item Report</div><div class="page-sub">Items removed from KOT after kitchen confirmation · <b>09/03/2026 – 15/03/2026</b></div></div>
+        <div class="hdr-btns"><button class="ebtn" onclick="showToast('Exported!')">⬇ Export</button><button class="ebtn primary" onclick="showToast('PDF!')">🖨 Print</button></div>
+      </div>
+      <div class="filter-bar"><span class="flabel">Period:</span><select class="fsel"><option>Current Week</option><option>Today</option><option>Last Month</option></select><span class="fsep">From</span><input class="finput" type="date" value="2026-03-09"/><span class="fsep">To</span><input class="finput" type="date" value="2026-03-15"/></div>
+      <div class="sg4">
+        <div class="sc cr"><div class="sc-top"><div class="sc-label">Items Removed</div><div class="sc-ico">🗑️</div></div><div class="sc-val">7</div><div class="sc-rows"><div class="sr"><span class="sk">Value Lost</span><span class="sv red">₹630</span></div><div class="sr"><span class="sk">Orders Affected</span><span class="sv">5</span></div></div></div>
+        <div class="sc ca"><div class="sc-top"><div class="sc-label">By Waiter</div><div class="sc-ico">🙋</div></div><div class="sc-val">4</div><div class="sc-rows"><div class="sr"><span class="sk">Value</span><span class="sv">₹360</span></div><div class="sr"><span class="sk">Top: Sanjay</span><span class="badge ba">3x</span></div></div></div>
+        <div class="sc cb"><div class="sc-top"><div class="sc-label">By Manager</div><div class="sc-ico">👔</div></div><div class="sc-val">3</div><div class="sc-rows"><div class="sr"><span class="sk">Value</span><span class="sv">₹270</span></div><div class="sr"><span class="sk">Reason</span><span class="badge bb">Complaint</span></div></div></div>
+        <div class="sc cg"><div class="sc-top"><div class="sc-label">Most Removed</div><div class="sc-ico">🍽️</div></div><div class="sc-val" style="font-size:16px">Pizza</div><div class="sc-rows"><div class="sr"><span class="sk">Count</span><span class="sv">3</span></div><div class="sr"><span class="sk">Value</span><span class="sv red">₹280</span></div></div></div>
+      </div>
+      <div class="tcard"><div class="t-hdr"><div class="t-title">Removed Items Log</div><div class="t-badge">7 removals</div></div><div class="t-wrap"><table><thead><tr><th>Order #</th><th>Date & Time</th><th>Item Name</th><th class="r">Qty</th><th class="r">Price</th><th class="r">Total Loss</th><th>Removed By</th><th>Reason</th><th>KOT #</th></tr></thead><tbody>
+        <tr><td class="dc">#152</td><td>09/03 02:30 PM</td><td>Masroom Pizza</td><td class="r">1</td><td class="r">₹250</td><td class="r red">₹250</td><td>Sanjay Singh</td><td>Customer Change</td><td>KOT-01</td></tr>
+        <tr><td class="dc">#153</td><td>11/03 01:15 PM</td><td>Egg Biryani</td><td class="r">1</td><td class="r">₹250</td><td class="r red">₹250</td><td>Manager</td><td>Wrong Item</td><td>KOT-03</td></tr>
+        <tr><td class="dc">#158</td><td>11/03 07:45 PM</td><td>Butter Naan</td><td class="r">2</td><td class="r">₹40</td><td class="r red">₹80</td><td>Arjun K.</td><td>Quality Issue</td><td>KOT-05</td></tr>
+        <tr><td class="dc">#162</td><td>13/03 12:30 PM</td><td>Chicken Pizza</td><td class="r">1</td><td class="r">₹380</td><td class="r red">₹380</td><td>Manager</td><td>Complaint</td><td>KOT-08</td></tr>
+        <tr><td class="dc">#170</td><td>14/03 08:00 PM</td><td>Dal Makhani</td><td class="r">1</td><td class="r">₹200</td><td class="r red">₹200</td><td>Sanjay Singh</td><td>Customer Change</td><td>KOT-11</td></tr>
+      </tbody></table></div></div>
+    </div>
+
+    <!-- ══════════ 8. REFUND REPORT ══════════ -->
+    <div class="rpage" id="p-refund">
+      <div class="page-hdr">
+        <div><div class="page-title">Refund Report</div><div class="page-sub">Processed refunds & adjustments · <b>09/03/2026 – 15/03/2026</b></div></div>
+        <div class="hdr-btns"><button class="ebtn" onclick="showToast('Exported!')">⬇ Export</button><button class="ebtn primary" onclick="showToast('PDF!')">🖨 Print</button></div>
+      </div>
+      <div class="filter-bar"><span class="flabel">Type:</span><select class="fsel"><option>All Refunds</option><option>Full Refund</option><option>Partial Refund</option></select><span class="fsep">From</span><input class="finput" type="date" value="2026-03-09"/><span class="fsep">To</span><input class="finput" type="date" value="2026-03-15"/></div>
+      <div class="sg4">
+        <div class="sc cr"><div class="sc-top"><div class="sc-label">Total Refunds</div><div class="sc-ico">↩️</div></div><div class="sc-val">₹350</div><div class="sc-rows"><div class="sr"><span class="sk">Count</span><span class="sv">2</span></div><div class="sr"><span class="sk">% of Sales</span><span class="badge br">4.7%</span></div></div></div>
+        <div class="sc ca"><div class="sc-top"><div class="sc-label">Full Refunds</div><div class="sc-ico">✅</div></div><div class="sc-val">₹250</div><div class="sc-rows"><div class="sr"><span class="sk">Orders</span><span class="sv">1</span></div><div class="sr"><span class="sk">Reason</span><span class="sv">Quality</span></div></div></div>
+        <div class="sc cb"><div class="sc-top"><div class="sc-label">Partial Refunds</div><div class="sc-ico">⚖️</div></div><div class="sc-val">₹100</div><div class="sc-rows"><div class="sr"><span class="sk">Orders</span><span class="sv">1</span></div><div class="sr"><span class="sk">Reason</span><span class="sv">Complaint</span></div></div></div>
+        <div class="sc cg"><div class="sc-top"><div class="sc-label">Refund Rate</div><div class="sc-ico">📊</div></div><div class="sc-val">2.2%</div><div class="sc-rows"><div class="sr"><span class="sk">Target</span><span class="sv">&lt;2%</span></div><div class="sr"><span class="sk">Status</span><span class="badge ba">Watch</span></div></div></div>
+      </div>
+      <div class="tcard"><div class="t-hdr"><div class="t-title">Refund Transactions</div><div class="t-badge">2 refunds</div></div><div class="t-wrap"><table><thead><tr><th>Refund #</th><th>Order #</th><th>Date</th><th>Customer</th><th class="r">Order Amt</th><th class="r">Refund Amt</th><th>Method</th><th>Type</th><th>Reason</th><th>Status</th></tr></thead><tbody>
+        <tr><td class="dc">REF-001</td><td>#153</td><td>11/03/2026</td><td>Priya M.</td><td class="r">₹250</td><td class="r red">₹250</td><td>UPI</td><td><span class="status-pill sp-red">Full</span></td><td>Bad Quality</td><td><span class="status-pill sp-green">Processed</span></td></tr>
+        <tr><td class="dc">REF-002</td><td>#162</td><td>13/03/2026</td><td>Amit K.</td><td class="r">₹380</td><td class="r red">₹100</td><td>Cash</td><td><span class="status-pill sp-amber">Partial</span></td><td>Wrong Item</td><td><span class="status-pill sp-green">Processed</span></td></tr>
+      </tbody></table></div></div>
+    </div>
+
+    <!-- ══════════ 9. TAX REPORT ══════════ -->
+    <div class="rpage" id="p-tax">
+      <div class="page-hdr">
+        <div><div class="page-title">Tax Report</div><div class="page-sub">GST & tax breakdown for filing · <b>09/03/2026 – 15/03/2026</b></div></div>
+        <div class="hdr-btns"><button class="ebtn" onclick="showToast('GST File Exported!')">📑 Export GST</button><button class="ebtn primary" onclick="showToast('PDF!')">🖨 Print</button></div>
+      </div>
+      <div class="filter-bar"><span class="flabel">Tax Mode:</span><select class="fsel"><option>Item-wise</option><option>Order-wise</option></select><span class="fsep">Period:</span><select class="fsel"><option>Current Week</option><option>This Month</option><option>Last Quarter</option></select></div>
+      <div class="sg4">
+        <div class="sc cr"><div class="sc-top"><div class="sc-label">Total Tax Collected</div><div class="sc-ico">🧾</div></div><div class="sc-val">₹192.50</div><div class="sc-rows"><div class="sr"><span class="sk">Taxable Sales</span><span class="sv">₹552.50</span></div><div class="sr"><span class="sk">Tax Rate</span><span class="badge bb">5%</span></div></div></div>
+        <div class="sc cg"><div class="sc-top"><div class="sc-label">CGST (2.5%)</div><div class="sc-ico">🏛️</div></div><div class="sc-val">₹96.25</div><div class="sc-rows"><div class="sr"><span class="sk">On Sales</span><span class="sv">₹552.50</span></div><div class="sr"><span class="sk">Payable</span><span class="badge bg">₹96.25</span></div></div></div>
+        <div class="sc cb"><div class="sc-top"><div class="sc-label">SGST (2.5%)</div><div class="sc-ico">🏢</div></div><div class="sc-val">₹96.25</div><div class="sc-rows"><div class="sr"><span class="sk">On Sales</span><span class="sv">₹552.50</span></div><div class="sr"><span class="sk">Payable</span><span class="badge bb">₹96.25</span></div></div></div>
+        <div class="sc ct"><div class="sc-top"><div class="sc-label">Non-Taxable</div><div class="sc-ico">🔖</div></div><div class="sc-val">₹192.50</div><div class="sc-rows"><div class="sr"><span class="sk">Exempt Items</span><span class="sv">₹0</span></div><div class="sr"><span class="sk">Orders</span><span class="sv">5</span></div></div></div>
+      </div>
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-card-title">GST Summary</div>
+          <div class="info-row"><span class="info-key">Total Sales (incl. tax)</span><span class="info-val">₹745.00</span></div>
+          <div class="info-row"><span class="info-key">Taxable Amount</span><span class="info-val">₹552.50</span></div>
+          <div class="info-row"><span class="info-key">CGST @ 2.5%</span><span class="info-val acc">₹96.25</span></div>
+          <div class="info-row"><span class="info-key">SGST @ 2.5%</span><span class="info-val acc">₹96.25</span></div>
+          <div class="info-row"><span class="info-key">Total GST</span><span class="info-val grn">₹192.50</span></div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-title">Tax by Category</div>
+          <div class="info-row"><span class="info-key">Pizza</span><span class="info-val acc">₹23.80</span></div>
+          <div class="info-row"><span class="info-key">Biryani</span><span class="info-val acc">₹11.90</span></div>
+          <div class="info-row"><span class="info-key">Paneer</span><span class="info-val acc">₹11.90</span></div>
+          <div class="info-row"><span class="info-key">Others</span><span class="info-val acc">₹144.90</span></div>
+          <div class="info-row"><span class="info-key">Total</span><span class="info-val grn">₹192.50</span></div>
+        </div>
+      </div>
+      <div class="tcard"><div class="t-hdr"><div class="t-title">Day-wise Tax Collection</div><div class="t-badge">5 days</div></div><div class="t-wrap"><table><thead><tr><th>Date</th><th class="r">Orders</th><th class="r">Sales</th><th class="r">Taxable Amt</th><th class="r">CGST 2.5%</th><th class="r">SGST 2.5%</th><th class="r">Total GST</th><th class="r">Net Sales</th></tr></thead><tbody>
+        <tr><td class="dc">09/03/2026</td><td class="r"><div class="obadge">1</div></td><td class="r">₹320</td><td class="r">₹0</td><td class="r">₹0</td><td class="r">₹0</td><td class="r grn">₹0</td><td class="r acc">₹320</td></tr>
+        <tr><td class="dc">11/03/2026</td><td class="r"><div class="obadge">2</div></td><td class="r">₹200</td><td class="r">₹186</td><td class="r">₹23.25</td><td class="r">₹23.25</td><td class="r grn">₹46.50</td><td class="r acc">₹200</td></tr>
+        <tr><td class="dc">13/03/2026</td><td class="r"><div class="obadge">1</div></td><td class="r">₹120</td><td class="r">₹584</td><td class="r">₹73</td><td class="r">₹73</td><td class="r grn">₹146</td><td class="r acc">₹120</td></tr>
+        <tr><td class="dc">14/03/2026</td><td class="r"><div class="obadge">1</div></td><td class="r">₹105</td><td class="r">₹0</td><td class="r">₹0</td><td class="r">₹0</td><td class="r grn">₹0</td><td class="r acc">₹105</td></tr>
+        <tr style="background:var(--s1)"><td style="font-weight:800;color:var(--accent)">Total</td><td class="r"><div class="obadge" style="background:var(--accent-dim);color:var(--accent)">5</div></td><td class="r" style="font-weight:800">₹745</td><td class="r" style="font-weight:800">₹552.50</td><td class="r grn" style="font-size:14px">₹96.25</td><td class="r grn" style="font-size:14px">₹96.25</td><td class="r acc" style="font-size:14px">₹192.50</td><td class="r acc" style="font-size:15px">₹745</td></tr>
+      </tbody></table></div></div>
+    </div>
+
+    <!-- ══════════ 10. OUTSTANDING PAYMENTS ══════════ -->
+    <div class="rpage" id="p-outstanding">
+      <div class="page-hdr">
+        <div><div class="page-title">Outstanding Payments</div><div class="page-sub">Unpaid & due orders · As of <b>15/03/2026</b></div></div>
+        <div class="hdr-btns"><button class="ebtn" onclick="showToast('Reminder Sent!')">📤 Send Reminders</button><button class="ebtn primary" onclick="showToast('PDF!')">🖨 Print</button></div>
+      </div>
+      <div class="filter-bar"><span class="flabel">Status:</span><select class="fsel"><option>All Outstanding</option><option>Overdue</option><option>Due Today</option></select><span class="flabel">Customer:</span><input class="finput" type="text" placeholder="Search customer…" style="width:160px"/></div>
+      <div class="sg4">
+        <div class="sc cr"><div class="sc-top"><div class="sc-label">Total Outstanding</div><div class="sc-ico">⏳</div></div><div class="sc-val">₹0</div><div class="sc-rows"><div class="sr"><span class="sk">Orders</span><span class="badge bg">0</span></div><div class="sr"><span class="sk">Status</span><span class="badge bg">All Clear</span></div></div></div>
+        <div class="sc ca"><div class="sc-top"><div class="sc-label">Overdue (&gt;7 days)</div><div class="sc-ico">🚨</div></div><div class="sc-val">₹0</div><div class="sc-rows"><div class="sr"><span class="sk">Orders</span><span class="badge bg">0</span></div><div class="sr"><span class="sk">Avg Days</span><span class="sv">—</span></div></div></div>
+        <div class="sc cb"><div class="sc-top"><div class="sc-label">Due This Week</div><div class="sc-ico">📅</div></div><div class="sc-val">₹0</div><div class="sc-rows"><div class="sr"><span class="sk">Orders</span><span class="badge bg">0</span></div><div class="sr"><span class="sk">Follow-up</span><span class="badge bg">None</span></div></div></div>
+        <div class="sc cg"><div class="sc-top"><div class="sc-label">Recovered</div><div class="sc-ico">✅</div></div><div class="sc-val">₹450</div><div class="sc-rows"><div class="sr"><span class="sk">This Month</span><span class="badge bg">₹450</span></div><div class="sr"><span class="sk">Orders</span><span class="sv">3</span></div></div></div>
+      </div>
+      <div class="tcard" style="margin-bottom:0">
+        <div class="t-hdr"><div class="t-title">Outstanding Orders</div><div class="t-badge" style="background:var(--green-dim);color:var(--green);border-color:var(--green-bdr)">0 pending</div></div>
+        <div style="padding:60px;text-align:center">
+          <div style="font-size:48px;margin-bottom:12px">🎉</div>
+          <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--text);margin-bottom:8px">All Payments Cleared!</div>
+          <div style="font-size:13px;color:var(--text3)">No outstanding payments as of 15/03/2026</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ 11. INVENTORY REPORT ══════════ -->
+    <div class="rpage" id="p-inventory">
+      <div class="page-hdr">
+        <div><div class="page-title">Inventory Report</div><div class="page-sub">Current stock & usage tracking · <b>March 2026</b></div></div>
+        <div class="hdr-btns"><button class="ebtn" onclick="showToast('Exported!')">⬇ Export</button><button class="ebtn primary" onclick="showToast('PDF!')">🖨 Print</button></div>
+      </div>
+      <div class="filter-bar"><span class="flabel">Category:</span><select class="fsel"><option>All Items</option><option>Raw Material</option><option>Beverages</option><option>Packaging</option></select><span class="flabel">Status:</span><select class="fsel"><option>All Status</option><option>Low Stock</option><option>Out of Stock</option><option>Good</option></select></div>
+      <div class="sg4">
+        <div class="sc cr"><div class="sc-top"><div class="sc-label">Total Items</div><div class="sc-ico">📦</div></div><div class="sc-val">48</div><div class="sc-rows"><div class="sr"><span class="sk">Low Stock</span><span class="badge br">6</span></div><div class="sr"><span class="sk">Out of Stock</span><span class="badge br">2</span></div></div></div>
+        <div class="sc ca"><div class="sc-top"><div class="sc-label">Low Stock Alert</div><div class="sc-ico">⚠️</div></div><div class="sc-val">6</div><div class="sc-rows"><div class="sr"><span class="sk">Needs Reorder</span><span class="sv">4</span></div><div class="sr"><span class="sk">Critical</span><span class="badge br">2</span></div></div></div>
+        <div class="sc cg"><div class="sc-top"><div class="sc-label">Well Stocked</div><div class="sc-ico">✅</div></div><div class="sc-val">40</div><div class="sc-rows"><div class="sr"><span class="sk">Optimal</span><span class="sv">32</span></div><div class="sr"><span class="sk">Overstocked</span><span class="badge ba">8</span></div></div></div>
+        <div class="sc ct"><div class="sc-top"><div class="sc-label">Inventory Value</div><div class="sc-ico">💰</div></div><div class="sc-val">₹28,400</div><div class="sc-rows"><div class="sr"><span class="sk">Raw Material</span><span class="sv">₹18,200</span></div><div class="sr"><span class="sk">Other</span><span class="sv">₹10,200</span></div></div></div>
+      </div>
+      <div class="tcard"><div class="t-hdr"><div class="t-title">Inventory Items</div><div class="t-badge">48 items</div></div><div class="t-wrap"><table><thead><tr><th>#</th><th>Item Name</th><th>Category</th><th>Unit</th><th class="r">Opening Qty</th><th class="r">Used</th><th class="r">Remaining</th><th class="r">Min Level</th><th class="r">Unit Cost</th><th>Status</th></tr></thead><tbody>
+        <tr><td>1</td><td class="dc">Tomatoes</td><td>Vegetables</td><td>Kg</td><td class="r">15</td><td class="r">8</td><td class="r grn">7</td><td class="r">3</td><td class="r">₹40</td><td><span class="status-pill sp-green">Good</span></td></tr>
+        <tr><td>2</td><td class="dc">Chicken</td><td>Non-Veg</td><td>Kg</td><td class="r">20</td><td class="r">18</td><td class="r red">2</td><td class="r">5</td><td class="r">₹280</td><td><span class="status-pill sp-red">Critical</span></td></tr>
+        <tr><td>3</td><td class="dc">Maida (Flour)</td><td>Dry Goods</td><td>Kg</td><td class="r">25</td><td class="r">12</td><td class="r grn">13</td><td class="r">5</td><td class="r">₹35</td><td><span class="status-pill sp-green">Good</span></td></tr>
+        <tr><td>4</td><td class="dc">Paneer</td><td>Dairy</td><td>Kg</td><td class="r">8</td><td class="r">7</td><td class="r red">1</td><td class="r">3</td><td class="r">₹340</td><td><span class="status-pill sp-red">Low Stock</span></td></tr>
+        <tr><td>5</td><td class="dc">Onions</td><td>Vegetables</td><td>Kg</td><td class="r">10</td><td class="r">4</td><td class="r grn">6</td><td class="r">2</td><td class="r">₹25</td><td><span class="status-pill sp-green">Good</span></td></tr>
+        <tr><td>6</td><td class="dc">Rice (Basmati)</td><td>Dry Goods</td><td>Kg</td><td class="r">30</td><td class="r">14</td><td class="r grn">16</td><td class="r">8</td><td class="r">₹90</td><td><span class="status-pill sp-green">Good</span></td></tr>
+        <tr><td>7</td><td class="dc">Cooking Oil</td><td>Oils</td><td>Ltr</td><td class="r">12</td><td class="r">10</td><td class="r red">2</td><td class="r">4</td><td class="r">₹140</td><td><span class="status-pill sp-amber">Low Stock</span></td></tr>
+      </tbody></table></div></div>
+    </div>
+
+    <!-- ══════════ 12. STOCK REPORT ══════════ -->
+    <div class="rpage" id="p-stock">
+      <div class="page-hdr">
+        <div><div class="page-title">Stock Report</div><div class="page-sub">Stock in/out movement · <b>09/03/2026 – 15/03/2026</b></div></div>
+        <div class="hdr-btns"><button class="ebtn" onclick="showToast('Exported!')">⬇ Export</button><button class="ebtn primary" onclick="showToast('PDF!')">🖨 Print</button></div>
+      </div>
+      <div class="filter-bar"><span class="flabel">Movement:</span><select class="fsel"><option>All</option><option>Stock In</option><option>Stock Out</option></select><span class="fsep">From</span><input class="finput" type="date" value="2026-03-09"/><span class="fsep">To</span><input class="finput" type="date" value="2026-03-15"/></div>
+      <div class="sg4">
+        <div class="sc cg"><div class="sc-top"><div class="sc-label">Stock In (Purchased)</div><div class="sc-ico">📥</div></div><div class="sc-val">₹7,200</div><div class="sc-rows"><div class="sr"><span class="sk">Transactions</span><span class="sv">6</span></div><div class="sr"><span class="sk">Suppliers</span><span class="sv">3</span></div></div></div>
+        <div class="sc cr"><div class="sc-top"><div class="sc-label">Stock Out (Used)</div><div class="sc-ico">📤</div></div><div class="sc-val">₹4,850</div><div class="sc-rows"><div class="sr"><span class="sk">Transactions</span><span class="sv">24</span></div><div class="sr"><span class="sk">Waste</span><span class="sv">₹320</span></div></div></div>
+        <div class="sc cb"><div class="sc-top"><div class="sc-label">Net Movement</div><div class="sc-ico">📊</div></div><div class="sc-val">₹2,350</div><div class="sc-rows"><div class="sr"><span class="sk">Surplus</span><span class="badge bg">+₹2,350</span></div><div class="sr"><span class="sk">vs Last Week</span><span class="badge bb">+12%</span></div></div></div>
+        <div class="sc ca"><div class="sc-top"><div class="sc-label">Waste/Spoilage</div><div class="sc-ico">🗑️</div></div><div class="sc-val">₹320</div><div class="sc-rows"><div class="sr"><span class="sk">vs Last Week</span><span class="badge ba">-8%</span></div><div class="sr"><span class="sk">Items</span><span class="sv">3</span></div></div></div>
+      </div>
+      <div class="tcard"><div class="t-hdr"><div class="t-title">Stock Movement Log</div><div class="t-badge">30 entries</div></div><div class="t-wrap"><table><thead><tr><th>Date</th><th>Item Name</th><th>Category</th><th>Type</th><th class="r">Qty</th><th class="r">Unit Cost</th><th class="r">Total Value</th><th>Source/Usage</th><th>Added By</th><th>Note</th></tr></thead><tbody>
+        <tr><td class="dc">09/03/2026</td><td>Chicken</td><td>Non-Veg</td><td><span class="status-pill sp-green">Stock In</span></td><td class="r">10 Kg</td><td class="r">₹280</td><td class="r grn">₹2,800</td><td>Meat House</td><td>Arjun K.</td><td>Fresh stock</td></tr>
+        <tr><td class="dc">09/03/2026</td><td>Chicken</td><td>Non-Veg</td><td><span class="status-pill sp-red">Stock Out</span></td><td class="r">3 Kg</td><td class="r">₹280</td><td class="r red">₹840</td><td>Kitchen Use</td><td>Auto</td><td>Order #152</td></tr>
+        <tr><td class="dc">11/03/2026</td><td>Tomatoes</td><td>Vegetables</td><td><span class="status-pill sp-green">Stock In</span></td><td class="r">10 Kg</td><td class="r">₹40</td><td class="r grn">₹400</td><td>Sharma Store</td><td>Sanjay S.</td><td>—</td></tr>
+        <tr><td class="dc">11/03/2026</td><td>Paneer</td><td>Dairy</td><td><span class="status-pill sp-red">Stock Out</span></td><td class="r">4 Kg</td><td class="r">₹340</td><td class="r red">₹1,360</td><td>Kitchen Use</td><td>Auto</td><td>Order #160,#161</td></tr>
+        <tr><td class="dc">13/03/2026</td><td>Cooking Oil</td><td>Oils</td><td><span class="status-pill sp-red">Waste</span></td><td class="r">2 Ltr</td><td class="r">₹140</td><td class="r red">₹280</td><td>Expired</td><td>Manager</td><td>Spoiled</td></tr>
+        <tr><td class="dc">14/03/2026</td><td>Rice Basmati</td><td>Dry Goods</td><td><span class="status-pill sp-green">Stock In</span></td><td class="r">20 Kg</td><td class="r">₹90</td><td class="r grn">₹1,800</td><td>Wholesale</td><td>Arjun K.</td><td>Weekly restock</td></tr>
+      </tbody></table></div></div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /body -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+let activeChart = null;
+
+const CHARTS = {
+  sales: () => {
+    if(document.getElementById('salesChart')) {
+      if(activeChart) activeChart.destroy();
+      activeChart = new Chart(document.getElementById('salesChart').getContext('2d'), {
+        type:'bar',data:{labels:['09 Mar','10 Mar','11 Mar','12 Mar','13 Mar','14 Mar','15 Mar'],datasets:[{label:'Sales',data:[320,0,200,0,120,105,0],backgroundColor:'rgba(255,61,1,0.15)',borderColor:'#FF3D01',borderWidth:2,borderRadius:6}]},
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#16100a',bodyFont:{family:'Plus Jakarta Sans',weight:'700'},padding:12,cornerRadius:10,callbacks:{label:c=>' ₹'+c.parsed.y}}},scales:{x:{grid:{display:false},ticks:{color:'#a4927e',font:{size:11}},border:{display:false}},y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{color:'#a4927e',font:{size:11},callback:v=>'₹'+v},border:{display:false}}}}
+      });
+    }
+  },
+  item: () => {
+    if(document.getElementById('itemChart')) {
+      if(activeChart) activeChart.destroy();
+      activeChart = new Chart(document.getElementById('itemChart').getContext('2d'), {
+        type:'bar',data:{labels:['Masroom Pizza','Onion Pizza','Egg Biryani','Butter Paneer','Ch. Burger','Dal Makhani'],datasets:[{label:'Qty Sold',data:[5,5,5,5,3,2],backgroundColor:['rgba(255,61,1,0.2)','rgba(26,79,204,0.15)','rgba(24,107,53,0.15)','rgba(109,40,217,0.15)','rgba(15,118,110,0.15)','rgba(146,64,14,0.15)'],borderColor:['#FF3D01','#1a4fcc','#186b35','#6d28d9','#0f766e','#92400e'],borderWidth:2,borderRadius:6}]},
+        options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{color:'#a4927e',font:{size:11}},border:{display:false}},y:{grid:{display:false},ticks:{color:'#6b5c48',font:{size:11,weight:'600'}},border:{display:false}}}}
+      });
+    }
+  },
+  category: () => {
+    if(document.getElementById('catChart')) {
+      if(activeChart) activeChart.destroy();
+      activeChart = new Chart(document.getElementById('catChart').getContext('2d'), {
+        type:'doughnut',data:{labels:['Pizza','Biryani','Burger','Paneer','Others'],datasets:[{data:[500,250,160,250,85],backgroundColor:['rgba(255,61,1,0.8)','rgba(26,79,204,0.7)','rgba(24,107,53,0.7)','rgba(109,40,217,0.7)','rgba(15,118,110,0.7)'],borderWidth:0,hoverOffset:6}]},
+        options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:'right',labels:{color:'#6b5c48',font:{size:11,family:'Plus Jakarta Sans'},padding:12,boxWidth:10}},tooltip:{backgroundColor:'#16100a',bodyFont:{family:'Plus Jakarta Sans',weight:'700'},padding:10,cornerRadius:8,callbacks:{label:c=>' ₹'+c.raw}}}}
+      });
+    }
+  }
+};
+
+function nav(el, pageId) {
+  document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.rpage').forEach(p => p.classList.remove('active'));
+  document.getElementById('p-' + pageId).classList.add('active');
+  document.querySelector('.content').scrollTop = 0;
+  if(CHARTS[pageId]) setTimeout(CHARTS[pageId], 100);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+/* Init chart on load */
+setTimeout(CHARTS.sales, 200);
+</script>
+</body>
+</html>

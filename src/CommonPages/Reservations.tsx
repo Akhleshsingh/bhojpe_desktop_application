@@ -257,7 +257,7 @@ function AssignTableModal({
           >
             {loading ? (
               <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: 200 }}>
-                <CircularProgress size={28} sx={{ color: "#E8353A" }} />
+                <CircularProgress size={28} sx={{ color: "#FF3D01" }} />
               </Box>
             ) : areas.length === 0 ? (
               /* ── Demo fallback so the UI is never empty ── */
@@ -343,7 +343,7 @@ function AssignTableModal({
                           display: "inline-block",
                         }}
                       >
-                        <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#E8353A", fontFamily: "Poppins, sans-serif" }}>
+                        <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#FF3D01", fontFamily: "Poppins, sans-serif" }}>
                           {assignedTable}
                         </Typography>
                       </Box>
@@ -398,7 +398,7 @@ function AssignTableModal({
               sx={{
                 textTransform: "none", fontWeight: 600, fontSize: 13,
                 background: selectedTableId
-                  ? "linear-gradient(135deg,#E8353A,#c62a2f)"
+                  ? "linear-gradient(135deg,#FF3D01,#c62a2f)"
                   : "#E5E7EB",
                 color: selectedTableId ? "#fff" : "#9CA3AF",
                 borderRadius: "8px", px: 2.5, height: 36,
@@ -599,17 +599,17 @@ function TableCard({ label, seats, isSelected, isOccupied, onClick }: TableCardP
   const badgeColor = isOccupied
     ? "#15803D"
     : isSelected
-      ? "#E8353A"
+      ? "#FF3D01"
       : "#1D4ED8";
 
   const borderColor = isOccupied
     ? "#6EE7B7"
     : isSelected
-      ? "#E8353A"
+      ? "#FF3D01"
       : "#BFDBFE";
 
   const cardBorder = isSelected
-    ? "2px solid #E8353A"
+    ? "2px solid #FF3D01"
     : isOccupied
       ? "1.5px solid #6EE7B7"
       : "1.5px solid #E5E7EB";
@@ -635,7 +635,7 @@ function TableCard({ label, seats, isSelected, isOccupied, onClick }: TableCardP
           : {
               boxShadow: "0 4px 14px rgba(0,0,0,0.1)",
               transform: "translateY(-2px)",
-              border: `2px solid ${isSelected ? "#E8353A" : "#93C5FD"}`,
+              border: `2px solid ${isSelected ? "#FF3D01" : "#93C5FD"}`,
             },
       }}
     >
@@ -681,7 +681,7 @@ function TableCard({ label, seats, isSelected, isOccupied, onClick }: TableCardP
             border: "1px solid #FCA5A5",
           }}
         >
-          <Typography sx={{ fontSize: 9, fontWeight: 700, color: "#E8353A", fontFamily: "Poppins, sans-serif" }}>
+          <Typography sx={{ fontSize: 9, fontWeight: 700, color: "#FF3D01", fontFamily: "Poppins, sans-serif" }}>
             SELECTED
           </Typography>
         </Box>
@@ -798,10 +798,10 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
       backgroundColor: "#FAFAFA",
       "& fieldset": { borderColor: "#E5E7EB" },
       "&:hover fieldset": { borderColor: "#9CA3AF" },
-      "&.Mui-focused fieldset": { borderColor: "#E8353A", borderWidth: 1.5 },
+      "&.Mui-focused fieldset": { borderColor: "#FF3D01", borderWidth: 1.5 },
     },
     "& .MuiInputLabel-root": { fontSize: 13, fontFamily: "Poppins, sans-serif" },
-    "& .MuiInputLabel-root.Mui-focused": { color: "#E8353A" },
+    "& .MuiInputLabel-root.Mui-focused": { color: "#FF3D01" },
   };
 
   return (
@@ -889,7 +889,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
                 border: "1.5px solid #E5E7EB", borderRadius: "10px",
                 px: 1.5, height: 46, background: "#FAFAFA",
                 flex: "1 1 140px", minWidth: 130,
-                "&:focus-within": { borderColor: "#E8353A" },
+                "&:focus-within": { borderColor: "#FF3D01" },
                 transition: "border-color .15s",
               }}
             >
@@ -926,7 +926,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
                   backgroundColor: "#FAFAFA",
                   "& .MuiOutlinedInput-notchedOutline": { borderColor: "#E5E7EB" },
                   "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#9CA3AF" },
-                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "#E8353A", borderWidth: 1.5 },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "#FF3D01", borderWidth: 1.5 },
                   "& .MuiSelect-icon": { fontSize: 18, color: "#6B7280" },
                 }}
               >
@@ -955,7 +955,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
                   backgroundColor: "#FAFAFA",
                   "& .MuiOutlinedInput-notchedOutline": { borderColor: "#E5E7EB" },
                   "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#9CA3AF" },
-                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "#E8353A", borderWidth: 1.5 },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "#FF3D01", borderWidth: 1.5 },
                   "& .MuiSelect-icon": { fontSize: 18, color: "#6B7280" },
                 }}
               >
@@ -986,12 +986,12 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
                     sx={{
                       px: 1.8, py: 0.7,
                       borderRadius: "8px",
-                      border: isActive ? "1.5px solid #E8353A" : "1.5px solid #E5E7EB",
+                      border: isActive ? "1.5px solid #FF3D01" : "1.5px solid #E5E7EB",
                       backgroundColor: isActive ? "rgba(232,53,58,0.07)" : "#FAFAFA",
                       cursor: "pointer",
                       transition: "all .15s",
                       "&:hover": {
-                        borderColor: isActive ? "#E8353A" : "#9CA3AF",
+                        borderColor: isActive ? "#FF3D01" : "#9CA3AF",
                         backgroundColor: isActive ? "rgba(232,53,58,0.1)" : "#F3F4F6",
                       },
                     }}
@@ -999,7 +999,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
                     <Typography
                       sx={{
                         fontSize: 12, fontWeight: isActive ? 700 : 500,
-                        color: isActive ? "#E8353A" : "#4B5563",
+                        color: isActive ? "#FF3D01" : "#4B5563",
                         fontFamily: "Poppins, sans-serif",
                       }}
                     >
@@ -1034,7 +1034,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
                 backgroundColor: "#FAFAFA", resize: "vertical",
                 outline: "none", transition: "border-color .15s",
               }}
-              onFocus={(e) => (e.currentTarget.style.borderColor = "#E8353A")}
+              onFocus={(e) => (e.currentTarget.style.borderColor = "#FF3D01")}
               onBlur={(e) => (e.currentTarget.style.borderColor = "#E5E7EB")}
             />
           </Box>
@@ -1100,7 +1100,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
                     backgroundColor: "#FFFFFF",
                     "& fieldset": { borderColor: "#E5E7EB" },
                     "&:hover fieldset": { borderColor: "#9CA3AF" },
-                    "&.Mui-focused fieldset": { borderColor: "#E8353A", borderWidth: 1.5 },
+                    "&.Mui-focused fieldset": { borderColor: "#FF3D01", borderWidth: 1.5 },
                   },
                 }}
               />
@@ -1111,7 +1111,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
           <Box sx={{ display: "flex", gap: 1.5, mb: 1.5, flexWrap: "wrap" }}>
             <Box sx={{ flex: "1 1 200px", minWidth: 160 }}>
               <Typography sx={{ fontSize: 12, fontWeight: 500, color: "#374151", mb: 0.6, fontFamily: "Poppins, sans-serif" }}>
-                Customer Name <span style={{ color: "#E8353A" }}>*</span>
+                Customer Name <span style={{ color: "#FF3D01" }}>*</span>
               </Typography>
               <TextField
                 fullWidth
@@ -1144,7 +1144,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
           {/* ── Phone ── */}
           <Box sx={{ mb: 3 }}>
             <Typography sx={{ fontSize: 12, fontWeight: 500, color: "#374151", mb: 0.6, fontFamily: "Poppins, sans-serif" }}>
-              Phone <span style={{ color: "#E8353A" }}>*</span>
+              Phone <span style={{ color: "#FF3D01" }}>*</span>
             </Typography>
             <Box sx={{ display: "flex", gap: 1 }}>
               <FormControl size="small" sx={{ flexShrink: 0 }}>
@@ -1158,7 +1158,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
                     backgroundColor: "#FAFAFA",
                     "& .MuiOutlinedInput-notchedOutline": { borderColor: "#E5E7EB" },
                     "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#9CA3AF" },
-                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "#E8353A", borderWidth: 1.5 },
+                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "#FF3D01", borderWidth: 1.5 },
                     "& .MuiSelect-icon": { fontSize: 16, color: "#6B7280" },
                   }}
                 >
@@ -1221,7 +1221,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
           disabled={submitting}
           sx={{
             textTransform: "none", fontWeight: 700, fontSize: 13,
-            background: "linear-gradient(135deg,#E8353A,#c62a2f)",
+            background: "linear-gradient(135deg,#FF3D01,#c62a2f)",
             borderRadius: "10px", px: 3.5, height: 42,
             fontFamily: "Poppins, sans-serif",
             boxShadow: "0 3px 10px rgba(232,53,58,.4)",
@@ -1319,7 +1319,7 @@ export default function Reservations() {
           <Box
             sx={{
               px: 1.5, py: 0.2, borderRadius: "20px",
-              background: "linear-gradient(135deg,#E8353A,#FF6B6B)",
+              background: "linear-gradient(135deg,#FF3D01,#FF6B6B)",
               boxShadow: "0 2px 8px rgba(232,53,58,.3)",
             }}
           >
@@ -1334,7 +1334,7 @@ export default function Reservations() {
           startIcon={<AddIcon />}
           onClick={() => setNewResOpen(true)}
           sx={{
-            background: "linear-gradient(135deg,#E8353A,#c62a2f)",
+            background: "linear-gradient(135deg,#FF3D01,#c62a2f)",
             textTransform: "none", fontWeight: 600, fontSize: 13,
             height: 36, px: 2.5, borderRadius: "8px",
             fontFamily: "Poppins, sans-serif",
@@ -1518,8 +1518,8 @@ export default function Reservations() {
                 }}
               >
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  <CalendarTodayOutlinedIcon sx={{ fontSize: 15, color: "#E8353A" }} />
-                  <Typography sx={{ fontSize: 13, fontWeight: 700, color: "#E8353A", fontFamily: "Poppins, sans-serif" }}>
+                  <CalendarTodayOutlinedIcon sx={{ fontSize: 15, color: "#FF3D01" }} />
+                  <Typography sx={{ fontSize: 13, fontWeight: 700, color: "#FF3D01", fontFamily: "Poppins, sans-serif" }}>
                     {res.date}, {res.time}
                   </Typography>
                 </Box>

@@ -102,12 +102,12 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 2px solid #E8353A;
+  border: 2px solid #FF3D01;
   background: #fff;
 }
 
 .passcode-dot-filled {
-  background-color: #E8353A;
+  background-color: #FF3D01;
 }
 
 /* ---------- KEYPAD ---------- */
@@ -123,7 +123,7 @@
   width: 40px;
   height: 40px;
   border-radius: 8px;
-  border: 1px solid #E8353A;
+  border: 1px solid #FF3D01;
   display: flex;
   justify-content: center;
   align-items: center;

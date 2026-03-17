@@ -253,14 +253,14 @@ export default function OrdersHistory() {
   }, []);
 
   const handleOrderClick = useCallback((order: any) => {
-    if (order.mode === "draft") { navigate("/menudashboard", { state: { draftOrder: order } }); return; }
-    if (order.status === "billed" || order.status === "paid") { setBilledOrderData(order); setBillDrawerOpen(true); return; }
-    navigate("/menudashboard", { state: { mode: "kot", tableId: order.table_id, activeOrder: order, orderId: order.id, orderNumber: order.order_number } });
+    if (order.mode === "draft") { navigate("/poss", { state: { draftOrder: order } }); return; }
+    const isBilled = order.status === "billed" || order.status === "paid";
+    navigate("/poss", { state: { mode: isBilled ? "view" : "kot", tableId: order.table_id, activeOrder: order, orderId: order.id, orderNumber: order.order_number } });
   }, [navigate]);
 
   const handleNewKot = useCallback((e: React.MouseEvent, order: any) => {
     e.stopPropagation();
-    navigate("/menudashboard", { state: { mode: "kot", tableId: order.table_id, activeOrder: order, orderId: order.id, orderNumber: order.order_number } });
+    navigate("/poss", { state: { mode: "new_kot", tableId: order.table_id, activeOrder: order, orderId: order.id, orderNumber: order.order_number } });
   }, [navigate]);
 
   const moveDrawerToNextStep = useCallback(async () => {
@@ -296,73 +296,6 @@ export default function OrdersHistory() {
   // ── Render ────────────────────────────────────────────────────
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh", backgroundColor: "#F8FAFC", fontFamily: "Poppins, sans-serif" }}>
-
-      {/* ── TOP HEADER BAR ── */}
-      <Box
-        sx={{
-          position: "sticky", top: 0, zIndex: 10,
-          backgroundColor: "#FFFFFF",
-          borderBottom: "1px solid #E5E7EB",
-          boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
-          px: 3, py: 1.2,
-          display: "flex", alignItems: "center", justifyContent: "space-between",
-        }}
-      >
-        {/* Left: title + count + live badge */}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-          <Typography sx={{ fontSize: 18, fontWeight: 700, color: "#111827", fontFamily: "Poppins, sans-serif" }}>
-            Orders History
-          </Typography>
-          <Box sx={{ px: 1.5, py: 0.2, borderRadius: "20px", background: "linear-gradient(135deg,#E8353A,#FF6B6B)", boxShadow: "0 2px 8px rgba(232,53,58,.35)" }}>
-            <Typography sx={{ fontSize: 13, fontWeight: 700, color: "#FFF", fontFamily: "Poppins, sans-serif" }}>{allOrders.length}</Typography>
-          </Box>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 0.6, px: 1.2, py: 0.3, borderRadius: "20px", backgroundColor: "#DCFCE7" }}>
-            <FiberManualRecordIcon sx={{ fontSize: 8, color: "#16A34A" }} />
-            <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#15803D", fontFamily: "Poppins, sans-serif" }}>Real Time Update</Typography>
-          </Box>
-        </Box>
-
-        {/* Right: delivery platform + action buttons */}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-          <FormControl size="small">
-            <Select
-              value={deliveryPlatform || "all_delivery"}
-              onChange={(e) => handleDeliveryPlatformChange(e.target.value)}
-              sx={{ ...selectSx, minWidth: 170 }}
-              IconComponent={KeyboardArrowDownIcon}
-            >
-              <MenuItem value="all_delivery">All Delivery Apps</MenuItem>
-              <MenuItem value="swiggy">Swiggy</MenuItem>
-              <MenuItem value="zomato">Zomato</MenuItem>
-            </Select>
-          </FormControl>
-          <MuiButton
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={() => navigate("/menudashboard")}
-            sx={{
-              background: "linear-gradient(135deg,#E8353A,#c62a2f)", textTransform: "none",
-              fontWeight: 600, fontSize: 13, height: 36, px: 2, borderRadius: "8px",
-              fontFamily: "Poppins, sans-serif", boxShadow: "0 2px 8px rgba(232,53,58,.35)",
-              "&:hover": { background: "linear-gradient(135deg,#c62a2f,#a02020)" },
-            }}
-          >
-            New Order
-          </MuiButton>
-          <MuiButton
-            variant="outlined"
-            startIcon={<MergeIcon />}
-            sx={{
-              borderColor: "#E8353A", color: "#E8353A", textTransform: "none",
-              fontWeight: 600, fontSize: 13, height: 36, px: 2, borderRadius: "8px",
-              fontFamily: "Poppins, sans-serif",
-              "&:hover": { backgroundColor: "#FEF2F2", borderColor: "#c62a2f" },
-            }}
-          >
-            Merge Order
-          </MuiButton>
-        </Box>
-      </Box>
 
       {/* ── FILTER BAR ── */}
       <Box sx={{ backgroundColor: "#FFFFFF", borderBottom: "1px solid #F1F5F9", px: 3, py: 1.2, display: "flex", alignItems: "center", gap: 1.5, flexWrap: "wrap" }}>
@@ -470,10 +403,10 @@ export default function OrdersHistory() {
                 {/* Top row: icon + info + chips */}
                 <Box sx={{ p: 1.5, display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                   <Box sx={{ display: "flex", gap: 1, alignItems: "flex-start" }}>
-                    <Box sx={{ width: 40, height: 40, borderRadius: "10px", flexShrink: 0, background: icon ? "#FEF2F2" : "linear-gradient(135deg,#E8353A20,#FF6B6B30)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <Box sx={{ width: 40, height: 40, borderRadius: "10px", flexShrink: 0, background: icon ? "#FEF2F2" : "linear-gradient(135deg,#FF3D0120,#FF6B6B30)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       {icon
                         ? <img src={icon} width={22} alt="type" />
-                        : <Typography sx={{ fontSize: 10, fontWeight: 700, color: "#E8353A", textAlign: "center", lineHeight: 1.2 }}>
+                        : <Typography sx={{ fontSize: 10, fontWeight: 700, color: "#FF3D01", textAlign: "center", lineHeight: 1.2 }}>
                             {order.customer?.name?.split(" ")[0]?.slice(0, 2)?.toUpperCase() || "--"}
                           </Typography>
                       }
@@ -580,7 +513,7 @@ export default function OrdersHistory() {
                       fontSize: 11, fontWeight: 600, textTransform: "none",
                       borderColor: "#D1D5DB", color: "#374151", borderRadius: "8px",
                       fontFamily: "Poppins, sans-serif", px: 1.2,
-                      "&:hover": { borderColor: "#E8353A", color: "#E8353A", backgroundColor: "#FEF2F2" },
+                      "&:hover": { borderColor: "#FF3D01", color: "#FF3D01", backgroundColor: "#FEF2F2" },
                     }}
                   >
                     New KOT
@@ -597,7 +530,7 @@ export default function OrdersHistory() {
             disabled={page === 1}
             onClick={() => setPage((p) => p - 1)}
             variant="outlined"
-            sx={{ textTransform: "none", fontSize: 13, fontFamily: "Poppins, sans-serif", borderColor: "#D1D5DB", color: "#374151", borderRadius: "8px", "&:hover": { borderColor: "#E8353A", color: "#E8353A" } }}
+            sx={{ textTransform: "none", fontSize: 13, fontFamily: "Poppins, sans-serif", borderColor: "#D1D5DB", color: "#374151", borderRadius: "8px", "&:hover": { borderColor: "#FF3D01", color: "#FF3D01" } }}
           >
             Previous
           </MuiButton>
@@ -608,7 +541,7 @@ export default function OrdersHistory() {
             disabled={page * perPage >= ordersTotal}
             onClick={() => setPage((p) => p + 1)}
             variant="outlined"
-            sx={{ textTransform: "none", fontSize: 13, fontFamily: "Poppins, sans-serif", borderColor: "#D1D5DB", color: "#374151", borderRadius: "8px", "&:hover": { borderColor: "#E8353A", color: "#E8353A" } }}
+            sx={{ textTransform: "none", fontSize: 13, fontFamily: "Poppins, sans-serif", borderColor: "#D1D5DB", color: "#374151", borderRadius: "8px", "&:hover": { borderColor: "#FF3D01", color: "#FF3D01" } }}
           >
             Next
           </MuiButton>

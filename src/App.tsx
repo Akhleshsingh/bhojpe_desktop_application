@@ -46,6 +46,8 @@ import PrintReceiptPage from "./components/PrintReceiptPage";
 import { Toaster } from "react-hot-toast";
 import AllKitchenKot from "./CommonPages/AllKitchenKot";
 import DeliveryExecutivesPage from "./CommonPages/DeliveryExecutivesPage";
+import PrinterSettings from "./CommonPages/PrinterSettings";
+import Poss from "./Pages/Poss";
 export default function App() {
   const [savedOrders, setSavedOrders] = useState<Order[]>([]);
 
@@ -89,7 +91,7 @@ export default function App() {
                             <Route path="/" element={<Login />} />
 
                             <Route
-                              path="/dashboard"
+                              path="/tables"
                               element={
                                 <DashboardLayout>
                                   <Dashboard />
@@ -97,7 +99,7 @@ export default function App() {
                               }
                             />
                             <Route
-                              path="/main-dashboard"
+                              path="/dashboard"
                               element={
                                 <DashboardLayout>
                                   <MainDashboard />
@@ -142,7 +144,7 @@ export default function App() {
                             />
                             {/* Orders History Page */}
                             <Route
-                              path="/ordershistory"
+                              path="/orders"
                               element={
                                 <DashboardLayout>
                                   <OrdersHistory />
@@ -159,7 +161,7 @@ export default function App() {
                               }
                             />
                             <Route
-                              path="/tables"
+                              path="/manage-tables"
                               element={
                                 <DashboardLayout>
                                   <Tables />
@@ -191,6 +193,7 @@ export default function App() {
                               }
                             />
 
+                            <Route path="/poss" element={<Poss />} />
                             <Route path="/print" element={<PrintReceipt />} />
                             <Route path="/print-kot" element={<PrintKot />} />
                             <Route
@@ -278,7 +281,7 @@ export default function App() {
                               }
                             />
                             <Route
-                              path="/kitchens/all-kitchens-kot"
+                              path="/kots"
                               element={
                                 <DashboardLayout>
                                   <AllKitchenKot />
@@ -298,6 +301,14 @@ export default function App() {
                               element={
                                 <DashboardLayout>
                                   <DeliveryExecutivesPage />
+                                </DashboardLayout>
+                              }
+                            />
+                            <Route
+                              path="/printer-settings"
+                              element={
+                                <DashboardLayout>
+                                  <PrinterSettings />
                                 </DashboardLayout>
                               }
                             />

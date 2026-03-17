@@ -126,7 +126,7 @@ export default function DeliveryExecutivesPage() {
               sx={{
                 textTransform: "none", fontSize: 13, fontWeight: 600,
                 fontFamily: "Poppins, sans-serif", height: 38, px: 2,
-                background: "linear-gradient(135deg,#E8353A,#c62a2f)",
+                background: "linear-gradient(135deg,#FF3D01,#c62a2f)",
                 borderRadius: "8px",
                 boxShadow: "0 2px 8px rgba(232,53,58,.35)",
                 "&:hover": { background: "linear-gradient(135deg,#c62a2f,#a02020)" },
@@ -177,7 +177,7 @@ export default function DeliveryExecutivesPage() {
           {!loading && filtered.length === 0 && (
             <Box sx={{ px: 2.5, py: 6, display: "flex", flexDirection: "column", alignItems: "center", gap: 1.5 }}>
               <Box sx={{ width: 56, height: 56, borderRadius: "50%", backgroundColor: "#FEF2F2", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <DeliveryDiningIcon sx={{ fontSize: 28, color: "#E8353A" }} />
+                <DeliveryDiningIcon sx={{ fontSize: 28, color: "#FF3D01" }} />
               </Box>
               <Typography sx={{ fontSize: 15, fontWeight: 600, color: "#374151", fontFamily: "Poppins, sans-serif" }}>
                 No delivery executives found
@@ -265,7 +265,7 @@ export default function DeliveryExecutivesPage() {
                   <IconButton
                     size="small"
                     sx={{
-                      color: "#E8353A", p: 0.5,
+                      color: "#FF3D01", p: 0.5,
                       "&:hover": { backgroundColor: "#FEF2F2" },
                     }}
                   >
@@ -308,8 +308,8 @@ export default function DeliveryExecutivesPage() {
                   sx={{
                     width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center",
                     borderRadius: "6px", cursor: "pointer",
-                    border: `1px solid ${p === page ? "#E8353A" : "#D1D5DB"}`,
-                    backgroundColor: p === page ? "#E8353A" : "#FFFFFF",
+                    border: `1px solid ${p === page ? "#FF3D01" : "#D1D5DB"}`,
+                    backgroundColor: p === page ? "#FF3D01" : "#FFFFFF",
                     transition: "all .15s",
                     "&:hover": { backgroundColor: p === page ? "#c62a2f" : "#F3F4F6" },
                   }}

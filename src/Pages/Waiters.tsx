@@ -93,7 +93,7 @@ export default function Waiters() {
               sx={{
                 textTransform: "none", fontSize: 13, fontWeight: 600,
                 fontFamily: "Poppins, sans-serif", height: 36, px: 2,
-                background: "linear-gradient(135deg,#E8353A,#c62a2f)",
+                background: "linear-gradient(135deg,#FF3D01,#c62a2f)",
                 borderRadius: "8px",
                 boxShadow: "0 2px 8px rgba(232,53,58,.3)",
                 "&:hover": { background: "linear-gradient(135deg,#c62a2f,#a02020)" },
@@ -107,7 +107,7 @@ export default function Waiters() {
         {/* ── LOADING ── */}
         {loading && (
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, py: 6, justifyContent: "center" }}>
-            <CircularProgress size={22} sx={{ color: "#E8353A" }} />
+            <CircularProgress size={22} sx={{ color: "#FF3D01" }} />
             <Typography sx={{ fontSize: 13, color: "#9CA3AF", fontFamily: "Poppins, sans-serif" }}>
               Loading waiters…
             </Typography>
@@ -118,7 +118,7 @@ export default function Waiters() {
         {!loading && filtered.length === 0 && (
           <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", py: 10, gap: 1.5 }}>
             <Box sx={{ width: 60, height: 60, borderRadius: "50%", backgroundColor: "#FEF2F2", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <PeopleOutlineIcon sx={{ fontSize: 30, color: "#E8353A" }} />
+              <PeopleOutlineIcon sx={{ fontSize: 30, color: "#FF3D01" }} />
             </Box>
             <Typography sx={{ fontSize: 15, fontWeight: 600, color: "#374151", fontFamily: "Poppins, sans-serif" }}>
               No waiters found
@@ -211,7 +211,7 @@ export default function Waiters() {
                   {/* Contact info */}
                   <Box sx={{ display: "flex", flexDirection: "column", gap: 0.7, flex: 1 }}>
                     <Box sx={{ display: "flex", alignItems: "center", gap: 0.8 }}>
-                      <LocalPhoneOutlinedIcon sx={{ fontSize: 14, color: "#E8353A", flexShrink: 0 }} />
+                      <LocalPhoneOutlinedIcon sx={{ fontSize: 14, color: "#FF3D01", flexShrink: 0 }} />
                       <Typography sx={{ fontSize: 13, color: "#374151", fontFamily: "Poppins, sans-serif" }}>
                         {waiter.phone_number || "—"}
                       </Typography>

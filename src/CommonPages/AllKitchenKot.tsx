@@ -184,7 +184,7 @@ export default function AllKitchenKot() {
               px: 1.5,
               py: 0.2,
               borderRadius: "20px",
-              background: "linear-gradient(135deg, #E8353A 0%, #FF6B6B 100%)",
+              background: "linear-gradient(135deg, #FF3D01 0%, #FF6B6B 100%)",
               boxShadow: "0 2px 8px rgba(232,53,58,0.35)",
             }}
           >
@@ -490,12 +490,12 @@ export default function AllKitchenKot() {
               <IconButton
                 size="small"
                 sx={{
-                  background: "linear-gradient(135deg, #E8353A 0%, #FF6B6B 100%)",
+                  background: "linear-gradient(135deg, #FF3D01 0%, #FF6B6B 100%)",
                   color: "#FFF",
                   width: 34,
                   height: 34,
                   boxShadow: "0 2px 6px rgba(232,53,58,0.35)",
-                  "&:hover": { background: "linear-gradient(135deg, #c62a2f 0%, #E8353A 100%)" },
+                  "&:hover": { background: "linear-gradient(135deg, #c62a2f 0%, #FF3D01 100%)" },
                 }}
               >
                 <PrintIcon sx={{ fontSize: 17 }} />

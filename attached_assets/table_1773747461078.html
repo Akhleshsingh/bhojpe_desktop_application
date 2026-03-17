@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bhojpe — Table View</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --accent:#FF3D01;
+  --accent-h:#e63500;
+  --accent-dim:rgba(255,61,1,0.08);
+  --accent-mid:rgba(255,61,1,0.14);
+  --accent-bdr:rgba(255,61,1,0.28);
+  --bg:#f5f0ea;
+  --white:#ffffff;
+  --s1:#faf7f3;
+  --s2:#f0ebe3;
+  --s3:#e6dfd6;
+  --border:#e2d9d0;
+  --border2:#cfc5ba;
+  --text:#1a1208;
+  --text2:#6b5c4a;
+  --text3:#a8978a;
+  --green:#1e8c45;
+  --blue:#2563eb;
+  --amber:#b45309;
+  /* Table states */
+  --avail-bg:#ffffff;
+  --avail-bdr:#d1d5db;
+  --running-bg:#dbeafe;
+  --running-bdr:#93c5fd;
+  --running-text:#1d4ed8;
+  --reserved-bg:#ffe4d6;
+  --reserved-bdr:#fdba74;
+  --reserved-text:#c2410c;
+  --billprint-bg:#fef9c3;
+  --billprint-bdr:#fde047;
+  --billprint-text:#a16207;
+  --sh:0 1px 4px rgba(0,0,0,0.07);
+  --sh2:0 4px 16px rgba(0,0,0,0.10);
+}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden;font-size:14px}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;padding:0 18px;height:56px;background:var(--white);border-bottom:1px solid var(--border);gap:10px;flex-shrink:0;box-shadow:0 1px 6px rgba(0,0,0,0.06)}
+.logo-wrap{display:flex;align-items:center;gap:10px}
+.logo-icon{width:36px;height:36px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 3px 10px rgba(255,61,1,0.28)}
+.logo-col{display:flex;flex-direction:column;line-height:1.1}
+.logo-name{font-family:'Playfair Display',serif;font-size:21px;font-weight:700;color:var(--accent)}
+.logo-sub{font-size:9px;color:var(--text3);margin-top:2px}
+.sep{width:1px;height:26px;background:var(--border);margin:0 4px;flex-shrink:0}
+.order-pills{display:flex;gap:7px}
+.order-pill{display:flex;align-items:center;gap:7px;padding:5px 13px 5px 10px;background:var(--s1);border:1px solid var(--border);border-radius:30px;cursor:pointer;font-size:12px;color:var(--text2);font-weight:500;transition:all .15s}
+.order-pill:hover{border-color:var(--border2)}
+.pill-badge{min-width:18px;height:18px;border-radius:9px;padding:0 5px;background:var(--accent);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.pill-badge.empty{background:var(--s3);color:var(--text3)}
+.new-order-btn{padding:7px 16px;background:var(--accent);border:none;border-radius:9px;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:7px;white-space:nowrap;box-shadow:0 3px 10px rgba(255,61,1,0.25);transition:background .15s}
+.new-order-btn:hover{background:var(--accent-h)}
+.topbar-spacer{flex:1}
+.topbar-icons{display:flex;align-items:center;gap:2px}
+.t-icon{width:36px;height:36px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:16px;transition:all .15s;border:none;background:none}
+.t-icon:hover{background:var(--s2)}
+.t-icon.active{color:var(--accent);background:var(--accent-dim)}
+
+/* CONTENT */
+.content{flex:1;overflow-y:auto;padding:20px 22px}
+.content::-webkit-scrollbar{width:5px}
+.content::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+
+/* PAGE HEADER */
+.page-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:16px;
+}
+.page-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--text)}
+.header-actions{display:flex;align-items:center;gap:8px}
+.header-btn{
+  padding:8px 16px;background:var(--white);border:1.5px solid var(--border);
+  border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text2);
+  font-family:'Plus Jakarta Sans',sans-serif;transition:all .15s;display:flex;align-items:center;gap:6px;
+}
+.header-btn:hover{border-color:var(--border2);color:var(--text)}
+.add-table-btn{
+  padding:8px 18px;background:var(--accent);border:none;border-radius:9px;color:#fff;
+  font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:13px;cursor:pointer;
+  box-shadow:0 3px 10px rgba(255,61,1,0.25);transition:background .15s;display:flex;align-items:center;gap:6px;
+}
+.add-table-btn:hover{background:var(--accent-h)}
+
+/* CONTROLS ROW */
+.controls-row{
+  display:flex;align-items:center;gap:10px;
+  margin-bottom:20px;flex-wrap:wrap;
+}
+.area-tabs{display:flex;gap:6px}
+.area-tab{
+  padding:7px 16px;border-radius:20px;font-size:12px;font-weight:600;
+  cursor:pointer;border:1.5px solid var(--border);background:var(--white);
+  color:var(--text2);transition:all .15s;font-family:'Plus Jakarta Sans',sans-serif;
+}
+.area-tab:hover{border-color:var(--border2);color:var(--text)}
+.area-tab.active{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(255,61,1,0.25)}
+
+.controls-spacer{flex:1}
+
+.legend{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);font-weight:500}
+.legend-dot{width:12px;height:12px;border-radius:3px;border:1.5px solid}
+.legend-dot.avail{background:var(--avail-bg);border-color:var(--avail-bdr)}
+.legend-dot.running{background:var(--running-bg);border-color:var(--running-bdr)}
+.legend-dot.reserved{background:var(--reserved-bg);border-color:var(--reserved-bdr)}
+.legend-dot.billprint{background:var(--billprint-bg);border-color:var(--billprint-bdr)}
+
+.action-btns{display:flex;gap:8px}
+.action-chip{
+  display:flex;align-items:center;gap:6px;padding:7px 14px;
+  background:var(--white);border:1.5px solid var(--border);border-radius:9px;
+  font-size:12px;font-weight:600;cursor:pointer;color:var(--text2);
+  font-family:'Plus Jakarta Sans',sans-serif;transition:all .15s;
+}
+.action-chip:hover{border-color:var(--border2);color:var(--text)}
+
+/* FLOOR SECTIONS */
+.floor-section{margin-bottom:24px}
+.floor-header{
+  display:flex;align-items:center;gap:12px;margin-bottom:12px;
+}
+.floor-name{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--text)}
+.floor-count{
+  font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;
+  background:var(--s2);color:var(--text2);border:1px solid var(--border);
+}
+.add-floor-table{
+  padding:4px 12px;background:none;border:1.5px dashed var(--border2);
+  border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;color:var(--text3);
+  font-family:'Plus Jakarta Sans',sans-serif;transition:all .15s;
+}
+.add-floor-table:hover{border-color:var(--accent);color:var(--accent)}
+
+/* TABLE GRID */
+.tables-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+
+/* TABLE CARD */
+.table-card{
+  border:1.5px solid;border-radius:14px;padding:13px;
+  cursor:pointer;transition:all .18s;position:relative;
+  min-height:110px;display:flex;flex-direction:column;
+}
+.table-card:hover{transform:translateY(-2px);box-shadow:var(--sh2)}
+.table-card.avail{background:var(--avail-bg);border-color:var(--avail-bdr)}
+.table-card.running{background:var(--running-bg);border-color:var(--running-bdr)}
+.table-card.reserved{background:var(--reserved-bg);border-color:var(--reserved-bdr)}
+.table-card.billprint{background:var(--billprint-bg);border-color:var(--billprint-bdr)}
+
+.tc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px}
+.tc-seats{font-size:11px;font-weight:600;color:var(--text3)}
+.tc-kots{font-size:11px;font-weight:700}
+.table-card.avail .tc-kots{color:var(--text3)}
+.table-card.running .tc-kots{color:var(--running-text)}
+.table-card.reserved .tc-kots{color:var(--reserved-text)}
+.table-card.billprint .tc-kots{color:var(--billprint-text)}
+
+.tc-name{
+  font-family:'Playfair Display',serif;font-size:26px;font-weight:700;
+  margin-bottom:2px;
+}
+.table-card.avail .tc-name{color:#9ca3af}
+.table-card.running .tc-name{color:var(--running-text)}
+.table-card.reserved .tc-name{color:var(--reserved-text)}
+.table-card.billprint .tc-name{color:var(--billprint-text)}
+
+.tc-time{font-size:12px;font-weight:700;margin-bottom:10px}
+.table-card.avail .tc-time{color:var(--text3)}
+.table-card.running .tc-time{color:var(--running-text)}
+.table-card.reserved .tc-time{color:var(--reserved-text)}
+.table-card.billprint .tc-time{color:var(--billprint-text)}
+
+.tc-actions{display:flex;gap:6px;margin-top:auto}
+.tc-btn{
+  width:30px;height:30px;border-radius:8px;border:1px solid;
+  display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;
+  transition:opacity .15s;background:rgba(255,255,255,0.7);
+}
+.tc-btn:hover{opacity:.75}
+.table-card.avail .tc-btn{border-color:var(--border)}
+.table-card.running .tc-btn{border-color:var(--running-bdr)}
+.table-card.reserved .tc-btn{border-color:var(--reserved-bdr)}
+.table-card.billprint .tc-btn{border-color:var(--billprint-bdr)}
+
+/* Toast */
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--green);color:#fff;padding:11px 24px;border-radius:11px;font-weight:600;font-size:13px;transition:transform .3s;z-index:999;white-space:nowrap;box-shadow:0 6px 20px rgba(0,0,0,0.15)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo-wrap">
+    <div class="logo-icon">🍽️</div>
+    <div class="logo-col">
+      <div class="logo-name">Bhojpe</div>
+      <div class="logo-sub">by Nepson Infotech LLP</div>
+    </div>
+  </div>
+  <div class="sep"></div>
+  <div class="order-pills">
+    <div class="order-pill">🍽️ Dine In <div class="pill-badge empty">0</div></div>
+    <div class="order-pill">🥡 Takeaway <div class="pill-badge empty">0</div></div>
+    <div class="order-pill">🛵 Delivery <div class="pill-badge empty">0</div></div>
+  </div>
+  <button class="new-order-btn">+ New Order</button>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-icons">
+    <button class="t-icon">🧾</button>
+    <button class="t-icon">💳</button>
+    <button class="t-icon active">🖥️</button>
+    <button class="t-icon">📦</button>
+    <button class="t-icon">🔄</button>
+    <button class="t-icon">🔔</button>
+    <button class="t-icon">⚙️</button>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-title">Table View</div>
+    <div class="header-actions">
+      <button class="header-btn" onclick="showToast('Pickup orders')">🥡 Pickup</button>
+      <button class="header-btn" onclick="showToast('Delivery orders')">🛵 Delivery</button>
+      <button class="add-table-btn" onclick="showToast('Add table dialog')">+ Add Table</button>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls-row">
+    <div class="area-tabs">
+      <div class="area-tab active" onclick="filterArea(this,'all')">All Area</div>
+      <div class="area-tab" onclick="filterArea(this,'ground')">Ground Floor</div>
+      <div class="area-tab" onclick="filterArea(this,'first')">First Floor</div>
+      <div class="area-tab" onclick="filterArea(this,'roof')">Roof Top</div>
+    </div>
+    <div class="controls-spacer"></div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot avail"></div>Available</div>
+      <div class="legend-item"><div class="legend-dot running"></div>Running</div>
+      <div class="legend-item"><div class="legend-dot reserved"></div>Reserved</div>
+      <div class="legend-item"><div class="legend-dot billprint"></div>Bill Print</div>
+    </div>
+    <div class="action-btns">
+      <div class="action-chip" onclick="showToast('Items/KOT Move')">🔀 Items/KOT Move</div>
+      <div class="action-chip" onclick="showToast('Merge Table')">⇄ Merge Table</div>
+    </div>
+  </div>
+
+  <!-- GROUND FLOOR -->
+  <div class="floor-section" data-floor="ground">
+    <div class="floor-header">
+      <div class="floor-name">Ground Floor</div>
+      <div class="floor-count">6 Tables</div>
+      <button class="add-floor-table" onclick="showToast('Add table to Ground Floor')">+ Add Table</button>
+    </div>
+    <div class="tables-grid">
+      <div class="table-card running" onclick="showToast('T-1 Ground Floor')">
+        <div class="tc-top"><span class="tc-seats">4 Seat(s)</span><span class="tc-kots">2 KOT</span></div>
+        <div class="tc-name">T-1</div>
+        <div class="tc-time">16m</div>
+        <div class="tc-actions">
+          <div class="tc-btn" title="View">👁</div>
+          <div class="tc-btn" title="Bill">🧾</div>
+        </div>
+      </div>
+      <div class="table-card running" onclick="showToast('T-2 Ground Floor')">
+        <div class="tc-top"><span class="tc-seats">4 Seat(s)</span><span class="tc-kots">2 KOT</span></div>
+        <div class="tc-name">T-2</div>
+        <div class="tc-time">22m</div>
+        <div class="tc-actions">
+          <div class="tc-btn">👁</div>
+          <div class="tc-btn">🧾</div>
+        </div>
+      </div>
+      <div class="table-card avail" onclick="showToast('T-3 available')">
+        <div class="tc-top"><span class="tc-seats">6 Seat(s)</span><span class="tc-kots">0 KOT</span></div>
+        <div class="tc-name">T-3</div>
+        <div class="tc-time">—</div>
+        <div class="tc-actions"></div>
+      </div>
+      <div class="table-card reserved" onclick="showToast('T-4 Reserved')">
+        <div class="tc-top"><span class="tc-seats">8 Seat(s)</span><span class="tc-kots">0 KOT</span></div>
+        <div class="tc-name">T-4</div>
+        <div class="tc-time">Reserved</div>
+        <div class="tc-actions">
+          <div class="tc-btn">📅</div>
+        </div>
+      </div>
+      <div class="table-card running" onclick="showToast('T-5 Ground Floor')">
+        <div class="tc-top"><span class="tc-seats">4 Seat(s)</span><span class="tc-kots">2 KOT</span></div>
+        <div class="tc-name">T-5</div>
+        <div class="tc-time">25m</div>
+        <div class="tc-actions">
+          <div class="tc-btn">👁</div>
+          <div class="tc-btn">🧾</div>
+        </div>
+      </div>
+      <div class="table-card billprint" onclick="showToast('T-6 Bill Print')">
+        <div class="tc-top"><span class="tc-seats">4 Seat(s)</span><span class="tc-kots">4 KOT</span></div>
+        <div class="tc-name">T-6</div>
+        <div class="tc-time">33m</div>
+        <div class="tc-actions">
+          <div class="tc-btn">👁</div>
+          <div class="tc-btn">🖨️</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FIRST FLOOR -->
+  <div class="floor-section" data-floor="first">
+    <div class="floor-header">
+      <div class="floor-name">First Floor</div>
+      <div class="floor-count">6 Tables</div>
+      <button class="add-floor-table" onclick="showToast('Add table to First Floor')">+ Add Table</button>
+    </div>
+    <div class="tables-grid">
+      <div class="table-card running" onclick="showToast('T-1 First Floor')">
+        <div class="tc-top"><span class="tc-seats">4 Seat(s)</span><span class="tc-kots">1 KOT</span></div>
+        <div class="tc-name">T-1</div>
+        <div class="tc-time">3m</div>
+        <div class="tc-actions"><div class="tc-btn">👁</div><div class="tc-btn">🧾</div></div>
+      </div>
+      <div class="table-card running" onclick="showToast('T-2 First Floor')">
+        <div class="tc-top"><span class="tc-seats">4 Seat(s)</span><span class="tc-kots">6 KOT</span></div>
+        <div class="tc-name">T-2</div>
+        <div class="tc-time" style="color:#c2410c">45m</div>
+        <div class="tc-actions"><div class="tc-btn">👁</div><div class="tc-btn">🧾</div></div>
+      </div>
+      <div class="table-card running" onclick="showToast('T-3 First Floor')">
+        <div class="tc-top"><span class="tc-seats">4 Seat(s)</span><span class="tc-kots">5 KOT</span></div>
+        <div class="tc-name">T-3</div>
+        <div class="tc-time" style="color:#c2410c">1h</div>
+        <div class="tc-actions"><div class="tc-btn">👁</div><div class="tc-btn">🧾</div></div>
+      </div>
+      <div class="table-card avail"><div class="tc-top"><span class="tc-seats">8 Seat(s)</span><span class="tc-kots">0 KOT</span></div><div class="tc-name">T-4</div><div class="tc-time">—</div></div>
+      <div class="table-card avail"><div class="tc-top"><span class="tc-seats">4 Seat(s)</span><span class="tc-kots">0 KOT</span></div><div class="tc-name">T-5</div><div class="tc-time">—</div></div>
+      <div class="table-card billprint" onclick="showToast('T-6 Bill Print')">
+        <div class="tc-top"><span class="tc-seats">4 Seat(s)</span><span class="tc-kots">2 KOT</span></div>
+        <div class="tc-name">T-6</div>
+        <div class="tc-time">25m</div>
+        <div class="tc-actions"><div class="tc-btn">👁</div><div class="tc-btn">🖨️</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROOF TOP -->
+  <div class="floor-section" data-floor="roof">
+    <div class="floor-header">
+      <div class="floor-name">Roof Top</div>
+      <div class="floor-count">6 Tables</div>
+      <button class="add-floor-table" onclick="showToast('Add table to Roof Top')">+ Add Table</button>
+    </div>
+    <div class="tables-grid">
+      <div class="table-card avail"><div class="tc-top"><span class="tc-seats">2 Seat(s)</span><span class="tc-kots">0 KOT</span></div><div class="tc-name">T-1</div><div class="tc-time">—</div></div>
+      <div class="table-card avail"><div class="tc-top"><span class="tc-seats">3 Seat(s)</span><span class="tc-kots">0 KOT</span></div><div class="tc-name">T-2</div><div class="tc-time">—</div></div>
+      <div class="table-card avail"><div class="tc-top"><span class="tc-seats">6 Seat(s)</span><span class="tc-kots">0 KOT</span></div><div class="tc-name">T-3</div><div class="tc-time">—</div></div>
+      <div class="table-card avail"><div class="tc-top"><span class="tc-seats">8 Seat(s)</span><span class="tc-kots">0 KOT</span></div><div class="tc-name">T-4</div><div class="tc-time">—</div></div>
+      <div class="table-card reserved" onclick="showToast('T-5 Reserved')">
+        <div class="tc-top"><span class="tc-seats">4 Seat(s)</span><span class="tc-kots">0 KOT</span></div>
+        <div class="tc-name">T-5</div>
+        <div class="tc-time">12m</div>
+        <div class="tc-actions"><div class="tc-btn">📅</div></div>
+      </div>
+      <div class="table-card running" onclick="showToast('T-6 Roof Top')">
+        <div class="tc-top"><span class="tc-seats">4 Seat(s)</span><span class="tc-kots">1 KOT</span></div>
+        <div class="tc-name">T-6</div>
+        <div class="tc-time">12m</div>
+        <div class="tc-actions"><div class="tc-btn">👁</div><div class="tc-btn">🧾</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function filterArea(el, area) {
+  document.querySelectorAll('.area-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.floor-section').forEach(sec => {
+    if (area === 'all') { sec.style.display = ''; return; }
+    const map = { ground:'ground', first:'first', roof:'roof' };
+    sec.style.display = sec.dataset.floor === map[area] ? '' : 'none';
+  });
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+</script>
+</body>
+</html>
