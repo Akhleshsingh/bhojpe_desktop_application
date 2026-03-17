@@ -495,42 +495,49 @@ export default function Poss() {
       <Box sx={{display:"flex",flex:1,overflow:"hidden",minHeight:0}}>
 
         {/* ── SIDEBAR ───────────────────────────────────────────────────── */}
-        <Box sx={{width:162,background:C.w,borderRight:`1px solid ${C.bd}`,display:"flex",flexDirection:"column",flexShrink:0,overflow:"hidden"}}>
+        <Box sx={{width:190,minWidth:170,background:C.w,borderRight:`1.5px solid ${C.bd}`,display:"flex",flexDirection:"column",flexShrink:0,overflow:"hidden",boxShadow:"2px 0 8px rgba(0,0,0,.04)"}}>
           {/* Tab toggle */}
-          <Box sx={{display:"grid",gridTemplateColumns:"1fr 1fr",borderBottom:`1px solid ${C.bd}`,flexShrink:0}}>
+          <Box sx={{display:"grid",gridTemplateColumns:"1fr 1fr",borderBottom:`1.5px solid ${C.bd}`,flexShrink:0,background:C.s1}}>
             {(["cat","menu"] as const).map(m=>(
               <Box key={m} component="button" onClick={()=>{setSideMode(m);setSelectedCategoryId(null);setSelectedMenuId(null);setActiveMealTime(null);}}
-                sx={{py:"9px",textAlign:"center",fontSize:"10px",fontWeight:700,cursor:"pointer",color:sideMode===m?C.ac:C.t3,border:"none",background:sideMode===m?C.adim:"none",fontFamily:FONT,letterSpacing:".5px",textTransform:"uppercase",transition:"all .14s",borderBottom:`2px solid ${sideMode===m?C.ac:"transparent"}`}}>
-                {m==="cat"?"CATEGORY":"MENU"}
+                sx={{py:"10px",textAlign:"center",fontSize:"10.5px",fontWeight:800,cursor:"pointer",color:sideMode===m?C.ac:C.t3,border:"none",background:sideMode===m?C.w:"transparent",fontFamily:FONT,letterSpacing:".6px",textTransform:"uppercase",transition:"all .15s",borderBottom:`2.5px solid ${sideMode===m?C.ac:"transparent"}`,boxShadow:sideMode===m?"0 1px 0 #fff inset":"none"}}>
+                {m==="cat"?"Category":"Menu"}
               </Box>
             ))}
           </Box>
           {/* List */}
-          <Box sx={{flex:1,overflowY:"auto",py:"5px",px:"7px"}}>
+          <Box sx={{flex:1,overflowY:"auto",py:"6px",px:"8px"}}>
             {sideMode==="cat" ? (
               <>
-                {/* All option */}
-                {[{ id:null, name:"All", cnt:menuItems.length }, ...categories.map((c:any)=>({ id:c.id, name:c.name, cnt:menuItems.filter((m:MenuItem)=>m.item_category_id===c.id||m.category_id===c.id).length }))].map(cat=>{
+                {[
+                  { id:null as number|null, label:"All Items", cnt:menuItems.length },
+                  ...categories.map((c:any)=>({
+                    id: c.id as number,
+                    label: (typeof c.category_name==="object" ? c.category_name?.en : c.category_name) ?? c.name ?? "Unknown",
+                    cnt: menuItems.filter((m:MenuItem)=>m.item_category_id===c.id||m.category_id===c.id).length,
+                  }))
+                ].map(cat=>{
                   const active = selectedCategoryId===cat.id;
                   return (
                     <Box key={cat.id??0} onClick={()=>setSelectedCategoryId(cat.id)}
-                      sx={{display:"flex",alignItems:"center",justifyContent:"space-between",px:"9px",py:"8px",borderRadius:"10px",mb:"2px",cursor:"pointer",fontSize:"12.5px",color:active?C.ac:C.t2,fontWeight:active?700:500,border:`1.5px solid ${active?C.abdr:"transparent"}`,background:active?C.adim:"transparent",transition:"all .13s","&:hover":{background:active?C.adim:C.s2,color:active?C.ac:C.tx}}}>
-                      <span style={{overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",maxWidth:100}}>{cat.name}</span>
-                      <Box component="span" sx={{fontSize:"9.5px",fontWeight:700,px:"5px",py:"1px",borderRadius:"8px",background:active?C.amid:C.s2,color:active?C.ac:C.t3,flexShrink:0}}>{cat.cnt}</Box>
+                      sx={{display:"flex",alignItems:"center",justifyContent:"space-between",px:"10px",py:"9px",borderRadius:"10px",mb:"2px",cursor:"pointer",color:active?C.ac:C.t2,fontWeight:active?700:500,border:`1.5px solid ${active?C.abdr:"transparent"}`,background:active?C.adim:"transparent",transition:"all .13s","&:hover":{background:active?C.adim:C.s2,color:active?C.ac:C.tx}}}>
+                      <Typography sx={{fontSize:"12px",fontWeight:"inherit",color:"inherit",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",maxWidth:120,fontFamily:FONT}}>{cat.label}</Typography>
+                      <Box component="span" sx={{fontSize:"10px",fontWeight:700,minWidth:20,textAlign:"center",px:"5px",py:"1.5px",borderRadius:"8px",background:active?C.amid:C.s2,color:active?C.ac:C.t3,flexShrink:0,ml:"4px"}}>{cat.cnt}</Box>
                     </Box>
                   );
                 })}
               </>
             ) : (
               <>
-                {(menus.length > 0 ? menus : MEAL_TIMES.map(mt=>({id:mt.key,name:`${mt.icon} ${mt.key}`}))).map((menu:any)=>{
+                {(menus.length > 0 ? menus : MEAL_TIMES.map(mt=>({id:mt.key,menu_name:{en:`${mt.icon} ${mt.key}`}}))).map((menu:any)=>{
+                  const label = (typeof menu.menu_name==="object" ? menu.menu_name?.en : menu.menu_name) ?? menu.name ?? "Menu";
                   const isActive = typeof menu.id==="number" ? selectedMenuId===menu.id : activeMealTime===menu.id;
                   const cnt = typeof menu.id==="number" ? menuItems.filter((m:MenuItem)=>m.menu_id===menu.id).length : (MEAL_TIMES.find(mt=>mt.key===menu.id)?.cats.length??0);
                   return (
                     <Box key={menu.id} onClick={()=>{ if(typeof menu.id==="number"){setSelectedMenuId(isActive?null:menu.id);setActiveMealTime(null);}else{setActiveMealTime(isActive?null:menu.id);setSelectedMenuId(null);}}}
-                      sx={{display:"flex",alignItems:"center",justifyContent:"space-between",px:"9px",py:"8px",borderRadius:"10px",mb:"2px",cursor:"pointer",fontSize:"12.5px",fontWeight:700,border:`1.5px solid ${isActive?C.abdr:"transparent"}`,background:isActive?C.adim:"transparent",color:isActive?C.ac:C.t2,transition:"all .13s","&:hover":{background:isActive?C.adim:C.s2}}}>
-                      <span style={{overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",maxWidth:100}}>{menu.name}</span>
-                      <Box component="span" sx={{fontSize:"9.5px",fontWeight:700,px:"5px",py:"1px",borderRadius:"8px",background:isActive?C.amid:C.s2,color:isActive?C.ac:C.t3,flexShrink:0}}>{cnt}</Box>
+                      sx={{display:"flex",alignItems:"center",justifyContent:"space-between",px:"10px",py:"9px",borderRadius:"10px",mb:"2px",cursor:"pointer",border:`1.5px solid ${isActive?C.abdr:"transparent"}`,background:isActive?C.adim:"transparent",color:isActive?C.ac:C.t2,transition:"all .13s","&:hover":{background:isActive?C.adim:C.s2}}}>
+                      <Typography sx={{fontSize:"12px",fontWeight:isActive?700:500,color:"inherit",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",maxWidth:120,fontFamily:FONT}}>{label}</Typography>
+                      <Box component="span" sx={{fontSize:"10px",fontWeight:700,minWidth:20,textAlign:"center",px:"5px",py:"1.5px",borderRadius:"8px",background:isActive?C.amid:C.s2,color:isActive?C.ac:C.t3,flexShrink:0,ml:"4px"}}>{cnt}</Box>
                     </Box>
                   );
                 })}
@@ -542,49 +549,96 @@ export default function Poss() {
         {/* ── CENTER (Search + Grid) ─────────────────────────────────────── */}
         <Box sx={{display:"flex",flexDirection:"column",flex:1,overflow:"hidden",minWidth:0}}>
           {/* Top bar */}
-          <Box sx={{display:"flex",alignItems:"center",gap:"9px",px:"12px",py:"7px",background:C.w,borderBottom:`1px solid ${C.bd}`,flexShrink:0}}>
-            <Box sx={{position:"relative",flex:1,maxWidth:340}}>
-              <Box component="span" sx={{position:"absolute",left:9,top:"50%",transform:"translateY(-50%)",color:C.t3,fontSize:14,pointerEvents:"none"}}>🔍</Box>
+          <Box sx={{display:"flex",alignItems:"center",gap:"10px",px:"14px",py:"8px",background:C.w,borderBottom:`1.5px solid ${C.bd}`,flexShrink:0}}>
+            <Box sx={{position:"relative",flex:1}}>
+              <Box component="span" sx={{position:"absolute",left:11,top:"50%",transform:"translateY(-50%)",color:C.t3,fontSize:15,pointerEvents:"none",lineHeight:1}}>🔍</Box>
               <Box component="input" value={srchQ} onChange={(e:any)=>setSrchQ(e.target.value)} placeholder="Search menu items…"
-                sx={{width:"100%",background:C.s1,border:`1.5px solid ${C.bd}`,borderRadius:"10px",py:"7px",pl:"30px",pr:"10px",color:C.tx,fontFamily:FONT,fontSize:"12.5px",outline:"none",transition:"border-color .2s","&:focus":{borderColor:C.ac,background:C.w},"&::placeholder":{color:C.t3}}} />
+                sx={{width:"100%",background:C.s1,border:`1.5px solid ${C.bd}`,borderRadius:"10px",py:"8px",pl:"34px",pr:"12px",color:C.tx,fontFamily:FONT,fontSize:"13px",outline:"none",transition:"all .2s","&:focus":{borderColor:C.ac,background:C.w,boxShadow:`0 0 0 3px ${C.adim}`},"&::placeholder":{color:C.t3}}} />
+              {srchQ && <Box component="button" onClick={()=>setSrchQ("")} sx={{position:"absolute",right:10,top:"50%",transform:"translateY(-50%)",width:16,height:16,borderRadius:"50%",background:C.t3,border:"none",cursor:"pointer",fontSize:9,color:"#fff",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:800}}>✕</Box>}
             </Box>
-            <Box sx={{display:"flex",gap:"5px"}}>
+            <Box sx={{display:"flex",gap:"6px",flexShrink:0}}>
               {(["all","veg","nonveg"] as const).map(f=>{
                 const on = vegFilter===f;
-                const cfg = { all:{label:"All",c:C.t2,dc:C.s1,bd:C.bd}, veg:{label:"● Veg",c:C.grn,dc:C.gdim,bd:C.gbdr}, nonveg:{label:"● Non-Veg",c:C.red,dc:C.rdim,bd:C.rbdr} }[f];
+                const cfg = {
+                  all:    {label:"All",    c:C.tx,   dc:C.s1,   bd:C.bd  },
+                  veg:    {label:"🟢 Veg",  c:C.grn,  dc:C.gdim, bd:C.gbdr},
+                  nonveg: {label:"🔴 Non-Veg",c:C.red,dc:C.rdim, bd:C.rbdr},
+                }[f];
                 return (
                   <Box key={f} component="button" onClick={()=>setVegFilter(f)}
-                    sx={{px:"10px",py:"5px",borderRadius:"20px",fontSize:"11px",fontWeight:700,cursor:"pointer",border:`1.5px solid ${on?cfg.bd:C.bd}`,background:on?cfg.dc:C.s1,color:on?cfg.c:C.t3,fontFamily:FONT,transition:"all .13s"}}>
+                    sx={{px:"12px",py:"6px",borderRadius:"20px",fontSize:"11.5px",fontWeight:700,cursor:"pointer",border:`1.5px solid ${on?cfg.bd:C.bd}`,background:on?cfg.dc:C.s1,color:on?cfg.c:C.t3,fontFamily:FONT,transition:"all .14s",whiteSpace:"nowrap","&:hover":{borderColor:cfg.bd,color:cfg.c,background:cfg.dc}}}>
                     {cfg.label}
                   </Box>
                 );
               })}
             </Box>
+            <Typography sx={{fontSize:"11px",color:C.t3,flexShrink:0,fontWeight:600}}>{gridItems.length} items</Typography>
           </Box>
-          {/* Product Grid */}
-          <Box sx={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:"8px",px:"10px",py:"10px",overflowY:"auto",flex:1,alignContent:"start"}}>
+
+          {/* Product Grid — responsive columns */}
+          <Box sx={{
+            display:"grid",
+            gridTemplateColumns:"repeat(auto-fill, minmax(155px, 1fr))",
+            gap:"10px",
+            px:"12px",
+            py:"12px",
+            overflowY:"auto",
+            flex:1,
+            alignContent:"start",
+          }}>
             {gridItems.length===0 ? (
-              <Box sx={{gridColumn:"1/-1",textAlign:"center",color:C.t3,py:"40px",fontSize:13}}>
-                {menuLoading ? "Loading items…" : "Koi item nahi mila"}
+              <Box sx={{gridColumn:"1/-1",textAlign:"center",py:"60px",display:"flex",flexDirection:"column",alignItems:"center",gap:"10px"}}>
+                <Typography sx={{fontSize:40,opacity:.15}}>🍽️</Typography>
+                <Typography sx={{fontSize:14,fontWeight:700,color:C.t2}}>{menuLoading ? "Loading items…" : "No items found"}</Typography>
+                {srchQ && <Box component="button" onClick={()=>setSrchQ("")} sx={{px:"12px",py:"6px",background:C.adim,border:`1px solid ${C.abdr}`,borderRadius:"8px",fontSize:12,fontWeight:700,color:C.ac,cursor:"pointer",fontFamily:FONT}}>Clear search</Box>}
               </Box>
             ) : gridItems.map((item: MenuItem) => {
-              const qty   = cart.filter(c=>c.item.id===item.id).reduce((s,c)=>s+c.qty,0);
+              const cartEntry = cart.filter(c=>c.item.id===item.id);
+              const qty = cartEntry.reduce((s,c)=>s+c.qty,0);
               const ft    = foodType(item);
               const emoji = foodEmoji(item.item_name);
+              const hasVariations = (item.variations?.length??0) > 0;
               return (
                 <Box key={item.id} onClick={()=>addItem(item)}
-                  sx={{background:C.w,border:`1.5px solid ${qty>0?C.ac:C.bd}`,borderRadius:"13px",overflow:"hidden",cursor:"pointer",transition:"all .15s",display:"flex",flexDirection:"column",boxShadow:"0 1px 4px rgba(0,0,0,.06)",position:"relative","&:hover":{transform:"translateY(-2px)",boxShadow:"0 8px 24px rgba(0,0,0,.1)",borderColor:qty>0?C.ac:C.bd2},...(qty>0?{boxShadow:`0 0 0 2px ${C.adim}`}:{})}}>
-                  <Box sx={{width:"100%",aspectRatio:"4/3",background:"linear-gradient(145deg,#fff4ee,#fce3d4)",display:"flex",alignItems:"center",justifyContent:"center",position:"relative",overflow:"hidden"}}>
+                  sx={{
+                    background:C.w,
+                    border:`1.5px solid ${qty>0?C.ac:C.bd}`,
+                    borderRadius:"14px",
+                    overflow:"hidden",
+                    cursor:"pointer",
+                    transition:"all .16s ease",
+                    display:"flex",
+                    flexDirection:"column",
+                    boxShadow:qty>0?"0 0 0 3px rgba(255,61,1,.1), 0 2px 8px rgba(0,0,0,.08)":"0 1px 4px rgba(0,0,0,.05)",
+                    position:"relative",
+                    "&:hover":{
+                      transform:"translateY(-3px)",
+                      boxShadow:qty>0?"0 0 0 3px rgba(255,61,1,.12), 0 12px 28px rgba(0,0,0,.12)":"0 8px 24px rgba(0,0,0,.1)",
+                      borderColor:qty>0?C.ac:C.bd2,
+                    },
+                  }}>
+                  {/* Image area */}
+                  <Box sx={{width:"100%",aspectRatio:"16/10",background:`linear-gradient(145deg,${qty>0?"#fff0ea,#fcd8c8":"#fff8f4,#fce8d8"})`,display:"flex",alignItems:"center",justifyContent:"center",position:"relative",overflow:"hidden"}}>
                     <VDot type={ft} />
-                    <Box sx={{display:"flex",flexDirection:"column",alignItems:"center",gap:"3px",transition:"transform .18s","&:hover":{transform:"scale(1.06)"}}}>
-                      <span style={{fontSize:32,lineHeight:1}}>{emoji}</span>
-                    </Box>
-                    {qty>0 && <Box sx={{position:"absolute",top:6,right:6,minWidth:18,height:18,px:"3px",borderRadius:"9px",background:C.ac,color:"#fff",fontSize:"9px",fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 2px 6px rgba(255,61,1,.35)"}}>{qty}</Box>}
-                    {(item.variations?.length??0)>0 && <Box sx={{position:"absolute",bottom:5,right:6,fontSize:"8.5px",fontWeight:800,px:"5px",py:"2px",borderRadius:"5px",background:"rgba(0,0,0,.55)",color:"#fff",letterSpacing:".3px"}}>OPTIONS</Box>}
+                    <Box sx={{fontSize:36,lineHeight:1,transition:"transform .2s","&:hover":{transform:"scale(1.1)"}}}>{emoji}</Box>
+                    {qty>0 && (
+                      <Box sx={{position:"absolute",top:6,right:6,minWidth:20,height:20,px:"4px",borderRadius:"10px",background:C.ac,color:"#fff",fontSize:"10px",fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 2px 6px rgba(255,61,1,.4)",border:"1.5px solid #fff"}}>
+                        {qty}
+                      </Box>
+                    )}
+                    {hasVariations && (
+                      <Box sx={{position:"absolute",bottom:5,left:6,fontSize:"8px",fontWeight:800,px:"5px",py:"2px",borderRadius:"5px",background:"rgba(0,0,0,.6)",color:"#fff",letterSpacing:".4px",textTransform:"uppercase"}}>Options</Box>
+                    )}
                   </Box>
-                  <Box sx={{px:"9px",pt:"6px",pb:"10px"}}>
-                    <Typography sx={{fontSize:"11px",fontWeight:700,color:C.tx,lineHeight:1.3,mb:"2px"}}>{item.item_name}</Typography>
-                    <Typography sx={{fontSize:"12.5px",fontWeight:800,color:C.ac}}>₹{item.price}</Typography>
+                  {/* Info */}
+                  <Box sx={{px:"10px",pt:"8px",pb:"10px",flex:1,display:"flex",flexDirection:"column",gap:"3px"}}>
+                    <Typography sx={{fontSize:"12px",fontWeight:700,color:C.tx,lineHeight:1.35,fontFamily:FONT,display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical",overflow:"hidden"}}>{item.item_name}</Typography>
+                    <Box sx={{display:"flex",alignItems:"center",justifyContent:"space-between",mt:"auto",pt:"4px"}}>
+                      <Typography sx={{fontSize:"13px",fontWeight:800,color:C.ac,fontFamily:FONT}}>₹{item.price}</Typography>
+                      <Box sx={{width:22,height:22,borderRadius:"6px",background:qty>0?C.ac:C.s2,border:`1.5px solid ${qty>0?C.ac:C.bd}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:800,color:qty>0?"#fff":C.t2,flexShrink:0,transition:"all .14s"}}>
+                        {qty>0?"✓":"+"}
+                      </Box>
+                    </Box>
                   </Box>
                 </Box>
               );
@@ -593,19 +647,20 @@ export default function Poss() {
         </Box>
 
         {/* ── CART ──────────────────────────────────────────────────────── */}
-        <Box sx={{width:355,background:C.w,borderLeft:`1px solid ${C.bd}`,display:"flex",flexDirection:"column",flexShrink:0,boxShadow:"-3px 0 14px rgba(0,0,0,.05)",minHeight:0,overflow:"hidden"}}>
+        <Box sx={{width:420,minWidth:360,background:C.w,borderLeft:`1.5px solid ${C.bd}`,display:"flex",flexDirection:"column",flexShrink:0,boxShadow:"-4px 0 20px rgba(0,0,0,.07)",minHeight:0,overflow:"hidden"}}>
           {/* Channel strip */}
           <Box sx={{height:3,background:chStripColor,transition:"background .2s",flexShrink:0}} />
 
           {/* Channel tabs */}
-          <Box sx={{display:"flex",background:C.s1,borderBottom:`1px solid ${C.bd}`,flexShrink:0}}>
+          <Box sx={{display:"flex",background:C.s1,borderBottom:`1.5px solid ${C.bd}`,flexShrink:0}}>
             {(["dine","pickup","delivery"] as const).map(ch=>{
               const active=channel===ch;
-              const label={dine:"Dine In",pickup:"Pickup",delivery:"Delivery"}[ch];
+              const meta={dine:{label:"Dine In",icon:"🍽️",ac:C.ac},pickup:{label:"Pickup",icon:"🥡",ac:C.grn},delivery:{label:"Delivery",icon:"🛵",ac:C.blu}}[ch];
               return (
                 <Box key={ch} component="button" onClick={()=>setChannel(ch)}
-                  sx={{flex:1,py:"8px",cursor:"pointer",color:active?C.ac:C.t3,border:"none",background:active?C.w:"transparent",fontFamily:FONT,transition:"all .13s",borderBottom:`2.5px solid ${active?C.ac:"transparent"}`,display:"flex",flexDirection:"column",alignItems:"center","&:hover":{color:active?C.ac:C.t2}}}>
-                  <Typography sx={{fontSize:"11.5px",fontWeight:700,letterSpacing:".3px",textTransform:"uppercase",fontFamily:FONT}}>{label}</Typography>
+                  sx={{flex:1,py:"10px",cursor:"pointer",border:"none",background:active?C.w:"transparent",fontFamily:FONT,transition:"all .14s",borderBottom:`3px solid ${active?meta.ac:"transparent"}`,display:"flex",flexDirection:"column",alignItems:"center",gap:"2px","&:hover":{background:active?C.w:C.s2}}}>
+                  <Typography sx={{fontSize:"13px",lineHeight:1}}>{meta.icon}</Typography>
+                  <Typography sx={{fontSize:"10.5px",fontWeight:800,letterSpacing:".4px",textTransform:"uppercase",fontFamily:FONT,color:active?meta.ac:C.t3}}>{meta.label}</Typography>
                 </Box>
               );
             })}
@@ -613,26 +668,28 @@ export default function Poss() {
 
           {/* ── Dine In meta ── */}
           {channel==="dine" && (
-            <Box sx={{flexShrink:0,borderBottom:`1px solid ${C.bd}`}}>
-              <Box sx={{display:"flex",alignItems:"center",gap:"5px",flexWrap:"wrap",px:"10px",py:"6px",borderBottom:`1px solid ${C.bd}`}}>
-                <Box sx={{...mkMcSx(),fontWeight:800}}>📋 #{orderNo}</Box>
-                <Box sx={mkMcSx()}>
-                  Pax&nbsp;
-                  <Box sx={{display:"flex",alignItems:"center",gap:"2px"}}>
+            <Box sx={{flexShrink:0,borderBottom:`1px solid ${C.bd}`,background:C.s1}}>
+              <Box sx={{display:"flex",alignItems:"center",gap:"6px",flexWrap:"wrap",px:"12px",py:"8px",borderBottom:`1px solid ${C.bd}`}}>
+                <Box sx={{...mkMcSx(),fontWeight:800,fontSize:"12px",px:"10px",py:"5px"}}>📋 #{orderNo}</Box>
+                <Box sx={{...mkMcSx(),fontSize:"12px",px:"10px",py:"5px"}}>
+                  👥&nbsp;Pax&nbsp;
+                  <Box sx={{display:"flex",alignItems:"center",gap:"3px",ml:"2px"}}>
                     {([-1,1]).map(d=>(
-                      <Box key={d} component="button" onClick={()=>setPax(p=>Math.max(1,p+d))} sx={{width:16,height:16,border:`1px solid ${C.bd2}`,borderRadius:"4px",background:C.w,cursor:"pointer",fontSize:12,color:C.tx,display:"flex",alignItems:"center",justifyContent:"center","&:hover":{background:C.s3}}}>{d<0?"−":"+"}</Box>
+                      <Box key={d} component="button" onClick={(e:any)=>{e.stopPropagation();setPax(p=>Math.max(1,p+d));}} sx={{width:18,height:18,border:`1px solid ${C.bd2}`,borderRadius:"5px",background:C.w,cursor:"pointer",fontSize:13,color:C.tx,display:"flex",alignItems:"center",justifyContent:"center","&:hover":{background:C.s3,borderColor:C.bd2}}}>{d<0?"−":"+"}</Box>
                     ))}
-                    <Typography sx={{fontSize:12,fontWeight:800,minWidth:14,textAlign:"center"}}>{pax}</Typography>
+                    <Typography sx={{fontSize:13,fontWeight:800,minWidth:18,textAlign:"center",color:C.ac}}>{pax}</Typography>
                   </Box>
                 </Box>
-                <Box component="button" onClick={()=>setAssignTablePopup(true)} sx={{...mkMcSx(),...(assignedTable?{background:C.adim,borderColor:C.abdr,color:C.ac,fontWeight:700}:{})}}>🪑 {assignedTable?assignedTable.table_no:"Table"}</Box>
-                <Box component="button" onClick={()=>{setNotePopup({type:"channel",key:"dine"});setNoteText(channelNotes.dine);}} sx={{...mkMcSx(),...(channelNotes.dine?{background:C.adim,borderColor:C.abdr,color:C.ac,fontWeight:700}:{})}}><NoteIcon />&nbsp;Note</Box>
-                <Box component="button" onClick={()=>setKotPopup(true)} sx={mkMcSx()}>🔖 KOT Token</Box>
+                <Box component="button" onClick={()=>setAssignTablePopup(true)} sx={{...mkMcSx(),fontSize:"12px",px:"10px",py:"5px",...(assignedTable?{background:C.adim,borderColor:C.abdr,color:C.ac,fontWeight:800}:{})}}>
+                  🪑 {assignedTable ? assignedTable.table_no : "Assign Table"}
+                </Box>
+                <Box component="button" onClick={()=>setKotPopup(true)} sx={{...mkMcSx(),fontSize:"12px",px:"10px",py:"5px"}}>🔖 KOT</Box>
+                <Box component="button" onClick={()=>{setNotePopup({type:"channel",key:"dine"});setNoteText(channelNotes.dine);}} sx={{...mkMcSx(),fontSize:"12px",px:"10px",py:"5px",...(channelNotes.dine?{background:C.adim,borderColor:C.abdr,color:C.ac,fontWeight:700}:{})}}><NoteIcon />&nbsp;Note</Box>
               </Box>
-              <Box sx={{display:"flex",alignItems:"center",gap:"6px",px:"10px",py:"6px"}}>
+              <Box sx={{display:"flex",alignItems:"center",gap:"8px",px:"12px",py:"8px"}}>
                 <CustPillBtn pill={custPill("dine")} onClick={()=>{setCustPopup("dine");setCustTab("recent");}} />
-                <Box component="select" value={selectedWaiter?.id??""} onChange={(e:any)=>{const w=waiters.find((x:Staff)=>x.id===Number(e.target.value));setWaiter(w??null);}} sx={{flex:1,px:"8px",py:"5px",background:selectedWaiter?C.gdim:C.s1,border:`1.5px solid ${selectedWaiter?C.gbdr:C.bd}`,borderRadius:"8px",fontFamily:FONT,fontSize:"11px",fontWeight:600,color:selectedWaiter?C.grn:C.t2,outline:"none",cursor:"pointer",appearance:"none",maxWidth:150}}>
-                  <option value="">🙋 Waiter ▾</option>
+                <Box component="select" value={selectedWaiter?.id??""} onChange={(e:any)=>{const w=waiters.find((x:Staff)=>x.id===Number(e.target.value));setWaiter(w??null);}} sx={{flex:"0 0 160px",px:"10px",py:"7px",background:selectedWaiter?C.gdim:C.w,border:`1.5px solid ${selectedWaiter?C.gbdr:C.bd}`,borderRadius:"9px",fontFamily:FONT,fontSize:"12px",fontWeight:600,color:selectedWaiter?C.grn:C.t2,outline:"none",cursor:"pointer",appearance:"none"}}>
+                  <option value="">🙋 Select Waiter</option>
                   {(waiters as Staff[]).map(w=><option key={w.id} value={w.id}>{w.name}</option>)}
                 </Box>
               </Box>
@@ -641,18 +698,18 @@ export default function Poss() {
 
           {/* ── Pickup meta ── */}
           {channel==="pickup" && (
-            <Box sx={{flexShrink:0,borderBottom:`1px solid ${C.bd}`}}>
-              <Box sx={{display:"flex",alignItems:"center",gap:"5px",flexWrap:"wrap",px:"10px",py:"6px",borderBottom:`1px solid ${C.bd}`}}>
-                <Box sx={{...mkMcSx(),fontWeight:800}}>📋 #{orderNo}</Box>
-                <Box sx={{display:"flex",alignItems:"center",gap:"4px",px:"10px",py:"4px",background:"#fff7ed",border:"1.5px solid #fdba74",borderRadius:"8px",fontSize:"11px",fontWeight:800,color:"#c2410c",whiteSpace:"nowrap"}}>🔖 P-{String(orderNo).padStart(3,"0")}</Box>
-                <Box component="button" onClick={openPickupDate} sx={{...mkMcSx(),background:C.adim,borderColor:C.abdr,color:C.ac,fontWeight:700}}>📅 {pickupDate}</Box>
-                <Box component="button" onClick={openPickupTime} sx={{...mkMcSx(),background:C.adim,borderColor:C.abdr,color:C.ac,fontWeight:700}}>🕐 {pickupTime}</Box>
-                <Box component="button" onClick={()=>{setNotePopup({type:"channel",key:"pickup"});setNoteText(channelNotes.pickup);}} sx={{...mkMcSx(),...(channelNotes.pickup?{background:C.adim,borderColor:C.abdr,color:C.ac,fontWeight:700}:{})}}><NoteIcon />&nbsp;Note</Box>
+            <Box sx={{flexShrink:0,borderBottom:`1px solid ${C.bd}`,background:C.s1}}>
+              <Box sx={{display:"flex",alignItems:"center",gap:"6px",flexWrap:"wrap",px:"12px",py:"8px",borderBottom:`1px solid ${C.bd}`}}>
+                <Box sx={{...mkMcSx(),fontWeight:800,fontSize:"12px",px:"10px",py:"5px"}}>📋 #{orderNo}</Box>
+                <Box sx={{display:"flex",alignItems:"center",gap:"4px",px:"10px",py:"5px",background:"#fff7ed",border:"1.5px solid #fdba74",borderRadius:"8px",fontSize:"12px",fontWeight:800,color:"#c2410c",whiteSpace:"nowrap"}}>🔖 P-{String(orderNo).padStart(3,"0")}</Box>
+                <Box component="button" onClick={openPickupDate} sx={{...mkMcSx(),background:C.adim,borderColor:C.abdr,color:C.ac,fontWeight:700,fontSize:"12px",px:"10px",py:"5px"}}>📅 {pickupDate}</Box>
+                <Box component="button" onClick={openPickupTime} sx={{...mkMcSx(),background:C.adim,borderColor:C.abdr,color:C.ac,fontWeight:700,fontSize:"12px",px:"10px",py:"5px"}}>🕐 {pickupTime}</Box>
+                <Box component="button" onClick={()=>{setNotePopup({type:"channel",key:"pickup"});setNoteText(channelNotes.pickup);}} sx={{...mkMcSx(),fontSize:"12px",px:"10px",py:"5px",...(channelNotes.pickup?{background:C.adim,borderColor:C.abdr,color:C.ac,fontWeight:700}:{})}}><NoteIcon />&nbsp;Note</Box>
               </Box>
-              <Box sx={{display:"flex",alignItems:"center",gap:"6px",px:"10px",py:"6px"}}>
+              <Box sx={{display:"flex",alignItems:"center",gap:"8px",px:"12px",py:"8px"}}>
                 <CustPillBtn pill={custPill("pickup")} onClick={()=>{setCustPopup("pickup");setCustTab("recent");}} />
-                <Box component="select" value={selectedWaiter?.id??""} onChange={(e:any)=>{const w=waiters.find((x:Staff)=>x.id===Number(e.target.value));setWaiter(w??null);}} sx={{flex:1,px:"8px",py:"5px",background:selectedWaiter?C.gdim:C.s1,border:`1.5px solid ${selectedWaiter?C.gbdr:C.bd}`,borderRadius:"8px",fontFamily:FONT,fontSize:"11px",fontWeight:600,color:selectedWaiter?C.grn:C.t2,outline:"none",cursor:"pointer",appearance:"none",maxWidth:150}}>
-                  <option value="">🙋 Waiter ▾</option>
+                <Box component="select" value={selectedWaiter?.id??""} onChange={(e:any)=>{const w=waiters.find((x:Staff)=>x.id===Number(e.target.value));setWaiter(w??null);}} sx={{flex:"0 0 160px",px:"10px",py:"7px",background:selectedWaiter?C.gdim:C.w,border:`1.5px solid ${selectedWaiter?C.gbdr:C.bd}`,borderRadius:"9px",fontFamily:FONT,fontSize:"12px",fontWeight:600,color:selectedWaiter?C.grn:C.t2,outline:"none",cursor:"pointer",appearance:"none"}}>
+                  <option value="">🙋 Select Waiter</option>
                   {(waiters as Staff[]).map(w=><option key={w.id} value={w.id}>{w.name}</option>)}
                 </Box>
               </Box>
@@ -661,23 +718,23 @@ export default function Poss() {
 
           {/* ── Delivery meta ── */}
           {channel==="delivery" && (
-            <Box sx={{flexShrink:0,borderBottom:`1px solid ${C.bd}`}}>
-              <Box sx={{display:"flex",alignItems:"center",gap:"6px",px:"10px",py:"6px",background:C.s1,borderBottom:`1px solid ${C.bd}`,flexWrap:"wrap"}}>
-                <Box sx={{...mkMcSx(),fontWeight:800}}>📋 #{orderNo}</Box>
-                <Box component="button" onClick={()=>{setNotePopup({type:"channel",key:"delivery"});setNoteText(channelNotes.delivery);}} sx={{...mkMcSx(),...(channelNotes.delivery?{background:C.adim,borderColor:C.abdr,color:C.ac,fontWeight:700}:{})}}><NoteIcon />&nbsp;Note</Box>
+            <Box sx={{flexShrink:0,borderBottom:`1px solid ${C.bd}`,background:C.s1}}>
+              <Box sx={{display:"flex",alignItems:"center",gap:"6px",px:"12px",py:"8px",borderBottom:`1px solid ${C.bd}`,flexWrap:"wrap"}}>
+                <Box sx={{...mkMcSx(),fontWeight:800,fontSize:"12px",px:"10px",py:"5px"}}>📋 #{orderNo}</Box>
                 <Box component="select" value={platform} onChange={(e:any)=>setPlatform(e.target.value)}
-                  sx={{flex:1,maxWidth:180,px:"8px",py:"4px",background:C.adim,border:`1.5px solid ${C.abdr}`,borderRadius:"8px",fontFamily:FONT,fontSize:"11.5px",fontWeight:700,color:C.ac,outline:"none",cursor:"pointer",appearance:"none"}}>
+                  sx={{flex:1,minWidth:140,px:"10px",py:"5px",background:C.adim,border:`1.5px solid ${C.abdr}`,borderRadius:"8px",fontFamily:FONT,fontSize:"12px",fontWeight:700,color:C.ac,outline:"none",cursor:"pointer",appearance:"none"}}>
                   <option value="bhojpe">🔴 Bhojpe App</option>
                   <option value="zomato">🔴 Zomato</option>
                   <option value="swiggy">🟠 Swiggy</option>
                   <option value="manual">📞 Direct Call</option>
                   <option value="website">🌐 Website</option>
                 </Box>
+                <Box component="button" onClick={()=>{setNotePopup({type:"channel",key:"delivery"});setNoteText(channelNotes.delivery);}} sx={{...mkMcSx(),fontSize:"12px",px:"10px",py:"5px",...(channelNotes.delivery?{background:C.adim,borderColor:C.abdr,color:C.ac,fontWeight:700}:{})}}><NoteIcon />&nbsp;Note</Box>
               </Box>
-              <Box sx={{display:"flex",alignItems:"center",gap:"6px",px:"10px",py:"6px"}}>
+              <Box sx={{display:"flex",alignItems:"center",gap:"8px",px:"12px",py:"8px"}}>
                 <CustPillBtn pill={custPill("delivery")} onClick={()=>{setCustPopup("delivery");setCustTab("recent");}} />
-                <Box component="select" value={selectedDelExec?.id??""} onChange={(e:any)=>{const d=deliveryExecutives.find((x:Staff)=>x.id===Number(e.target.value));setSelectedDelExec(d??null);}} sx={{flex:1,px:"8px",py:"5px",background:selectedDelExec?C.gdim:C.s1,border:`1.5px solid ${selectedDelExec?C.gbdr:C.bd}`,borderRadius:"8px",fontFamily:FONT,fontSize:"11px",fontWeight:600,color:selectedDelExec?C.grn:C.t2,outline:"none",cursor:"pointer",appearance:"none",maxWidth:150}}>
-                  <option value="">🛵 Delivery Boy ▾</option>
+                <Box component="select" value={selectedDelExec?.id??""} onChange={(e:any)=>{const d=deliveryExecutives.find((x:Staff)=>x.id===Number(e.target.value));setSelectedDelExec(d??null);}} sx={{flex:"0 0 160px",px:"10px",py:"7px",background:selectedDelExec?C.gdim:C.w,border:`1.5px solid ${selectedDelExec?C.gbdr:C.bd}`,borderRadius:"9px",fontFamily:FONT,fontSize:"12px",fontWeight:600,color:selectedDelExec?C.grn:C.t2,outline:"none",cursor:"pointer",appearance:"none"}}>
+                  <option value="">🛵 Select Delivery Boy</option>
                   {(deliveryExecutives as Staff[]).map(d=><option key={d.id} value={d.id}>{d.name}</option>)}
                 </Box>
               </Box>
@@ -685,41 +742,52 @@ export default function Poss() {
           )}
 
           {/* Cart items */}
-          <Box sx={{flex:1,overflowY:"auto",px:"10px",py:"2px",minHeight:0}}>
+          <Box sx={{flex:1,overflowY:"auto",px:"12px",py:"4px",minHeight:0}}>
             {cart.length===0 ? (
-              <Box sx={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",height:"100%",gap:"8px"}}>
-                <Typography sx={{fontSize:36,opacity:.2}}>🛒</Typography>
-                <Typography sx={{fontSize:13,fontWeight:700,color:C.t2}}>Cart is empty</Typography>
-                <Typography sx={{fontSize:11,color:C.t3}}>Menu se item chunein</Typography>
+              <Box sx={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",height:"100%",gap:"12px"}}>
+                <Typography sx={{fontSize:48,opacity:.12,lineHeight:1}}>🛒</Typography>
+                <Typography sx={{fontSize:15,fontWeight:700,color:C.t2}}>Cart is empty</Typography>
+                <Typography sx={{fontSize:12,color:C.t3}}>Click menu items to add them here</Typography>
               </Box>
             ) : cart.map((ci, idx) => {
               const hasNote = !!ci.note?.trim();
+              const ft = foodType(ci.item);
               return (
-                <Box key={`${ci.item.id}_${ci.variationId??0}_${idx}`} sx={{py:"7px",borderBottom:`1px solid ${C.bd}`,animation:"fadeUp .15s ease"}}>
-                  <Box sx={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:"6px",mb:"5px"}}>
+                <Box key={`${ci.item.id}_${ci.variationId??0}_${idx}`}
+                  sx={{py:"10px",borderBottom:`1px solid ${C.bd}`,animation:"fadeUp .15s ease","&:last-child":{borderBottom:"none"}}}>
+                  {/* Row 1: name + total */}
+                  <Box sx={{display:"flex",alignItems:"flex-start",gap:"8px",mb:"8px"}}>
+                    {/* Veg dot */}
+                    <Box sx={{width:12,height:12,borderRadius:"3px",border:`1.5px solid ${foodColor(ft)}`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,mt:"3px"}}>
+                      <Box sx={{width:5,height:5,borderRadius:"50%",background:foodColor(ft)}} />
+                    </Box>
                     <Box sx={{flex:1,minWidth:0}}>
-                      <Box sx={{display:"flex",alignItems:"center",gap:"5px"}}>
-                        <Box sx={{width:10,height:10,borderRadius:"2px",border:`1.5px solid ${foodColor(foodType(ci.item))}`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-                          <Box sx={{width:4,height:4,borderRadius:"50%",background:foodColor(foodType(ci.item))}} />
-                        </Box>
-                        <Typography sx={{fontSize:"12.5px",fontWeight:700,color:C.tx,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{ci.item.item_name}{ci.variationName?<span style={{fontWeight:500,color:C.t3}}> ({ci.variationName})</span>:null}</Typography>
-                      </Box>
-                      <Typography sx={{fontSize:"10px",color:C.t3,mt:"1px",pl:"15px"}}>₹{ci.price} / item</Typography>
+                      <Typography sx={{fontSize:"13px",fontWeight:700,color:C.tx,lineHeight:1.35,mb:"2px",fontFamily:FONT}}>
+                        {ci.item.item_name}
+                        {ci.variationName && <Box component="span" sx={{fontWeight:500,color:C.t3,fontSize:"11.5px"}}> ({ci.variationName})</Box>}
+                      </Typography>
+                      <Typography sx={{fontSize:"11px",color:C.t3,fontFamily:FONT}}>₹{ci.price} × {ci.qty}</Typography>
                     </Box>
-                    <Typography sx={{fontSize:"13px",fontWeight:800,color:C.ac,flexShrink:0}}>₹{ci.price*ci.qty}</Typography>
+                    <Typography sx={{fontSize:"14px",fontWeight:800,color:C.ac,flexShrink:0,fontFamily:FONT}}>₹{ci.price*ci.qty}</Typography>
                   </Box>
-                  <Box sx={{display:"flex",alignItems:"center",gap:"5px",pl:"14px"}}>
-                    <Box sx={{display:"flex",alignItems:"center",background:C.s1,border:`1.5px solid ${C.bd}`,borderRadius:"7px",overflow:"hidden",flexShrink:0}}>
-                      {([-1,1]).map(d=>(
-                        <Box key={d} component="button" onClick={()=>changeQty(idx,d)} sx={{width:26,height:24,border:"none",background:"none",fontSize:14,fontWeight:700,cursor:"pointer",color:C.tx,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:FONT,transition:"background .12s","&:hover":{background:C.s3}}}>{d<0?"−":"+"}</Box>
-                      ))}
-                      <Typography sx={{fontSize:12,fontWeight:800,minWidth:22,textAlign:"center",color:C.tx,borderLeft:`1px solid ${C.bd}`,borderRight:`1px solid ${C.bd}`,height:24,lineHeight:"24px"}}>{ci.qty}</Typography>
+                  {/* Row 2: qty stepper + note + delete */}
+                  <Box sx={{display:"flex",alignItems:"center",gap:"8px",pl:"20px"}}>
+                    {/* Qty stepper */}
+                    <Box sx={{display:"flex",alignItems:"center",background:C.s1,border:`1.5px solid ${C.bd}`,borderRadius:"8px",overflow:"hidden",flexShrink:0}}>
+                      <Box component="button" onClick={()=>changeQty(idx,-1)} sx={{width:30,height:28,border:"none",background:"none",fontSize:16,fontWeight:700,cursor:"pointer",color:C.tx,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:FONT,transition:"background .12s","&:hover":{background:C.s3}}}>−</Box>
+                      <Typography sx={{fontSize:13,fontWeight:800,minWidth:28,textAlign:"center",color:C.tx,borderLeft:`1px solid ${C.bd}`,borderRight:`1px solid ${C.bd}`,height:28,lineHeight:"28px",px:"4px"}}>{ci.qty}</Typography>
+                      <Box component="button" onClick={()=>changeQty(idx,1)} sx={{width:30,height:28,border:"none",background:"none",fontSize:16,fontWeight:700,cursor:"pointer",color:C.tx,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:FONT,transition:"background .12s","&:hover":{background:C.s3}}}>+</Box>
                     </Box>
+                    {/* Note button */}
                     <Box component="button" onClick={()=>{setNotePopup({type:"item",key:idx});setNoteText(ci.note||"");}}
-                      sx={{flex:1,display:"flex",justifyContent:"center",alignItems:"center",gap:"3px",px:"6px",py:"2px",borderRadius:"6px",cursor:"pointer",fontSize:"9.5px",fontWeight:hasNote?700:600,color:hasNote?C.ac:C.t3,border:`1px ${hasNote?"solid":"dashed"} ${hasNote?"rgba(255,61,1,.4)":C.bd2}`,background:hasNote?"rgba(255,61,1,.1)":"none",fontFamily:FONT,transition:"all .13s","&:hover":{color:hasNote?C.ac:C.t2}}}>
-                      <NoteIcon /> {hasNote?ci.note.slice(0,14)+(ci.note.length>14?"…":""):"Note"}
+                      sx={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",gap:"4px",px:"8px",py:"4px",height:28,borderRadius:"7px",cursor:"pointer",fontSize:"11px",fontWeight:hasNote?700:500,color:hasNote?C.ac:C.t3,border:`1px ${hasNote?"solid":"dashed"} ${hasNote?"rgba(255,61,1,.4)":C.bd2}`,background:hasNote?"rgba(255,61,1,.08)":"transparent",fontFamily:FONT,transition:"all .13s","&:hover":{color:C.ac,borderColor:"rgba(255,61,1,.4)",background:"rgba(255,61,1,.06)"}}}>
+                      <NoteIcon />
+                      <span style={{overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",maxWidth:100}}>
+                        {hasNote ? ci.note.slice(0,16)+(ci.note.length>16?"…":"") : "Add note"}
+                      </span>
                     </Box>
-                    <Box component="button" onClick={()=>changeQty(idx,-999)} sx={{width:24,height:24,borderRadius:"6px",flexShrink:0,background:C.rdim,border:`1.5px solid ${C.rbdr}`,color:C.red,cursor:"pointer",fontSize:12,display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700,transition:"all .13s","&:hover":{background:C.red,color:"#fff"}}}>✕</Box>
+                    {/* Delete */}
+                    <Box component="button" onClick={()=>changeQty(idx,-999)} sx={{width:28,height:28,borderRadius:"7px",flexShrink:0,background:C.rdim,border:`1.5px solid ${C.rbdr}`,color:C.red,cursor:"pointer",fontSize:13,display:"flex",alignItems:"center",justifyContent:"center",fontWeight:800,transition:"all .13s","&:hover":{background:C.red,color:"#fff",borderColor:C.red}}}>✕</Box>
                   </Box>
                 </Box>
               );
@@ -777,33 +845,44 @@ export default function Poss() {
             )}
 
             {/* Payment modes */}
-            <Box sx={{display:"flex",alignItems:"center",gap:"7px",px:"11px",py:"7px",borderBottom:`1px solid rgba(255,255,255,.07)`}}>
-              <Typography sx={{fontSize:"9.5px",fontWeight:700,color:"rgba(255,255,255,.3)",textTransform:"uppercase",letterSpacing:".5px",whiteSpace:"nowrap",flexShrink:0}}>Pay</Typography>
-              <Box sx={{display:"flex",gap:"4px",flex:1,overflowX:"auto","&::-webkit-scrollbar":{display:"none"}}}>
-                {["💵 Cash","📱 UPI","💳 Card","📄 Due"].map(pm=>{
-                  const lbl=pm.split(" ").slice(1).join(" ");
-                  return <Box key={pm} component="button" onClick={()=>setPayMode(lbl)} sx={mkPmSx(payMode===lbl)}>{pm}</Box>;
-                })}
-                <Box component="button" onClick={()=>setEbillPopup(true)} sx={{...mkPmSx(false),background:"#dcfce7",borderColor:"#4ade80",color:"#15803d","&:hover":{background:"#bbf7d0",color:"#14532d"}}}>💬 E-Bill</Box>
+            <Box sx={{px:"12px",py:"8px",borderBottom:`1px solid rgba(255,255,255,.07)`}}>
+              <Typography sx={{fontSize:"9.5px",fontWeight:700,color:"rgba(255,255,255,.3)",textTransform:"uppercase",letterSpacing:".6px",mb:"6px"}}>Payment Method</Typography>
+              <Box sx={{display:"flex",gap:"5px",flexWrap:"wrap"}}>
+                {[{pm:"💵 Cash",lbl:"Cash"},{pm:"📱 UPI",lbl:"UPI"},{pm:"💳 Card",lbl:"Card"},{pm:"📄 Due",lbl:"Due"}].map(({pm,lbl})=>(
+                  <Box key={lbl} component="button" onClick={()=>setPayMode(lbl)} sx={{...mkPmSx(payMode===lbl),flex:1,minWidth:70,py:"8px"}}>{pm}</Box>
+                ))}
+                <Box component="button" onClick={()=>setEbillPopup(true)} sx={{...mkPmSx(false),flex:"0 0 auto",background:"rgba(34,197,94,.15)",borderColor:"rgba(34,197,94,.3)",color:"#4ade80","&:hover":{background:"rgba(34,197,94,.25)",color:"#86efac"}}}>💬 E-Bill</Box>
               </Box>
             </Box>
 
-            {/* Action row */}
-            <Box sx={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:"3px",px:"10px",py:"6px",borderBottom:`1px solid rgba(255,255,255,.07)`}}>
-              {[{icon:"⏸️",label:"Hold",fn:()=>toast("Order held ⏸")},{icon:"💾",label:"Draft",fn:()=>toast("Draft saved 💾")},{icon:"🕐",label:"KOT",fn:()=>placeOrder("kot")},{icon:"🖨️",label:"KOT+Print",fn:()=>placeOrder("kot_print")}].map(b=>(
+            {/* Action row — KOT actions */}
+            <Box sx={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:"4px",px:"12px",py:"8px",borderBottom:`1px solid rgba(255,255,255,.07)`}}>
+              {[
+                {icon:"⏸️",label:"Hold",   fn:()=>toast("Order held ⏸")},
+                {icon:"💾",label:"Draft",   fn:()=>toast("Draft saved 💾")},
+                {icon:"🕐",label:"KOT",    fn:()=>placeOrder("kot")},
+                {icon:"🖨️",label:"KOT+🖨️",fn:()=>placeOrder("kot_print")},
+              ].map(b=>(
                 <Box key={b.label} component="button" onClick={b.fn} disabled={placing}
-                  sx={{py:"6px",px:"2px",background:C.dk3,border:"1.5px solid rgba(255,255,255,.09)",borderRadius:"8px",fontSize:"9.5px",fontWeight:700,color:"rgba(255,255,255,.55)",cursor:"pointer",fontFamily:FONT,display:"flex",flexDirection:"column",alignItems:"center",gap:"2px",transition:"all .13s","&:hover":{background:"#453d36",color:"#fff"},"&:disabled":{opacity:.5,cursor:"not-allowed"}}}>
-                  <span style={{fontSize:12}}>{b.icon}</span>{b.label}
+                  sx={{py:"8px",px:"2px",background:C.dk3,border:"1.5px solid rgba(255,255,255,.1)",borderRadius:"9px",fontSize:"11px",fontWeight:700,color:"rgba(255,255,255,.6)",cursor:"pointer",fontFamily:FONT,display:"flex",flexDirection:"column",alignItems:"center",gap:"3px",transition:"all .14s","&:hover":{background:"#4a4038",color:"#fff",borderColor:"rgba(255,255,255,.2)"},"&:disabled":{opacity:.5,cursor:"not-allowed"}}}>
+                  <span style={{fontSize:14}}>{b.icon}</span>
+                  <span style={{fontSize:"9.5px"}}>{b.label}</span>
                 </Box>
               ))}
             </Box>
 
             {/* Bill row */}
-            <Box sx={{display:"grid",gridTemplateColumns:"repeat(4,1fr)"}}>
-              {[{icon:"🧾",label:"Bill",primary:false,fn:()=>placeOrder("bill")},{icon:"🖨️",label:"Bill+Print",primary:false,fn:()=>placeOrder("bill_print")},{icon:"💳",label:"KOT+Pay",primary:false,fn:()=>{placeOrder("kot");}},{icon:placing?"⏳":"✅",label:channel==="delivery"?"Dispatch":channel==="pickup"?"Ready & Pay":"Bill & Pay",primary:true,fn:()=>placeOrder("bill")}].map((b,i)=>(
+            <Box sx={{display:"grid",gridTemplateColumns:"1fr 1fr 1.6fr"}}>
+              {[
+                {icon:"🧾",label:"Bill",   fn:()=>placeOrder("bill"),    primary:false},
+                {icon:"🖨️",label:"Bill+Print",fn:()=>placeOrder("bill_print"),primary:false},
+                {icon:placing?"⏳":(channel==="delivery"?"🛵":channel==="pickup"?"🥡":"✅"),
+                 label:channel==="delivery"?"Dispatch & Pay":channel==="pickup"?"Ready & Pay":"Bill & Pay",
+                 fn:()=>placeOrder("bill"), primary:true},
+              ].map((b,i)=>(
                 <Box key={b.label} component="button" onClick={b.fn} disabled={placing}
-                  sx={{py:"12px",px:"2px",textAlign:"center",fontSize:"10px",fontWeight:700,cursor:"pointer",transition:"all .13s",border:"none",fontFamily:FONT,background:b.primary?C.ac:C.dk4,color:b.primary?"#fff":"rgba(255,255,255,.5)",borderRight:i<3?"1px solid rgba(255,255,255,.07)":"none",borderTop:"1px solid rgba(255,255,255,.07)",display:"flex",flexDirection:"column",alignItems:"center",gap:"2px","&:hover":{background:b.primary?C.ah:"#362f28",color:"#fff"},"&:disabled":{opacity:.6,cursor:"not-allowed"}}}>
-                  {placing && b.primary ? <CircularProgress size={12} sx={{color:"#fff",mb:"2px"}} /> : <span style={{fontSize:11}}>{b.icon}</span>}
+                  sx={{py:"14px",px:"4px",textAlign:"center",fontSize:b.primary?"12px":"10.5px",fontWeight:800,cursor:"pointer",transition:"all .14s",border:"none",fontFamily:FONT,background:b.primary?C.ac:C.dk4,color:b.primary?"#fff":"rgba(255,255,255,.55)",borderRight:i<2?"1px solid rgba(255,255,255,.07)":"none",borderTop:"1px solid rgba(255,255,255,.07)",display:"flex",flexDirection:"column",alignItems:"center",gap:"3px","&:hover":{background:b.primary?C.ah:"#3a322a",color:b.primary?"#fff":"rgba(255,255,255,.85)"},"&:disabled":{opacity:.65,cursor:"not-allowed"}}}>
+                  {placing && b.primary ? <CircularProgress size={14} sx={{color:"#fff",mb:"2px"}} /> : <span style={{fontSize:b.primary?18:14,lineHeight:1}}>{b.icon}</span>}
                   {b.label}
                 </Box>
               ))}
