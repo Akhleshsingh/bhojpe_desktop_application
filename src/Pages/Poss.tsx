@@ -16,7 +16,6 @@ import { useTables } from "../context/TablesContext";
 import { BASE_URL } from "../utils/api";
 import SecondHeader from "../CommonPages/secondheader";
 import HamburgerSidebar from "../CommonPages/HamburgerSidebar";
-import Sidebar from "../components/Sidebar";
 import CheckoutModal from "../components/CheckoutModal";
 
 // ─── Design Tokens ──────────────────────────────────────────────────────────
@@ -489,6 +488,14 @@ export default function Poss() {
           ordersCount={cartCount}
           sidebarOpen={!sidebarCollapsed}
           setSidebarOpen={(v:boolean)=>setSidebarCollapsed(!v)}
+          onNewOrder={() => {
+            if (!cart.length || window.confirm("Start a new order? Current cart will be cleared.")) {
+              setCart([]);
+              setDiscAmt(0);
+              setDiscLabel("");
+              setOrderNo(n => n + 1);
+            }
+          }}
         />
       </Box>
 
@@ -501,21 +508,21 @@ export default function Poss() {
           onToggle={()=>setSidebarCollapsed(v=>!v)}
         />
 
-        {/* ── CATEGORY SIDEBAR (existing Sidebar component) ─────────────── */}
-        <Sidebar
+        {/* ── CATEGORY SIDEBAR with item previews ───────────────────────── */}
+        <PosCategorySidebar
           categories={categories.map((c:any)=>({
             id: c.id,
             category_name: typeof c.category_name==="object" ? c.category_name : { en: c.category_name ?? c.name ?? "Unknown" },
           }))}
-          selectedCategoryId={selectedCategoryId}
-          onSelect={(cat)=>{ setSelectedCategoryId(cat ? cat.id : null); setSelectedMenuId(null); setActiveMealTime(null); }}
           menus={menus.map((m:any)=>({
             id: m.id,
             menu_name: typeof m.menu_name==="object" ? m.menu_name : { en: m.menu_name ?? m.name ?? "Menu" },
           }))}
+          menuItems={menuItems}
+          selectedCategoryId={selectedCategoryId}
+          onSelectCategory={(id)=>{ setSelectedCategoryId(id); setSelectedMenuId(null); setActiveMealTime(null); }}
           selectedMenuId={selectedMenuId}
-          onMenuSelect={(id)=>{ setSelectedMenuId(id); setSelectedCategoryId(null); setActiveMealTime(null); }}
-          collapsed={false}
+          onSelectMenu={(id)=>{ setSelectedMenuId(id); setSelectedCategoryId(null); setActiveMealTime(null); }}
         />
 
         {/* ── CENTER (Search + Grid) ─────────────────────────────────────── */}
@@ -1256,6 +1263,193 @@ export default function Poss() {
 }
 
 // ── Sub-components ─────────────────────────────────────────────────────────
+
+// ─── PosCategorySidebar ──────────────────────────────────────────────────
+// Dark themed category sidebar with item count badges and quick preview
+// strip that appears when a category is selected.
+interface SidebarCategory { id: number; category_name: { en: string } | string; }
+interface SidebarMenu { id: number; menu_name: { en: string } | string; }
+const SB = {
+  base:"#3D3636", header:"#2C2828", active:"#E8353A", hover:"#4A4444",
+  text:"#FFFFFF", dim:"rgba(255,255,255,.55)", border:"rgba(255,255,255,.1)",
+  preview:"#332e2e",
+};
+const getCatLabel = (c: SidebarCategory) =>
+  typeof c.category_name === "object" ? c.category_name.en : (c.category_name ?? "Unknown");
+const getMenuLabel = (m: SidebarMenu) =>
+  typeof m.menu_name === "object" ? m.menu_name.en : (m.menu_name ?? "Menu");
+
+function PosCategorySidebar({
+  categories, menus, menuItems,
+  selectedCategoryId, onSelectCategory,
+  selectedMenuId, onSelectMenu,
+}: {
+  categories: SidebarCategory[];
+  menus: SidebarMenu[];
+  menuItems: MenuItem[];
+  selectedCategoryId: number | null;
+  onSelectCategory: (id: number | null) => void;
+  selectedMenuId: number | null;
+  onSelectMenu: (id: number | null) => void;
+}) {
+  const [menuOpen, setMenuOpen] = React.useState(false);
+
+  const catRows: { id: number | null; label: string }[] = [
+    { id: null, label: "All Items" },
+    ...categories.map(c => ({ id: c.id, label: getCatLabel(c) })),
+  ];
+
+  const activeMenuLabel = selectedMenuId
+    ? getMenuLabel(menus.find(m => m.id === selectedMenuId) ?? menus[0])
+    : "All Menus";
+
+  const getCatItems = (catId: number | null) =>
+    catId === null ? menuItems : menuItems.filter(i => i.item_category_id === catId || i.category_id === catId);
+
+  return (
+    <Box sx={{
+      width: "clamp(160px, 12vw, 200px)",
+      flexShrink: 0,
+      background: SB.base,
+      display: "flex",
+      flexDirection: "column",
+      height: "100%",
+      overflowY: "auto",
+      fontFamily: "Poppins, sans-serif",
+      "&::-webkit-scrollbar": { width: 3 },
+      "&::-webkit-scrollbar-thumb": { background: "#555", borderRadius: 2 },
+    }}>
+      {/* ── Menu filter header ── */}
+      <Box sx={{
+        position: "relative",
+        px: 1.5, py: 1.2,
+        background: SB.header,
+        borderBottom: `1px solid ${SB.border}`,
+        flexShrink: 0,
+      }}>
+        <Box onClick={() => setMenuOpen(v => !v)} sx={{
+          display: "flex", alignItems: "center", gap: 0.6,
+          cursor: "pointer", userSelect: "none",
+          "&:hover": { opacity: 0.8 },
+        }}>
+          <Typography sx={{ fontSize: 11, color: SB.text, fontWeight: 600, flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            {activeMenuLabel}
+          </Typography>
+          <Box component="span" sx={{ fontSize: 10, color: SB.dim, transform: menuOpen ? "rotate(180deg)" : "none", display: "inline-block", transition: "transform .2s" }}>▼</Box>
+        </Box>
+        {/* Dropdown */}
+        {menuOpen && (
+          <Box sx={{
+            position: "absolute", top: "100%", left: 0, right: 0, zIndex: 100,
+            background: SB.header, borderTop: `1px solid ${SB.border}`,
+            boxShadow: "0 8px 24px rgba(0,0,0,.4)", maxHeight: 200, overflowY: "auto",
+          }}>
+            {[{ id: null, label: "All Menus" }, ...menus.map(m => ({ id: m.id, label: getMenuLabel(m) }))].map(m => (
+              <Box key={m.id ?? "all"} onClick={() => { onSelectMenu(m.id); setMenuOpen(false); }}
+                sx={{
+                  px: 1.5, py: 1,
+                  fontSize: 11, fontWeight: selectedMenuId === m.id ? 700 : 400,
+                  color: selectedMenuId === m.id ? "#E8353A" : SB.dim,
+                  cursor: "pointer",
+                  background: selectedMenuId === m.id ? "rgba(232,53,58,.12)" : "transparent",
+                  "&:hover": { background: SB.hover, color: SB.text },
+                  borderBottom: `1px solid ${SB.border}`,
+                }}>
+                {m.label}
+              </Box>
+            ))}
+          </Box>
+        )}
+      </Box>
+
+      {/* ── Category list ── */}
+      {catRows.map(cat => {
+        const isActive = selectedCategoryId === cat.id;
+        const catItems = getCatItems(cat.id);
+        const menuFiltered = selectedMenuId
+          ? catItems.filter(i => i.menu_id === selectedMenuId)
+          : catItems;
+        const count = menuFiltered.length;
+        const previewItems = menuFiltered.slice(0, 4);
+
+        return (
+          <Box key={cat.id ?? "all"}>
+            {/* Category row */}
+            <Box onClick={() => onSelectCategory(cat.id)}
+              sx={{
+                display: "flex", alignItems: "center",
+                px: 1.5, py: 1.1,
+                cursor: "pointer",
+                background: isActive ? SB.active : "transparent",
+                borderBottom: `1px solid ${SB.border}`,
+                transition: "background .13s",
+                "&:hover": { background: isActive ? SB.active : SB.hover },
+              }}>
+              <Typography sx={{
+                fontSize: 11.5, fontWeight: isActive ? 700 : 400,
+                color: SB.text, flex: 1, lineHeight: 1.3,
+                overflow: "hidden", textOverflow: "ellipsis",
+                display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
+              }}>
+                {cat.label}
+              </Typography>
+              <Box component="span" sx={{
+                ml: 0.5, flexShrink: 0, minWidth: 18,
+                px: "4px", py: "1px", borderRadius: "8px",
+                background: isActive ? "rgba(255,255,255,.25)" : "rgba(255,255,255,.1)",
+                fontSize: 9, fontWeight: 700, color: SB.text, textAlign: "center",
+              }}>
+                {count}
+              </Box>
+            </Box>
+
+            {/* Preview strip — shown when category is selected */}
+            {isActive && previewItems.length > 0 && (
+              <Box sx={{ background: SB.preview, borderBottom: `1px solid ${SB.border}`, py: 0.8, px: 1 }}>
+                {previewItems.map(item => {
+                  const ft = foodType(item);
+                  return (
+                    <Box key={item.id} sx={{
+                      display: "flex", alignItems: "center", gap: 0.8,
+                      py: "4px",
+                      borderBottom: `1px solid rgba(255,255,255,.05)`,
+                      "&:last-child": { borderBottom: "none" },
+                    }}>
+                      {/* Veg/Non-veg dot */}
+                      <Box sx={{
+                        width: 8, height: 8, borderRadius: "2px", flexShrink: 0,
+                        border: `1.5px solid ${foodColor(ft)}`,
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                      }}>
+                        <Box sx={{ width: 3, height: 3, borderRadius: "50%", background: foodColor(ft) }} />
+                      </Box>
+                      <Typography sx={{
+                        fontSize: 10, color: "rgba(255,255,255,.75)", flex: 1,
+                        overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                        lineHeight: 1.3,
+                      }}>
+                        {item.item_name}
+                      </Typography>
+                      <Typography sx={{ fontSize: 10, fontWeight: 700, color: "#E8353A", flexShrink: 0 }}>
+                        ₹{item.price}
+                      </Typography>
+                    </Box>
+                  );
+                })}
+                {menuFiltered.length > 4 && (
+                  <Typography sx={{ fontSize: 9, color: SB.dim, textAlign: "center", pt: "3px" }}>
+                    +{menuFiltered.length - 4} more
+                  </Typography>
+                )}
+              </Box>
+            )}
+          </Box>
+        );
+      })}
+    </Box>
+  );
+}
+
 function CustPillBtn({ pill, onClick }: { pill:{filled:boolean;label:string;initials:string}; onClick:()=>void }) {
   return (
     <Box component="button" onClick={onClick} sx={{flex:1,display:"flex",alignItems:"center",gap:"5px",px:"9px",py:"4px",background:pill.filled?"rgba(24,107,53,0.08)":"#fdfaf7",border:`1px solid ${pill.filled?"rgba(24,107,53,0.22)":"#e4dbd0"}`,borderRadius:"8px",fontSize:"10.5px",cursor:"pointer",fontWeight:600,fontFamily:FONT,color:pill.filled?"#186b35":"#68594a",transition:"all .13s","&:hover":{borderColor:"#cec4b8"},minWidth:0}}>

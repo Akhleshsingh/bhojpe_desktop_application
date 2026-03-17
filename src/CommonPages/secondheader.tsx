@@ -29,6 +29,7 @@ export default function SecondHeader({
   sidebarOpen,
   setSidebarOpen,
   orderType,
+  onNewOrder,
 }: {
   orderType?: any;
   setOrderType?: (type: any) => void;
@@ -37,6 +38,7 @@ export default function SecondHeader({
   waiters?: any;
   sidebarOpen?: boolean;
   setSidebarOpen?: (v: boolean) => void;
+  onNewOrder?: () => void;
 }) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -62,6 +64,7 @@ export default function SecondHeader({
   );
 
   const handleNewKot = () => {
+    if (onNewOrder) { onNewOrder(); return; }
     navigate("/menudashboard", {});
   };
 
