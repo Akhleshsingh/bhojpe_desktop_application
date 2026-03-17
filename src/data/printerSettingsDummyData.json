@@ -1,0 +1,323 @@
+{
+  "__comment": "BhojPe PrinterSettings — Dummy API Responses",
+  "__version": "1.0.0",
+  "__backend_base": "http://bhojpe.in/api/v1",
+
+  "kitchens": {
+    "success": true,
+    "data": [
+      {
+        "id": "k1",
+        "name": "Veg Kitchen",
+        "color": "#16a34a",
+        "printer": "Epson TM-T88VI (192.168.1.10)",
+        "printer_id": "p1",
+        "categories": [
+          "🥗 Veg Pizza",
+          "🥘 Paneer",
+          "🥬 South Indian",
+          "🫓 Roti / Naan",
+          "🫕 Dal"
+        ],
+        "online": true,
+        "auto_kot": true,
+        "show_notes": true,
+        "created_at": "2026-01-10T08:00:00Z",
+        "updated_at": "2026-03-15T10:30:00Z"
+      },
+      {
+        "id": "k2",
+        "name": "Non-Veg Kitchen",
+        "color": "#dc2626",
+        "printer": "Star TSP654IIE (192.168.1.11)",
+        "printer_id": "p2",
+        "categories": [
+          "🍗 Chicken Items",
+          "🥩 Mutton Items",
+          "🍳 Egg Items",
+          "🥩 Non-Veg Biryani"
+        ],
+        "online": true,
+        "auto_kot": true,
+        "show_notes": true,
+        "created_at": "2026-01-10T08:00:00Z",
+        "updated_at": "2026-03-15T10:30:00Z"
+      }
+    ]
+  },
+
+  "printers": {
+    "success": true,
+    "data": [
+      {
+        "id": "p1",
+        "name": "Veg Kitchen Printer",
+        "model": "Epson TM-T88VI",
+        "conn": "wifi",
+        "ip": "192.168.1.10",
+        "port": "9100",
+        "paper_size": "80mm",
+        "copies": "1 Copy",
+        "encoding": "ESC/POS",
+        "function": "Veg Kitchen KOT",
+        "print_type": "kot",
+        "auto_print": true,
+        "active": true,
+        "status": "online",
+        "icon": "🖨️",
+        "created_at": "2026-01-10T08:00:00Z"
+      },
+      {
+        "id": "p2",
+        "name": "Non-Veg Kitchen Printer",
+        "model": "Star TSP654IIE",
+        "conn": "lan",
+        "ip": "192.168.1.11",
+        "port": "9100",
+        "paper_size": "80mm",
+        "copies": "1 Copy",
+        "encoding": "Star Mode",
+        "function": "Non-Veg Kitchen KOT",
+        "print_type": "kot",
+        "auto_print": true,
+        "active": true,
+        "status": "online",
+        "icon": "🖨️",
+        "created_at": "2026-01-10T08:00:00Z"
+      },
+      {
+        "id": "p3",
+        "name": "Bill / Receipt Printer",
+        "model": "Epson TM-T20III",
+        "conn": "usb",
+        "ip": "",
+        "port": "",
+        "paper_size": "80mm",
+        "copies": "1 Copy",
+        "encoding": "ESC/POS",
+        "function": "Bill / Receipt",
+        "print_type": "bill",
+        "auto_print": false,
+        "active": true,
+        "status": "online",
+        "icon": "🧾",
+        "created_at": "2026-01-10T08:00:00Z"
+      },
+      {
+        "id": "p4",
+        "name": "Cash Drawer",
+        "model": "Bill Printer se connect",
+        "conn": "cash",
+        "ip": "",
+        "port": "",
+        "paper_size": "80mm",
+        "copies": "1 Copy",
+        "encoding": "ESC/POS",
+        "function": "Cash Drawer",
+        "print_type": "kot",
+        "auto_print": false,
+        "active": true,
+        "status": "warn",
+        "icon": "🗄️",
+        "created_at": "2026-01-10T08:00:00Z"
+      },
+      {
+        "id": "p5",
+        "name": "KDS Display",
+        "model": "Kitchen Display System",
+        "conn": "wifi",
+        "ip": "",
+        "port": "",
+        "paper_size": "80mm",
+        "copies": "1 Copy",
+        "encoding": "ESC/POS",
+        "function": "KDS Display",
+        "print_type": "kot",
+        "auto_print": false,
+        "active": false,
+        "status": "offline",
+        "icon": "🖥️",
+        "created_at": "2026-01-10T08:00:00Z"
+      }
+    ]
+  },
+
+  "kot_settings": {
+    "success": true,
+    "data": {
+      "restaurant_name": "Bhojpe Restaurant",
+      "branch_name": "Kap's Cafe, Gwalior",
+      "footer": "Please prepare these items",
+      "toggles": {
+        "rest_name": true,
+        "branch_name": true,
+        "logo": false,
+        "kot_num": true,
+        "table": true,
+        "order_type": true,
+        "date_time": true,
+        "waiter": true,
+        "pax": true,
+        "order_id": true,
+        "item_name_bold": true,
+        "item_qty_large": true,
+        "item_price": false,
+        "item_notes": true,
+        "modifiers": true,
+        "veg_indicator": true,
+        "footer": true,
+        "copy_num": true,
+        "cut_paper": true
+      },
+      "updated_at": "2026-03-15T10:00:00Z"
+    }
+  },
+
+  "bill_settings": {
+    "success": true,
+    "data": {
+      "restaurant_name": "Bhojpe Restaurant",
+      "address": "City Center, Gwalior MP",
+      "phone": "+91 94250 08600",
+      "gstin": "23AAACB1234A1Z5",
+      "fssai": "",
+      "email": "hello@bhojpe.in",
+      "upi_id": "",
+      "footer_line1": "Thank you! Visit us again 🙏",
+      "footer_line2": "",
+      "copies": "1 Copy",
+      "toggles": {
+        "logo": true,
+        "rest_name": true,
+        "address": true,
+        "phone": true,
+        "gstin": true,
+        "fssai": false,
+        "bill_num": true,
+        "table": true,
+        "date_time": true,
+        "waiter": true,
+        "pax": true,
+        "customer": false,
+        "gst_breakup": true,
+        "discount": true,
+        "delivery": true,
+        "round_off": false,
+        "amt_words": false,
+        "upi_qr": false,
+        "website": false,
+        "print_invoice": true,
+        "cut_paper": true
+      },
+      "updated_at": "2026-03-15T10:00:00Z"
+    }
+  },
+
+  "direct_print": {
+    "success": true,
+    "data": {
+      "kot_direct": true,
+      "bill_direct": true,
+      "auto_kot_on_add": false,
+      "auto_bill_on_checkout": true,
+      "open_drawer": true,
+      "ebill_send": false,
+      "kot_sound": true,
+      "new_order_sound": true,
+      "reprint_confirm": true,
+      "partial_kot": true,
+      "updated_at": "2026-03-15T10:00:00Z"
+    }
+  },
+
+  "paper_settings": {
+    "success": true,
+    "data": {
+      "paper_size": "80mm",
+      "chars_per_line": "48",
+      "font_size": "Medium (9pt)",
+      "line_spacing": "Normal",
+      "updated_at": "2026-03-15T10:00:00Z"
+    }
+  },
+
+  "kds_settings": {
+    "success": true,
+    "data": {
+      "ip": "",
+      "conn_type": "WebSocket (LAN)",
+      "cols": "4 Columns",
+      "card_size": "Medium",
+      "theme": "Dark (Kitchen)",
+      "font_size": "Medium",
+      "normal_min": "15",
+      "warn_min": "25",
+      "crit_min": "25",
+      "blink_on_critical": true,
+      "sound_on_critical": true,
+      "toggles": {
+        "auto_send": true,
+        "show_timer": true,
+        "sound_alert": true,
+        "auto_remove": true,
+        "order_type": true,
+        "customer_name": false,
+        "platform": true
+      },
+      "updated_at": "2026-03-15T10:00:00Z"
+    }
+  },
+
+  "kds_screens": {
+    "success": true,
+    "data": [
+      {
+        "id": "ks1",
+        "name": "Veg Kitchen Display",
+        "ip": "192.168.1.20",
+        "desc": "Shows: Veg items only",
+        "status": "offline",
+        "categories": ["🥗 Veg Pizza","🥘 Paneer","🥬 South Indian"],
+        "created_at": "2026-01-10T08:00:00Z"
+      },
+      {
+        "id": "ks2",
+        "name": "Non-Veg Kitchen Display",
+        "ip": "192.168.1.21",
+        "desc": "Shows: Non-veg items",
+        "status": "offline",
+        "categories": ["🍗 Chicken Items","🥩 Mutton Items"],
+        "created_at": "2026-01-10T08:00:00Z"
+      }
+    ]
+  },
+
+  "led_settings": {
+    "success": true,
+    "data": {
+      "default_duration": "5",
+      "transition": "Fade",
+      "transition_speed": "Medium (1s)",
+      "image_fit": "Cover (Full Screen)",
+      "orientation": "Landscape (16:9)",
+      "loop": true,
+      "toggles": {
+        "customer_display": true,
+        "auto_start": true,
+        "pause_on_order": false
+      },
+      "updated_at": "2026-03-15T10:00:00Z"
+    }
+  },
+
+  "led_images": {
+    "success": true,
+    "data": []
+  },
+
+  "save_response": {
+    "success": true,
+    "message": "Settings saved successfully",
+    "updated_at": "2026-03-17T08:00:00Z"
+  }
+}

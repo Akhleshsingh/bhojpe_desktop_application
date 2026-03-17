@@ -5,8 +5,21 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined";
-import client from "../api/client";
 import { useAuth } from "../context/AuthContext";
+import {
+  loadAllPrinterSettings,
+  addKitchen as apiAddKitchen,
+  updateKitchen as apiUpdateKitchen,
+  deleteKitchen as apiDeleteKitchen,
+  addPrinter as apiAddPrinter,
+  saveKotSettings as apiSaveKot,
+  saveBillSettings as apiSaveBill,
+  saveDirectPrintSettings as apiSaveDirect,
+  savePaperSettings as apiSavePaper,
+  saveKdsSettings as apiSaveKds,
+  saveLedSettings as apiSaveLed,
+  type Kitchen as ApiKitchen,
+} from "../api/endpoints/printerSettings";
 import toast from "react-hot-toast";
 
 // ─── Design Tokens ────────────────────────────────────────────────────────────
@@ -236,22 +249,225 @@ export default function PrinterSettings() {
   const [kotBranch, setKotBranch] = useState(branchData?.data?.branch_name||"Kap's Cafe, Gwalior");
   const [kotFooter, setKotFooter] = useState("Please prepare these items");
 
+  const [loading, setLoading] = useState(true);
+
   const showToast = useCallback((msg:string, type:"success"|"error"|"info"="success")=>{
     if (type==="error") toast.error(msg); else if (type==="info") toast(msg); else toast.success(msg);
   },[]);
 
+  // ─── Initial Data Load (GET all settings from API / dummy fallback) ────────
+  useEffect(()=>{
+    let cancelled = false;
+    (async()=>{
+      try {
+        const all = await loadAllPrinterSettings();
+        if (cancelled) return;
+
+        // Kitchens
+        if (Array.isArray(all.kitchens) && all.kitchens.length > 0) {
+          setKitchens(all.kitchens.map((k: any)=>({
+            id: k.id, name: k.name, color: k.color,
+            printer: k.printer, categories: k.categories ?? [],
+            online: k.online ?? false,
+            autoKot: k.auto_kot ?? true,
+            showNotes: k.show_notes ?? true,
+          })));
+        }
+
+        // KOT Settings
+        const kot = all.kotSettings as any;
+        if (kot) {
+          setKotRestName(kot.restaurant_name ?? kotRestName);
+          setKotBranch(kot.branch_name ?? kotBranch);
+          setKotFooter(kot.footer ?? kotFooter);
+          if (kot.toggles) setKotToggles({
+            restName: kot.toggles.rest_name ?? true,
+            branchName: kot.toggles.branch_name ?? true,
+            logo: kot.toggles.logo ?? false,
+            kotNum: kot.toggles.kot_num ?? true,
+            table: kot.toggles.table ?? true,
+            orderType: kot.toggles.order_type ?? true,
+            dateTime: kot.toggles.date_time ?? true,
+            waiter: kot.toggles.waiter ?? true,
+            pax: kot.toggles.pax ?? true,
+            orderId: kot.toggles.order_id ?? true,
+            itemNameBold: kot.toggles.item_name_bold ?? true,
+            itemQtyLarge: kot.toggles.item_qty_large ?? true,
+            itemPrice: kot.toggles.item_price ?? false,
+            itemNotes: kot.toggles.item_notes ?? true,
+            modifiers: kot.toggles.modifiers ?? true,
+            vegIndicator: kot.toggles.veg_indicator ?? true,
+            footer: kot.toggles.footer ?? true,
+            copyNum: kot.toggles.copy_num ?? true,
+            cutPaper: kot.toggles.cut_paper ?? true,
+          });
+        }
+
+        // Bill Settings
+        const bill = all.billSettings as any;
+        if (bill) {
+          setBillRestName(bill.restaurant_name ?? "");
+          setBillAddress(bill.address ?? "");
+          setBillPhone(bill.phone ?? "");
+          setBillGstin(bill.gstin ?? "");
+          setBillFssai(bill.fssai ?? "");
+          setBillEmail(bill.email ?? "");
+          setBillUpi(bill.upi_id ?? "");
+          setBillFooter1(bill.footer_line1 ?? "");
+          setBillFooter2(bill.footer_line2 ?? "");
+          setBillCopies(bill.copies ?? "1 Copy");
+          if (bill.toggles) setBillToggles({
+            logo: bill.toggles.logo ?? true,
+            restName: bill.toggles.rest_name ?? true,
+            address: bill.toggles.address ?? true,
+            phone: bill.toggles.phone ?? true,
+            gstin: bill.toggles.gstin ?? true,
+            fssai: bill.toggles.fssai ?? false,
+            billNum: bill.toggles.bill_num ?? true,
+            table: bill.toggles.table ?? true,
+            dateTime: bill.toggles.date_time ?? true,
+            waiter: bill.toggles.waiter ?? true,
+            pax: bill.toggles.pax ?? true,
+            customer: bill.toggles.customer ?? false,
+            gstBreakup: bill.toggles.gst_breakup ?? true,
+            discount: bill.toggles.discount ?? true,
+            delivery: bill.toggles.delivery ?? true,
+            roundOff: bill.toggles.round_off ?? false,
+            amtWords: bill.toggles.amt_words ?? false,
+            upiQr: bill.toggles.upi_qr ?? false,
+            website: bill.toggles.website ?? false,
+            printInvoice: bill.toggles.print_invoice ?? true,
+            cutPaper: bill.toggles.cut_paper ?? true,
+          });
+        }
+
+        // Direct Print
+        const dp = all.directPrint as any;
+        if (dp) setDirectToggles({
+          kotDirect: dp.kot_direct ?? true,
+          billDirect: dp.bill_direct ?? true,
+          autoKotOnAdd: dp.auto_kot_on_add ?? false,
+          autoBillOnCheckout: dp.auto_bill_on_checkout ?? true,
+          openDrawer: dp.open_drawer ?? true,
+          ebillSend: dp.ebill_send ?? false,
+          kotSound: dp.kot_sound ?? true,
+          newOrderSound: dp.new_order_sound ?? true,
+          reprintConfirm: dp.reprint_confirm ?? true,
+          partialKot: dp.partial_kot ?? true,
+        });
+
+        // Paper Settings
+        const paper = all.paperSettings as any;
+        if (paper) {
+          setPaperSize(paper.paper_size ?? "80mm");
+          setCharsPerLine(paper.chars_per_line ?? "48");
+          setFontSize(paper.font_size ?? "Medium (9pt)");
+          setLineSpacing(paper.line_spacing ?? "Normal");
+        }
+
+        // KDS Settings
+        const kds = all.kdsSettings as any;
+        if (kds) {
+          setKdsIp(kds.ip ?? "");
+          setKdsConnType(kds.conn_type ?? "WebSocket (LAN)");
+          setKdsCols(kds.cols ?? "4 Columns");
+          setKdsCardSize(kds.card_size ?? "Medium");
+          setKdsTheme(kds.theme ?? "Dark (Kitchen)");
+          setKdsFontSize(kds.font_size ?? "Medium");
+          setNormalMin(kds.normal_min ?? "15");
+          setWarnMin(kds.warn_min ?? "25");
+          setCritMin(kds.crit_min ?? "25");
+          setKdsBlink(kds.blink_on_critical ?? true);
+          setKdsSound(kds.sound_on_critical ?? true);
+          if (kds.toggles) setKdsToggles({
+            autoSend: kds.toggles.auto_send ?? true,
+            showTimer: kds.toggles.show_timer ?? true,
+            soundAlert: kds.toggles.sound_alert ?? true,
+            autoRemove: kds.toggles.auto_remove ?? true,
+            orderType: kds.toggles.order_type ?? true,
+            customerName: kds.toggles.customer_name ?? false,
+            platform: kds.toggles.platform ?? true,
+          });
+        }
+
+        // LED Settings
+        const led = all.ledSettings as any;
+        if (led) {
+          setLedDuration(led.default_duration ?? "5");
+          setLedTransition(led.transition ?? "Fade");
+          setLedTransitionSpeed(led.transition_speed ?? "Medium (1s)");
+          setLedFit(led.image_fit ?? "Cover (Full Screen)");
+          setLedOrientation(led.orientation ?? "Landscape (16:9)");
+          setLedLoop(led.loop ?? true);
+          if (led.toggles) setLedToggles({
+            customerDisplay: led.toggles.customer_display ?? true,
+            autoStart: led.toggles.auto_start ?? true,
+            pauseOnOrder: led.toggles.pause_on_order ?? false,
+          });
+        }
+      } catch {
+        // dummy fallback already handled inside each API function
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return ()=>{ cancelled = true; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[]);
+
   const toggleKitchen = (id:string)=>setOpenKitchens(p=>p.includes(id)?p.filter(k=>k!==id):[...p,id]);
-  const removeKitchen = (id:string)=>{ if (!window.confirm("Remove this kitchen?")) return; setKitchens(p=>p.filter(k=>k.id!==id)); showToast("Kitchen removed"); };
+
+  const removeKitchen = async (id:string)=>{
+    if (!window.confirm("Remove this kitchen?")) return;
+    try { await apiDeleteKitchen(id); } catch { /* local remove */ }
+    setKitchens(p=>p.filter(k=>k.id!==id));
+    showToast("Kitchen removed");
+  };
+
   const addKitchen = async ()=>{
     if (!newKitchenName.trim()){showToast("Kitchen name enter karo","error");return;}
-    const newK:Kitchen={id:`k${Date.now()}`,name:newKitchenName.trim(),color:newKitchenColor,printer:newKitchenPrinter||"No printer",categories:newKitchenCats,online:false,autoKot:true,showNotes:true};
-    try{await client.post("/kitchens",{name:newK.name,color:newK.color,printer:newK.printer,categories:newK.categories});}catch{/*local*/}
-    setKitchens(p=>[...p,newK]);setNewKitchenName("");setNewKitchenColor("#16a34a");setNewKitchenCats([]);setNewKitchenPrinter("");setShowAddKitchen(false);showToast(`${newK.name} kitchen added ✓`);
+    const payload = {
+      name: newKitchenName.trim(), color: newKitchenColor,
+      printer: newKitchenPrinter || "No printer", printer_id: "",
+      categories: newKitchenCats, online: false, auto_kot: true, show_notes: true,
+    };
+    let newId = `k${Date.now()}`;
+    try {
+      const created = await apiAddKitchen(payload);
+      newId = created.id ?? newId;
+    } catch { /* local */ }
+    const newK:Kitchen = { id:newId, name:payload.name, color:payload.color, printer:payload.printer, categories:payload.categories, online:false, autoKot:true, showNotes:true };
+    setKitchens(p=>[...p,newK]);
+    setNewKitchenName(""); setNewKitchenColor("#16a34a"); setNewKitchenCats([]); setNewKitchenPrinter(""); setShowAddKitchen(false);
+    showToast(`${newK.name} kitchen added ✓`);
   };
+
+  const saveKitchen = async (k:Kitchen)=>{
+    try {
+      await apiUpdateKitchen(k.id, {
+        name:k.name, color:k.color, printer:k.printer,
+        categories:k.categories, auto_kot:k.autoKot, show_notes:k.showNotes,
+      } as Partial<ApiKitchen>);
+    } catch { /* local */ }
+    showToast(`${k.name} saved ✓`);
+  };
+
   const toggleCat=(cat:string,arr:string[],setArr:(v:string[])=>void)=>setArr(arr.includes(cat)?arr.filter(c=>c!==cat):[...arr,cat]);
   const openModal=(name:string|null)=>{setModalName(name||"");setModalFunction("");setModalPrintType("kot");setModalConn("wifi");setModalIp("");setModalPort("9100");setModalModel("");setFoundPrinters([]);setSelectedFound("");setModalOpen(true);};
   const doScan=()=>{setScanning(true);setFoundPrinters([]);setTimeout(()=>{const r=SCAN_DATA[modalConn]||[];setFoundPrinters(r);setScanning(false);showToast(`${r.length} printer(s) found`);},2200);};
-  const saveModal=async()=>{if(!modalName.trim()){showToast("Printer name enter karo","error");return;}try{await client.post("/printers",{name:modalName,function:modalFunction,printType:modalPrintType,conn:modalConn,ip:modalIp,port:modalPort,model:modalModel,paperSize:modalPaperSize,copies:modalCopies,encoding:modalEncoding,autoPrint:modalAutoPrint,active:modalActive});}catch{/*local*/}setModalOpen(false);showToast(`${modalName} saved ✓`);};
+
+  const saveModal=async()=>{
+    if(!modalName.trim()){showToast("Printer name enter karo","error");return;}
+    try {
+      await apiAddPrinter({
+        name:modalName, model:modalModel, conn:modalConn as "wifi"|"lan"|"bt"|"usb"|"cash",
+        ip:modalIp, port:modalPort, paper_size:modalPaperSize, copies:modalCopies,
+        encoding:modalEncoding, function:modalFunction,
+        print_type:modalPrintType, auto_print:modalAutoPrint, active:modalActive, icon:"🖨️",
+      });
+    } catch { /* local */ }
+    setModalOpen(false); showToast(`${modalName} saved ✓`);
+  };
   const handleFiles=(files:File[])=>{const valid=files.filter(f=>f.type.startsWith("image/")&&f.size<=5*1024*1024);valid.forEach(f=>{const r=new FileReader();r.onload=e=>setLedImages(p=>[...p,{id:`img${Date.now()}${Math.random()}`,name:f.name,size:`${(f.size/1024).toFixed(1)} KB`,duration:5,src:e.target?.result as string}]);r.readAsDataURL(f);});if(valid.length<files.length)showToast("Some files skipped (>5MB or not image)","error");};
 
   useEffect(()=>{
@@ -259,12 +475,43 @@ export default function PrinterSettings() {
     return()=>{if(ledTimerRef.current)clearTimeout(ledTimerRef.current);};
   },[ledPlaying,ledCurrentIdx,ledImages]);
 
-  const saveKotSettings=async()=>{try{await client.post("/print-settings/kot",{...kotToggles,restaurantName:kotRestName,branchName:kotBranch,footer:kotFooter});}catch{/*local*/}showToast("KOT settings saved ✓");};
-  const saveBillSettings=async()=>{try{await client.post("/print-settings/bill",{...billToggles,restaurantName:billRestName,address:billAddress,phone:billPhone,gstin:billGstin,fssai:billFssai,email:billEmail,upi:billUpi,footer1:billFooter1,footer2:billFooter2,copies:billCopies});}catch{/*local*/}showToast("Bill settings saved ✓");};
-  const saveDirectPrint=async()=>{try{await client.post("/print-settings/direct",directToggles);}catch{/*local*/}showToast("Direct print saved ✓");};
-  const savePaperSettings=async()=>{try{await client.post("/print-settings/paper",{paperSize,charsPerLine,fontSize,lineSpacing});}catch{/*local*/}showToast("Paper settings saved ✓");};
-  const saveKdsSettings=async()=>{try{await client.post("/kds-settings",{ip:kdsIp,connType:kdsConnType,...kdsToggles,cols:kdsCols,cardSize:kdsCardSize,theme:kdsTheme,fontSize:kdsFontSize});}catch{/*local*/}showToast("KDS settings saved ✓");};
-  const saveLedSettings=async()=>{try{await client.post("/led-settings",{duration:ledDuration,transition:ledTransition,speed:ledTransitionSpeed,fit:ledFit,orientation:ledOrientation,loop:ledLoop,...ledToggles});}catch{/*local*/}showToast("Display settings saved ✓");};
+  const saveKotSettings=async()=>{
+    try{ await apiSaveKot({
+      restaurant_name:kotRestName, branch_name:kotBranch, footer:kotFooter,
+      toggles:{ rest_name:kotToggles.restName, branch_name:kotToggles.branchName, logo:kotToggles.logo, kot_num:kotToggles.kotNum, table:kotToggles.table, order_type:kotToggles.orderType, date_time:kotToggles.dateTime, waiter:kotToggles.waiter, pax:kotToggles.pax, order_id:kotToggles.orderId, item_name_bold:kotToggles.itemNameBold, item_qty_large:kotToggles.itemQtyLarge, item_price:kotToggles.itemPrice, item_notes:kotToggles.itemNotes, modifiers:kotToggles.modifiers, veg_indicator:kotToggles.vegIndicator, footer:kotToggles.footer, copy_num:kotToggles.copyNum, cut_paper:kotToggles.cutPaper },
+    });}catch{/*local*/} showToast("KOT settings saved ✓");
+  };
+
+  const saveBillSettings=async()=>{
+    try{ await apiSaveBill({
+      restaurant_name:billRestName, address:billAddress, phone:billPhone, gstin:billGstin, fssai:billFssai, email:billEmail, upi_id:billUpi, footer_line1:billFooter1, footer_line2:billFooter2, copies:billCopies,
+      toggles:{ logo:billToggles.logo, rest_name:billToggles.restName, address:billToggles.address, phone:billToggles.phone, gstin:billToggles.gstin, fssai:billToggles.fssai, bill_num:billToggles.billNum, table:billToggles.table, date_time:billToggles.dateTime, waiter:billToggles.waiter, pax:billToggles.pax, customer:billToggles.customer, gst_breakup:billToggles.gstBreakup, discount:billToggles.discount, delivery:billToggles.delivery, round_off:billToggles.roundOff, amt_words:billToggles.amtWords, upi_qr:billToggles.upiQr, website:billToggles.website, print_invoice:billToggles.printInvoice, cut_paper:billToggles.cutPaper },
+    });}catch{/*local*/} showToast("Bill settings saved ✓");
+  };
+
+  const saveDirectPrint=async()=>{
+    try{ await apiSaveDirect({
+      kot_direct:directToggles.kotDirect, bill_direct:directToggles.billDirect, auto_kot_on_add:directToggles.autoKotOnAdd, auto_bill_on_checkout:directToggles.autoBillOnCheckout, open_drawer:directToggles.openDrawer, ebill_send:directToggles.ebillSend, kot_sound:directToggles.kotSound, new_order_sound:directToggles.newOrderSound, reprint_confirm:directToggles.reprintConfirm, partial_kot:directToggles.partialKot,
+    });}catch{/*local*/} showToast("Direct print saved ✓");
+  };
+
+  const savePaperSettings=async()=>{
+    try{ await apiSavePaper({ paper_size:paperSize, chars_per_line:charsPerLine, font_size:fontSize, line_spacing:lineSpacing });}catch{/*local*/} showToast("Paper settings saved ✓");
+  };
+
+  const saveKdsSettings=async()=>{
+    try{ await apiSaveKds({
+      ip:kdsIp, conn_type:kdsConnType, cols:kdsCols, card_size:kdsCardSize, theme:kdsTheme, font_size:kdsFontSize, normal_min:normalMin, warn_min:warnMin, crit_min:critMin, blink_on_critical:kdsBlink, sound_on_critical:kdsSound,
+      toggles:{ auto_send:kdsToggles.autoSend, show_timer:kdsToggles.showTimer, sound_alert:kdsToggles.soundAlert, auto_remove:kdsToggles.autoRemove, order_type:kdsToggles.orderType, customer_name:kdsToggles.customerName, platform:kdsToggles.platform },
+    });}catch{/*local*/} showToast("KDS settings saved ✓");
+  };
+
+  const saveLedSettings=async()=>{
+    try{ await apiSaveLed({
+      default_duration:ledDuration, transition:ledTransition, transition_speed:ledTransitionSpeed, image_fit:ledFit, orientation:ledOrientation, loop:ledLoop,
+      toggles:{ customer_display:ledToggles.customerDisplay, auto_start:ledToggles.autoStart, pause_on_order:ledToggles.pauseOnOrder },
+    });}catch{/*local*/} showToast("Display settings saved ✓");
+  };
 
   const printerStatus=[{name:"Veg Kitchen",status:"online" as const},{name:"Non-Veg Kitchen",status:"online" as const},{name:"Bill Printer",status:"online" as const},{name:"Cash Drawer",status:"warn" as const}];
 
@@ -354,7 +601,7 @@ export default function PrinterSettings() {
                   <Switch checked={k.showNotes} size="small" sx={muiSwSx} />
                   <Typography sx={{fontSize:13,fontWeight:600,color:C.t2}}>Show Notes on KOT</Typography>
                 </Box>
-                <ABtn variant="primary" sm onClick={()=>showToast(`${k.name} saved ✓`)} startIcon={<SaveOutlinedIcon sx={{fontSize:"14px !important"}} />}>Save</ABtn>
+                <ABtn variant="primary" sm onClick={()=>saveKitchen(k)} startIcon={<SaveOutlinedIcon sx={{fontSize:"14px !important"}} />}>Save</ABtn>
               </Box>
             </Box>
           )}
@@ -850,6 +1097,14 @@ ${kotToggles.footer?kotFooter+"\n":""}${kotToggles.copyNum?"COPY 1 / 1\n":""}===
 
   const sidebarSx={width:236,background:C.w,borderRight:`1px solid ${C.bd}`,flexShrink:0,p:"14px 8px",overflowY:"auto" as const};
   const contentSx={flex:1,p:"22px 26px",overflowY:"auto" as const,background:C.bg};
+
+  if (loading) return (
+    <Box sx={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:C.bg,flexDirection:"column",gap:"16px"}}>
+      <Box sx={{width:40,height:40,border:`4px solid ${C.bd}`,borderTop:`4px solid ${C.ac}`,borderRadius:"50%",animation:"spin 0.9s linear infinite"}} />
+      <Typography sx={{fontSize:13,fontWeight:600,color:C.t2,fontFamily:"Plus Jakarta Sans,sans-serif"}}>Settings load ho rahi hain…</Typography>
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+    </Box>
+  );
 
   return (
     <Box sx={{fontFamily:"Plus Jakarta Sans,sans-serif",background:C.bg,color:C.tx,minHeight:"100vh",fontSize:14}}>
