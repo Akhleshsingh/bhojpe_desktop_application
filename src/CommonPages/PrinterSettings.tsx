@@ -98,7 +98,7 @@ function FgField({ label, value, onChange, placeholder, mono, type }: {
     <TextField label={label} value={value} type={type||"text"} placeholder={placeholder}
       onChange={e=>onChange?.(e.target.value)} size="small" fullWidth variant="outlined"
       inputProps={{ style:{ fontFamily:mono?"JetBrains Mono,monospace":"Plus Jakarta Sans,sans-serif",fontSize:13 } }}
-      sx={{ "& .MuiOutlinedInput-root":{ background:C.s1,borderRadius:"10px","& fieldset":{borderColor:C.bd},"&:hover fieldset":{borderColor:C.bd2},"&.Mui-focused fieldset":{borderColor:C.ac,background:C.w} },"& label":{fontSize:11,fontWeight:700,color:C.t2,textTransform:"uppercase",letterSpacing:".3px"},"& label.Mui-focused":{color:C.ac} }}
+      sx={{ "& .MuiOutlinedInput-root":{ background:C.s1,borderRadius:"10px","& fieldset":{borderColor:C.bd},"&:hover fieldset":{borderColor:C.bd2},"&.Mui-focused":{background:C.w},"&.Mui-focused fieldset":{borderColor:C.ac} },"& label":{fontSize:11,fontWeight:700,color:C.t2,textTransform:"uppercase",letterSpacing:".3px"},"& label.Mui-focused":{color:C.ac} }}
     />
   );
 }
