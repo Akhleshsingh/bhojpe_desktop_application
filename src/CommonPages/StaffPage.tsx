@@ -76,7 +76,7 @@ const StatChip = ({ icon, label, value, color }: { icon: React.ReactNode; label:
   </Box>
 );
 
-const colW = ["28%", "28%", "20%", "15%", "9%"];
+const colW = ["24%", "26%", "18%", "18%", "14%"];
 
 export default function StaffPage() {
   const { branchData } = useAuth();
@@ -318,7 +318,7 @@ export default function StaffPage() {
 
           {/* Header row */}
           <Box sx={{ display: "grid", gridTemplateColumns: colW.join(" "), backgroundColor: "#f0ebe4", px: 2, py: 1.4, borderBottom: "1.5px solid #e2d9d0" }}>
-            {["MEMBER NAME", "EMAIL ADDRESS", "ROLE", "ACTION", ""].map((h, i) => (
+            {["MEMBER NAME", "EMAIL ADDRESS", "PHONE NUMBER", "ROLE", "ACTION"].map((h, i) => (
               <Typography key={i} sx={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", fontFamily: FONT, letterSpacing: 0.6, textTransform: "uppercase" }}>{h}</Typography>
             ))}
           </Box>
@@ -358,6 +358,9 @@ export default function StaffPage() {
                   {row.email}
                 </Typography>
 
+                {/* Phone */}
+                <Typography sx={{ fontSize: 12, color: "#6B7280", fontFamily: FONT }}>{row.phone_number}</Typography>
+
                 {/* Role chip */}
                 <Box>
                   {row.role_name ? (
@@ -386,9 +389,6 @@ export default function StaffPage() {
                     </IconButton>
                   </Tooltip>
                 </Box>
-
-                {/* Phone */}
-                <Typography sx={{ fontSize: 11, color: "#9CA3AF", fontFamily: FONT }}>{row.phone_number}</Typography>
               </Box>
             );
           })}
