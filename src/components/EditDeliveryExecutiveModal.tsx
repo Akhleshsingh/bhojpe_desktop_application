@@ -17,7 +17,7 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import type { DeliveryExecutive } from "../context/DeliveryExecutive";
 import { useDeliveryExecutives } from "../context/DeliveryExecutive";
 
-const FONT = "'Plus Jakarta Sans', sans-serif";
+const FONT = "'Montserrat', sans-serif";
 
 const FieldRow = ({ icon, children }: { icon: React.ReactNode; children: React.ReactNode }) => (
   <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1.5 }}>

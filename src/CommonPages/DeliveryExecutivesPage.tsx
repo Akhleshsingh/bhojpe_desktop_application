@@ -27,7 +27,7 @@ import AddStaffMemberDialog from "../components/AddStaffMemberDialog";
 import EditDeliveryExecutiveModal from "../components/EditDeliveryExecutiveModal";
 
 const PER_PAGE = 10;
-const FONT = "'Plus Jakarta Sans', sans-serif";
+const FONT = "'Montserrat', sans-serif";
 
 function getStatusMeta(exec: any): { label: string; bg: string; color: string } {
   const s = (exec.status || "").toLowerCase();

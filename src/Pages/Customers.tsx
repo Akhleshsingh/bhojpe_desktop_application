@@ -29,7 +29,7 @@ import EditCustomerModal from "../components/EditCustomerModal";
 import ImportCustomerModal from "../components/ImportCustomerModal";
 
 const PER_PAGE = 10;
-const FONT = "'Plus Jakarta Sans', sans-serif";
+const FONT = "'Montserrat', sans-serif";
 
 const COL_HEADER = {
   fontSize: 11,

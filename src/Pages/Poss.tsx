@@ -35,7 +35,7 @@ const C = {
   tx:"#24201c", t2:"#68594a", t3:"#a4927e",
   dk:"#24201c", dk2:"#2e2a26", dk3:"#3a342e", dk4:"#2a2420",
 } as const;
-const FONT   = "'Plus Jakarta Sans', sans-serif";
+const FONT   = "'Montserrat', sans-serif";
 const SERIF  = "'Playfair Display', serif";
 
 // ─── Meal-Time Groups (for sidebar "Menu" tab) ────────────────────────────
@@ -1607,7 +1607,7 @@ function CustPillBtn({ pill, onClick }: { pill:{filled:boolean;label:string;init
   return (
     <Box component="button" onClick={onClick} sx={{flex:1,display:"flex",alignItems:"center",gap:"5px",px:"9px",py:"4px",background:pill.filled?"rgba(24,107,53,0.08)":"#fdfaf7",border:`1px solid ${pill.filled?"rgba(24,107,53,0.22)":"#e4dbd0"}`,borderRadius:"8px",fontSize:"10.5px",cursor:"pointer",fontWeight:600,fontFamily:FONT,color:pill.filled?"#186b35":"#68594a",transition:"all .13s","&:hover":{borderColor:"#cec4b8"},minWidth:0}}>
       <Box sx={{width:18,height:18,borderRadius:"50%",background:pill.filled?"rgba(24,107,53,0.22)":"#FF3D01",color:"#fff",fontSize:"8px",fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{pill.initials}</Box>
-      <Typography sx={{fontSize:"10.5px",fontWeight:600,fontFamily:"'Plus Jakarta Sans',sans-serif",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{pill.label}</Typography>
+      <Typography sx={{fontSize:"10.5px",fontWeight:600,fontFamily:"'Montserrat',sans-serif",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{pill.label}</Typography>
     </Box>
   );
 }

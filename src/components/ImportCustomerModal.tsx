@@ -15,7 +15,7 @@ import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import InsertDriveFileOutlinedIcon from "@mui/icons-material/InsertDriveFileOutlined";
 import { useCustomers } from "../context/CustomerContext";
 
-const FONT = "'Plus Jakarta Sans', sans-serif";
+const FONT = "'Montserrat', sans-serif";
 
 type ParsedRow = {
   name: string;

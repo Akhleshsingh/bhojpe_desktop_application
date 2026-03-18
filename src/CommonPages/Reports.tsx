@@ -250,7 +250,7 @@ const calBtnSx = {
   display: "flex", alignItems: "center", gap: "5px", px: "10px", py: "6px",
   background: T.s1, border: `1.5px solid ${T.bd}`, borderRadius: "8px",
   cursor: "pointer", userSelect: "none" as const,
-  fontSize: 12.5, fontWeight: 600, color: T.tx, fontFamily: "Plus Jakarta Sans,sans-serif",
+  fontSize: 12.5, fontWeight: 600, color: T.tx, fontFamily: "Montserrat,sans-serif",
   "&:hover": { borderColor: T.bd2 },
 } as const;
 const calDropSx = {
@@ -320,7 +320,7 @@ function SalesReport() {
               <CartesianGrid strokeDasharray="3 3" stroke={T.bd} />
               <XAxis dataKey="day" tick={{ fontSize: 10, fill: T.t3 }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 10, fill: T.t3 }} axisLine={false} tickLine={false} tickFormatter={v => `₹${v}`} />
-              <Tooltip formatter={(v: number) => [`₹${v}`, "Sales"]} contentStyle={{ fontFamily: "Plus Jakarta Sans,sans-serif", fontSize: 12 }} />
+              <Tooltip formatter={(v: number) => [`₹${v}`, "Sales"]} contentStyle={{ fontFamily: "Montserrat,sans-serif", fontSize: 12 }} />
               <Area type="monotone" dataKey="sales" stroke={T.ac} strokeWidth={2.5} fill="url(#sg)" dot={{ fill: T.ac, r: 3 }} />
             </AreaChart>
           </ResponsiveContainer>
@@ -402,7 +402,7 @@ function ItemReport() {
               <CartesianGrid strokeDasharray="3 3" stroke={T.bd} />
               <XAxis dataKey="name" tick={{ fontSize: 9, fill: T.t3 }} angle={-35} textAnchor="end" interval={0} />
               <YAxis tick={{ fontSize: 10, fill: T.t3 }} axisLine={false} tickLine={false} />
-              <Tooltip contentStyle={{ fontFamily: "Plus Jakarta Sans,sans-serif", fontSize: 12 }} />
+              <Tooltip contentStyle={{ fontFamily: "Montserrat,sans-serif", fontSize: 12 }} />
               <Bar dataKey="qty" fill={T.ac} radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
@@ -459,7 +459,7 @@ function CategoryReport() {
               <CartesianGrid strokeDasharray="3 3" stroke={T.bd} />
               <XAxis dataKey="name" tick={{ fontSize: 10, fill: T.t3 }} />
               <YAxis tick={{ fontSize: 10, fill: T.t3 }} axisLine={false} tickLine={false} tickFormatter={v => `₹${v}`} />
-              <Tooltip formatter={(v: number) => [`₹${v}`, "Revenue"]} contentStyle={{ fontFamily: "Plus Jakarta Sans,sans-serif", fontSize: 12 }} />
+              <Tooltip formatter={(v: number) => [`₹${v}`, "Revenue"]} contentStyle={{ fontFamily: "Montserrat,sans-serif", fontSize: 12 }} />
               <Bar dataKey="revenue" fill={T.ac} radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
@@ -951,8 +951,8 @@ export default function Reports() {
   const sections = [...new Set(NAV_ITEMS.map(n => n.section))];
 
   return (
-    <Box sx={{ display: "flex", height: "100%", fontFamily: "Plus Jakarta Sans,sans-serif", background: T.bg, color: T.tx, fontSize: 14 }}>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');`}</style>
+    <Box sx={{ display: "flex", height: "100%", fontFamily: "Montserrat,sans-serif", background: T.bg, color: T.tx, fontSize: 14 }}>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Montserrat:wght@400;500;600;700;800&display=swap');`}</style>
 
       {/* Sidebar */}
       <Box sx={{ width: 210, background: T.w, borderRight: `1px solid ${T.bd}`, display: "flex", flexDirection: "column", flexShrink: 0, overflow: "hidden" }}>

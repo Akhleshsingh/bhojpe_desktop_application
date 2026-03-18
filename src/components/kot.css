@@ -3,7 +3,7 @@
   background-color: #f5f0ea;
   min-height: 100vh;
   padding: 24px;
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "Montserrat", sans-serif;
 }
 
 /* HEADER */
@@ -31,7 +31,7 @@
   border: 1px solid #e2d9d0;
   padding: 0 10px;
   background: #fff;
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 13px;
   color: #1a1208;
 }
@@ -43,7 +43,7 @@
   border-radius: 6px;
   padding: 6px 14px;
   cursor: pointer;
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 13px;
   font-weight: 600;
   transition: background 0.15s;
@@ -73,7 +73,7 @@
   border: 1.5px solid #e2d9d0;
   padding: 0 12px;
   background: #fff;
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 12.5px;
   color: #1a1208;
   cursor: pointer;
@@ -120,7 +120,7 @@
   border-radius: 8px;
   background: #ffffff;
   font-size: 13px;
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "Montserrat", sans-serif;
   color: #1a1208;
   width: 100%;
   outline: none;
@@ -184,7 +184,7 @@
   font-size: 13px;
   cursor: pointer;
   font-weight: 600;
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "Montserrat", sans-serif;
 }
 
 .kot-empty-clear:hover {
@@ -198,7 +198,7 @@
   border-radius: 5px;
   background: #ffffff;
   font-size: 13px;
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "Montserrat", sans-serif;
   color: #1a1208;
 }
 

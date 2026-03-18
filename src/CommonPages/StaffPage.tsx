@@ -22,7 +22,7 @@ import WorkOutlineIcon from "@mui/icons-material/WorkOutline";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 
-const FONT = "'Plus Jakarta Sans', sans-serif";
+const FONT = "'Montserrat', sans-serif";
 const RED = "#FF3D01";
 const PAGE_SIZE = 10;
 

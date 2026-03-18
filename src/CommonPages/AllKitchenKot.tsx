@@ -117,7 +117,7 @@ const initialKots: Kot[] = [
 
 // ── Theme tokens ─────────────────────────────────────────────────────────────
 const ACCENT   = "#FF3D01";
-const FONT     = "'Plus Jakarta Sans', sans-serif";
+const FONT     = "'Montserrat', sans-serif";
 const BG       = "#f5f0ea";
 const BDR      = "#e2d9d0";
 const TX       = "#1a1208";

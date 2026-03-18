@@ -211,7 +211,7 @@ export default function SecondHeader({
               sx={{
                 backgroundColor: "#fff",
                 color: "#FF3D01",
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
+                fontFamily: "'Montserrat', sans-serif",
                 fontWeight: 600,
                 fontSize: "13px",
                 borderRadius: "6px",
@@ -233,7 +233,7 @@ export default function SecondHeader({
               sx={{
                 backgroundColor: "#FF3D01",
                 color: "#fff",
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
+                fontFamily: "'Montserrat', sans-serif",
                 fontWeight: 600,
                 fontSize: "13px",
                 borderRadius: "6px",

@@ -10,7 +10,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../utils/api";
 
-const FONT  = "'Plus Jakarta Sans', sans-serif";
+const FONT  = "'Montserrat', sans-serif";
 const SERIF = "'Playfair Display', serif";
 const ACCENT      = "#FF3D01";
 const ACCENT_DIM  = "rgba(255,61,1,0.08)";

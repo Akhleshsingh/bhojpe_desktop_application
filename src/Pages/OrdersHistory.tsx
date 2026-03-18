@@ -28,7 +28,7 @@ import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 // ── Theme tokens ─────────────────────────────────────────────────────────────
 const ACCENT   = "#FF3D01";
 const ACCENT_H = "#e63500";
-const FONT     = "'Plus Jakarta Sans', sans-serif";
+const FONT     = "'Montserrat', sans-serif";
 const SERIF    = "'Playfair Display', serif";
 const BG       = "#f5f0ea";
 const BDR      = "#e2d9d0";

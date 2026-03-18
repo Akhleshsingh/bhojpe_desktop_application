@@ -19,7 +19,7 @@ import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 import { BASE_URL } from "../utils/api";
 
-const FONT = "'Plus Jakarta Sans', sans-serif";
+const FONT = "'Montserrat', sans-serif";
 const RED  = "#FF3D01";
 
 const COUNTRY_CODES = ["+91", "+1", "+44", "+61", "+971", "+65", "+81", "+86"];

@@ -97,7 +97,7 @@ function FgField({ label, value, onChange, placeholder, mono, type }: {
   return (
     <TextField label={label} value={value} type={type||"text"} placeholder={placeholder}
       onChange={e=>onChange?.(e.target.value)} size="small" fullWidth variant="outlined"
-      inputProps={{ style:{ fontFamily:mono?"JetBrains Mono,monospace":"Plus Jakarta Sans,sans-serif",fontSize:13 } }}
+      inputProps={{ style:{ fontFamily:mono?"JetBrains Mono,monospace":"Montserrat,sans-serif",fontSize:13 } }}
       sx={{ "& .MuiOutlinedInput-root":{ background:C.s1,borderRadius:"10px","& fieldset":{borderColor:C.bd},"&:hover fieldset":{borderColor:C.bd2},"&.Mui-focused":{background:C.w},"&.Mui-focused fieldset":{borderColor:C.ac} },"& label":{fontSize:11,fontWeight:700,color:C.t2,textTransform:"uppercase",letterSpacing:".3px"},"& label.Mui-focused":{color:C.ac} }}
     />
   );
@@ -110,7 +110,7 @@ function FgSel({ label, value, onChange, options }: {
     <FormControl size="small" fullWidth>
       <Typography sx={{ fontSize:11,fontWeight:700,color:C.t2,textTransform:"uppercase",letterSpacing:".3px",mb:"5px" }}>{label}</Typography>
       <Select value={value} onChange={e=>onChange?.(e.target.value as string)}
-        sx={{ background:C.s1,borderRadius:"10px","& .MuiOutlinedInput-notchedOutline":{borderColor:C.bd},"&:hover .MuiOutlinedInput-notchedOutline":{borderColor:C.bd2},"&.Mui-focused .MuiOutlinedInput-notchedOutline":{borderColor:C.ac},fontSize:13,fontFamily:"Plus Jakarta Sans,sans-serif",color:C.tx }}>
+        sx={{ background:C.s1,borderRadius:"10px","& .MuiOutlinedInput-notchedOutline":{borderColor:C.bd},"&:hover .MuiOutlinedInput-notchedOutline":{borderColor:C.bd2},"&.Mui-focused .MuiOutlinedInput-notchedOutline":{borderColor:C.ac},fontSize:13,fontFamily:"Montserrat,sans-serif",color:C.tx }}>
         {options.map(o=><MenuItem key={o} value={o} sx={{fontSize:13}}>{o}</MenuItem>)}
       </Select>
     </FormControl>
@@ -129,7 +129,7 @@ function ABtn({ children, onClick, variant="default", sm, startIcon }: {
   const v = vs[variant];
   return (
     <Button onClick={onClick} size={sm?"small":"medium"} startIcon={startIcon}
-      sx={{ background:v.bg,border:v.border,color:v.color,borderRadius:"10px",fontWeight:700,textTransform:"none",fontSize:sm?12:13,fontFamily:"Plus Jakarta Sans,sans-serif",px:sm?"12px":"16px",py:sm?"7px":"9px","&:hover":{background:"hover" in v && "bg" in (v.hover||{})?(v.hover as any).bg:v.bg,border:v.border,opacity:.88},boxShadow:variant==="primary"?`0 2px 8px rgba(255,61,1,.25)`:"none" }}>
+      sx={{ background:v.bg,border:v.border,color:v.color,borderRadius:"10px",fontWeight:700,textTransform:"none",fontSize:sm?12:13,fontFamily:"Montserrat,sans-serif",px:sm?"12px":"16px",py:sm?"7px":"9px","&:hover":{background:"hover" in v && "bg" in (v.hover||{})?(v.hover as any).bg:v.bg,border:v.border,opacity:.88},boxShadow:variant==="primary"?`0 2px 8px rgba(255,61,1,.25)`:"none" }}>
       {children}
     </Button>
   );
@@ -1062,7 +1062,7 @@ export default function PrinterSettings() {
                 <Typography sx={{fontSize:12,color:C.t3,mt:"2px"}}>{img.size}</Typography>
                 <Box sx={{display:"flex",alignItems:"center",gap:"6px",mt:"8px"}}>
                   <Typography sx={{fontSize:12,color:C.t2,fontWeight:500}}>Duration:</Typography>
-                  <TextField type="number" value={img.duration} size="small" inputProps={{min:1,max:60,style:{width:50,fontFamily:"Plus Jakarta Sans",fontSize:13,fontWeight:700,textAlign:"center"}}} onChange={e=>setLedImages(p=>p.map(x=>x.id===img.id?{...x,duration:Number(e.target.value)}:x))} sx={{"& .MuiOutlinedInput-root":{background:C.s1,borderRadius:"7px","& fieldset":{borderColor:C.bd}}}} />
+                  <TextField type="number" value={img.duration} size="small" inputProps={{min:1,max:60,style:{width:50,fontFamily:"Montserrat",fontSize:13,fontWeight:700,textAlign:"center"}}} onChange={e=>setLedImages(p=>p.map(x=>x.id===img.id?{...x,duration:Number(e.target.value)}:x))} sx={{"& .MuiOutlinedInput-root":{background:C.s1,borderRadius:"7px","& fieldset":{borderColor:C.bd}}}} />
                   <Typography sx={{fontSize:12,color:C.t2,fontWeight:500}}>seconds</Typography>
                 </Box>
               </Box>
@@ -1132,7 +1132,7 @@ export default function PrinterSettings() {
 
   // ─── Printer Modal ─────────────────────────────────────────────────────────
   const renderModal=()=>(
-    <Box sx={{position:"fixed",inset:0,background:"rgba(0,0,0,.6)",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",p:"20px",fontFamily:"Plus Jakarta Sans,sans-serif"}}>
+    <Box sx={{position:"fixed",inset:0,background:"rgba(0,0,0,.6)",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",p:"20px",fontFamily:"Montserrat,sans-serif"}}>
       <Paper elevation={0} sx={{borderRadius:"18px",width:580,maxWidth:"96vw",overflow:"hidden",display:"flex",flexDirection:"column",maxHeight:"90vh",animation:"popIn .22s ease"}}>
         <Box sx={{background:C.tx,p:"18px 22px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
           <Box>
@@ -1195,8 +1195,8 @@ export default function PrinterSettings() {
         </Box>
         <Box sx={{p:"16px 22px",borderTop:`1px solid ${C.bd}`,display:"flex",gap:"10px",background:C.s1}}>
           <ABtn onClick={()=>{showToast("Testing printer...");setModalOpen(false);}}>🖨️ Test Print</ABtn>
-          <Button onClick={()=>setModalOpen(false)} sx={{px:"20px",py:"13px",background:C.s2,border:`1.5px solid ${C.bd}`,borderRadius:"14px",color:C.t2,fontFamily:"Plus Jakarta Sans,sans-serif",fontWeight:700,fontSize:14,cursor:"pointer",textTransform:"none","&:hover":{background:C.s3}}}>Cancel</Button>
-          <Button onClick={saveModal} variant="contained" sx={{flex:1,py:"13px",background:C.ac,borderRadius:"14px",fontFamily:"Plus Jakarta Sans,sans-serif",fontWeight:800,fontSize:14,textTransform:"none",boxShadow:`0 3px 10px rgba(255,61,1,.28)`,"&:hover":{background:C.ah}}}>💾 Save Printer</Button>
+          <Button onClick={()=>setModalOpen(false)} sx={{px:"20px",py:"13px",background:C.s2,border:`1.5px solid ${C.bd}`,borderRadius:"14px",color:C.t2,fontFamily:"Montserrat,sans-serif",fontWeight:700,fontSize:14,cursor:"pointer",textTransform:"none","&:hover":{background:C.s3}}}>Cancel</Button>
+          <Button onClick={saveModal} variant="contained" sx={{flex:1,py:"13px",background:C.ac,borderRadius:"14px",fontFamily:"Montserrat,sans-serif",fontWeight:800,fontSize:14,textTransform:"none",boxShadow:`0 3px 10px rgba(255,61,1,.28)`,"&:hover":{background:C.ah}}}>💾 Save Printer</Button>
         </Box>
       </Paper>
     </Box>
@@ -1208,15 +1208,15 @@ export default function PrinterSettings() {
   if (loading) return (
     <Box sx={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:C.bg,flexDirection:"column",gap:"16px"}}>
       <Box sx={{width:40,height:40,border:`4px solid ${C.bd}`,borderTop:`4px solid ${C.ac}`,borderRadius:"50%",animation:"spin 0.9s linear infinite"}} />
-      <Typography sx={{fontSize:13,fontWeight:600,color:C.t2,fontFamily:"Plus Jakarta Sans,sans-serif"}}>Settings load ho rahi hain…</Typography>
+      <Typography sx={{fontSize:13,fontWeight:600,color:C.t2,fontFamily:"Montserrat,sans-serif"}}>Settings load ho rahi hain…</Typography>
       <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
     </Box>
   );
 
   return (
-    <Box sx={{fontFamily:"Plus Jakarta Sans,sans-serif",background:C.bg,color:C.tx,minHeight:"100vh",fontSize:14}}>
+    <Box sx={{fontFamily:"Montserrat,sans-serif",background:C.bg,color:C.tx,minHeight:"100vh",fontSize:14}}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
         @keyframes popIn{from{opacity:0;transform:scale(.92) translateY(16px)}to{opacity:1;transform:scale(1) translateY(0)}}
         @keyframes spAnim{0%{width:0;margin-left:0}60%{width:100%;margin-left:0}100%{width:0;margin-left:100%}}
         @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
@@ -1226,14 +1226,14 @@ export default function PrinterSettings() {
       <Box sx={{display:"flex",alignItems:"center",p:"0 20px",height:52,background:C.tx,gap:"10px",boxShadow:"0 2px 14px rgba(0,0,0,.22)",position:"sticky",top:0,zIndex:60}}>
         <Typography sx={{fontSize:13,fontWeight:700,color:"rgba(255,255,255,.7)",letterSpacing:".3px"}}>⚙️ Settings</Typography>
         <Divider orientation="vertical" flexItem sx={{borderColor:"rgba(255,255,255,.15)",mx:"4px",my:"8px"}} />
-        <Tabs value={mainTab} onChange={(_,v)=>setMainTab(v as MainTab)} sx={{"& .MuiTabs-indicator":{background:C.ac},"& .MuiTab-root":{color:"rgba(255,255,255,.65)",fontFamily:"Plus Jakarta Sans,sans-serif",fontWeight:700,fontSize:"12.5px",textTransform:"none",minHeight:52,p:"6px 14px"},"& .Mui-selected":{color:"#fff"}}}>
+        <Tabs value={mainTab} onChange={(_,v)=>setMainTab(v as MainTab)} sx={{"& .MuiTabs-indicator":{background:C.ac},"& .MuiTab-root":{color:"rgba(255,255,255,.65)",fontFamily:"Montserrat,sans-serif",fontWeight:700,fontSize:"12.5px",textTransform:"none",minHeight:52,p:"6px 14px"},"& .Mui-selected":{color:"#fff"}}}>
           <Tab value="printers" label="⚙️ Printer Settings" />
           <Tab value="kds" label="🖥️ KDS Settings" />
           <Tab value="led" label="📺 LED Display" />
         </Tabs>
         <Box sx={{flex:1}} />
         <Button onClick={()=>{saveKotSettings();saveBillSettings();saveDirectPrint();savePaperSettings();}} variant="contained" startIcon={<SaveOutlinedIcon />}
-          sx={{background:C.ac,borderRadius:"9px",fontFamily:"Plus Jakarta Sans,sans-serif",fontWeight:800,fontSize:13,textTransform:"none",boxShadow:`0 3px 10px rgba(255,61,1,.3)`,"&:hover":{background:C.ah}}}>
+          sx={{background:C.ac,borderRadius:"9px",fontFamily:"Montserrat,sans-serif",fontWeight:800,fontSize:13,textTransform:"none",boxShadow:`0 3px 10px rgba(255,61,1,.3)`,"&:hover":{background:C.ah}}}>
           Save All
         </Button>
       </Box>
@@ -1260,7 +1260,7 @@ export default function PrinterSettings() {
             </Box>
             <Box sx={{p:"10px 12px",mt:"8px"}}>
               <Button fullWidth onClick={()=>{setPrinterSec("printer-config");showToast("Testing all printers...","info");}} variant="contained"
-                sx={{background:C.grn,borderRadius:"10px",fontFamily:"Plus Jakarta Sans,sans-serif",fontWeight:800,fontSize:12,textTransform:"none","&:hover":{background:"#15803d"}}}>
+                sx={{background:C.grn,borderRadius:"10px",fontFamily:"Montserrat,sans-serif",fontWeight:800,fontSize:12,textTransform:"none","&:hover":{background:"#15803d"}}}>
                 🔍 Test All Printers
               </Button>
             </Box>

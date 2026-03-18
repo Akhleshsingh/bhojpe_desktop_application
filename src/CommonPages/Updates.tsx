@@ -13,7 +13,7 @@ import RocketLaunchOutlinedIcon from "@mui/icons-material/RocketLaunchOutlined";
 import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 
-const FONT = "'Plus Jakarta Sans', sans-serif";
+const FONT = "'Montserrat', sans-serif";
 const RED = "#FF3D01";
 
 type ChangeType = "new" | "fixed" | "improved" | "security" | "removed";
