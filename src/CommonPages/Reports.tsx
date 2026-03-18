@@ -13,6 +13,21 @@ import {
 import data from "../data/reportsDummyData.json";
 import toast from "react-hot-toast";
 
+function exportCSV(filename: string, headers: string[], rows: (string | number)[][]) {
+  const esc = (v: string | number | null | undefined) => {
+    const s = v == null ? "" : String(v);
+    return s.includes(",") || s.includes('"') || s.includes("\n")
+      ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+  const csv = [headers.join(","), ...rows.map(r => r.map(esc).join(","))].join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+  toast.success("CSV exported!");
+}
+
 // ── Design tokens ──────────────────────────────────────────────────────────
 const T = {
   ac: "#FF3D01", acH: "#e03500", acDim: "rgba(255,61,1,0.07)", acMid: "rgba(255,61,1,0.13)", acBdr: "rgba(255,61,1,0.25)",
@@ -283,7 +298,7 @@ function SalesReport() {
   const [period, setPeriod] = useState("Current Week");
   return (
     <div>
-      <PageHeader title="Sales Report" sub={<>Sales data <b>09/03/2026 – 15/03/2026</b> · Each day 12:00 AM – 11:59 PM</>} onExport={() => toast.success("CSV Exported!")} onPrint={() => toast.success("PDF Generated!")} />
+      <PageHeader title="Sales Report" sub={<>Sales data <b>09/03/2026 – 15/03/2026</b> · Each day 12:00 AM – 11:59 PM</>} onExport={() => exportCSV("sales_report.csv", ["Date","Orders","GST 5%","Total Tax","Cash","UPI","Card","Due","Discount","Total"], s.dailyBreakdown.map(r => [r.date,r.orders,r.gst5,r.totalTax,r.cash,r.upi,r.card,r.due,r.discount,r.total]))} onPrint={() => toast.success("PDF Generated!")} />
       <FilterBar>
         <Typography sx={flSx}>Period:</Typography>
         <FiltSel value={period} onChange={setPeriod}><MenuItem value="Current Week">Current Week</MenuItem><MenuItem value="Today">Today</MenuItem><MenuItem value="Last 30 Days">Last 30 Days</MenuItem></FiltSel>
@@ -368,7 +383,7 @@ function ItemReport() {
   const typeVariant = (t: string): StatusVariant => t === "Veg" ? "green" : t === "Non-Veg" ? "red" : "amber";
   return (
     <div>
-      <PageHeader title="Item Report" sub={<>Best selling items · <b>09/03/2026 – 15/03/2026</b></>} onExport={() => toast.success("Exported!")} onPrint={() => toast.success("PDF Generated!")} />
+      <PageHeader title="Item Report" sub={<>Best selling items · <b>09/03/2026 – 15/03/2026</b></>} onExport={() => exportCSV("item_report.csv", ["Rank","Item Name","Category","Type","Qty Sold","Unit Price","Total Revenue","Tax","Share"], d.itemSales.map(r => [r.rank,r.name,r.category,r.type,r.qty,r.unitPrice,r.revenue,r.tax,r.share]))} onPrint={() => toast.success("PDF Generated!")} />
       <FilterBar>
         <Typography sx={flSx}>Period:</Typography>
         <Select defaultValue="Current Week" size="small" sx={fSelSx}><MenuItem value="Current Week">Current Week</MenuItem><MenuItem value="Today">Today</MenuItem></Select>
@@ -425,7 +440,7 @@ function CategoryReport() {
   const d = data.categories;
   return (
     <div>
-      <PageHeader title="Category Report" sub={<>Sales by menu category · <b>09/03/2026 – 15/03/2026</b></>} onExport={() => toast.success("Exported!")} onPrint={() => toast.success("PDF Generated!")} />
+      <PageHeader title="Category Report" sub={<>Sales by menu category · <b>09/03/2026 – 15/03/2026</b></>} onExport={() => exportCSV("category_report.csv", ["Rank","Category","Items Sold","Orders","Revenue","Tax","Discount","Net Total","Share"], d.categorySales.map(r => [r.rank,r.category,r.items,r.orders,r.revenue,r.tax,r.discount,r.net,r.share]))} onPrint={() => toast.success("PDF Generated!")} />
       <FilterBar>
         <Typography sx={flSx}>Period:</Typography>
         <Select defaultValue="Current Week" size="small" sx={fSelSx}><MenuItem value="Current Week">Current Week</MenuItem><MenuItem value="Today">Today</MenuItem></Select>
@@ -491,7 +506,7 @@ function DeliveryReport() {
   const sv = (s: string): StatusVariant => s === "Delivered" ? "green" : s === "Pending" ? "amber" : "red";
   return (
     <div>
-      <PageHeader title="Delivery App Report" sub={<>Online delivery platform orders · <b>09/03/2026 – 15/03/2026</b></>} onExport={() => toast.success("Exported!")} onPrint={() => toast.success("PDF Generated!")} />
+      <PageHeader title="Delivery App Report" sub={<>Online delivery platform orders · <b>09/03/2026 – 15/03/2026</b></>} onExport={() => exportCSV("delivery_report.csv", ["Order #","Date","Platform","Customer","Items","Order Amount","Delivery Fee","Commission","Net Amount","Status"], d.orders.map(r => [r.id,r.date,r.platform,r.customer,r.items,r.amount,r.deliveryFee,r.commission,r.net,r.status]))} onPrint={() => toast.success("PDF Generated!")} />
       <FilterBar>
         <Typography sx={flSx}>Platform:</Typography>
         <Select defaultValue="All Platforms" size="small" sx={fSelSx}><MenuItem value="All Platforms">All Platforms</MenuItem><MenuItem value="Swiggy">Swiggy</MenuItem><MenuItem value="Zomato">Zomato</MenuItem><MenuItem value="Direct">Direct</MenuItem></Select>
@@ -537,7 +552,7 @@ function ExpenseReport() {
   const sv = (s: string): StatusVariant => s === "Paid" ? "green" : s === "Partial" ? "amber" : "blue";
   return (
     <div>
-      <PageHeader title="Expense Reports" sub={<>Business expenses & overheads · <b>March 2026</b></>} onExport={() => toast.success("Exported!")} onPrint={() => toast.success("PDF Generated!")} />
+      <PageHeader title="Expense Reports" sub={<>Business expenses & overheads · <b>March 2026</b></>} onExport={() => exportCSV("expense_report.csv", ["Date","Description","Category","Vendor","Added By","Amount","Payment","Status"], d.entries.map(r => [r.date,r.description,r.category,r.vendor,r.addedBy,r.amount,r.payment,r.status]))} onPrint={() => toast.success("PDF Generated!")} />
       <FilterBar>
         <Typography sx={flSx}>Category:</Typography>
         <Select defaultValue="All Categories" size="small" sx={fSelSx}><MenuItem value="All Categories">All Categories</MenuItem><MenuItem value="Raw Material">Raw Material</MenuItem><MenuItem value="Utilities">Utilities</MenuItem><MenuItem value="Salary">Salary</MenuItem></Select>
@@ -582,7 +597,7 @@ function CancelledReport() {
   const kotV = (s: string): StatusVariant => s === "Before KOT" ? "green" : "red";
   return (
     <div>
-      <PageHeader title="Cancelled Order Report" sub={<>Orders cancelled before completion · <b>09/03/2026 – 15/03/2026</b></>} onExport={() => toast.success("Exported!")} onPrint={() => toast.success("PDF Generated!")} />
+      <PageHeader title="Cancelled Order Report" sub={<>Orders cancelled before completion · <b>09/03/2026 – 15/03/2026</b></>} onExport={() => exportCSV("cancelled_orders.csv", ["Order #","Date","Channel","Table","Waiter","Items","Order Value","Cancelled By","Reason","KOT Status"], d.orders.map(r => [r.id,r.date,r.channel,r.table,r.waiter,r.items,r.value,r.cancelledBy,r.reason,r.kotStatus]))} onPrint={() => toast.success("PDF Generated!")} />
       <FilterBar>
         <Typography sx={flSx}>Channel:</Typography>
         <Select defaultValue="All Channels" size="small" sx={fSelSx}><MenuItem value="All Channels">All Channels</MenuItem><MenuItem value="Dine In">Dine In</MenuItem><MenuItem value="Delivery">Delivery</MenuItem><MenuItem value="Pickup">Pickup</MenuItem></Select>
@@ -628,7 +643,7 @@ function RemovedKotReport() {
   const d = data.removedKotItems;
   return (
     <div>
-      <PageHeader title="Removed KOT Item Report" sub={<>Items removed from KOT after kitchen confirmation · <b>09/03/2026 – 15/03/2026</b></>} onExport={() => toast.success("Exported!")} onPrint={() => toast.success("PDF Generated!")} />
+      <PageHeader title="Removed KOT Item Report" sub={<>Items removed from KOT after kitchen confirmation · <b>09/03/2026 – 15/03/2026</b></>} onExport={() => exportCSV("removed_kot_items.csv", ["Order #","Date & Time","Item Name","Qty","Price","Total Loss","Removed By","Reason","KOT #"], d.items.map(r => [r.orderId,r.datetime,r.item,r.qty,r.price,r.totalLoss,r.removedBy,r.reason,r.kot]))} onPrint={() => toast.success("PDF Generated!")} />
       <FilterBar>
         <Typography sx={flSx}>Period:</Typography>
         <Select defaultValue="Current Week" size="small" sx={fSelSx}><MenuItem value="Current Week">Current Week</MenuItem><MenuItem value="Today">Today</MenuItem></Select>
@@ -673,7 +688,7 @@ function RefundReport() {
   const tv = (t: string): StatusVariant => t === "Full" ? "red" : "amber";
   return (
     <div>
-      <PageHeader title="Refund Report" sub={<>Processed refunds & adjustments · <b>09/03/2026 – 15/03/2026</b></>} onExport={() => toast.success("Exported!")} onPrint={() => toast.success("PDF Generated!")} />
+      <PageHeader title="Refund Report" sub={<>Processed refunds & adjustments · <b>09/03/2026 – 15/03/2026</b></>} onExport={() => exportCSV("refund_report.csv", ["Refund #","Order #","Date","Customer","Order Amount","Refund Amount","Method","Type","Reason","Status"], d.transactions.map(r => [r.refundId,r.orderId,r.date,r.customer,r.orderAmt,r.refundAmt,r.method,r.type,r.reason,r.status]))} onPrint={() => toast.success("PDF Generated!")} />
       <FilterBar>
         <Typography sx={flSx}>Type:</Typography>
         <Select defaultValue="All Refunds" size="small" sx={fSelSx}><MenuItem value="All Refunds">All Refunds</MenuItem><MenuItem value="Full Refund">Full Refund</MenuItem><MenuItem value="Partial Refund">Partial Refund</MenuItem></Select>
@@ -718,7 +733,7 @@ function TaxReport() {
   const d = data.tax;
   return (
     <div>
-      <PageHeader title="Tax Report" sub={<>GST & tax breakdown for filing · <b>09/03/2026 – 15/03/2026</b></>} onExport={() => toast.success("GST File Exported!")} exportLabel="Export GST" onPrint={() => toast.success("PDF Generated!")} />
+      <PageHeader title="Tax Report" sub={<>GST & tax breakdown for filing · <b>09/03/2026 – 15/03/2026</b></>} onExport={() => exportCSV("tax_report.csv", ["Date","Orders","Sales","Taxable Amount","CGST 2.5%","SGST 2.5%","Total GST","Net Sales"], d.dailyTax.map(r => [r.date,r.orders,r.sales,r.taxableAmt,r.cgst,r.sgst,r.totalGst,r.netSales]))} exportLabel="Export GST" onPrint={() => toast.success("PDF Generated!")} />
       <FilterBar>
         <Typography sx={flSx}>Tax Mode:</Typography>
         <Select defaultValue="Item-wise" size="small" sx={fSelSx}><MenuItem value="Item-wise">Item-wise</MenuItem><MenuItem value="Order-wise">Order-wise</MenuItem></Select>
@@ -784,7 +799,7 @@ function OutstandingReport() {
   const d = data.outstanding;
   return (
     <div>
-      <PageHeader title="Outstanding Payments" sub={<>Unpaid & due orders · As of <b>15/03/2026</b></>} onExport={() => toast.success("Reminder Sent!")} exportLabel="Send Reminders" onPrint={() => toast.success("PDF Generated!")} />
+      <PageHeader title="Outstanding Payments" sub={<>Unpaid & due orders · As of <b>15/03/2026</b></>} onExport={() => exportCSV("outstanding_payments.csv", ["Order #","Date","Customer","Amount Due","Days Overdue","Status"], (d.orders as {id:string;date:string;customer:string;amountDue:number;daysOverdue:number;status:string}[]).map(r => [r.id,r.date,r.customer,r.amountDue,r.daysOverdue,r.status]))} exportLabel="Export CSV" onPrint={() => toast.success("PDF Generated!")} />
       <FilterBar>
         <Typography sx={flSx}>Status:</Typography>
         <Select defaultValue="All Outstanding" size="small" sx={fSelSx}><MenuItem value="All Outstanding">All Outstanding</MenuItem><MenuItem value="Overdue">Overdue</MenuItem><MenuItem value="Due Today">Due Today</MenuItem></Select>
@@ -817,7 +832,7 @@ function InventoryReport() {
   const sv = (s: string): StatusVariant => s === "Good" ? "green" : s === "Out of Stock" ? "red" : "amber";
   return (
     <div>
-      <PageHeader title="Inventory Report" sub={<>Current stock & usage tracking · <b>March 2026</b></>} onExport={() => toast.success("Exported!")} onPrint={() => toast.success("PDF Generated!")} />
+      <PageHeader title="Inventory Report" sub={<>Current stock & usage tracking · <b>March 2026</b></>} onExport={() => exportCSV("inventory_report.csv", ["Item","Category","Unit","Opening","Received","Consumed","Closing","Min Stock","Status"], d.items.map(r => [r.name,r.category,r.unit,r.opening,r.received,r.consumed,r.closing,r.minStock,r.status]))} onPrint={() => toast.success("PDF Generated!")} />
       <FilterBar>
         <Typography sx={flSx}>Category:</Typography>
         <Select defaultValue="All Items" size="small" sx={fSelSx}><MenuItem value="All Items">All Items</MenuItem><MenuItem value="Raw Material">Raw Material</MenuItem><MenuItem value="Beverages">Beverages</MenuItem></Select>
@@ -863,7 +878,7 @@ function StockReport() {
   const sv = (s: string): StatusVariant => s === "Good" ? "green" : s === "Out" ? "red" : "amber";
   return (
     <div>
-      <PageHeader title="Stock Report" sub={<>SKU-level stock valuation & reorder status · <b>March 2026</b></>} onExport={() => toast.success("Exported!")} onPrint={() => toast.success("PDF Generated!")} />
+      <PageHeader title="Stock Report" sub={<>SKU-level stock valuation & reorder status · <b>March 2026</b></>} onExport={() => exportCSV("stock_report.csv", ["SKU","Item Name","Category","Unit","Qty","Unit Cost","Total Value","Reorder Level","Supplier","Last Purchase","Status"], d.items.map(r => [r.sku,r.name,r.category,r.unit,r.qty,r.unitCost,r.totalValue,r.reorderLevel,r.supplier,r.lastPurchase,r.status]))} onPrint={() => toast.success("PDF Generated!")} />
       <FilterBar>
         <Typography sx={flSx}>Category:</Typography>
         <Select defaultValue="All Items" size="small" sx={fSelSx}><MenuItem value="All Items">All Items</MenuItem><MenuItem value="Vegetables">Vegetables</MenuItem><MenuItem value="Non-Veg">Non-Veg</MenuItem><MenuItem value="Dairy">Dairy</MenuItem></Select>
