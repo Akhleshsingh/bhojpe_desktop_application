@@ -72,6 +72,30 @@ export default function Customers() {
   const totalPages = Math.max(1, Math.ceil(displayList.length / PER_PAGE));
   const paginated = displayList.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 
+  const handleExport = useCallback(() => {
+    const esc = (v: string | number | null | undefined) => {
+      const s = v == null ? "" : String(v);
+      return s.includes(",") || s.includes('"') || s.includes("\n")
+        ? `"${s.replace(/"/g, '""')}"` : s;
+    };
+    const headers = ["Name", "Email", "Phone", "Address", "Total Orders"];
+    const rows = displayList.map(c => [
+      esc(c.name),
+      esc(c.email),
+      esc(c.phone),
+      esc(c.delivery_address),
+      esc(c.orders_count),
+    ].join(","));
+    const csv = [headers.join(","), ...rows].join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement("a");
+    a.href     = url;
+    a.download = `customers_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [displayList]);
+
   const handleAddSave = useCallback(() => {
     setAddOpen(false);
   }, []);
@@ -130,6 +154,8 @@ export default function Customers() {
             <Button
               variant="outlined"
               startIcon={<FileDownloadOutlinedIcon sx={{ fontSize: 16 }} />}
+              onClick={handleExport}
+              disabled={displayList.length === 0}
               sx={{
                 textTransform: "none", fontSize: 13, fontWeight: 600,
                 fontFamily: "'Plus Jakarta Sans', sans-serif", height: 38, px: 2,
