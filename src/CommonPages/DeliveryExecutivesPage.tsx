@@ -68,6 +68,29 @@ export default function DeliveryExecutivesPage() {
     setPage(1);
   };
 
+  const handleExport = () => {
+    const esc = (v: string | number | null | undefined) => {
+      const s = v == null ? "" : String(v);
+      return s.includes(",") || s.includes('"') || s.includes("\n")
+        ? `"${s.replace(/"/g, '""')}"` : s;
+    };
+    const headers = ["Name", "Phone", "Total Orders", "Status"];
+    const rows = filtered.map(e => [
+      esc(e.name),
+      esc(e.phone),
+      esc(e.total_orders ?? e.order_count ?? 0),
+      esc(getStatusMeta(e).label),
+    ].join(","));
+    const csv  = [headers.join(","), ...rows].join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement("a");
+    a.href = url;
+    a.download = `delivery_executives_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <Box sx={{ minHeight: "100vh", backgroundColor: "#f5f0ea", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
 
@@ -110,6 +133,8 @@ export default function DeliveryExecutivesPage() {
             <Button
               variant="outlined"
               startIcon={<FileDownloadOutlinedIcon sx={{ fontSize: 16 }} />}
+              onClick={handleExport}
+              disabled={filtered.length === 0}
               sx={{
                 textTransform: "none", fontSize: 13, fontWeight: 600,
                 fontFamily: "'Plus Jakarta Sans', sans-serif", height: 38, px: 2,
