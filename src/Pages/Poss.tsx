@@ -36,7 +36,7 @@ const C = {
   dk:"#24201c", dk2:"#2e2a26", dk3:"#3a342e", dk4:"#2a2420",
 } as const;
 const FONT   = "'Montserrat', sans-serif";
-const SERIF  = "'Playfair Display', serif";
+const SERIF  = "'Montserrat', sans-serif";
 
 // ─── Meal-Time Groups (for sidebar "Menu" tab) ────────────────────────────
 const MEAL_TIMES = [

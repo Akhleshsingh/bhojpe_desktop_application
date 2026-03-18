@@ -74,7 +74,7 @@ function StatCard({ label, value, icon, variant, rows }: {
         <Typography sx={{ fontSize: 10.5, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".5px", color: T.t3 }}>{label}</Typography>
         <Box sx={{ width: 28, height: 28, borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, background: dim }}>{icon}</Box>
       </Box>
-      <Typography sx={{ fontFamily: "'Playfair Display',serif", fontSize: 22, fontWeight: 700, color, mb: 1 }}>{value}</Typography>
+      <Typography sx={{ fontFamily: "'Montserrat',sans-serif", fontSize: 22, fontWeight: 700, color, mb: 1 }}>{value}</Typography>
       {rows && (
         <Box sx={{ borderTop: `1px solid ${T.bd}`, pt: "7px", display: "flex", flexDirection: "column", gap: "4px" }}>
           {rows.map((r, i) => (
@@ -114,7 +114,7 @@ function PageHeader({ title, sub, onExport, onPrint, exportLabel }: {
   return (
     <Box sx={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", mb: "18px" }}>
       <Box>
-        <Typography sx={{ fontFamily: "'Playfair Display',serif", fontSize: 24, fontWeight: 700, color: T.tx }}>{title}</Typography>
+        <Typography sx={{ fontFamily: "'Montserrat',sans-serif", fontSize: 24, fontWeight: 700, color: T.tx }}>{title}</Typography>
         <Typography sx={{ fontSize: 12, color: T.t3, mt: "4px", fontWeight: 500 }}>{sub}</Typography>
       </Box>
       <Stack direction="row" spacing={1}>
@@ -163,7 +163,7 @@ function TCard({ title, badge, badgeGreen, children }: { title: string; badge: s
   return (
     <Paper elevation={0} sx={{ border: `1.5px solid ${T.bd}`, borderRadius: "14px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", overflow: "hidden", mb: "18px" }}>
       <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", p: "14px 18px", borderBottom: `1px solid ${T.bd}` }}>
-        <Typography sx={{ fontFamily: "'Playfair Display',serif", fontSize: 16, fontWeight: 700, color: T.tx }}>{title}</Typography>
+        <Typography sx={{ fontFamily: "'Montserrat',sans-serif", fontSize: 16, fontWeight: 700, color: T.tx }}>{title}</Typography>
         <Chip label={badge} size="small" sx={{ fontSize: 11, fontWeight: 700, background: badgeGreen ? T.grnDim : T.acDim, color: badgeGreen ? T.grn : T.ac, border: `1px solid ${badgeGreen ? T.grnBdr : T.acBdr}`, borderRadius: "20px" }} />
       </Box>
       <TableContainer sx={{ "&::-webkit-scrollbar": { height: 4 }, "&::-webkit-scrollbar-thumb": { background: T.bd2, borderRadius: 4 } }}>
@@ -176,7 +176,7 @@ function TCard({ title, badge, badgeGreen, children }: { title: string; badge: s
 const thSx = { fontSize: 10.5, fontWeight: 800, textTransform: "uppercase" as const, letterSpacing: ".5px", color: T.t3, borderBottom: `1.5px solid ${T.bd}`, background: T.s1, whiteSpace: "nowrap" as const, py: "10px", px: "14px" };
 const thRSx = { ...thSx, textAlign: "right" as const };
 const tdSx = { fontSize: 13, color: T.tx, borderBottom: `1px solid ${T.bd}`, py: "11px", px: "14px" };
-const tdRSx = { ...tdSx, textAlign: "right" as const, fontWeight: 700, fontFamily: "'Playfair Display',serif" };
+const tdRSx = { ...tdSx, textAlign: "right" as const, fontWeight: 700, fontFamily: "'Montserrat',sans-serif" };
 
 function ChartCard({ title, sub, total, totalLabel, children }: {
   title: string; sub?: string; total?: string; totalLabel?: string; children: React.ReactNode;
@@ -185,12 +185,12 @@ function ChartCard({ title, sub, total, totalLabel, children }: {
     <Paper elevation={0} sx={{ border: `1.5px solid ${T.bd}`, borderRadius: "14px", p: "18px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
       <Box sx={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", mb: "14px" }}>
         <Box>
-          <Typography sx={{ fontFamily: "'Playfair Display',serif", fontSize: 16, fontWeight: 700, color: T.tx }}>{title}</Typography>
+          <Typography sx={{ fontFamily: "'Montserrat',sans-serif", fontSize: 16, fontWeight: 700, color: T.tx }}>{title}</Typography>
           {sub && <Typography sx={{ fontSize: 11, color: T.t3, mt: "2px" }}>{sub}</Typography>}
         </Box>
         {total && (
           <Box sx={{ textAlign: "right" }}>
-            <Typography sx={{ fontFamily: "'Playfair Display',serif", fontSize: 20, fontWeight: 700, color: T.ac }}>{total}</Typography>
+            <Typography sx={{ fontFamily: "'Montserrat',sans-serif", fontSize: 20, fontWeight: 700, color: T.ac }}>{total}</Typography>
             {totalLabel && <Typography sx={{ fontSize: 11, color: T.t3, mt: "2px" }}>{totalLabel}</Typography>}
           </Box>
         )}
@@ -207,7 +207,7 @@ function PbarSection({ title, items, footer }: {
 }) {
   return (
     <Paper elevation={0} sx={{ border: `1.5px solid ${T.bd}`, borderRadius: "14px", p: "18px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
-      <Typography sx={{ fontFamily: "'Playfair Display',serif", fontSize: 15, fontWeight: 700, color: T.tx, mb: "14px" }}>{title}</Typography>
+      <Typography sx={{ fontFamily: "'Montserrat',sans-serif", fontSize: 15, fontWeight: 700, color: T.tx, mb: "14px" }}>{title}</Typography>
       {items.map((item, i) => (
         <Box key={i} sx={{ display: "flex", alignItems: "center", gap: "10px", mb: "10px" }}>
           <Typography sx={{ fontSize: 12, fontWeight: 600, color: T.t2, minWidth: 90, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.label}</Typography>
@@ -225,7 +225,7 @@ function PbarSection({ title, items, footer }: {
 function InfoCard({ title, rows }: { title: string; rows: { key: string; value: string; color?: string }[] }) {
   return (
     <Paper elevation={0} sx={{ border: `1.5px solid ${T.bd}`, borderRadius: "14px", p: "18px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
-      <Typography sx={{ fontFamily: "'Playfair Display',serif", fontSize: 15, fontWeight: 700, color: T.tx, mb: "12px", pb: "8px", borderBottom: `1px solid ${T.bd}` }}>{title}</Typography>
+      <Typography sx={{ fontFamily: "'Montserrat',sans-serif", fontSize: 15, fontWeight: 700, color: T.tx, mb: "12px", pb: "8px", borderBottom: `1px solid ${T.bd}` }}>{title}</Typography>
       {rows.map((r, i) => (
         <Box key={i} sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", py: "7px", borderBottom: i < rows.length - 1 ? `1px solid ${T.bd}` : "none", fontSize: 13 }}>
           <Typography sx={{ color: T.t2, fontWeight: 500, fontSize: 13 }}>{r.key}</Typography>
@@ -814,12 +814,12 @@ function OutstandingReport() {
       </Box>
       <Paper elevation={0} sx={{ border: `1.5px solid ${T.bd}`, borderRadius: "14px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", overflow: "hidden" }}>
         <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", p: "14px 18px", borderBottom: `1px solid ${T.bd}` }}>
-          <Typography sx={{ fontFamily: "'Playfair Display',serif", fontSize: 16, fontWeight: 700, color: T.tx }}>Outstanding Orders</Typography>
+          <Typography sx={{ fontFamily: "'Montserrat',sans-serif", fontSize: 16, fontWeight: 700, color: T.tx }}>Outstanding Orders</Typography>
           <Chip label="0 pending" size="small" sx={{ background: T.grnDim, color: T.grn, fontWeight: 700, border: `1px solid ${T.grnBdr}`, borderRadius: "20px" }} />
         </Box>
         <Box sx={{ p: "60px 20px", textAlign: "center" }}>
           <Typography sx={{ fontSize: 48, mb: "12px" }}>🎉</Typography>
-          <Typography sx={{ fontFamily: "'Playfair Display',serif", fontSize: 20, fontWeight: 700, color: T.tx, mb: "8px" }}>All Payments Cleared!</Typography>
+          <Typography sx={{ fontFamily: "'Montserrat',sans-serif", fontSize: 20, fontWeight: 700, color: T.tx, mb: "8px" }}>All Payments Cleared!</Typography>
           <Typography sx={{ fontSize: 13, color: T.t3 }}>No outstanding payments as of 15/03/2026</Typography>
         </Box>
       </Paper>
@@ -952,11 +952,11 @@ export default function Reports() {
 
   return (
     <Box sx={{ display: "flex", height: "100%", fontFamily: "Montserrat,sans-serif", background: T.bg, color: T.tx, fontSize: 14 }}>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Montserrat:wght@400;500;600;700;800&display=swap');`}</style>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');`}</style>
 
       {/* Sidebar */}
       <Box sx={{ width: 210, background: T.w, borderRight: `1px solid ${T.bd}`, display: "flex", flexDirection: "column", flexShrink: 0, overflow: "hidden" }}>
-        <Typography sx={{ p: "14px 14px 6px", fontFamily: "'Playfair Display',serif", fontSize: 17, fontWeight: 700, color: T.tx }}>
+        <Typography sx={{ p: "14px 14px 6px", fontFamily: "'Montserrat',sans-serif", fontSize: 17, fontWeight: 700, color: T.tx }}>
           Reports<Box component="span" sx={{ color: T.ac }}>.</Box>
         </Typography>
         <Box sx={{ mx: "14px", mb: "8px", height: 2, borderRadius: "2px", background: `linear-gradient(90deg,${T.ac},transparent)` }} />

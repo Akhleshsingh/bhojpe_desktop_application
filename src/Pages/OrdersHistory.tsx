@@ -29,7 +29,7 @@ import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 const ACCENT   = "#FF3D01";
 const ACCENT_H = "#e63500";
 const FONT     = "'Montserrat', sans-serif";
-const SERIF    = "'Playfair Display', serif";
+const SERIF    = "'Montserrat', sans-serif";
 const BG       = "#f5f0ea";
 const BDR      = "#e2d9d0";
 const TX       = "#1a1208";

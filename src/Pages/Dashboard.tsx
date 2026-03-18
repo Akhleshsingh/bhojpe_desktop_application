@@ -18,7 +18,7 @@ const ACCENT = "#FF3D01";
 const ACCENT_H = "#e63500";
 const ACCENT_DIM = "rgba(255,61,1,0.08)";
 const FONT = "'Montserrat', sans-serif";
-const SERIF = "'Playfair Display', serif";
+const SERIF = "'Montserrat', sans-serif";
 
 const STATUS_STYLES: Record<string, { bg: string; border: string; text: string }> = {
   available:  { bg: "#ffffff",   border: "#d1d5db",  text: "#9ca3af"  },
