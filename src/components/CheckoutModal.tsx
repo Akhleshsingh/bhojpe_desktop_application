@@ -47,7 +47,7 @@ const PAYMENT_METHODS = [
 const QUICK_AMOUNTS = [50, 100, 500, 1000];
 const KEYPAD_KEYS = [1, 2, 3, 4, 5, 6, 7, 8, 9, ".", 0, "back"] as const;
 
-const FONT = "Poppins, sans-serif";
+const FONT = "'Montserrat', sans-serif";
 
 const SummaryRow = ({
   label, value, red, bold,

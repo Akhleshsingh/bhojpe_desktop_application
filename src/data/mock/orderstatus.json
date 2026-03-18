@@ -1,0 +1,30 @@
+{
+  "status": true,
+  "message": "Order status fetched successfully",
+  "data": [
+    {
+      "key": "placed",
+      "label": "Placed"
+    },
+    {
+      "key": "confirmed",
+      "label": "Confirmed"
+    },
+    {
+      "key": "preparing",
+      "label": "Preparing"
+    },
+    {
+      "key": "food_ready",
+      "label": "Food is Ready"
+    },
+    {
+      "key": "served",
+      "label": "served"
+    },
+    {
+      "key": "cancelled",
+      "label": "Cancelled"
+    }
+  ]
+}

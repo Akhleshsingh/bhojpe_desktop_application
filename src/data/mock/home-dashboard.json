@@ -1,0 +1,13 @@
+{
+  "status": true,
+  "message": "Home dashboard data fetched successfully",
+  "data": {
+    "app_version_code": "1.0.3",
+    "force_update": 1,
+    "today_overview": {
+      "total_sales": 5683,
+      "total_orders": 15,
+      "total_customers": 0
+    }
+  }
+}

@@ -7,7 +7,7 @@ export default function Tables() {
   const { tables, loading } = useTables();
 
   return (
-    <Box sx={{ minHeight: "100vh", backgroundColor: "#F6F6F6" }}>
+    <Box sx={{ minHeight: "100vh", backgroundColor: "#f5f0ea" }}>
 
       <Box sx={{ p: 3 }}>
         <Typography sx={{ fontSize: 22, fontWeight: 700, mb: 3 }}>

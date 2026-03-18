@@ -1,0 +1,46 @@
+{
+  "status": true,
+  "message": "Waiters fetched successfully",
+  "data": [
+    {
+      "id": 6,
+      "name": "ashish",
+      "email": "ashish@foodscaner.com",
+      "phone_number": "6260129457",
+      "branch_id": 4,
+      "profile_photo_url": "https://ui-avatars.com/api/?name=a&color=#27272a&background=f4f4f5"
+    },
+    {
+      "id": 45,
+      "name": "chandu waiter",
+      "email": "sawariyajob56@gmail.com",
+      "phone_number": "6269871425",
+      "branch_id": 4,
+      "profile_photo_url": "https://ui-avatars.com/api/?name=c+w&color=#27272a&background=f4f4f5"
+    },
+    {
+      "id": 53,
+      "name": "pooja singhhgu",
+      "email": "pooja@gmail.com",
+      "phone_number": "9293008767",
+      "branch_id": 4,
+      "profile_photo_url": "https://ui-avatars.com/api/?name=p+s&color=#27272a&background=f4f4f5"
+    },
+    {
+      "id": 93,
+      "name": "scscs",
+      "email": "zxzc@gmail.co",
+      "phone_number": "2132312349",
+      "branch_id": 4,
+      "profile_photo_url": "https://ui-avatars.com/api/?name=s&color=#27272a&background=f4f4f5"
+    },
+    {
+      "id": 108,
+      "name": "tes",
+      "email": "savaliyadarshan9699@gmail.com",
+      "phone_number": "7537537530",
+      "branch_id": 4,
+      "profile_photo_url": "https://ui-avatars.com/api/?name=t&color=#27272a&background=f4f4f5"
+    }
+  ]
+}

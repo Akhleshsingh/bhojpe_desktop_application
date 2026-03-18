@@ -19,7 +19,7 @@ import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import { useCustomers } from "../context/CustomerContext";
 
-const FONT = "Poppins, sans-serif";
+const FONT = "'Montserrat', sans-serif";
 
 type Props = {
   open: boolean;

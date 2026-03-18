@@ -2796,7 +2796,7 @@ gap: 1,
             borderRadius: "16px",
             boxShadow: "0 24px 80px rgba(0,0,0,0.25)",
             overflow: "hidden",
-            fontFamily: "Poppins, sans-serif",
+            fontFamily: "'Montserrat', sans-serif",
           }}>
             {/* Header */}
             <Box sx={{
@@ -2814,10 +2814,10 @@ gap: 1,
                   <LocalOfferOutlinedIcon sx={{ fontSize: 18, color: "#FCA5A5" }} />
                 </Box>
                 <Box>
-                  <Typography sx={{ fontSize: 15, fontWeight: 700, color: "#FFFFFF", fontFamily: "Poppins, sans-serif" }}>
+                  <Typography sx={{ fontSize: 15, fontWeight: 700, color: "#FFFFFF", fontFamily: "'Montserrat', sans-serif" }}>
                     Apply Discount
                   </Typography>
-                  <Typography sx={{ fontSize: 11, color: "#9CA3AF", fontFamily: "Poppins, sans-serif" }}>
+                  <Typography sx={{ fontSize: 11, color: "#9CA3AF", fontFamily: "'Montserrat', sans-serif" }}>
                     Order total: ₹{finalTotal.toFixed(2)}
                   </Typography>
                 </Box>
@@ -2838,7 +2838,7 @@ gap: 1,
                   <Box key={v} onClick={() => { setDiscountType(v as any); setDiscountValue(0); }}
                     sx={{
                       flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
-                      cursor: "pointer", fontSize: 13, fontWeight: 700, fontFamily: "Poppins, sans-serif",
+                      cursor: "pointer", fontSize: 13, fontWeight: 700, fontFamily: "'Montserrat', sans-serif",
                       backgroundColor: discountType === v ? "#FF3D01" : "#FFFFFF",
                       color: discountType === v ? "#FFFFFF" : "#6B7280",
                       transition: "all .15s",
@@ -2852,7 +2852,7 @@ gap: 1,
 
               {/* Quick preset buttons */}
               <Box>
-                <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#9CA3AF", fontFamily: "Poppins, sans-serif", mb: 0.8, textTransform: "uppercase", letterSpacing: 0.5 }}>
+                <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#9CA3AF", fontFamily: "'Montserrat', sans-serif", mb: 0.8, textTransform: "uppercase", letterSpacing: 0.5 }}>
                   Quick {discountType === "percent" ? "Percentages" : "Amounts"}
                 </Typography>
                 <Box sx={{ display: "flex", gap: 1 }}>
@@ -2866,7 +2866,7 @@ gap: 1,
                         cursor: "pointer", transition: "all .12s",
                         "&:hover": { borderColor: "#FF3D01", backgroundColor: "#FEF2F2" },
                       }}>
-                      <Typography sx={{ fontSize: 12, fontWeight: 700, fontFamily: "Poppins, sans-serif", color: discountValue === v ? "#FF3D01" : "#374151" }}>
+                      <Typography sx={{ fontSize: 12, fontWeight: 700, fontFamily: "'Montserrat', sans-serif", color: discountValue === v ? "#FF3D01" : "#374151" }}>
                         {discountType === "percent" ? `${v}%` : `₹${v}`}
                       </Typography>
                     </Box>
@@ -2876,7 +2876,7 @@ gap: 1,
 
               {/* Input */}
               <Box>
-                <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#9CA3AF", fontFamily: "Poppins, sans-serif", mb: 0.8, textTransform: "uppercase", letterSpacing: 0.5 }}>
+                <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#9CA3AF", fontFamily: "'Montserrat', sans-serif", mb: 0.8, textTransform: "uppercase", letterSpacing: 0.5 }}>
                   {discountType === "fixed" ? "Flat Discount Amount (₹)" : "Discount Percentage (%)"}
                 </Typography>
                 <TextField
@@ -2886,14 +2886,14 @@ gap: 1,
                   onChange={e => setDiscountValue(Number(e.target.value))}
                   InputProps={{
                     startAdornment: (
-                      <Box sx={{ mr: 0.5, color: "#9CA3AF", fontFamily: "Poppins, sans-serif", fontSize: 18, fontWeight: 700 }}>
+                      <Box sx={{ mr: 0.5, color: "#9CA3AF", fontFamily: "'Montserrat', sans-serif", fontSize: 18, fontWeight: 700 }}>
                         {discountType === "fixed" ? "₹" : "%"}
                       </Box>
                     ),
                   }}
                   sx={{
                     "& .MuiOutlinedInput-root": {
-                      height: 52, fontSize: 22, fontWeight: 700, fontFamily: "Poppins, sans-serif",
+                      height: 52, fontSize: 22, fontWeight: 700, fontFamily: "'Montserrat', sans-serif",
                       borderRadius: "10px", backgroundColor: "#F9FAFB",
                       "& fieldset": { borderColor: "#E5E7EB" },
                       "&:hover fieldset": { borderColor: "#9CA3AF" },
@@ -2904,10 +2904,10 @@ gap: 1,
                 {/* Preview */}
                 {discountValue > 0 && (
                   <Box sx={{ mt: 1, display: "flex", justifyContent: "space-between", px: 1 }}>
-                    <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: "Poppins, sans-serif" }}>
+                    <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: "'Montserrat', sans-serif" }}>
                       Discount applied
                     </Typography>
-                    <Typography sx={{ fontSize: 13, fontWeight: 700, color: "#16A34A", fontFamily: "Poppins, sans-serif" }}>
+                    <Typography sx={{ fontSize: 13, fontWeight: 700, color: "#16A34A", fontFamily: "'Montserrat', sans-serif" }}>
                       -{discountType === "fixed"
                         ? `₹${discountValue}`
                         : `₹${((finalTotal * discountValue) / 100).toFixed(2)}`}
@@ -2921,7 +2921,7 @@ gap: 1,
                 <Button fullWidth variant="outlined"
                   onClick={() => { setDiscountOpen(false); setDiscountValue(0); setDiscountType("fixed"); }}
                   sx={{
-                    textTransform: "none", fontSize: 13, fontWeight: 600, fontFamily: "Poppins, sans-serif",
+                    textTransform: "none", fontSize: 13, fontWeight: 600, fontFamily: "'Montserrat', sans-serif",
                     height: 42, borderRadius: "10px",
                     borderColor: "#D1D5DB", color: "#374151",
                     "&:hover": { borderColor: "#9CA3AF", backgroundColor: "#F9FAFB" },
@@ -2932,7 +2932,7 @@ gap: 1,
                   disabled={!discountValue || discountValue <= 0}
                   onClick={applyDiscount}
                   sx={{
-                    textTransform: "none", fontSize: 13, fontWeight: 700, fontFamily: "Poppins, sans-serif",
+                    textTransform: "none", fontSize: 13, fontWeight: 700, fontFamily: "'Montserrat', sans-serif",
                     height: 42, borderRadius: "10px",
                     background: discountValue > 0 ? "linear-gradient(135deg,#16A34A,#15803D)" : "#F3F4F6",
                     color: discountValue > 0 ? "#FFF" : "#D1D5DB",

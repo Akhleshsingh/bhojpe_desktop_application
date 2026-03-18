@@ -37,10 +37,10 @@ const ROWS = [
 
 const COL_HEADER = {
   fontSize: 11, fontWeight: 700, color: "#6B7280",
-  fontFamily: "Poppins, sans-serif", letterSpacing: 0.6,
+  fontFamily: "'Montserrat', sans-serif", letterSpacing: 0.6,
   textTransform: "uppercase" as const,
 };
-const CELL = { fontSize: 13, color: "#111827", fontFamily: "Poppins, sans-serif" };
+const CELL = { fontSize: 13, color: "#111827", fontFamily: "'Montserrat', sans-serif" };
 
 function MethodBadge({ method }: { method: string }) {
   const isUPI = method === "UPI";
@@ -80,13 +80,13 @@ function StatCard({ label, value, sub, color, icon }: any) {
         {React.cloneElement(icon, { sx: { fontSize: 22, color } })}
       </Box>
       <Box>
-        <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#9CA3AF", fontFamily: "Poppins, sans-serif", letterSpacing: 0.5, textTransform: "uppercase" }}>
+        <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#9CA3AF", fontFamily: "'Montserrat', sans-serif", letterSpacing: 0.5, textTransform: "uppercase" }}>
           {label}
         </Typography>
-        <Typography sx={{ fontSize: 20, fontWeight: 700, color: "#111827", fontFamily: "Poppins, sans-serif", lineHeight: 1.3 }}>
+        <Typography sx={{ fontSize: 20, fontWeight: 700, color: "#111827", fontFamily: "'Montserrat', sans-serif", lineHeight: 1.3 }}>
           {value}
         </Typography>
-        {sub && <Typography sx={{ fontSize: 11, color: "#9CA3AF", fontFamily: "Poppins, sans-serif" }}>{sub}</Typography>}
+        {sub && <Typography sx={{ fontSize: 11, color: "#9CA3AF", fontFamily: "'Montserrat', sans-serif" }}>{sub}</Typography>}
       </Box>
     </Box>
   );
@@ -122,11 +122,11 @@ export default function Payments() {
   const openRefund = (row: any) => { setSelectedPayment(row); setRefundOpen(true); };
 
   return (
-    <Box sx={{ minHeight: "100vh", backgroundColor: "#F8FAFC", fontFamily: "Poppins, sans-serif" }}>
+    <Box sx={{ minHeight: "100vh", backgroundColor: "#f5f0ea", fontFamily: "'Montserrat', sans-serif" }}>
       <Box sx={{ p: 3 }}>
 
         {/* ── TITLE ── */}
-        <Typography sx={{ fontSize: 22, fontWeight: 700, color: "#111827", fontFamily: "Poppins, sans-serif", mb: 2.5 }}>
+        <Typography sx={{ fontSize: 22, fontWeight: 700, color: "#111827", fontFamily: "'Montserrat', sans-serif", mb: 2.5 }}>
           Payments
         </Typography>
 
@@ -151,7 +151,7 @@ export default function Payments() {
             sx={{
               width: 300,
               "& .MuiOutlinedInput-root": {
-                height: 38, fontSize: 13, fontFamily: "Poppins, sans-serif",
+                height: 38, fontSize: 13, fontFamily: "'Montserrat', sans-serif",
                 borderRadius: "8px", backgroundColor: "#fff",
                 "& fieldset": { borderColor: "#D1D5DB" },
                 "&:hover fieldset": { borderColor: "#9CA3AF" },
@@ -160,9 +160,9 @@ export default function Payments() {
           />
           <Button variant="outlined" startIcon={<FileDownloadOutlinedIcon sx={{ fontSize: 16 }} />}
             sx={{
-              textTransform: "none", fontSize: 13, fontWeight: 600, fontFamily: "Poppins, sans-serif",
+              textTransform: "none", fontSize: 13, fontWeight: 600, fontFamily: "'Montserrat', sans-serif",
               height: 38, px: 2, borderColor: "#D1D5DB", color: "#374151", borderRadius: "8px",
-              "&:hover": { borderColor: "#9CA3AF", backgroundColor: "#F9FAFB" },
+              "&:hover": { borderColor: "#a08c7c", backgroundColor: "#f0ebe4" },
             }}>
             Export
           </Button>
@@ -172,7 +172,7 @@ export default function Payments() {
         <Box sx={{ backgroundColor: "#FFFFFF", borderRadius: "12px", border: "1px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,0.05)", overflow: "hidden" }}>
 
           {/* Header */}
-          <Box sx={{ display: "grid", gridTemplateColumns: "0.5fr 1fr 1.2fr 1.2fr 1.3fr 1fr", px: 2.5, py: 1.4, backgroundColor: "#F9FAFB", borderBottom: "1px solid #E5E7EB" }}>
+          <Box sx={{ display: "grid", gridTemplateColumns: "0.5fr 1fr 1.2fr 1.2fr 1.3fr 1fr", px: 2.5, py: 1.4, backgroundColor: "#f0ebe4", borderBottom: "1px solid #e2d9d0" }}>
             <Typography sx={COL_HEADER}>ID</Typography>
             <Typography sx={COL_HEADER}>Amount</Typography>
             <Typography sx={COL_HEADER}>Payment Method</Typography>
@@ -183,7 +183,7 @@ export default function Payments() {
 
           {paginated.length === 0 && (
             <Box sx={{ py: 6, textAlign: "center" }}>
-              <Typography sx={{ fontSize: 13, color: "#9CA3AF", fontFamily: "Poppins, sans-serif" }}>No payments found</Typography>
+              <Typography sx={{ fontSize: 13, color: "#9CA3AF", fontFamily: "'Montserrat', sans-serif" }}>No payments found</Typography>
             </Box>
           )}
 
@@ -202,7 +202,7 @@ export default function Payments() {
               {/* Amount chip */}
               <Box sx={{ display: "inline-flex" }}>
                 <Box sx={{ px: 1.2, py: 0.3, borderRadius: "6px", backgroundColor: "#DCFCE7", border: "1px solid #BBF7D0" }}>
-                  <Typography sx={{ fontSize: 12, fontWeight: 700, color: "#15803D", fontFamily: "Poppins, sans-serif" }}>
+                  <Typography sx={{ fontSize: 12, fontWeight: 700, color: "#15803D", fontFamily: "'Montserrat', sans-serif" }}>
                     ₹{row.amount.toFixed(2)}
                   </Typography>
                 </Box>
@@ -214,14 +214,14 @@ export default function Payments() {
 
               <Box>
                 <Typography sx={{ ...CELL, fontWeight: 600 }}>{row.time}</Typography>
-                <Typography sx={{ fontSize: 11, color: "#9CA3AF", fontFamily: "Poppins, sans-serif" }}>{row.date} · {row.ago}</Typography>
+                <Typography sx={{ fontSize: 11, color: "#9CA3AF", fontFamily: "'Montserrat', sans-serif" }}>{row.date} · {row.ago}</Typography>
               </Box>
 
               <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
                 <Button size="small" variant="outlined" startIcon={<ReplayOutlinedIcon sx={{ fontSize: 14 }} />}
                   onClick={() => openRefund(row)}
                   sx={{
-                    textTransform: "none", fontSize: 12, fontWeight: 600, fontFamily: "Poppins, sans-serif",
+                    textTransform: "none", fontSize: 12, fontWeight: 600, fontFamily: "'Montserrat', sans-serif",
                     borderColor: "#FECACA", color: "#DC2626", borderRadius: "7px", py: 0.4, px: 1.2,
                     "&:hover": { backgroundColor: "#FEF2F2", borderColor: "#DC2626" },
                   }}>
@@ -235,7 +235,7 @@ export default function Payments() {
         {/* ── PAGINATION ── */}
         {filtered.length > 0 && (
           <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mt: 2 }}>
-            <Typography sx={{ fontSize: 13, color: "#6B7280", fontFamily: "Poppins, sans-serif" }}>
+            <Typography sx={{ fontSize: 13, color: "#6B7280", fontFamily: "'Montserrat', sans-serif" }}>
               Showing {(page - 1) * PER_PAGE + 1} To {Math.min(page * PER_PAGE, filtered.length)} of {filtered.length} results
             </Typography>
             <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
@@ -252,7 +252,7 @@ export default function Payments() {
                     backgroundColor: p === page ? "#FF3D01" : "#FFFFFF",
                     "&:hover": { backgroundColor: p === page ? "#c62a2f" : "#F3F4F6" },
                   }}>
-                  <Typography sx={{ fontSize: 13, fontWeight: 600, color: p === page ? "#FFF" : "#374151", fontFamily: "Poppins, sans-serif" }}>{p}</Typography>
+                  <Typography sx={{ fontSize: 13, fontWeight: 600, color: p === page ? "#FFF" : "#374151", fontFamily: "'Montserrat', sans-serif" }}>{p}</Typography>
                 </Box>
               ))}
               <IconButton size="small" disabled={page === totalPages} onClick={() => setPage(p => p + 1)}
@@ -266,7 +266,7 @@ export default function Payments() {
 
       {/* ── REFUND DRAWER ── */}
       <Drawer anchor="right" open={refundOpen} onClose={() => setRefundOpen(false)}
-        PaperProps={{ sx: { width: 480, p: 0, fontFamily: "Poppins, sans-serif" } }}>
+        PaperProps={{ sx: { width: 480, p: 0, fontFamily: "'Montserrat', sans-serif" } }}>
 
         {/* Drawer header */}
         <Box sx={{ px: 3, py: 2.5, borderBottom: "1px solid #E5E7EB", display: "flex", alignItems: "center", justifyContent: "space-between", background: "linear-gradient(135deg,#1F2937,#374151)" }}>
@@ -275,8 +275,8 @@ export default function Payments() {
               <ReplayOutlinedIcon sx={{ fontSize: 18, color: "#FCA5A5" }} />
             </Box>
             <Box>
-              <Typography sx={{ fontSize: 16, fontWeight: 700, color: "#FFFFFF", fontFamily: "Poppins, sans-serif" }}>Process Refund</Typography>
-              <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: "Poppins, sans-serif" }}>Review and submit refund request</Typography>
+              <Typography sx={{ fontSize: 16, fontWeight: 700, color: "#FFFFFF", fontFamily: "'Montserrat', sans-serif" }}>Process Refund</Typography>
+              <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: "'Montserrat', sans-serif" }}>Review and submit refund request</Typography>
             </Box>
           </Box>
           <IconButton onClick={() => setRefundOpen(false)} sx={{ color: "#9CA3AF", "&:hover": { backgroundColor: "rgba(255,255,255,0.08)" } }}>
@@ -287,24 +287,24 @@ export default function Payments() {
         <Box sx={{ p: 3, overflowY: "auto", flex: 1, display: "flex", flexDirection: "column", gap: 2.5 }}>
           {/* Payment info */}
           <Box sx={{ backgroundColor: "#F9FAFB", borderRadius: "10px", border: "1px solid #E5E7EB", p: 2 }}>
-            <Typography sx={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", fontFamily: "Poppins, sans-serif", letterSpacing: 0.5, mb: 1.5, textTransform: "uppercase" }}>Payment Summary</Typography>
+            <Typography sx={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", fontFamily: "'Montserrat', sans-serif", letterSpacing: 0.5, mb: 1.5, textTransform: "uppercase" }}>Payment Summary</Typography>
             {[
               { label: "Order", value: selectedPayment?.order },
               { label: "Amount", value: `₹${selectedPayment?.amount?.toFixed(2)}` },
               { label: "Method", value: selectedPayment?.method },
             ].map(({ label, value }) => (
               <Box key={label} sx={{ display: "flex", justifyContent: "space-between", py: 0.6 }}>
-                <Typography sx={{ fontSize: 13, color: "#6B7280", fontFamily: "Poppins, sans-serif" }}>{label}</Typography>
-                <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#111827", fontFamily: "Poppins, sans-serif" }}>{value}</Typography>
+                <Typography sx={{ fontSize: 13, color: "#6B7280", fontFamily: "'Montserrat', sans-serif" }}>{label}</Typography>
+                <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#111827", fontFamily: "'Montserrat', sans-serif" }}>{value}</Typography>
               </Box>
             ))}
           </Box>
 
           {/* Reason */}
           <Box>
-            <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#374151", fontFamily: "Poppins, sans-serif", mb: 0.8 }}>Refund Reason</Typography>
+            <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#374151", fontFamily: "'Montserrat', sans-serif", mb: 0.8 }}>Refund Reason</Typography>
             <Select fullWidth size="small" value={refundReason} onChange={(e) => setRefundReason(e.target.value as string)} displayEmpty
-              sx={{ fontSize: 13, fontFamily: "Poppins, sans-serif", borderRadius: "8px", "& .MuiOutlinedInput-notchedOutline": { borderColor: "#D1D5DB" } }}>
+              sx={{ fontSize: 13, fontFamily: "'Montserrat', sans-serif", borderRadius: "8px", "& .MuiOutlinedInput-notchedOutline": { borderColor: "#D1D5DB" } }}>
               <MenuItem value="" disabled><em style={{ color: "#9CA3AF", fontStyle: "normal" }}>Select a reason</em></MenuItem>
               <MenuItem value="cancelled">Order Cancelled</MenuItem>
               <MenuItem value="mistake">Payment Mistake</MenuItem>
@@ -315,34 +315,34 @@ export default function Payments() {
 
           {/* Refund type */}
           <Box>
-            <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#374151", fontFamily: "Poppins, sans-serif", mb: 0.8 }}>Refund Type</Typography>
+            <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#374151", fontFamily: "'Montserrat', sans-serif", mb: 0.8 }}>Refund Type</Typography>
             <RadioGroup value={refundType} onChange={(e) => setRefundType(e.target.value)}>
               {[["full", "Full Refund"], ["partial", "Partial Refund"], ["waste", "Waste / Write-Off Refund"]].map(([v, l]) => (
                 <FormControlLabel key={v} value={v} control={<Radio size="small" sx={{ color: "#FF3D01", "&.Mui-checked": { color: "#FF3D01" } }} />}
-                  label={<Typography sx={{ fontSize: 13, fontFamily: "Poppins, sans-serif", color: "#374151" }}>{l}</Typography>} />
+                  label={<Typography sx={{ fontSize: 13, fontFamily: "'Montserrat', sans-serif", color: "#374151" }}>{l}</Typography>} />
               ))}
             </RadioGroup>
           </Box>
 
           {/* Amount */}
           <Box>
-            <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#374151", fontFamily: "Poppins, sans-serif", mb: 0.8 }}>Refund Amount</Typography>
+            <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#374151", fontFamily: "'Montserrat', sans-serif", mb: 0.8 }}>Refund Amount</Typography>
             <TextField fullWidth size="small" value={`₹${selectedPayment?.amount?.toFixed(2) ?? ""}`} disabled
-              sx={{ "& .MuiOutlinedInput-root": { borderRadius: "8px", fontSize: 13, fontFamily: "Poppins, sans-serif", backgroundColor: "#F9FAFB" } }} />
+              sx={{ "& .MuiOutlinedInput-root": { borderRadius: "8px", fontSize: 13, fontFamily: "'Montserrat', sans-serif", backgroundColor: "#F9FAFB" } }} />
           </Box>
 
           {/* Notes */}
           <Box>
-            <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#374151", fontFamily: "Poppins, sans-serif", mb: 0.8 }}>Notes</Typography>
+            <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#374151", fontFamily: "'Montserrat', sans-serif", mb: 0.8 }}>Notes</Typography>
             <TextField fullWidth multiline rows={3} placeholder="Add any notes about this refund…" value={refundNote} onChange={(e) => setRefundNote(e.target.value)}
-              sx={{ "& .MuiOutlinedInput-root": { borderRadius: "8px", fontSize: 13, fontFamily: "Poppins, sans-serif" } }} />
+              sx={{ "& .MuiOutlinedInput-root": { borderRadius: "8px", fontSize: 13, fontFamily: "'Montserrat', sans-serif" } }} />
           </Box>
 
           {/* Actions */}
           <Box sx={{ display: "flex", gap: 1.5, mt: 1 }}>
             <Button fullWidth variant="contained"
               sx={{
-                textTransform: "none", fontWeight: 700, fontFamily: "Poppins, sans-serif", height: 42, borderRadius: "8px",
+                textTransform: "none", fontWeight: 700, fontFamily: "'Montserrat', sans-serif", height: 42, borderRadius: "8px",
                 background: "linear-gradient(135deg,#FF3D01,#c62a2f)",
                 boxShadow: "0 2px 8px rgba(232,53,58,.35)",
                 "&:hover": { background: "linear-gradient(135deg,#c62a2f,#a02020)" },
@@ -351,9 +351,9 @@ export default function Payments() {
             </Button>
             <Button fullWidth variant="outlined" onClick={() => setRefundOpen(false)}
               sx={{
-                textTransform: "none", fontWeight: 600, fontFamily: "Poppins, sans-serif", height: 42, borderRadius: "8px",
+                textTransform: "none", fontWeight: 600, fontFamily: "'Montserrat', sans-serif", height: 42, borderRadius: "8px",
                 borderColor: "#D1D5DB", color: "#374151",
-                "&:hover": { borderColor: "#9CA3AF", backgroundColor: "#F9FAFB" },
+                "&:hover": { borderColor: "#a08c7c", backgroundColor: "#f0ebe4" },
               }}>
               Cancel
             </Button>

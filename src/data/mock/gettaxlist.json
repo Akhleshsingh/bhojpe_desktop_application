@@ -1,0 +1,11 @@
+{
+  "status": true,
+  "message": "Tax list fetched successfully",
+  "data": [
+    {
+      "id": 4,
+      "tax_name": "GST",
+      "tax_percent": 5
+    }
+  ]
+}

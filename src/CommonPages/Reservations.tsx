@@ -1,4 +1,7 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
+import { useAuth } from "../context/AuthContext";
 import {
   Box,
   Typography,
@@ -31,6 +34,8 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 import { useTables } from "../context/TablesContext";
 
+const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "/api/v1";
+
 type ReservationStatus = "Confirmed" | "Pending" | "Cancelled" | "No Show";
 
 type Reservation = {
@@ -46,52 +51,21 @@ type Reservation = {
   status: ReservationStatus;
 };
 
-const dummyReservations: Reservation[] = [
-  {
-    id: 1,
-    table: "T-3",
-    guests: 2,
-    date: "Sunday, 25 Jan",
-    time: "01:00 PM",
-    name: "datscvjvkvbkbl",
-    email: "fy@gmail.com",
-    phone: "+919999999999",
-    notes: "testing requirements",
-    status: "Confirmed",
-  },
-  {
-    id: 2,
-    guests: 2,
-    date: "Sunday, 25 Jan",
-    time: "06:00 PM",
-    name: "akhleshsisjdj",
-    email: "akhlesh@gmail.com",
-    phone: "+916260129453",
-    status: "Pending",
-  },
-  {
-    id: 3,
-    table: "T-7",
-    guests: 4,
-    date: "Monday, 26 Jan",
-    time: "07:30 PM",
-    name: "Rahul Sharma",
-    email: "rahul@gmail.com",
-    phone: "+918800123456",
-    notes: "Anniversary dinner, need cake",
-    status: "Confirmed",
-  },
-  {
-    id: 4,
-    guests: 6,
-    date: "Tuesday, 27 Jan",
-    time: "08:00 PM",
-    name: "Priya Mehta",
-    email: "priya@email.com",
-    phone: "+917700987654",
-    status: "Pending",
-  },
-];
+function mapApiReservation(r: any): Reservation {
+  const dt = new Date(r.reservation_date_time);
+  return {
+    id: r.id,
+    name: r.name ?? "",
+    email: r.email ?? "",
+    phone: r.phone ?? "",
+    guests: r.party_size ?? 1,
+    date: dt.toLocaleDateString("en-US", { weekday: "long", day: "numeric", month: "short" }),
+    time: dt.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true }),
+    notes: r.notes ?? undefined,
+    status: (r.status as ReservationStatus) ?? "Pending",
+    table: r.table_code ?? undefined,
+  };
+}
 
 const STATUS_META: Record<ReservationStatus, { bg: string; color: string; border: string }> = {
   Confirmed:  { bg: "#DCFCE7", color: "#15803D", border: "#6EE7B7" },
@@ -107,7 +81,7 @@ const DATE_RANGES = ["Today", "Tomorrow", "Current Week", "Next Week", "This Mon
 const selectSx = {
   height: 36,
   fontSize: 13,
-  fontFamily: "Poppins, sans-serif",
+  fontFamily: "'Montserrat', sans-serif",
   backgroundColor: "#FFFFFF",
   borderRadius: "8px",
   "& .MuiOutlinedInput-notchedOutline": { borderColor: "#D1D5DB" },
@@ -198,7 +172,7 @@ function AssignTableModal({
         sx: {
           borderRadius: "16px",
           overflow: "hidden",
-          fontFamily: "Poppins, sans-serif",
+          fontFamily: "'Montserrat', sans-serif",
           maxHeight: "80vh",
         },
       }}
@@ -219,7 +193,7 @@ function AssignTableModal({
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
             <TableBarOutlinedIcon sx={{ color: "#FCA5A5", fontSize: 20 }} />
             <Typography
-              sx={{ fontSize: 17, fontWeight: 700, color: "#F9FAFB", fontFamily: "Poppins, sans-serif" }}
+              sx={{ fontSize: 17, fontWeight: 700, color: "#F9FAFB", fontFamily: "'Montserrat', sans-serif" }}
             >
               Available Tables
             </Typography>
@@ -231,7 +205,7 @@ function AssignTableModal({
                   border: "1px solid rgba(232,53,58,0.4)",
                 }}
               >
-                <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#FCA5A5", fontFamily: "Poppins, sans-serif" }}>
+                <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#FCA5A5", fontFamily: "'Montserrat', sans-serif" }}>
                   {reservation.name} · {reservation.guests} Guests
                 </Typography>
               </Box>
@@ -292,12 +266,12 @@ function AssignTableModal({
             <Box
               sx={{
                 mb: 2, px: 1.5, py: 1,
-                background: "#F8FAFC",
+                background: "#f5f0ea",
                 borderRadius: "10px",
                 border: "1px solid #E5E7EB",
               }}
             >
-              <Typography sx={{ fontSize: 12, fontWeight: 700, color: "#374151", fontFamily: "Poppins, sans-serif" }}>
+              <Typography sx={{ fontSize: 12, fontWeight: 700, color: "#374151", fontFamily: "'Montserrat', sans-serif" }}>
                 Reservations: {dateLabel}
               </Typography>
             </Box>
@@ -311,7 +285,7 @@ function AssignTableModal({
                 }}
               >
                 <TableBarOutlinedIcon sx={{ fontSize: 30, opacity: 0.4 }} />
-                <Typography sx={{ fontSize: 12, fontFamily: "Poppins, sans-serif", textAlign: "center" }}>
+                <Typography sx={{ fontSize: 12, fontFamily: "'Montserrat', sans-serif", textAlign: "center" }}>
                   No table is reserved.
                 </Typography>
               </Box>
@@ -328,10 +302,10 @@ function AssignTableModal({
                       background: "#F9FAFB",
                     }}
                   >
-                    <Typography sx={{ fontSize: 12, fontWeight: 600, color: "#111827", fontFamily: "Poppins, sans-serif" }}>
+                    <Typography sx={{ fontSize: 12, fontWeight: 600, color: "#111827", fontFamily: "'Montserrat', sans-serif" }}>
                       {r.name}
                     </Typography>
-                    <Typography sx={{ fontSize: 11, color: "#6B7280", fontFamily: "Poppins, sans-serif" }}>
+                    <Typography sx={{ fontSize: 11, color: "#6B7280", fontFamily: "'Montserrat', sans-serif" }}>
                       {r.time} · {r.guests} guests
                     </Typography>
                     {assignedTable && (
@@ -343,7 +317,7 @@ function AssignTableModal({
                           display: "inline-block",
                         }}
                       >
-                        <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#FF3D01", fontFamily: "Poppins, sans-serif" }}>
+                        <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#FF3D01", fontFamily: "'Montserrat', sans-serif" }}>
                           {assignedTable}
                         </Typography>
                       </Box>
@@ -367,12 +341,12 @@ function AssignTableModal({
           {selectedTableId ? (
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <CheckCircleOutlineIcon sx={{ fontSize: 16, color: "#15803D" }} />
-              <Typography sx={{ fontSize: 13, color: "#374151", fontFamily: "Poppins, sans-serif" }}>
+              <Typography sx={{ fontSize: 13, color: "#374151", fontFamily: "'Montserrat', sans-serif" }}>
                 Selected: <strong>{selectedTableLabel}</strong>
               </Typography>
             </Box>
           ) : (
-            <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: "Poppins, sans-serif" }}>
+            <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: "'Montserrat', sans-serif" }}>
               Tap a table to select it
             </Typography>
           )}
@@ -385,7 +359,7 @@ function AssignTableModal({
                 textTransform: "none", fontWeight: 500, fontSize: 13,
                 borderColor: "#D1D5DB", color: "#6B7280",
                 borderRadius: "8px", px: 2.5, height: 36,
-                fontFamily: "Poppins, sans-serif",
+                fontFamily: "'Montserrat', sans-serif",
                 "&:hover": { borderColor: "#9CA3AF", backgroundColor: "#F9FAFB" },
               }}
             >
@@ -402,7 +376,7 @@ function AssignTableModal({
                   : "#E5E7EB",
                 color: selectedTableId ? "#fff" : "#9CA3AF",
                 borderRadius: "8px", px: 2.5, height: 36,
-                fontFamily: "Poppins, sans-serif",
+                fontFamily: "'Montserrat', sans-serif",
                 boxShadow: selectedTableId ? "0 2px 8px rgba(232,53,58,.35)" : "none",
                 "&:hover": {
                   background: selectedTableId
@@ -439,7 +413,7 @@ function AreaSection({ area, selectedTableId, onSelectTable, tableMap, allReserv
   return (
     <Box sx={{ mb: 3 }}>
       <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
-        <Typography sx={{ fontSize: 14, fontWeight: 600, color: "#374151", fontFamily: "Poppins, sans-serif" }}>
+        <Typography sx={{ fontSize: 14, fontWeight: 600, color: "#374151", fontFamily: "'Montserrat', sans-serif" }}>
           {area.name}
         </Typography>
         <Box
@@ -448,14 +422,14 @@ function AreaSection({ area, selectedTableId, onSelectTable, tableMap, allReserv
             border: "1px solid #E5E7EB", backgroundColor: "#fff",
           }}
         >
-          <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#6B7280", fontFamily: "Poppins, sans-serif" }}>
+          <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#6B7280", fontFamily: "'Montserrat', sans-serif" }}>
             {area.tables.length} Table{area.tables.length !== 1 ? "s" : ""}
           </Typography>
         </Box>
       </Box>
 
       {area.tables.length === 0 ? (
-        <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: "Poppins, sans-serif", pl: 0.5 }}>
+        <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: "'Montserrat', sans-serif", pl: 0.5 }}>
           No tables in this area.
         </Typography>
       ) : (
@@ -531,7 +505,7 @@ function DemoAreas({ selectedTableId, onSelectTable, tableMap, allReservations }
       {DEMO_AREAS.map((area) => (
         <Box key={area.id} sx={{ mb: 3 }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
-            <Typography sx={{ fontSize: 14, fontWeight: 600, color: "#374151", fontFamily: "Poppins, sans-serif" }}>
+            <Typography sx={{ fontSize: 14, fontWeight: 600, color: "#374151", fontFamily: "'Montserrat', sans-serif" }}>
               {area.name}
             </Typography>
             <Box
@@ -540,14 +514,14 @@ function DemoAreas({ selectedTableId, onSelectTable, tableMap, allReservations }
                 border: "1px solid #E5E7EB", backgroundColor: "#fff",
               }}
             >
-              <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#6B7280", fontFamily: "Poppins, sans-serif" }}>
+              <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#6B7280", fontFamily: "'Montserrat', sans-serif" }}>
                 {area.tables.length} Table{area.tables.length !== 1 ? "s" : ""}
               </Typography>
             </Box>
           </Box>
 
           {area.tables.length === 0 ? (
-            <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: "Poppins, sans-serif", pl: 0.5 }}>
+            <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: "'Montserrat', sans-serif", pl: 0.5 }}>
               No tables in this area.
             </Typography>
           ) : (
@@ -649,13 +623,13 @@ function TableCard({ label, seats, isSelected, isOccupied, onClick }: TableCardP
           border: `1.5px solid ${borderColor}`,
         }}
       >
-        <Typography sx={{ fontSize: 14, fontWeight: 700, color: badgeColor, fontFamily: "Poppins, sans-serif" }}>
+        <Typography sx={{ fontSize: 14, fontWeight: 700, color: badgeColor, fontFamily: "'Montserrat', sans-serif" }}>
           {label}
         </Typography>
       </Box>
 
       {/* Seat count */}
-      <Typography sx={{ fontSize: 11, color: "#6B7280", fontFamily: "Poppins, sans-serif", textAlign: "center" }}>
+      <Typography sx={{ fontSize: 11, color: "#6B7280", fontFamily: "'Montserrat', sans-serif", textAlign: "center" }}>
         {seats} Seat{Number(seats) !== 1 ? "(s)" : ""}
       </Typography>
 
@@ -668,7 +642,7 @@ function TableCard({ label, seats, isSelected, isOccupied, onClick }: TableCardP
             border: "1px solid #6EE7B7",
           }}
         >
-          <Typography sx={{ fontSize: 9, fontWeight: 600, color: "#15803D", fontFamily: "Poppins, sans-serif" }}>
+          <Typography sx={{ fontSize: 9, fontWeight: 600, color: "#15803D", fontFamily: "'Montserrat', sans-serif" }}>
             OCCUPIED
           </Typography>
         </Box>
@@ -681,7 +655,7 @@ function TableCard({ label, seats, isSelected, isOccupied, onClick }: TableCardP
             border: "1px solid #FCA5A5",
           }}
         >
-          <Typography sx={{ fontSize: 9, fontWeight: 700, color: "#FF3D01", fontFamily: "Poppins, sans-serif" }}>
+          <Typography sx={{ fontSize: 9, fontWeight: 700, color: "#FF3D01", fontFamily: "'Montserrat', sans-serif" }}>
             SELECTED
           </Typography>
         </Box>
@@ -709,13 +683,16 @@ const COUNTRY_CODES = ["+91", "+1", "+44", "+61", "+971", "+65"];
 interface NewReservationModalProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (res: Omit<Reservation, "id">) => void;
+  onSaved: () => void;
+  branchId?: number;
+  customers?: Reservation[];
 }
 
-function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalProps) {
+function NewReservationModal({ open, onClose, onSaved, branchId, customers = [] }: NewReservationModalProps) {
   const today = new Date().toISOString().split("T")[0];
 
   const [date, setDate]             = useState(today);
+  const [showDateCal, setShowDateCal] = useState(false);
   const [guests, setGuests]         = useState(1);
   const [mealType, setMealType]     = useState("Lunch");
   const [timeSlot, setTimeSlot]     = useState("");
@@ -766,41 +743,62 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
   const handleSubmit = async () => {
     if (!validate()) return;
     setSubmitting(true);
-    /* Simulate API call delay */
-    await new Promise((r) => setTimeout(r, 600));
-    setSubmitting(false);
-    setSuccess(true);
 
-    /* Format date for display */
-    const d = new Date(date);
-    const dateStr = d.toLocaleDateString("en-US", { weekday: "long", day: "numeric", month: "short" });
+    /* Convert "01:00 PM" → "13:00:00" for the API */
+    const [timePart, meridiem] = timeSlot.split(" ");
+    const [rawH, rawM] = timePart.split(":").map(Number);
+    let h = rawH;
+    if (meridiem === "PM" && rawH !== 12) h += 12;
+    if (meridiem === "AM" && rawH === 12) h = 0;
+    const time24 = `${String(h).padStart(2, "0")}:${String(rawM).padStart(2, "0")}:00`;
+    const reservation_date_time = `${date} ${time24}`;
 
-    onSubmit({
-      table: undefined,
-      guests,
-      date: dateStr,
-      time: timeSlot,
-      name: name.trim(),
-      email: email.trim(),
-      phone: `${countryCode}${phone.trim()}`,
-      notes: notes.trim() || undefined,
-      status: "Pending",
-    });
-
-    setTimeout(handleClose, 900);
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`${BASE_URL}/save-reservation`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          branch_id: branchId,
+          reservation_date_time,
+          party_size: guests,
+          reservation_slot_type: "time",
+          slot_time_difference: 60,
+          name: name.trim(),
+          email: email.trim() || undefined,
+          phone: `${countryCode}${phone.trim()}`,
+          notes: notes.trim() || undefined,
+        }),
+      });
+      const data = await res.json();
+      if (data.status) {
+        setSuccess(true);
+        onSaved();
+        setTimeout(handleClose, 900);
+      } else {
+        setErrors({ submit: data.message ?? "Failed to save reservation. Please try again." });
+      }
+    } catch {
+      setErrors({ submit: "Network error. Please try again." });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const fieldSx = {
     "& .MuiOutlinedInput-root": {
       borderRadius: "10px",
       fontSize: 13,
-      fontFamily: "Poppins, sans-serif",
+      fontFamily: "'Montserrat', sans-serif",
       backgroundColor: "#FAFAFA",
       "& fieldset": { borderColor: "#E5E7EB" },
       "&:hover fieldset": { borderColor: "#9CA3AF" },
       "&.Mui-focused fieldset": { borderColor: "#FF3D01", borderWidth: 1.5 },
     },
-    "& .MuiInputLabel-root": { fontSize: 13, fontFamily: "Poppins, sans-serif" },
+    "& .MuiInputLabel-root": { fontSize: 13, fontFamily: "'Montserrat', sans-serif" },
     "& .MuiInputLabel-root.Mui-focused": { color: "#FF3D01" },
   };
 
@@ -813,7 +811,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
       PaperProps={{
         sx: {
           borderRadius: "18px",
-          fontFamily: "Poppins, sans-serif",
+          fontFamily: "'Montserrat', sans-serif",
           maxHeight: "92vh",
           overflow: "hidden",
           display: "flex",
@@ -840,7 +838,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
           >
             <CalendarTodayOutlinedIcon sx={{ fontSize: 17, color: "#FCA5A5" }} />
           </Box>
-          <Typography sx={{ fontSize: 17, fontWeight: 700, color: "#F9FAFB", fontFamily: "Poppins, sans-serif" }}>
+          <Typography sx={{ fontSize: 17, fontWeight: 700, color: "#F9FAFB", fontFamily: "'Montserrat', sans-serif" }}>
             New Reservation
           </Typography>
         </Box>
@@ -871,7 +869,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
             >
               <CheckCircleOutlineIcon sx={{ fontSize: 32, color: "#15803D" }} />
             </Box>
-            <Typography sx={{ fontSize: 15, fontWeight: 700, color: "#15803D", fontFamily: "Poppins, sans-serif" }}>
+            <Typography sx={{ fontSize: 15, fontWeight: 700, color: "#15803D", fontFamily: "'Montserrat', sans-serif" }}>
               Reservation Created!
             </Typography>
           </Box>
@@ -883,28 +881,31 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
           <Box sx={{ display: "flex", gap: 1.5, mb: 2.5, flexWrap: "wrap" }}>
 
             {/* Date */}
-            <Box
-              sx={{
-                display: "flex", alignItems: "center", gap: 1,
-                border: "1.5px solid #E5E7EB", borderRadius: "10px",
-                px: 1.5, height: 46, background: "#FAFAFA",
-                flex: "1 1 140px", minWidth: 130,
-                "&:focus-within": { borderColor: "#FF3D01" },
-                transition: "border-color .15s",
-              }}
-            >
-              <CalendarTodayOutlinedIcon sx={{ fontSize: 16, color: "#6B7280", flexShrink: 0 }} />
-              <input
-                type="date"
-                value={date}
-                min={today}
-                onChange={(e) => setDate(e.target.value)}
-                style={{
-                  border: "none", outline: "none", fontSize: 13,
-                  fontFamily: "Poppins, sans-serif", color: "#374151",
-                  background: "transparent", cursor: "pointer", width: "100%",
+            <Box sx={{ position: "relative", flex: "1 1 140px", minWidth: 130 }}>
+              <Box
+                onClick={() => setShowDateCal(v => !v)}
+                sx={{
+                  display: "flex", alignItems: "center", gap: 1,
+                  border: `1.5px solid ${showDateCal ? "#FF3D01" : "#E5E7EB"}`,
+                  borderRadius: "10px", px: 1.5, height: 46, background: "#FAFAFA",
+                  cursor: "pointer", transition: "border-color .15s",
+                  "&:hover": { borderColor: "#FF3D01" },
                 }}
-              />
+              >
+                <CalendarTodayOutlinedIcon sx={{ fontSize: 16, color: "#6B7280", flexShrink: 0 }} />
+                <Typography sx={{ fontSize: 13, fontFamily: "'Montserrat', sans-serif", color: "#374151" }}>
+                  {date ? new Date(date + "T00:00").toLocaleDateString("en-US", { weekday: "short", day: "numeric", month: "short" }) : "Select date"}
+                </Typography>
+              </Box>
+              {showDateCal && (
+                <Box sx={{ position: "absolute", top: 52, left: 0, zIndex: 2000, boxShadow: "0 8px 24px rgba(0,0,0,.15)", borderRadius: "10px", overflow: "hidden" }}>
+                  <Calendar
+                    minDate={new Date(today)}
+                    value={date ? new Date(date + "T00:00") : new Date()}
+                    onChange={(d) => { setDate((d as Date).toISOString().split("T")[0]); setShowDateCal(false); }}
+                  />
+                </Box>
+              )}
             </Box>
 
             {/* Guests */}
@@ -916,7 +917,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
                 renderValue={(v) => (
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                     <GroupsOutlinedIcon sx={{ fontSize: 16, color: "#6B7280" }} />
-                    <Typography sx={{ fontSize: 13, fontFamily: "Poppins, sans-serif", color: "#374151" }}>
+                    <Typography sx={{ fontSize: 13, fontFamily: "'Montserrat', sans-serif", color: "#374151" }}>
                       {v} Guest{Number(v) !== 1 ? "s" : ""}
                     </Typography>
                   </Box>
@@ -931,7 +932,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
                 }}
               >
                 {GUEST_OPTIONS.map((n) => (
-                  <MenuItem key={n} value={n} sx={{ fontSize: 13, fontFamily: "Poppins, sans-serif" }}>
+                  <MenuItem key={n} value={n} sx={{ fontSize: 13, fontFamily: "'Montserrat', sans-serif" }}>
                     {n} Guest{n !== 1 ? "s" : ""}
                   </MenuItem>
                 ))}
@@ -947,7 +948,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
                 renderValue={(v) => (
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                     <AccessTimeIcon sx={{ fontSize: 16, color: "#6B7280" }} />
-                    <Typography sx={{ fontSize: 13, fontFamily: "Poppins, sans-serif", color: "#374151" }}>{v}</Typography>
+                    <Typography sx={{ fontSize: 13, fontFamily: "'Montserrat', sans-serif", color: "#374151" }}>{v}</Typography>
                   </Box>
                 )}
                 sx={{
@@ -960,7 +961,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
                 }}
               >
                 {MEAL_TYPES.map((m) => (
-                  <MenuItem key={m} value={m} sx={{ fontSize: 13, fontFamily: "Poppins, sans-serif" }}>{m}</MenuItem>
+                  <MenuItem key={m} value={m} sx={{ fontSize: 13, fontFamily: "'Montserrat', sans-serif" }}>{m}</MenuItem>
                 ))}
               </Select>
             </FormControl>
@@ -968,7 +969,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
 
           {/* ── Time Slot ── */}
           <Box sx={{ mb: 2.5 }}>
-            <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#374151", mb: 1.2, fontFamily: "Poppins, sans-serif" }}>
+            <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#374151", mb: 1.2, fontFamily: "'Montserrat', sans-serif" }}>
               Select Time Slot
             </Typography>
             <Box
@@ -1000,7 +1001,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
                       sx={{
                         fontSize: 12, fontWeight: isActive ? 700 : 500,
                         color: isActive ? "#FF3D01" : "#4B5563",
-                        fontFamily: "Poppins, sans-serif",
+                        fontFamily: "'Montserrat', sans-serif",
                       }}
                     >
                       {slot}
@@ -1010,7 +1011,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
               })}
             </Box>
             {errors.timeSlot && (
-              <Typography sx={{ fontSize: 11, color: "#DC2626", mt: 0.5, fontFamily: "Poppins, sans-serif" }}>
+              <Typography sx={{ fontSize: 11, color: "#DC2626", mt: 0.5, fontFamily: "'Montserrat', sans-serif" }}>
                 {errors.timeSlot}
               </Typography>
             )}
@@ -1018,7 +1019,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
 
           {/* ── Special Request ── */}
           <Box sx={{ mb: 2.5 }}>
-            <Typography sx={{ fontSize: 13, fontWeight: 500, color: "#374151", mb: 0.8, fontFamily: "Poppins, sans-serif" }}>
+            <Typography sx={{ fontSize: 13, fontWeight: 500, color: "#374151", mb: 0.8, fontFamily: "'Montserrat', sans-serif" }}>
               Any special request?
             </Typography>
             <textarea
@@ -1030,7 +1031,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
                 width: "100%", boxSizing: "border-box",
                 border: "1.5px solid #E5E7EB", borderRadius: "10px",
                 padding: "10px 12px",
-                fontSize: 13, fontFamily: "Poppins, sans-serif", color: "#374151",
+                fontSize: 13, fontFamily: "'Montserrat', sans-serif", color: "#374151",
                 backgroundColor: "#FAFAFA", resize: "vertical",
                 outline: "none", transition: "border-color .15s",
               }}
@@ -1047,7 +1048,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
               mb: 2,
               borderRadius: "12px",
               border: "1.5px solid #E5E7EB",
-              background: "#F8FAFC",
+              background: "#f5f0ea",
               overflow: "hidden",
             }}
           >
@@ -1059,7 +1060,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
               }}
             >
               <SearchIcon sx={{ fontSize: 16, color: "#6B7280" }} />
-              <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#374151", fontFamily: "Poppins, sans-serif" }}>
+              <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#374151", fontFamily: "'Montserrat', sans-serif" }}>
                 Search Customer
               </Typography>
             </Box>
@@ -1071,9 +1072,9 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
                 value={customerSearch}
                 onChange={(e) => {
                   setCustomerSearch(e.target.value);
-                  /* Auto-fill demo: if user types a known name */
+                  /* Auto-fill: if user types a known customer */
                   const val = e.target.value.toLowerCase();
-                  const match = dummyReservations.find(
+                  const match = customers.find(
                     (r) =>
                       r.name.toLowerCase().includes(val) ||
                       r.phone.includes(val) ||
@@ -1096,7 +1097,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     borderRadius: "8px", fontSize: 13,
-                    fontFamily: "Poppins, sans-serif",
+                    fontFamily: "'Montserrat', sans-serif",
                     backgroundColor: "#FFFFFF",
                     "& fieldset": { borderColor: "#E5E7EB" },
                     "&:hover fieldset": { borderColor: "#9CA3AF" },
@@ -1110,7 +1111,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
           {/* ── Customer Name + Email ── */}
           <Box sx={{ display: "flex", gap: 1.5, mb: 1.5, flexWrap: "wrap" }}>
             <Box sx={{ flex: "1 1 200px", minWidth: 160 }}>
-              <Typography sx={{ fontSize: 12, fontWeight: 500, color: "#374151", mb: 0.6, fontFamily: "Poppins, sans-serif" }}>
+              <Typography sx={{ fontSize: 12, fontWeight: 500, color: "#374151", mb: 0.6, fontFamily: "'Montserrat', sans-serif" }}>
                 Customer Name <span style={{ color: "#FF3D01" }}>*</span>
               </Typography>
               <TextField
@@ -1125,7 +1126,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
               />
             </Box>
             <Box sx={{ flex: "1 1 200px", minWidth: 160 }}>
-              <Typography sx={{ fontSize: 12, fontWeight: 500, color: "#374151", mb: 0.6, fontFamily: "Poppins, sans-serif" }}>
+              <Typography sx={{ fontSize: 12, fontWeight: 500, color: "#374151", mb: 0.6, fontFamily: "'Montserrat', sans-serif" }}>
                 Email Address
               </Typography>
               <TextField
@@ -1143,7 +1144,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
 
           {/* ── Phone ── */}
           <Box sx={{ mb: 3 }}>
-            <Typography sx={{ fontSize: 12, fontWeight: 500, color: "#374151", mb: 0.6, fontFamily: "Poppins, sans-serif" }}>
+            <Typography sx={{ fontSize: 12, fontWeight: 500, color: "#374151", mb: 0.6, fontFamily: "'Montserrat', sans-serif" }}>
               Phone <span style={{ color: "#FF3D01" }}>*</span>
             </Typography>
             <Box sx={{ display: "flex", gap: 1 }}>
@@ -1154,7 +1155,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
                   IconComponent={KeyboardArrowDownIcon}
                   sx={{
                     height: 40, minWidth: 88, borderRadius: "10px",
-                    fontSize: 13, fontFamily: "Poppins, sans-serif",
+                    fontSize: 13, fontFamily: "'Montserrat', sans-serif",
                     backgroundColor: "#FAFAFA",
                     "& .MuiOutlinedInput-notchedOutline": { borderColor: "#E5E7EB" },
                     "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#9CA3AF" },
@@ -1163,7 +1164,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
                   }}
                 >
                   {COUNTRY_CODES.map((c) => (
-                    <MenuItem key={c} value={c} sx={{ fontSize: 13, fontFamily: "Poppins, sans-serif" }}>{c}</MenuItem>
+                    <MenuItem key={c} value={c} sx={{ fontSize: 13, fontFamily: "'Montserrat', sans-serif" }}>{c}</MenuItem>
                   ))}
                 </Select>
               </FormControl>
@@ -1198,10 +1199,16 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
         sx={{
           px: 3, py: 2,
           borderTop: "1px solid #F1F5F9",
-          display: "flex", justifyContent: "flex-end", gap: 1.5,
+          display: "flex", flexDirection: "column", gap: 1.5,
           background: "#FFFFFF", flexShrink: 0,
         }}
       >
+        {errors.submit && (
+          <Typography sx={{ fontSize: 12, color: "#DC2626", fontFamily: "'Montserrat', sans-serif" }}>
+            {errors.submit}
+          </Typography>
+        )}
+        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1.5 }}>
         <Button
           onClick={handleClose}
           variant="outlined"
@@ -1209,7 +1216,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
             textTransform: "none", fontWeight: 500, fontSize: 13,
             borderColor: "#D1D5DB", color: "#6B7280",
             borderRadius: "10px", px: 3, height: 42,
-            fontFamily: "Poppins, sans-serif",
+            fontFamily: "'Montserrat', sans-serif",
             "&:hover": { borderColor: "#9CA3AF", backgroundColor: "#F9FAFB" },
           }}
         >
@@ -1223,7 +1230,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
             textTransform: "none", fontWeight: 700, fontSize: 13,
             background: "linear-gradient(135deg,#FF3D01,#c62a2f)",
             borderRadius: "10px", px: 3.5, height: 42,
-            fontFamily: "Poppins, sans-serif",
+            fontFamily: "'Montserrat', sans-serif",
             boxShadow: "0 3px 10px rgba(232,53,58,.4)",
             "&:hover": { background: "linear-gradient(135deg,#c62a2f,#a02020)" },
             "&:disabled": { background: "#E5E7EB", color: "#9CA3AF", boxShadow: "none" },
@@ -1238,6 +1245,7 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
             "Reserve Now"
           )}
         </Button>
+        </Box>
       </Box>
     </Dialog>
   );
@@ -1247,16 +1255,46 @@ function NewReservationModal({ open, onClose, onSubmit }: NewReservationModalPro
    Main Reservations Page
 ───────────────────────────────────────────────────── */
 export default function Reservations() {
+  const { branchData } = useAuth();
+  const branch_id: number | undefined = branchData?.data?.id;
+
   const [statusMap, setStatusMap] = useState<Record<number, ReservationStatus>>({});
   const [tableMap, setTableMap]   = useState<Record<number, string>>({});
   const [dateRange, setDateRange] = useState("Current Week");
   const [fromDate, setFromDate]   = useState("");
   const [toDate, setToDate]       = useState("");
   const [search, setSearch]       = useState("");
+  const [showFromCal, setShowFromCal] = useState(false);
+  const [showToCal, setShowToCal]     = useState(false);
+  const ymd = (d: Date) => d.toISOString().split("T")[0];
+  const fmtCal = (s: string) => s ? new Date(s + "T00:00").toLocaleDateString("en-IN", { day: "2-digit", month: "2-digit", year: "numeric" }) : "";
+
+  /* API reservations */
+  const [apiReservations, setApiReservations] = useState<Reservation[]>([]);
+  const [loadingRes, setLoadingRes]           = useState(false);
+
+  const fetchReservations = useCallback(async () => {
+    if (!branch_id) return;
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    setLoadingRes(true);
+    try {
+      const res = await fetch(`${BASE_URL}/get-reservations?branch_id=${branch_id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (data.status && Array.isArray(data.data)) {
+        setApiReservations(data.data.map(mapApiReservation));
+      }
+    } catch { /* silent */ } finally {
+      setLoadingRes(false);
+    }
+  }, [branch_id]);
+
+  useEffect(() => { fetchReservations(); }, [fetchReservations]);
 
   /* New-reservation modal */
   const [newResOpen, setNewResOpen] = useState(false);
-  const [localReservations, setLocalReservations] = useState<Reservation[]>([]);
 
   /* Assign-table modal */
   const [assignOpen, setAssignOpen]           = useState(false);
@@ -1264,13 +1302,6 @@ export default function Reservations() {
 
   const handleStatusChange = useCallback((id: number, status: ReservationStatus) => {
     setStatusMap((prev) => ({ ...prev, [id]: status }));
-  }, []);
-
-  const handleNewReservationSubmit = useCallback((data: Omit<Reservation, "id">) => {
-    setLocalReservations((prev) => [
-      ...prev,
-      { ...data, id: Date.now() },
-    ]);
   }, []);
 
   const handleOpenAssign = useCallback((res: Reservation) => {
@@ -1283,8 +1314,8 @@ export default function Reservations() {
   }, []);
 
   const allReservations = useMemo(
-    () => [...dummyReservations, ...localReservations],
-    [localReservations]
+    () => apiReservations,
+    [apiReservations]
   );
 
   const filteredReservations = useMemo(() => {
@@ -1299,7 +1330,7 @@ export default function Reservations() {
   }, [search, allReservations]);
 
   return (
-    <Box sx={{ minHeight: "100vh", backgroundColor: "#F8FAFC", fontFamily: "Poppins, sans-serif" }}>
+    <Box sx={{ minHeight: "100vh", backgroundColor: "#f5f0ea", fontFamily: "'Montserrat', sans-serif" }}>
 
       {/* ── TOP HEADER ── */}
       <Box
@@ -1313,7 +1344,7 @@ export default function Reservations() {
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-          <Typography sx={{ fontSize: 18, fontWeight: 700, color: "#111827", fontFamily: "Poppins, sans-serif" }}>
+          <Typography sx={{ fontSize: 18, fontWeight: 700, color: "#111827", fontFamily: "'Montserrat', sans-serif" }}>
             Reservations
           </Typography>
           <Box
@@ -1323,7 +1354,7 @@ export default function Reservations() {
               boxShadow: "0 2px 8px rgba(232,53,58,.3)",
             }}
           >
-            <Typography sx={{ fontSize: 12, fontWeight: 700, color: "#FFF", fontFamily: "Poppins, sans-serif" }}>
+            <Typography sx={{ fontSize: 12, fontWeight: 700, color: "#FFF", fontFamily: "'Montserrat', sans-serif" }}>
               {filteredReservations.length}
             </Typography>
           </Box>
@@ -1337,7 +1368,7 @@ export default function Reservations() {
             background: "linear-gradient(135deg,#FF3D01,#c62a2f)",
             textTransform: "none", fontWeight: 600, fontSize: 13,
             height: 36, px: 2.5, borderRadius: "8px",
-            fontFamily: "Poppins, sans-serif",
+            fontFamily: "'Montserrat', sans-serif",
             boxShadow: "0 2px 8px rgba(232,53,58,.35)",
             "&:hover": { background: "linear-gradient(135deg,#c62a2f,#a02020)" },
           }}
@@ -1366,40 +1397,49 @@ export default function Reservations() {
           </Select>
         </FormControl>
 
-        <Box
-          sx={{
-            display: "flex", alignItems: "center", gap: 1,
-            border: "1px solid #D1D5DB", borderRadius: "8px",
-            px: 1.5, height: 36, background: "#fff",
-          }}
-        >
-          <CalendarTodayOutlinedIcon sx={{ fontSize: 14, color: "#9CA3AF" }} />
-          <input
-            type="date"
-            value={fromDate}
-            onChange={(e) => setFromDate(e.target.value)}
-            max={toDate || undefined}
-            style={{ border: "none", outline: "none", fontSize: 13, fontFamily: "Poppins, sans-serif", color: "#374151", background: "transparent", cursor: "pointer" }}
-          />
+        {/* From calendar */}
+        <Box sx={{ position: "relative" }}>
+          <Box
+            onClick={() => { setShowFromCal(v => !v); setShowToCal(false); }}
+            sx={{ display: "flex", alignItems: "center", gap: 1, border: `1px solid ${showFromCal ? "#FF3D01" : "#e2d9d0"}`, borderRadius: "8px", px: 1.5, height: 36, background: "#fff", cursor: "pointer", "&:hover": { borderColor: "#a08c7c" } }}
+          >
+            <CalendarTodayOutlinedIcon sx={{ fontSize: 14, color: "#a08c7c" }} />
+            <Typography sx={{ fontSize: 13, color: fromDate ? "#1a1208" : "#a08c7c", fontFamily: "'Montserrat', sans-serif", minWidth: 80 }}>
+              {fromDate ? fmtCal(fromDate) : "From date"}
+            </Typography>
+          </Box>
+          {showFromCal && (
+            <Box sx={{ position: "absolute", top: 42, left: 0, zIndex: 2000, boxShadow: "0 8px 24px rgba(0,0,0,.15)", borderRadius: "10px", overflow: "hidden" }}>
+              <Calendar
+                value={fromDate ? new Date(fromDate + "T00:00") : null}
+                onChange={(d) => { const v = ymd(d as Date); setFromDate(v); if (toDate && v > toDate) setToDate(v); setShowFromCal(false); }}
+              />
+            </Box>
+          )}
         </Box>
 
-        <Typography sx={{ fontSize: 13, color: "#6B7280", fontFamily: "Poppins, sans-serif" }}>To</Typography>
+        <Typography sx={{ fontSize: 13, color: "#6b5c4a", fontFamily: "'Montserrat', sans-serif" }}>To</Typography>
 
-        <Box
-          sx={{
-            display: "flex", alignItems: "center", gap: 1,
-            border: "1px solid #D1D5DB", borderRadius: "8px",
-            px: 1.5, height: 36, background: "#fff",
-          }}
-        >
-          <CalendarTodayOutlinedIcon sx={{ fontSize: 14, color: "#9CA3AF" }} />
-          <input
-            type="date"
-            value={toDate}
-            onChange={(e) => setToDate(e.target.value)}
-            min={fromDate || undefined}
-            style={{ border: "none", outline: "none", fontSize: 13, fontFamily: "Poppins, sans-serif", color: "#374151", background: "transparent", cursor: "pointer" }}
-          />
+        {/* To calendar */}
+        <Box sx={{ position: "relative" }}>
+          <Box
+            onClick={() => { setShowToCal(v => !v); setShowFromCal(false); }}
+            sx={{ display: "flex", alignItems: "center", gap: 1, border: `1px solid ${showToCal ? "#FF3D01" : "#e2d9d0"}`, borderRadius: "8px", px: 1.5, height: 36, background: "#fff", cursor: "pointer", "&:hover": { borderColor: "#a08c7c" } }}
+          >
+            <CalendarTodayOutlinedIcon sx={{ fontSize: 14, color: "#a08c7c" }} />
+            <Typography sx={{ fontSize: 13, color: toDate ? "#1a1208" : "#a08c7c", fontFamily: "'Montserrat', sans-serif", minWidth: 80 }}>
+              {toDate ? fmtCal(toDate) : "To date"}
+            </Typography>
+          </Box>
+          {showToCal && (
+            <Box sx={{ position: "absolute", top: 42, left: 0, zIndex: 2000, boxShadow: "0 8px 24px rgba(0,0,0,.15)", borderRadius: "10px", overflow: "hidden" }}>
+              <Calendar
+                minDate={fromDate ? new Date(fromDate + "T00:00") : undefined}
+                value={toDate ? new Date(toDate + "T00:00") : null}
+                onChange={(d) => { setToDate(ymd(d as Date)); setShowToCal(false); }}
+              />
+            </Box>
+          )}
         </Box>
 
         <TextField
@@ -1417,7 +1457,7 @@ export default function Reservations() {
           sx={{
             flex: 1, minWidth: 240,
             "& .MuiOutlinedInput-root": {
-              height: 36, fontSize: 13, fontFamily: "Poppins, sans-serif",
+              height: 36, fontSize: 13, fontFamily: "'Montserrat', sans-serif",
               borderRadius: "8px", backgroundColor: "#fff",
               "& fieldset": { borderColor: "#D1D5DB" },
               "&:hover fieldset": { borderColor: "#9CA3AF" },
@@ -1435,6 +1475,18 @@ export default function Reservations() {
           gap: 2,
         }}
       >
+        {loadingRes && (
+          <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+            <CircularProgress size={28} sx={{ color: "#FF3D01" }} />
+          </Box>
+        )}
+        {!loadingRes && filteredReservations.length === 0 && (
+          <Box sx={{ textAlign: "center", py: 6 }}>
+            <Typography sx={{ color: "#9CA3AF", fontSize: 14, fontFamily: "'Montserrat', sans-serif" }}>
+              No reservations found.
+            </Typography>
+          </Box>
+        )}
         {filteredReservations.map((res) => {
           const currentStatus = statusMap[res.id] || res.status;
           const meta = STATUS_META[currentStatus];
@@ -1477,7 +1529,7 @@ export default function Reservations() {
                     }}
                   >
                     <TableBarOutlinedIcon sx={{ fontSize: 15, color: "#FCA5A5" }} />
-                    <Typography sx={{ fontSize: 13, fontWeight: 700, color: "#FCA5A5", fontFamily: "Poppins, sans-serif" }}>
+                    <Typography sx={{ fontSize: 13, fontWeight: 700, color: "#FCA5A5", fontFamily: "'Montserrat', sans-serif" }}>
                       {assignedTable}
                     </Typography>
                   </Box>
@@ -1491,7 +1543,7 @@ export default function Reservations() {
                       fontSize: 11, fontWeight: 600, textTransform: "none",
                       borderColor: "#6B7280", color: "#D1D5DB",
                       borderRadius: "8px", py: 0.4, px: 1.2,
-                      fontFamily: "Poppins, sans-serif",
+                      fontFamily: "'Montserrat', sans-serif",
                       "&:hover": { borderColor: "#FCA5A5", color: "#FCA5A5", backgroundColor: "rgba(232,53,58,0.1)" },
                     }}
                   >
@@ -1502,7 +1554,7 @@ export default function Reservations() {
                 {/* Guests count */}
                 <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
                   <PeopleAltOutlinedIcon sx={{ fontSize: 15, color: "#9CA3AF" }} />
-                  <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#E5E7EB", fontFamily: "Poppins, sans-serif" }}>
+                  <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#E5E7EB", fontFamily: "'Montserrat', sans-serif" }}>
                     {res.guests} Guests
                   </Typography>
                 </Box>
@@ -1519,7 +1571,7 @@ export default function Reservations() {
               >
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   <CalendarTodayOutlinedIcon sx={{ fontSize: 15, color: "#FF3D01" }} />
-                  <Typography sx={{ fontSize: 13, fontWeight: 700, color: "#FF3D01", fontFamily: "Poppins, sans-serif" }}>
+                  <Typography sx={{ fontSize: 13, fontWeight: 700, color: "#FF3D01", fontFamily: "'Montserrat', sans-serif" }}>
                     {res.date}, {res.time}
                   </Typography>
                 </Box>
@@ -1531,7 +1583,7 @@ export default function Reservations() {
                     border: `1px solid ${meta.border}`,
                   }}
                 >
-                  <Typography sx={{ fontSize: 11, fontWeight: 700, color: meta.color, fontFamily: "Poppins, sans-serif" }}>
+                  <Typography sx={{ fontSize: 11, fontWeight: 700, color: meta.color, fontFamily: "'Montserrat', sans-serif" }}>
                     {currentStatus.toUpperCase()}
                   </Typography>
                 </Box>
@@ -1541,19 +1593,19 @@ export default function Reservations() {
               <Box sx={{ px: 2, py: 1.5, display: "flex", flexDirection: "column", gap: 0.8 }}>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   <PersonOutlineIcon sx={{ fontSize: 16, color: "#9CA3AF" }} />
-                  <Typography sx={{ fontSize: 13, color: "#374151", fontWeight: 500, fontFamily: "Poppins, sans-serif" }}>
+                  <Typography sx={{ fontSize: 13, color: "#374151", fontWeight: 500, fontFamily: "'Montserrat', sans-serif" }}>
                     {res.name}
                   </Typography>
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   <EmailOutlinedIcon sx={{ fontSize: 16, color: "#9CA3AF" }} />
-                  <Typography sx={{ fontSize: 13, color: "#374151", fontFamily: "Poppins, sans-serif" }}>
+                  <Typography sx={{ fontSize: 13, color: "#374151", fontFamily: "'Montserrat', sans-serif" }}>
                     {res.email}
                   </Typography>
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   <PhoneOutlinedIcon sx={{ fontSize: 16, color: "#9CA3AF" }} />
-                  <Typography sx={{ fontSize: 13, color: "#374151", fontFamily: "Poppins, sans-serif" }}>
+                  <Typography sx={{ fontSize: 13, color: "#374151", fontFamily: "'Montserrat', sans-serif" }}>
                     {res.phone}
                   </Typography>
                 </Box>
@@ -1567,7 +1619,7 @@ export default function Reservations() {
                     }}
                   >
                     <NoteAltOutlinedIcon sx={{ fontSize: 15, color: "#9CA3AF", mt: 0.1 }} />
-                    <Typography sx={{ fontSize: 12, color: "#6B7280", fontFamily: "Poppins, sans-serif", fontStyle: "italic" }}>
+                    <Typography sx={{ fontSize: 12, color: "#6B7280", fontFamily: "'Montserrat', sans-serif", fontStyle: "italic" }}>
                       {res.notes}
                     </Typography>
                   </Box>
@@ -1584,7 +1636,7 @@ export default function Reservations() {
                     onChange={(e) => handleStatusChange(res.id, e.target.value as ReservationStatus)}
                     IconComponent={KeyboardArrowDownIcon}
                     sx={{
-                      height: 38, fontSize: 13, fontFamily: "Poppins, sans-serif",
+                      height: 38, fontSize: 13, fontFamily: "'Montserrat', sans-serif",
                       fontWeight: 600, color: meta.color,
                       borderRadius: "8px",
                       backgroundColor: meta.bg,
@@ -1594,7 +1646,7 @@ export default function Reservations() {
                     }}
                   >
                     {STATUS_OPTIONS.map((s) => (
-                      <MenuItem key={s} value={s} sx={{ fontSize: 13, fontFamily: "Poppins, sans-serif" }}>
+                      <MenuItem key={s} value={s} sx={{ fontSize: 13, fontFamily: "'Montserrat', sans-serif" }}>
                         {s}
                       </MenuItem>
                     ))}
@@ -1610,7 +1662,9 @@ export default function Reservations() {
       <NewReservationModal
         open={newResOpen}
         onClose={() => setNewResOpen(false)}
-        onSubmit={handleNewReservationSubmit}
+        onSaved={fetchReservations}
+        branchId={branch_id}
+        customers={allReservations}
       />
 
       {/* ── ASSIGN TABLE MODAL ── */}

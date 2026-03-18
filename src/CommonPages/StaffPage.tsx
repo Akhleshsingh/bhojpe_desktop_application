@@ -22,7 +22,7 @@ import WorkOutlineIcon from "@mui/icons-material/WorkOutline";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 
-const FONT = "Poppins, sans-serif";
+const FONT = "'Montserrat', sans-serif";
 const RED = "#FF3D01";
 const PAGE_SIZE = 10;
 
@@ -76,7 +76,7 @@ const StatChip = ({ icon, label, value, color }: { icon: React.ReactNode; label:
   </Box>
 );
 
-const colW = ["28%", "28%", "20%", "15%", "9%"];
+const colW = ["24%", "26%", "18%", "18%", "14%"];
 
 export default function StaffPage() {
   const { branchData } = useAuth();
@@ -100,13 +100,17 @@ export default function StaffPage() {
   const restaurant_id = branchData?.data?.restaurant_id;
   const phone_code    = String(branchData?.data?.restaurant?.phone_code ?? "91");
 
-  /* ── FETCH ROLES (token-only, no branch_id needed) ── */
+  /* ── FETCH ROLES ── */
   const fetchRoles = useCallback(async () => {
     const t = localStorage.getItem("token");
     if (!t) return;
+    const rid = branchData?.data?.restaurant_id;
+    if (!rid) return;
     try {
       const res = await fetch(`${BASE_URL}/restaurant-roles`, {
+        method: "POST",
         headers: { Authorization: `Bearer ${t}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ restaurant_id: rid }),
       });
       if (!res.ok) return;
       const data = await res.json();
@@ -114,7 +118,7 @@ export default function StaffPage() {
         setRoles(data.roles);
       }
     } catch { /* silent */ }
-  }, []);
+  }, [branchData]);
 
   /* ── FETCH STAFF ── */
   const fetchStaff = useCallback(async () => {
@@ -255,7 +259,7 @@ export default function StaffPage() {
   }, [roleCounts]);
 
   return (
-    <Box sx={{ minHeight: "100vh", backgroundColor: "#F8FAFC", fontFamily: FONT }}>
+    <Box sx={{ minHeight: "100vh", backgroundColor: "#f5f0ea", fontFamily: FONT }}>
 
       {/* ── Page Header ── */}
       <Box sx={{
@@ -313,8 +317,8 @@ export default function StaffPage() {
         <Box sx={{ backgroundColor: "#FFFFFF", borderRadius: "14px", boxShadow: "0 2px 12px rgba(0,0,0,0.06)", border: "1px solid #F3F4F6", overflow: "hidden" }}>
 
           {/* Header row */}
-          <Box sx={{ display: "grid", gridTemplateColumns: colW.join(" "), backgroundColor: "#F9FAFB", px: 2, py: 1.4, borderBottom: "1.5px solid #F0F0F0" }}>
-            {["MEMBER NAME", "EMAIL ADDRESS", "ROLE", "ACTION", ""].map((h, i) => (
+          <Box sx={{ display: "grid", gridTemplateColumns: colW.join(" "), backgroundColor: "#f0ebe4", px: 2, py: 1.4, borderBottom: "1.5px solid #e2d9d0" }}>
+            {["MEMBER NAME", "EMAIL ADDRESS", "PHONE NUMBER", "ROLE", "ACTION"].map((h, i) => (
               <Typography key={i} sx={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", fontFamily: FONT, letterSpacing: 0.6, textTransform: "uppercase" }}>{h}</Typography>
             ))}
           </Box>
@@ -354,6 +358,9 @@ export default function StaffPage() {
                   {row.email}
                 </Typography>
 
+                {/* Phone */}
+                <Typography sx={{ fontSize: 12, color: "#6B7280", fontFamily: FONT }}>{row.phone_number}</Typography>
+
                 {/* Role chip */}
                 <Box>
                   {row.role_name ? (
@@ -369,7 +376,7 @@ export default function StaffPage() {
                 <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
                   <Tooltip title="Edit" arrow>
                     <IconButton size="small" onClick={() => handleEdit(row)}
-                      sx={{ width: 32, height: 32, borderRadius: "8px", border: "1px solid #E5E7EB", backgroundColor: "#F9FAFB", "&:hover": { borderColor: "#2563EB", backgroundColor: "#EFF6FF" } }}>
+                      sx={{ width: 32, height: 32, borderRadius: "8px", border: "1px solid #E5E7EB", backgroundColor: "#f0ebe4", "&:hover": { borderColor: "#2563EB", backgroundColor: "#EFF6FF" } }}>
                       <EditOutlinedIcon sx={{ fontSize: 14, color: "#2563EB" }} />
                     </IconButton>
                   </Tooltip>
@@ -377,14 +384,11 @@ export default function StaffPage() {
                     <IconButton size="small"
                       onClick={() => setConfirmDeleteId(row.id)}
                       disabled={isDeleting}
-                      sx={{ width: 32, height: 32, borderRadius: "8px", border: "1px solid #E5E7EB", backgroundColor: "#F9FAFB", "&:hover": { borderColor: RED, backgroundColor: "#FEF2F2" } }}>
+                      sx={{ width: 32, height: 32, borderRadius: "8px", border: "1px solid #E5E7EB", backgroundColor: "#f0ebe4", "&:hover": { borderColor: RED, backgroundColor: "#FEF2F2" } }}>
                       {isDeleting ? <CircularProgress size={12} sx={{ color: RED }} /> : <DeleteOutlineIcon sx={{ fontSize: 14, color: RED }} />}
                     </IconButton>
                   </Tooltip>
                 </Box>
-
-                {/* Phone */}
-                <Typography sx={{ fontSize: 11, color: "#9CA3AF", fontFamily: FONT }}>{row.phone_number}</Typography>
               </Box>
             );
           })}
@@ -484,7 +488,7 @@ export default function StaffPage() {
               <Box sx={{ mt: 1.2, flexShrink: 0 }}>{field.icon}</Box>
               <TextField fullWidth size="small" label={field.label} type={field.type} placeholder={field.placeholder}
                 value={(form as any)[field.key]} onChange={e => setForm({ ...form, [field.key]: e.target.value })}
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: "10px", fontSize: 13, fontFamily: FONT, backgroundColor: "#F9FAFB", "& fieldset": { borderColor: "#E5E7EB" }, "&:hover fieldset": { borderColor: "#9CA3AF" }, "&.Mui-focused fieldset": { borderColor: RED } }, "& label": { fontFamily: FONT, fontSize: 13 } }} />
+                sx={{ "& .MuiOutlinedInput-root": { borderRadius: "10px", fontSize: 13, fontFamily: FONT, backgroundColor: "#fff", "& fieldset": { borderColor: "#E5E7EB" }, "&:hover fieldset": { borderColor: "#9CA3AF" }, "&.Mui-focused fieldset": { borderColor: RED } }, "& label": { fontFamily: FONT, fontSize: 13 } }} />
             </Box>
           ))}
 
@@ -495,7 +499,7 @@ export default function StaffPage() {
               <Typography sx={{ fontSize: 12, fontWeight: 600, color: "#6B7280", fontFamily: FONT, mb: 0.6, textTransform: "uppercase", letterSpacing: 0.5 }}>Role *</Typography>
               <Select fullWidth size="small" value={form.role_id} onChange={e => setForm({ ...form, role_id: Number(e.target.value) })}
                 displayEmpty
-                sx={{ borderRadius: "10px", fontSize: 13, fontFamily: FONT, backgroundColor: "#F9FAFB", "& .MuiOutlinedInput-notchedOutline": { borderColor: "#E5E7EB" } }}>
+                sx={{ borderRadius: "10px", fontSize: 13, fontFamily: FONT, backgroundColor: "#fff", "& .MuiOutlinedInput-notchedOutline": { borderColor: "#E5E7EB" } }}>
                 <MenuItem value="" disabled sx={{ fontFamily: FONT, fontSize: 13, color: "#9CA3AF" }}>
                   {roles.length === 0 ? "Loading roles…" : "Select a role"}
                 </MenuItem>

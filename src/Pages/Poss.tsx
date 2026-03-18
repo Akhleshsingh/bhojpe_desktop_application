@@ -6,6 +6,8 @@
  *           useCustomers, useTables
  */
 import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
 import { Box, Typography, Dialog, CircularProgress } from "@mui/material";
 import toast from "react-hot-toast";
 import { useLocation } from "react-router-dom";
@@ -18,6 +20,7 @@ import { BASE_URL } from "../utils/api";
 import SecondHeader from "../CommonPages/secondheader";
 import HamburgerSidebar from "../CommonPages/HamburgerSidebar";
 import CheckoutModal from "../components/CheckoutModal";
+import mainLogo from "../assets/mainLogo.png";
 
 // ─── Design Tokens ──────────────────────────────────────────────────────────
 const C = {
@@ -32,8 +35,8 @@ const C = {
   tx:"#24201c", t2:"#68594a", t3:"#a4927e",
   dk:"#24201c", dk2:"#2e2a26", dk3:"#3a342e", dk4:"#2a2420",
 } as const;
-const FONT   = "'Plus Jakarta Sans', sans-serif";
-const SERIF  = "'Playfair Display', serif";
+const FONT   = "'Montserrat', sans-serif";
+const SERIF  = "'Montserrat', sans-serif";
 
 // ─── Meal-Time Groups (for sidebar "Menu" tab) ────────────────────────────
 const MEAL_TIMES = [
@@ -146,14 +149,25 @@ export default function Poss() {
     return { dine: find("dine_in"), pickup: find("pickup"), delivery: find("delivery") };
   }, [orderTypes]);
 
-  // ── Menu Items ──
-  const [menuItems, setMenuItems]       = useState<MenuItem[]>(() => {
+  // ── Menu Items — stale-while-revalidate ──────────────────────────────────
+  // Initialize from cache immediately so the page renders without waiting for the API.
+  // menuLoading is only true on the very first load (empty cache). Subsequent opens
+  // render instantly from cache and refresh silently in the background.
+  const [menuItems, setMenuItems] = useState<MenuItem[]>(() => {
     try { return JSON.parse(localStorage.getItem("menuItems") || "[]"); } catch { return []; }
   });
-  const [menuLoading, setMenuLoading]   = useState(true);
+  const [menuLoading, setMenuLoading] = useState<boolean>(() => {
+    try { return (JSON.parse(localStorage.getItem("menuItems") || "[]") as any[]).length === 0; }
+    catch { return true; }
+  });
+  const [menuRefreshing, setMenuRefreshing] = useState(false);
 
   useEffect(() => {
     if (!token) { setMenuLoading(false); return; }
+    // If cache is empty we show the full loading screen; otherwise just a silent refresh
+    const hasCache = menuItems.length > 0;
+    if (!hasCache) setMenuLoading(true);
+    else setMenuRefreshing(true);
     fetch(`${BASE_URL}/menu-items`, { headers: { Authorization:`Bearer ${token}` } })
       .then(r => r.json())
       .then(d => {
@@ -162,8 +176,9 @@ export default function Poss() {
           localStorage.setItem("menuItems", JSON.stringify(d.data));
         }
       })
-      .catch(() => { /* use cached */ })
-      .finally(() => setMenuLoading(false));
+      .catch(() => { /* keep cached data */ })
+      .finally(() => { setMenuLoading(false); setMenuRefreshing(false); });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   // ── Body overflow hidden for POS ──
@@ -597,10 +612,76 @@ export default function Poss() {
 
   // ─── Loading splash ───────────────────────────────────────────────────────
   if (menuLoading) return (
-    <Box sx={{height:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:C.bg,flexDirection:"column",gap:"16px",fontFamily:FONT}}>
-      <CircularProgress size={36} sx={{color:C.ac}} />
-      <Typography sx={{fontSize:13,fontWeight:600,color:C.t2,fontFamily:FONT}}>POS load ho raha hai…</Typography>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');`}</style>
+    <Box sx={{
+      height:"100vh", display:"flex", alignItems:"center", justifyContent:"center",
+      background:`radial-gradient(ellipse at 50% 40%, #fff7f4 0%, ${C.bg} 70%)`,
+      flexDirection:"column", fontFamily:FONT, position:"relative", overflow:"hidden",
+    }}>
+      <style>{`
+        @keyframes pos-pulse{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.06);opacity:1}}
+        @keyframes pos-dot{0%,80%,100%{transform:translateY(0);opacity:.35}40%{transform:translateY(-9px);opacity:1}}
+        @keyframes pos-fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes pos-bar{0%{width:0%}100%{width:100%}}
+        @keyframes pos-shimmer{0%{background-position:-300% center}100%{background-position:300% center}}
+      `}</style>
+
+      {/* subtle background blobs */}
+      <Box sx={{position:"absolute",top:-80,right:-80,width:300,height:300,borderRadius:"50%",background:"rgba(255,61,1,0.04)",pointerEvents:"none"}} />
+      <Box sx={{position:"absolute",bottom:-60,left:-60,width:220,height:220,borderRadius:"50%",background:"rgba(255,61,1,0.03)",pointerEvents:"none"}} />
+
+      {/* logo card */}
+      <Box sx={{
+        animation:"pos-pulse 2.4s ease-in-out infinite",
+        mb:"20px",
+        width:88, height:88, borderRadius:"26px",
+        background:"#ffffff",
+        boxShadow:"0 0 0 1px rgba(255,61,1,0.12), 0 8px 28px rgba(255,61,1,0.16), 0 2px 8px rgba(0,0,0,0.06)",
+        display:"flex", alignItems:"center", justifyContent:"center",
+      }}>
+        <img src={mainLogo} alt="BhojPe" style={{width:54,height:"auto",objectFit:"contain"}} />
+      </Box>
+
+      {/* brand name */}
+      <Typography sx={{
+        fontSize:30, fontWeight:700, fontFamily:SERIF, color:C.tx,
+        letterSpacing:"-0.5px", lineHeight:1,
+        animation:"pos-fade .45s ease-out both",
+        mb:"6px",
+      }}>BhojPe</Typography>
+
+      {/* tagline */}
+      <Typography sx={{
+        fontSize:11, fontWeight:600, color:C.t3, letterSpacing:"2.5px",
+        textTransform:"uppercase", fontFamily:FONT,
+        animation:"pos-fade .55s ease-out both",
+        mb:"36px",
+      }}>Point of Sale</Typography>
+
+      {/* bouncing dots */}
+      <Box sx={{display:"flex",gap:"8px",mb:"28px"}}>
+        {[0,1,2].map(i=>(
+          <Box key={i} sx={{
+            width:8, height:8, borderRadius:"50%", background:C.ac,
+            animation:`pos-dot 1.3s ease-in-out ${i*0.18}s infinite`,
+          }}/>
+        ))}
+      </Box>
+
+      {/* thin progress bar */}
+      <Box sx={{width:160,height:3,borderRadius:4,background:"rgba(255,61,1,0.12)",overflow:"hidden"}}>
+        <Box sx={{
+          height:"100%", borderRadius:4,
+          background:`linear-gradient(90deg, ${C.ac}, #ff7043, ${C.ac})`,
+          backgroundSize:"300% 100%",
+          animation:"pos-bar 1.6s cubic-bezier(.4,0,.2,1) infinite, pos-shimmer 1.6s linear infinite",
+        }}/>
+      </Box>
+
+      {/* status text */}
+      <Typography sx={{
+        fontSize:12, color:C.t3, fontFamily:FONT, fontWeight:500,
+        mt:"14px", animation:"pos-fade .7s ease-out both",
+      }}>Loading your menu…</Typography>
     </Box>
   );
 
@@ -608,7 +689,6 @@ export default function Poss() {
   return (
     <Box sx={{fontFamily:FONT,background:C.bg,color:C.tx,height:"100vh",overflow:"hidden",display:"flex",flexDirection:"column"}}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
         @keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
         @keyframes popIn{from{opacity:0;transform:scale(.93) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
         @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
@@ -719,7 +799,10 @@ export default function Poss() {
                 );
               })}
             </Box>
-            <Typography sx={{fontSize:"11px",color:C.t3,flexShrink:0,fontWeight:600}}>{gridItems.length} items</Typography>
+            <Box sx={{display:"flex",alignItems:"center",gap:"6px",flexShrink:0}}>
+              {menuRefreshing && <CircularProgress size={10} sx={{color:C.t3}} />}
+              <Typography sx={{fontSize:"11px",color:C.t3,fontWeight:600}}>{gridItems.length} items</Typography>
+            </Box>
           </Box>
 
           {/* Product Grid — responsive columns, uniform row heights, scrollable */}
@@ -1293,7 +1376,7 @@ export default function Poss() {
       {/* Pickup Date / Time Popups */}
       {[{ open:pickupDatePopup, close:()=>setPickupDatePopup(false), title:"📅 Pickup Date", apply:applyPickupDate,
           body:<>
-            <Box component="input" type="date" value={dateInput} onChange={(e:any)=>setDateInput(e.target.value)} sx={{width:"100%",px:"12px",py:"10px",background:C.s1,border:`1.5px solid ${C.bd}`,borderRadius:"10px",fontFamily:FONT,fontSize:15,color:C.tx,outline:"none","&:focus":{borderColor:C.ac}}} />
+            <Calendar onChange={(d) => setDateInput((d as Date).toISOString().split("T")[0])} value={dateInput ? new Date(dateInput) : new Date()} />
             <Box sx={{display:"flex",gap:"6px",mt:"10px",flexWrap:"wrap"}}>
               {[{l:"Today",d:0},{l:"Tomorrow",d:1},{l:"+2 Days",d:2}].map(p=>(
                 <Box key={p.l} component="button" onClick={()=>{const d=new Date();d.setDate(d.getDate()+p.d);setDateInput(d.toISOString().split("T")[0]);}} sx={{px:"10px",py:"6px",background:C.adim,border:`1.5px solid ${C.abdr}`,borderRadius:"8px",fontSize:11,fontWeight:700,color:C.ac,cursor:"pointer",fontFamily:FONT}}>{p.l}</Box>
@@ -1524,7 +1607,7 @@ function CustPillBtn({ pill, onClick }: { pill:{filled:boolean;label:string;init
   return (
     <Box component="button" onClick={onClick} sx={{flex:1,display:"flex",alignItems:"center",gap:"5px",px:"9px",py:"4px",background:pill.filled?"rgba(24,107,53,0.08)":"#fdfaf7",border:`1px solid ${pill.filled?"rgba(24,107,53,0.22)":"#e4dbd0"}`,borderRadius:"8px",fontSize:"10.5px",cursor:"pointer",fontWeight:600,fontFamily:FONT,color:pill.filled?"#186b35":"#68594a",transition:"all .13s","&:hover":{borderColor:"#cec4b8"},minWidth:0}}>
       <Box sx={{width:18,height:18,borderRadius:"50%",background:pill.filled?"rgba(24,107,53,0.22)":"#FF3D01",color:"#fff",fontSize:"8px",fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{pill.initials}</Box>
-      <Typography sx={{fontSize:"10.5px",fontWeight:600,fontFamily:"'Plus Jakarta Sans',sans-serif",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{pill.label}</Typography>
+      <Typography sx={{fontSize:"10.5px",fontWeight:600,fontFamily:"'Montserrat',sans-serif",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{pill.label}</Typography>
     </Box>
   );
 }

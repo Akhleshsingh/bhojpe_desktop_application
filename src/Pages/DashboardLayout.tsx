@@ -45,7 +45,7 @@ function LayoutInner({
         height: "100vh",
         display: "flex",
         flexDirection: "column",
-        backgroundColor: "#F6F6F6",
+        backgroundColor: "#f5f0ea",
       }}
     >
       <Box

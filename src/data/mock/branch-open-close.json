@@ -1,0 +1,8 @@
+{
+  "status": true,
+  "message": "Branch status fetched successfully",
+  "data": {
+    "id": 4,
+    "is_open": 1
+  }
+}

@@ -52,9 +52,9 @@ export default function WaiterRequests() {
   return (
     <Box
       sx={{
-        backgroundColor: "#F8FAFC",
+        backgroundColor: "#f5f0ea",
         minHeight: "100vh",
-        fontFamily: "Poppins, sans-serif",
+        fontFamily: "'Montserrat', sans-serif",
         p: 3,
       }}
     >
@@ -72,7 +72,7 @@ export default function WaiterRequests() {
             fontSize: 22,
             fontWeight: 700,
             color: "#111827",
-            fontFamily: "Poppins, sans-serif",
+            fontFamily: "'Montserrat', sans-serif",
           }}
         >
           Waiter Requests ({totalRequests})
@@ -97,7 +97,7 @@ export default function WaiterRequests() {
               fontSize: 12,
               fontWeight: 600,
               color: "#15803D",
-              fontFamily: "Poppins, sans-serif",
+              fontFamily: "'Montserrat', sans-serif",
             }}
           >
             Real Time Update
@@ -121,7 +121,7 @@ export default function WaiterRequests() {
           }}
         >
           <NotificationsOffOutlinedIcon sx={{ fontSize: 40, color: "#D1D5DB" }} />
-          <Typography sx={{ fontSize: 14, color: "#6B7280", fontFamily: "Poppins, sans-serif" }}>
+          <Typography sx={{ fontSize: 14, color: "#6B7280", fontFamily: "'Montserrat', sans-serif" }}>
             No areas configured yet.
           </Typography>
         </Box>
@@ -148,7 +148,7 @@ export default function WaiterRequests() {
                     fontSize: 16,
                     fontWeight: 600,
                     color: "#111827",
-                    fontFamily: "Poppins, sans-serif",
+                    fontFamily: "'Montserrat', sans-serif",
                   }}
                 >
                   {area.area_name}
@@ -168,7 +168,7 @@ export default function WaiterRequests() {
                       fontSize: 12,
                       fontWeight: 600,
                       color: "#64748B",
-                      fontFamily: "Poppins, sans-serif",
+                      fontFamily: "'Montserrat', sans-serif",
                     }}
                   >
                     {tablesCount} Table{tablesCount !== 1 ? "s" : ""}
@@ -198,7 +198,7 @@ export default function WaiterRequests() {
                     sx={{
                       fontSize: 13,
                       color: "#9CA3AF",
-                      fontFamily: "Poppins, sans-serif",
+                      fontFamily: "'Montserrat', sans-serif",
                     }}
                   >
                     No waiter request found in this area.
@@ -251,7 +251,7 @@ export default function WaiterRequests() {
                               fontSize: 13,
                               fontWeight: 700,
                               color: "#4338CA",
-                              fontFamily: "Poppins, sans-serif",
+                              fontFamily: "'Montserrat', sans-serif",
                             }}
                           >
                             {req.tableNumber}
@@ -272,7 +272,7 @@ export default function WaiterRequests() {
                             sx={{
                               fontSize: 11,
                               color: "#9CA3AF",
-                              fontFamily: "Poppins, sans-serif",
+                              fontFamily: "'Montserrat', sans-serif",
                             }}
                           >
                             {timeAgo(req.requestedAt)}
@@ -295,7 +295,7 @@ export default function WaiterRequests() {
                           sx={{
                             fontSize: 12,
                             color: "#6B7280",
-                            fontFamily: "Poppins, sans-serif",
+                            fontFamily: "'Montserrat', sans-serif",
                           }}
                         >
                           {req.customerName || "--"}
@@ -314,7 +314,7 @@ export default function WaiterRequests() {
                             textTransform: "none",
                             fontSize: 11,
                             fontWeight: 600,
-                            fontFamily: "Poppins, sans-serif",
+                            fontFamily: "'Montserrat', sans-serif",
                             borderColor: "#D1D5DB",
                             color: "#374151",
                             borderRadius: "7px",
@@ -338,7 +338,7 @@ export default function WaiterRequests() {
                             textTransform: "none",
                             fontSize: 11,
                             fontWeight: 600,
-                            fontFamily: "Poppins, sans-serif",
+                            fontFamily: "'Montserrat', sans-serif",
                             borderColor: "#D1D5DB",
                             color: "#374151",
                             borderRadius: "7px",

@@ -25,6 +25,17 @@ import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 
+// ── Theme tokens ─────────────────────────────────────────────────────────────
+const ACCENT   = "#FF3D01";
+const ACCENT_H = "#e63500";
+const FONT     = "'Montserrat', sans-serif";
+const SERIF    = "'Montserrat', sans-serif";
+const BG       = "#f5f0ea";
+const BDR      = "#e2d9d0";
+const TX       = "#1a1208";
+const TX2      = "#6b5c4a";
+const TX3      = "#a08c7c";
+
 type OrderGroup = "all" | "dine_in" | "delivery" | "pickup" | "draft" | "billed" | "kot";
 
 const PAYMENT_OPTIONS = [
@@ -57,12 +68,12 @@ const DATE_PRESETS = ["Today", "Yesterday", "This Week", "This Month", "Last 3 M
 const selectSx = {
   height: 36,
   fontSize: 13,
-  fontFamily: "Poppins, sans-serif",
-  backgroundColor: "#FFFFFF",
+  fontFamily: FONT,
+  backgroundColor: "#ffffff",
   borderRadius: "8px",
-  "& .MuiOutlinedInput-notchedOutline": { borderColor: "#D1D5DB" },
-  "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#9CA3AF" },
-  "& .MuiSelect-icon": { fontSize: 18, color: "#6B7280" },
+  "& .MuiOutlinedInput-notchedOutline": { borderColor: BDR },
+  "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: TX3 },
+  "& .MuiSelect-icon": { fontSize: 18, color: TX3 },
 };
 
 const getDraftDisplayNumber = (draft: any, index: number) =>
@@ -101,7 +112,7 @@ function getStatusMeta(order: any): { label: string; color: string } {
     delivered: { label: "DELIVERED", color: "#16A34A" },
     cancelled: { label: "CANCELLED", color: "#DC2626" },
   };
-  return map[(order.order_status || "").toLowerCase()] ?? { label: (order.order_status || "").toUpperCase(), color: "#6B7280" };
+  return map[(order.order_status || "").toLowerCase()] ?? { label: (order.order_status || "").toUpperCase(), color: TX3 };
 }
 
 function getItemName(item: any): string {
@@ -295,10 +306,10 @@ export default function OrdersHistory() {
 
   // ── Render ────────────────────────────────────────────────────
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh", backgroundColor: "#F8FAFC", fontFamily: "Poppins, sans-serif" }}>
+    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh", backgroundColor: BG, fontFamily: FONT }}>
 
       {/* ── FILTER BAR ── */}
-      <Box sx={{ backgroundColor: "#FFFFFF", borderBottom: "1px solid #F1F5F9", px: 3, py: 1.2, display: "flex", alignItems: "center", gap: 1.5, flexWrap: "wrap" }}>
+      <Box sx={{ backgroundColor: "#fff", borderBottom: `1px solid ${BDR}`, px: 3, py: 1.2, display: "flex", alignItems: "center", gap: 1.5, flexWrap: "wrap" }}>
 
         {/* Date preset */}
         <FormControl size="small">
@@ -311,10 +322,10 @@ export default function OrdersHistory() {
         <Box sx={{ position: "relative" }}>
           <Box
             onClick={() => { setShowFromCal((v) => !v); setShowToCal(false); }}
-            sx={{ display: "flex", alignItems: "center", gap: 1, border: "1px solid #D1D5DB", borderRadius: "8px", px: 1.5, height: 36, background: "#fff", cursor: "pointer", minWidth: 140, "&:hover": { borderColor: "#9CA3AF" } }}
+            sx={{ display: "flex", alignItems: "center", gap: 1, border: `1px solid ${BDR}`, borderRadius: "8px", px: 1.5, height: 36, background: "#fff", cursor: "pointer", minWidth: 140, "&:hover": { borderColor: TX3 } }}
           >
-            <CalendarTodayIcon sx={{ fontSize: 14, color: "#9CA3AF" }} />
-            <Typography sx={{ fontSize: 13, color: fromDate ? "#374151" : "#9CA3AF", fontFamily: "Poppins, sans-serif" }}>
+            <CalendarTodayIcon sx={{ fontSize: 14, color: TX3 }} />
+            <Typography sx={{ fontSize: 13, color: fromDate ? TX : TX3, fontFamily: FONT }}>
               {fromDate ? dayjs(fromDate).format("DD/MM/YYYY") : "From date"}
             </Typography>
           </Box>
@@ -325,16 +336,16 @@ export default function OrdersHistory() {
           )}
         </Box>
 
-        <Typography sx={{ fontSize: 13, color: "#6B7280", fontFamily: "Poppins, sans-serif" }}>To</Typography>
+        <Typography sx={{ fontSize: 13, color: TX2, fontFamily: FONT }}>To</Typography>
 
         {/* To date */}
         <Box sx={{ position: "relative" }}>
           <Box
             onClick={() => { setShowToCal((v) => !v); setShowFromCal(false); }}
-            sx={{ display: "flex", alignItems: "center", gap: 1, border: "1px solid #D1D5DB", borderRadius: "8px", px: 1.5, height: 36, background: "#fff", cursor: "pointer", minWidth: 140, "&:hover": { borderColor: "#9CA3AF" } }}
+            sx={{ display: "flex", alignItems: "center", gap: 1, border: `1px solid ${BDR}`, borderRadius: "8px", px: 1.5, height: 36, background: "#fff", cursor: "pointer", minWidth: 140, "&:hover": { borderColor: TX3 } }}
           >
-            <CalendarTodayIcon sx={{ fontSize: 14, color: "#9CA3AF" }} />
-            <Typography sx={{ fontSize: 13, color: toDate ? "#374151" : "#9CA3AF", fontFamily: "Poppins, sans-serif" }}>
+            <CalendarTodayIcon sx={{ fontSize: 14, color: TX3 }} />
+            <Typography sx={{ fontSize: 13, color: toDate ? TX : TX3, fontFamily: FONT }}>
               {toDate ? dayjs(toDate).format("DD/MM/YYYY") : "To date"}
             </Typography>
           </Box>
@@ -371,7 +382,7 @@ export default function OrdersHistory() {
       {/* ── CARD GRID ── */}
       <Box sx={{ p: 2.5, flex: 1 }}>
         {loading && (
-          <Typography sx={{ fontSize: 13, color: "#6B7280", fontFamily: "Poppins, sans-serif", mb: 2 }}>Loading orders…</Typography>
+          <Typography sx={{ fontSize: 13, color: TX2, fontFamily: FONT, mb: 2 }}>Loading orders…</Typography>
         )}
 
         <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(240px,1fr))", gap: 2 }}>
@@ -393,11 +404,11 @@ export default function OrdersHistory() {
                 key={order.id || index}
                 onClick={() => handleOrderClick(order)}
                 sx={{
-                  backgroundColor: "#FFFFFF", borderRadius: "12px",
-                  border: "1px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,.06)",
+                  backgroundColor: "#fff", borderRadius: "12px",
+                  border: `1px solid ${BDR}`, boxShadow: "0 2px 8px rgba(100,60,10,.06)",
                   display: "flex", flexDirection: "column", overflow: "hidden",
                   cursor: "pointer", transition: "box-shadow .2s,transform .2s",
-                  "&:hover": { boxShadow: "0 8px 24px rgba(0,0,0,.12)", transform: "translateY(-2px)" },
+                  "&:hover": { boxShadow: "0 8px 24px rgba(100,60,10,.13)", transform: "translateY(-2px)" },
                 }}
               >
                 {/* Top row: icon + info + chips */}
@@ -412,13 +423,13 @@ export default function OrdersHistory() {
                       }
                     </Box>
                     <Box>
-                      <Typography sx={{ fontSize: 13, fontWeight: 700, color: "#111827", fontFamily: "Poppins, sans-serif", lineHeight: 1.3 }}>
+                      <Typography sx={{ fontSize: 13, fontWeight: 700, color: TX, fontFamily: FONT, lineHeight: 1.3 }}>
                         {order.customer?.name || "--"}
                       </Typography>
-                      <Typography sx={{ fontSize: 12, fontWeight: 600, color: "#374151", fontFamily: "Poppins, sans-serif" }}>
+                      <Typography sx={{ fontSize: 12, fontWeight: 600, color: TX2, fontFamily: FONT }}>
                         Order {orderNum}
                       </Typography>
-                      <Typography sx={{ fontSize: 11, color: "#9CA3AF", fontFamily: "Poppins, sans-serif", textTransform: "capitalize" }}>
+                      <Typography sx={{ fontSize: 11, color: TX3, fontFamily: FONT, textTransform: "capitalize" }}>
                         {orderTypeName}
                       </Typography>
                     </Box>
@@ -427,22 +438,22 @@ export default function OrdersHistory() {
                   <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5, alignItems: "flex-end" }}>
                     {order.status === "paid" && (
                       <Box sx={{ px: 1, py: 0.2, borderRadius: "5px", backgroundColor: "#DCFCE7" }}>
-                        <Typography sx={{ fontSize: 10, fontWeight: 700, color: "#15803D", fontFamily: "Poppins, sans-serif" }}>PAID</Typography>
+                        <Typography sx={{ fontSize: 10, fontWeight: 700, color: "#15803D", fontFamily: FONT }}>PAID</Typography>
                       </Box>
                     )}
                     {order.status === "billed" && (
                       <Box sx={{ px: 1, py: 0.2, borderRadius: "5px", backgroundColor: "#DBEAFE" }}>
-                        <Typography sx={{ fontSize: 10, fontWeight: 700, color: "#1D4ED8", fontFamily: "Poppins, sans-serif" }}>BILLED</Typography>
+                        <Typography sx={{ fontSize: 10, fontWeight: 700, color: "#1D4ED8", fontFamily: FONT }}>BILLED</Typography>
                       </Box>
                     )}
                     {order.status !== "paid" && order.status !== "billed" && kotCount > 0 && (
                       <Box sx={{ px: 1, py: 0.2, borderRadius: "5px", backgroundColor: "#FEF3C7" }}>
-                        <Typography sx={{ fontSize: 10, fontWeight: 700, color: "#B45309", fontFamily: "Poppins, sans-serif" }}>KOT × {kotCount}</Typography>
+                        <Typography sx={{ fontSize: 10, fontWeight: 700, color: "#B45309", fontFamily: FONT }}>KOT × {kotCount}</Typography>
                       </Box>
                     )}
                     {order.placed_via && (
                       <Box sx={{ px: 1, py: 0.2, borderRadius: "5px", backgroundColor: "#DBEAFE" }}>
-                        <Typography sx={{ fontSize: 10, fontWeight: 600, color: "#1E40AF", fontFamily: "Poppins, sans-serif" }}>{order.placed_via.toUpperCase()}</Typography>
+                        <Typography sx={{ fontSize: 10, fontWeight: 600, color: "#1E40AF", fontFamily: FONT }}>{order.placed_via.toUpperCase()}</Typography>
                       </Box>
                     )}
                   </Box>
@@ -453,53 +464,53 @@ export default function OrdersHistory() {
                   <Box>
                     {order.mode !== "draft" && order.mode !== "offline" &&
                       normalizeOrderType(order.order_type?.order_type_name) === "pickup" && (
-                      <Typography sx={{ fontSize: 10.5, color: "#6B7280", fontFamily: "Poppins, sans-serif" }}>
+                      <Typography sx={{ fontSize: 10.5, color: TX3, fontFamily: FONT }}>
                         Pickup Date: {dayjs(order.created_at).format("DD/MM/YYYY hh:mm A")}
                       </Typography>
                     )}
-                    <Typography sx={{ fontSize: 10.5, color: "#6B7280", fontFamily: "Poppins, sans-serif" }}>
+                    <Typography sx={{ fontSize: 10.5, color: TX3, fontFamily: FONT }}>
                       Order Date: {dayjs(order.mode === "draft" ? order.createdAt : order.created_at).format("DD/MM/YYYY hh:mm A")}
                     </Typography>
                   </Box>
-                  <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#374151", fontFamily: "Poppins, sans-serif", whiteSpace: "nowrap" }}>
+                  <Typography sx={{ fontSize: 11, fontWeight: 600, color: TX2, fontFamily: FONT, whiteSpace: "nowrap" }}>
                     {getItemCountText(order)}
                   </Typography>
                 </Box>
 
-                <Divider sx={{ borderColor: "#F3F4F6" }} />
+                <Divider sx={{ borderColor: BDR }} />
 
                 {/* Items preview */}
                 <Box sx={{ px: 1.5, py: 0.8, minHeight: 44 }}>
                   {order.mode === "draft" || order.mode === "offline"
                     ? order.cart?.slice(0, 2).map((item: any, idx: number) => (
-                        <Typography key={idx} sx={{ fontSize: 12, color: "#374151", fontFamily: "Poppins, sans-serif" }}>
+                        <Typography key={idx} sx={{ fontSize: 12, color: TX2, fontFamily: FONT }}>
                           {item.name} × {item.qty}
                         </Typography>
                       ))
                     : latestKot?.items?.slice(0, 2).map((item: any) => (
-                        <Typography key={item.id} sx={{ fontSize: 12, color: "#374151", fontFamily: "Poppins, sans-serif" }}>
+                        <Typography key={item.id} sx={{ fontSize: 12, color: TX2, fontFamily: FONT }}>
                           {getItemName(item)} × {item.quantity}
                         </Typography>
                       ))
                   }
                 </Box>
 
-                <Divider sx={{ borderColor: "#F3F4F6" }} />
+                <Divider sx={{ borderColor: BDR }} />
 
                 {/* Footer: amount + status + New KOT */}
                 <Box sx={{ px: 1.5, py: 1, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <Box>
-                    <Typography sx={{ fontSize: 16, fontWeight: 700, color: "#111827", fontFamily: "Poppins, sans-serif" }}>
+                    <Typography sx={{ fontSize: 16, fontWeight: 700, color: TX, fontFamily: FONT }}>
                       ₹{Number(totalAmount || 0).toFixed(2)}
                     </Typography>
                     <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mt: 0.3 }}>
                       <Box sx={{ width: 7, height: 7, borderRadius: "50%", backgroundColor: status.color }} />
-                      <Typography sx={{ fontSize: 11, fontWeight: 600, color: status.color, fontFamily: "Poppins, sans-serif", letterSpacing: 0.3 }}>
+                      <Typography sx={{ fontSize: 11, fontWeight: 600, color: status.color, fontFamily: FONT, letterSpacing: 0.3 }}>
                         {status.label}
                       </Typography>
                     </Box>
                     {order.waiter?.name && (
-                      <Typography sx={{ fontSize: 11, color: "#9CA3AF", fontFamily: "Poppins, sans-serif" }}>
+                      <Typography sx={{ fontSize: 11, color: TX3, fontFamily: FONT }}>
                         Waiter: {order.waiter.name}
                       </Typography>
                     )}
@@ -511,9 +522,9 @@ export default function OrdersHistory() {
                     onClick={(e) => handleNewKot(e, order)}
                     sx={{
                       fontSize: 11, fontWeight: 600, textTransform: "none",
-                      borderColor: "#D1D5DB", color: "#374151", borderRadius: "8px",
-                      fontFamily: "Poppins, sans-serif", px: 1.2,
-                      "&:hover": { borderColor: "#FF3D01", color: "#FF3D01", backgroundColor: "#FEF2F2" },
+                      borderColor: BDR, color: TX2, borderRadius: "8px",
+                      fontFamily: FONT, px: 1.2,
+                      "&:hover": { borderColor: ACCENT, color: ACCENT, backgroundColor: "rgba(255,61,1,0.06)" },
                     }}
                   >
                     New KOT
@@ -530,18 +541,18 @@ export default function OrdersHistory() {
             disabled={page === 1}
             onClick={() => setPage((p) => p - 1)}
             variant="outlined"
-            sx={{ textTransform: "none", fontSize: 13, fontFamily: "Poppins, sans-serif", borderColor: "#D1D5DB", color: "#374151", borderRadius: "8px", "&:hover": { borderColor: "#FF3D01", color: "#FF3D01" } }}
+            sx={{ textTransform: "none", fontSize: 13, fontFamily: FONT, borderColor: BDR, color: TX2, borderRadius: "8px", "&:hover": { borderColor: ACCENT, color: ACCENT } }}
           >
             Previous
           </MuiButton>
-          <Box sx={{ px: 2, py: 0.5, borderRadius: "8px", backgroundColor: "#F3F4F6" }}>
-            <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#374151", fontFamily: "Poppins, sans-serif" }}>Page {page}</Typography>
+          <Box sx={{ px: 2, py: 0.5, borderRadius: "8px", backgroundColor: "rgba(255,61,1,0.07)" }}>
+            <Typography sx={{ fontSize: 13, fontWeight: 600, color: ACCENT, fontFamily: FONT }}>Page {page}</Typography>
           </Box>
           <MuiButton
             disabled={page * perPage >= ordersTotal}
             onClick={() => setPage((p) => p + 1)}
             variant="outlined"
-            sx={{ textTransform: "none", fontSize: 13, fontFamily: "Poppins, sans-serif", borderColor: "#D1D5DB", color: "#374151", borderRadius: "8px", "&:hover": { borderColor: "#FF3D01", color: "#FF3D01" } }}
+            sx={{ textTransform: "none", fontSize: 13, fontFamily: FONT, borderColor: BDR, color: TX2, borderRadius: "8px", "&:hover": { borderColor: ACCENT, color: ACCENT } }}
           >
             Next
           </MuiButton>

@@ -1,0 +1,50 @@
+{
+  "status": true,
+  "total": 4,
+  "data": [
+    {
+      "id": 1,
+      "name": "Datscvjvkvbkbl",
+      "email": "fy@gmail.com",
+      "phone": "+919999999999",
+      "party_size": 2,
+      "reservation_date_time": "2026-01-25 13:00:00",
+      "status": "Confirmed",
+      "notes": "testing requirements",
+      "table_code": "T-3"
+    },
+    {
+      "id": 2,
+      "name": "Akhleshsisjdj",
+      "email": "akhlesh@gmail.com",
+      "phone": "+916260129453",
+      "party_size": 2,
+      "reservation_date_time": "2026-01-25 18:00:00",
+      "status": "Pending",
+      "notes": null,
+      "table_code": null
+    },
+    {
+      "id": 3,
+      "name": "Rahul Sharma",
+      "email": "rahul@gmail.com",
+      "phone": "+918800123456",
+      "party_size": 4,
+      "reservation_date_time": "2026-01-26 19:30:00",
+      "status": "Confirmed",
+      "notes": "Anniversary dinner, need cake",
+      "table_code": "T-7"
+    },
+    {
+      "id": 4,
+      "name": "Priya Mehta",
+      "email": "priya@email.com",
+      "phone": "+917700987654",
+      "party_size": 6,
+      "reservation_date_time": "2026-01-27 20:00:00",
+      "status": "Pending",
+      "notes": null,
+      "table_code": null
+    }
+  ]
+}

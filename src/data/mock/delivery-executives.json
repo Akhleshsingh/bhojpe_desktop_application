@@ -1,0 +1,102 @@
+{
+  "status": true,
+  "message": "Delivery executives fetched successfully",
+  "data": [
+    {
+      "id": 2,
+      "status": "available",
+      "name": "Ashish",
+      "phone": 6260129457
+    },
+    {
+      "id": 17,
+      "status": "available",
+      "name": "ashish",
+      "phone": 6260129457
+    },
+    {
+      "id": 24,
+      "status": "available",
+      "name": "darshan Savaliya",
+      "phone": 9998887770
+    },
+    {
+      "id": 18,
+      "status": "available",
+      "name": "drdr",
+      "phone": 987654320
+    },
+    {
+      "id": 16,
+      "status": "available",
+      "name": "hjklioo",
+      "phone": 1234567899
+    },
+    {
+      "id": 26,
+      "status": "inactive",
+      "name": "jeetu ojha",
+      "phone": 8602790073
+    },
+    {
+      "id": 10,
+      "status": "available",
+      "name": "mohan Sharma",
+      "phone": 9876543218
+    },
+    {
+      "id": 1,
+      "status": "on_delivery",
+      "name": "pawan",
+      "phone": 6260129456
+    },
+    {
+      "id": 6,
+      "status": "available",
+      "name": "Rahul kushwah",
+      "phone": 9876543210
+    },
+    {
+      "id": 7,
+      "status": "on_delivery",
+      "name": "ram Sharma",
+      "phone": 9876543211
+    },
+    {
+      "id": 15,
+      "status": "available",
+      "name": "scscs",
+      "phone": 2132312349
+    },
+    {
+      "id": 9,
+      "status": "on_delivery",
+      "name": "tes",
+      "phone": 8528529630
+    },
+    {
+      "id": 25,
+      "status": "available",
+      "name": "tes",
+      "phone": 7537537530
+    },
+    {
+      "id": 8,
+      "status": "available",
+      "name": "testing",
+      "phone": 9639639630
+    },
+    {
+      "id": 23,
+      "status": "available",
+      "name": "testing delivery boy",
+      "phone": 9669453963
+    },
+    {
+      "id": 11,
+      "status": "available",
+      "name": "testing with role",
+      "phone": 8528520009
+    }
+  ]
+}

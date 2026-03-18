@@ -63,21 +63,21 @@ function PinInput({
   return (
     <Box>
       <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1 }}>
-        <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#374151", fontFamily: "Poppins, sans-serif" }}>
+        <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#6b5c4a", fontFamily: "'Montserrat', sans-serif" }}>
           {label}
         </Typography>
         <Box onClick={onToggleShow} sx={{ display: "flex", alignItems: "center", gap: 0.4, cursor: "pointer" }}>
           {show
-            ? <VisibilityOffOutlinedIcon sx={{ fontSize: 15, color: "#9CA3AF" }} />
-            : <VisibilityOutlinedIcon sx={{ fontSize: 15, color: "#9CA3AF" }} />}
-          <Typography sx={{ fontSize: 11, color: "#9CA3AF", fontFamily: "Poppins, sans-serif" }}>
+            ? <VisibilityOffOutlinedIcon sx={{ fontSize: 15, color: "#a08c7c" }} />
+            : <VisibilityOutlinedIcon sx={{ fontSize: 15, color: "#a08c7c" }} />}
+          <Typography sx={{ fontSize: 11, color: "#a08c7c", fontFamily: "'Montserrat', sans-serif" }}>
             {show ? "Hide" : "Show"}
           </Typography>
         </Box>
       </Box>
 
       {hint && (
-        <Typography sx={{ fontSize: 11, color: "#9CA3AF", fontFamily: "Poppins, sans-serif", mb: 0.8 }}>
+        <Typography sx={{ fontSize: 11, color: "#a08c7c", fontFamily: "'Montserrat', sans-serif", mb: 0.8 }}>
           {hint}
         </Typography>
       )}
@@ -91,8 +91,8 @@ function PinInput({
               sx={{
                 width: 64, height: 64,
                 borderRadius: "12px",
-                border: `2px solid ${error ? "#FECACA" : filled ? "#FF3D01" : "#E5E7EB"}`,
-                backgroundColor: error ? "#FEF2F2" : filled ? "#FEF2F2" : "#F9FAFB",
+                border: `2px solid ${error ? "#FECACA" : filled ? "#FF3D01" : "#e2d9d0"}`,
+                backgroundColor: error ? "#FEF2F2" : filled ? "#FEF2F2" : "#faf7f3",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 position: "relative",
                 transition: "all .15s",
@@ -114,7 +114,7 @@ function PinInput({
               />
               <Typography sx={{
                 fontSize: show ? 22 : 28, fontWeight: 700, color: error ? "#DC2626" : "#FF3D01",
-                fontFamily: "Poppins, sans-serif", lineHeight: 1, userSelect: "none",
+                fontFamily: "'Montserrat', sans-serif", lineHeight: 1, userSelect: "none",
               }}>
                 {filled ? (show ? value[i] : "●") : ""}
               </Typography>
@@ -158,21 +158,21 @@ export default function ResetPasskey() {
 
   return (
     <Box sx={{
-      minHeight: "100vh", backgroundColor: "#F4F6F9",
+      minHeight: "100vh", backgroundColor: "#f5f0ea",
       display: "flex", alignItems: "center", justifyContent: "center",
-      fontFamily: "Poppins, sans-serif", p: 3,
+      fontFamily: "'Montserrat', sans-serif", p: 3,
     }}>
       <Box sx={{
         width: "100%", maxWidth: 420,
         backgroundColor: "#FFFFFF",
         borderRadius: "20px",
-        border: "1px solid #E5E7EB",
+        border: "1px solid #e2d9d0",
         boxShadow: "0 8px 40px rgba(0,0,0,0.10)",
         overflow: "hidden",
       }}>
         {/* ── Card header ── */}
         <Box sx={{
-          background: "linear-gradient(135deg,#1F2937 0%,#374151 100%)",
+          background: "linear-gradient(135deg,#2c1a0e 0%,#3d2810 100%)",
           px: 3, py: 3,
           display: "flex", alignItems: "center", justifyContent: "space-between",
         }}>
@@ -186,10 +186,10 @@ export default function ResetPasskey() {
               <LockResetOutlinedIcon sx={{ fontSize: 22, color: "#FCA5A5" }} />
             </Box>
             <Box>
-              <Typography sx={{ fontSize: 16, fontWeight: 700, color: "#FFFFFF", fontFamily: "Poppins, sans-serif" }}>
+              <Typography sx={{ fontSize: 16, fontWeight: 700, color: "#FFFFFF", fontFamily: "'Montserrat', sans-serif" }}>
                 Reset Passkey
               </Typography>
-              <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: "Poppins, sans-serif" }}>
+              <Typography sx={{ fontSize: 12, color: "#a08c7c", fontFamily: "'Montserrat', sans-serif" }}>
                 Verify current &amp; set new passkey
               </Typography>
             </Box>
@@ -203,8 +203,8 @@ export default function ResetPasskey() {
               "&:hover": { backgroundColor: "rgba(255,255,255,0.08)" },
             }}
           >
-            <ArrowBackIcon sx={{ fontSize: 16, color: "#9CA3AF" }} />
-            <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: "Poppins, sans-serif" }}>Back</Typography>
+            <ArrowBackIcon sx={{ fontSize: 16, color: "#a08c7c" }} />
+            <Typography sx={{ fontSize: 12, color: "#a08c7c", fontFamily: "'Montserrat', sans-serif" }}>Back</Typography>
           </Box>
         </Box>
 
@@ -216,17 +216,17 @@ export default function ResetPasskey() {
               <Box sx={{ width: 60, height: 60, borderRadius: "50%", backgroundColor: "#DCFCE7", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <CheckCircleOutlineIcon sx={{ fontSize: 32, color: "#16A34A" }} />
               </Box>
-              <Typography sx={{ fontSize: 16, fontWeight: 700, color: "#111827", fontFamily: "Poppins, sans-serif" }}>
+              <Typography sx={{ fontSize: 16, fontWeight: 700, color: "#111827", fontFamily: "'Montserrat', sans-serif" }}>
                 Passkey Reset Successfully!
               </Typography>
-              <Typography sx={{ fontSize: 13, color: "#9CA3AF", fontFamily: "Poppins, sans-serif" }}>
+              <Typography sx={{ fontSize: 13, color: "#9CA3AF", fontFamily: "'Montserrat', sans-serif" }}>
                 Redirecting you back…
               </Typography>
             </Box>
           ) : (
             <>
               {error && (
-                <Alert severity="error" sx={{ borderRadius: "10px", fontSize: 13, fontFamily: "Poppins, sans-serif", py: 0.5 }}>
+                <Alert severity="error" sx={{ borderRadius: "10px", fontSize: 13, fontFamily: "'Montserrat', sans-serif", py: 0.5 }}>
                   {error}
                 </Alert>
               )}
@@ -234,7 +234,7 @@ export default function ResetPasskey() {
               {/* Security notice */}
               <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1, p: 1.5, borderRadius: "10px", backgroundColor: "#FFFBEB", border: "1px solid #FDE68A" }}>
                 <ShieldOutlinedIcon sx={{ fontSize: 16, color: "#D97706", mt: 0.1, flexShrink: 0 }} />
-                <Typography sx={{ fontSize: 12, color: "#92400E", fontFamily: "Poppins, sans-serif", lineHeight: 1.6 }}>
+                <Typography sx={{ fontSize: 12, color: "#92400E", fontFamily: "'Montserrat', sans-serif", lineHeight: 1.6 }}>
                   You must enter your <strong>current passkey</strong> to set a new one. This ensures only authorized users can change security settings.
                 </Typography>
               </Box>
@@ -253,9 +253,9 @@ export default function ResetPasskey() {
 
               {/* Divider */}
               <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-                <Box sx={{ flex: 1, height: 1, backgroundColor: "#F3F4F6" }} />
-                <Typography sx={{ fontSize: 11, color: "#D1D5DB", fontFamily: "Poppins, sans-serif" }}>NEW PASSKEY</Typography>
-                <Box sx={{ flex: 1, height: 1, backgroundColor: "#F3F4F6" }} />
+                <Box sx={{ flex: 1, height: 1, backgroundColor: "#e2d9d0" }} />
+                <Typography sx={{ fontSize: 11, color: "#a08c7c", fontFamily: "'Montserrat', sans-serif" }}>NEW PASSKEY</Typography>
+                <Box sx={{ flex: 1, height: 1, backgroundColor: "#e2d9d0" }} />
               </Box>
 
               {/* New passkey */}
@@ -274,7 +274,7 @@ export default function ResetPasskey() {
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   <Box sx={{ width: 40, height: 3, borderRadius: "2px", backgroundColor: strength === "strong" ? "#16A34A" : "#DC2626" }} />
                   <Box sx={{ width: 40, height: 3, borderRadius: "2px", backgroundColor: strength === "strong" ? "#16A34A" : "#F3F4F6" }} />
-                  <Typography sx={{ fontSize: 11, fontWeight: 600, color: strength === "strong" ? "#16A34A" : "#DC2626", fontFamily: "Poppins, sans-serif", ml: 0.5 }}>
+                  <Typography sx={{ fontSize: 11, fontWeight: 600, color: strength === "strong" ? "#16A34A" : "#DC2626", fontFamily: "'Montserrat', sans-serif", ml: 0.5 }}>
                     {strength === "strong" ? "Strong passkey" : "Weak passkey — choose a less predictable combination"}
                   </Typography>
                 </Box>
@@ -287,7 +287,7 @@ export default function ResetPasskey() {
                 disabled={oldKey.length !== 4 || newKey.length !== 4}
                 sx={{
                   textTransform: "none", fontSize: 14, fontWeight: 700,
-                  fontFamily: "Poppins, sans-serif", height: 46, borderRadius: "12px",
+                  fontFamily: "'Montserrat', sans-serif", height: 46, borderRadius: "12px",
                   background: oldKey.length === 4 && newKey.length === 4
                     ? "linear-gradient(135deg,#FF3D01,#c62a2f)"
                     : "#E5E7EB",
@@ -305,7 +305,7 @@ export default function ResetPasskey() {
                 Reset Passkey
               </Button>
 
-              <Typography sx={{ fontSize: 12, color: "#9CA3AF", fontFamily: "Poppins, sans-serif", textAlign: "center", lineHeight: 1.6 }}>
+              <Typography sx={{ fontSize: 12, color: "#a08c7c", fontFamily: "'Montserrat', sans-serif", textAlign: "center", lineHeight: 1.6 }}>
                 After resetting, your new passkey will immediately protect POS access.
               </Typography>
             </>

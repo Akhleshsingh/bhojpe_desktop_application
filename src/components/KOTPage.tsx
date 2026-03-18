@@ -1,4 +1,6 @@
 import React, { useState, useMemo } from "react";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
 import "./kot.css";
 
 type KotItem = {
@@ -63,6 +65,11 @@ const KOT_DATA: Kot[] = [
 export default function KOTPage() {
   const [searchQ, setSearchQ] = useState("");
   const [orderTypeFilter, setOrderTypeFilter] = useState("All");
+  const [fromDate, setFromDate] = useState<Date | null>(null);
+  const [toDate, setToDate] = useState<Date | null>(null);
+  const [showFromCal, setShowFromCal] = useState(false);
+  const [showToCal, setShowToCal] = useState(false);
+  const fmtDate = (d: Date) => d.toLocaleDateString("en-IN", { day: "2-digit", month: "2-digit", year: "numeric" });
 
   const filtered = useMemo(() => {
     const q = searchQ.trim().toLowerCase();
@@ -103,8 +110,32 @@ export default function KOTPage() {
 
       {/* FILTER ROW */}
       <div className="kot-filters">
-        <input type="date" className="kot-filter-input" />
-        <input type="date" className="kot-filter-input" />
+        <div className="kot-date-wrap">
+          <button
+            className="kot-date-btn"
+            onClick={() => { setShowFromCal(v => !v); setShowToCal(false); }}
+          >
+            📅 {fromDate ? fmtDate(fromDate) : "From date"}
+          </button>
+          {showFromCal && (
+            <div className="kot-cal-drop">
+              <Calendar value={fromDate} onChange={(d) => { setFromDate(d as Date); setShowFromCal(false); }} />
+            </div>
+          )}
+        </div>
+        <div className="kot-date-wrap">
+          <button
+            className="kot-date-btn"
+            onClick={() => { setShowToCal(v => !v); setShowFromCal(false); }}
+          >
+            📅 {toDate ? fmtDate(toDate) : "To date"}
+          </button>
+          {showToCal && (
+            <div className="kot-cal-drop">
+              <Calendar minDate={fromDate || undefined} value={toDate} onChange={(d) => { setToDate(d as Date); setShowToCal(false); }} />
+            </div>
+          )}
+        </div>
         <select className="kot-filter-input">
           <option>Show All KOT</option>
         </select>

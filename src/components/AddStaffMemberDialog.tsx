@@ -19,7 +19,7 @@ import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 import { BASE_URL } from "../utils/api";
 
-const FONT = "Poppins, sans-serif";
+const FONT = "'Montserrat', sans-serif";
 const RED  = "#FF3D01";
 
 const COUNTRY_CODES = ["+91", "+1", "+44", "+61", "+971", "+65", "+81", "+86"];
@@ -68,9 +68,13 @@ export default function AddStaffMemberDialog({
   const loadRoles = useCallback(async () => {
     const token = localStorage.getItem("token");
     if (!token) return;
+    const rid = branchData?.data?.restaurant_id;
+    if (!rid) return;
     try {
       const res = await fetch(`${BASE_URL}/restaurant-roles`, {
-        headers: { Authorization: `Bearer ${token}` },
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ restaurant_id: rid }),
       });
       const data = await res.json();
       if (data.status && Array.isArray(data.roles)) {
@@ -88,7 +92,7 @@ export default function AddStaffMemberDialog({
         setRoleId(list[0]?.id ?? "");
       }
     } catch { /* silent */ }
-  }, [roleKeyword]);
+  }, [roleKeyword, branchData]);
 
   useEffect(() => {
     if (open) loadRoles();
