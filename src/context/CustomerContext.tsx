@@ -9,6 +9,13 @@ import React, {
 import type { Customer } from "../types/customer";
 import { useAuth } from "./AuthContext";
 
+type UpdatePayload = {
+  name: string;
+  phone: string;
+  email?: string;
+  delivery_address?: string;
+};
+
 type CustomersContextType = {
   customers: Customer[];
   loading: boolean;
@@ -19,6 +26,9 @@ type CustomersContextType = {
     email?: string;
     delivery_address?: string;
   }) => Promise<Customer | null>;
+  updateCustomer: (id: number, payload: UpdatePayload) => Promise<boolean>;
+  deleteCustomer: (id: number) => Promise<boolean>;
+  refreshCustomers: () => Promise<void>;
   selectedCustomer: Customer | null;
   setSelectedCustomer: React.Dispatch<React.SetStateAction<Customer | null>>;
 };
@@ -28,6 +38,9 @@ const CustomersContext = createContext<CustomersContextType>({
   loading: false,
   searchCustomers: async () => [],
   saveCustomer: async () => null,
+  updateCustomer: async () => false,
+  deleteCustomer: async () => false,
+  refreshCustomers: async () => {},
   selectedCustomer: null,
   setSelectedCustomer: (() => {}) as React.Dispatch<
     React.SetStateAction<Customer | null>
@@ -43,7 +56,7 @@ export const CustomersProvider = ({
   const [loading, setLoading] = useState(false);
 
   const { token, branchData } = useAuth();
- const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
+  const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
   const restaurant_id = branchData?.data?.restaurant_id;
   const branch_id = branchData?.data?.id;
 
@@ -63,28 +76,29 @@ export const CustomersProvider = ({
     return json.data?.data || [];
   };
 
-  useEffect(() => {
+  const loadCustomers = useCallback(async () => {
     if (!token || !restaurant_id || !branch_id) return;
-
-    const preload = async () => {
-      try {
-        setLoading(true);
-        const data = await callCustomerAPI({
-          restaurant_id,
-          branch_id,
-          keyword: "",
-          page: 1,
-        });
-        setCustomers(data);
-      } catch (err) {
-        console.error("Failed to preload customers", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    preload();
+    try {
+      setLoading(true);
+      const data = await callCustomerAPI({
+        restaurant_id,
+        branch_id,
+        keyword: "",
+        page: 1,
+      });
+      setCustomers(data);
+    } catch (err) {
+      console.error("Failed to load customers", err);
+    } finally {
+      setLoading(false);
+    }
   }, [token, restaurant_id, branch_id]);
+
+  useEffect(() => {
+    loadCustomers();
+  }, [loadCustomers]);
+
+  const refreshCustomers = useCallback(() => loadCustomers(), [loadCustomers]);
 
   const searchCustomers = useCallback(
     async (keyword: string) => {
@@ -109,7 +123,6 @@ export const CustomersProvider = ({
     [token, restaurant_id, branch_id]
   );
 
-  // 💾 SAVE customer (create)
   const saveCustomer = useCallback(
     async (payload: {
       name: string;
@@ -144,14 +157,78 @@ export const CustomersProvider = ({
     [token, restaurant_id, branch_id]
   );
 
+  const updateCustomer = useCallback(
+    async (id: number, payload: UpdatePayload): Promise<boolean> => {
+      try {
+        const res = await fetch(`${BASE_URL}/update-customer`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ id, restaurant_id, branch_id, ...payload }),
+        });
+        const json = await res.json();
+        if (!json?.status) return false;
+
+        setCustomers((prev) =>
+          prev.map((c) =>
+            c.id === id
+              ? {
+                  ...c,
+                  name: payload.name,
+                  phone: Number(payload.phone) || (payload.phone as any),
+                  email: payload.email ?? c.email,
+                  delivery_address: payload.delivery_address ?? c.delivery_address,
+                }
+              : c
+          )
+        );
+        return true;
+      } catch (err) {
+        console.error("Update customer failed", err);
+        return false;
+      }
+    },
+    [token, restaurant_id, branch_id]
+  );
+
+  const deleteCustomer = useCallback(
+    async (id: number): Promise<boolean> => {
+      try {
+        const res = await fetch(`${BASE_URL}/delete-customer`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ id, restaurant_id, branch_id }),
+        });
+        const json = await res.json();
+        if (!json?.status) return false;
+
+        setCustomers((prev) => prev.filter((c) => c.id !== id));
+        return true;
+      } catch (err) {
+        console.error("Delete customer failed", err);
+        return false;
+      }
+    },
+    [token, restaurant_id, branch_id]
+  );
+
   return (
     <CustomersContext.Provider
       value={{
         customers,
         loading,
         searchCustomers,
-        saveCustomer,  selectedCustomer,
-        setSelectedCustomer, 
+        saveCustomer,
+        updateCustomer,
+        deleteCustomer,
+        refreshCustomers,
+        selectedCustomer,
+        setSelectedCustomer,
       }}
     >
       {children}
@@ -160,4 +237,3 @@ export const CustomersProvider = ({
 };
 
 export const useCustomers = () => useContext(CustomersContext);
-

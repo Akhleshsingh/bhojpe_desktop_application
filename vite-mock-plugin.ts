@@ -22,6 +22,8 @@ const ROUTE_MAP: Record<string, string> = {
   "/api/v1/toggle-app-stock":     "toggle-app-stock",
   "/api/v1/get-reservations":     "get-reservations",
   "/api/v1/save-reservation":     "save-reservation",
+  "/api/v1/update-customer":      "update-customer",
+  "/api/v1/delete-customer":      "delete-customer",
 };
 
 function findMockFile(urlPath: string): string | null {
@@ -40,6 +42,8 @@ function findMockFile(urlPath: string): string | null {
 const ALWAYS_MOCK = new Set([
   "/api/v1/save-reservation",
   "/api/v1/get-reservations",
+  "/api/v1/update-customer",
+  "/api/v1/delete-customer",
 ]);
 
 function isValidToken(authHeader: string): boolean {
